@@ -6,6 +6,9 @@ import { ToastService } from 'angular-toastify';
 
 import { environment } from '../../../../environments/environment';
 import { AuthenticationService } from '../../../core/services/auth.service';
+import { ConfigService } from 'src/app/core/services/config.service';
+import { AUTH_MODE } from 'src/app/core/constants/config-values.constant';
+import { log } from 'console';
 
 @Component({
   selector: 'app-login',
@@ -24,6 +27,8 @@ export class LoginComponent implements OnInit {
   returnUrl: string;
   passwordFieldType: string = 'password';
 
+  authMode: string = AUTH_MODE.DB;
+
   // Set the currenr year
   year: number = new Date().getFullYear();
 
@@ -33,7 +38,8 @@ export class LoginComponent implements OnInit {
     private router: Router, 
     private route: ActivatedRoute,
     private authenticationService: AuthenticationService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private configService: ConfigService 
   ) { }
 
   ngOnInit() {
@@ -45,6 +51,17 @@ export class LoginComponent implements OnInit {
 
     // Reset login status
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+
+    this.configService.getConfigByKey('AUTH_MODE')
+      .subscribe(
+        (result: any) => {
+          this.authMode = result?.data ? result.data : AUTH_MODE.DB;
+          log(this.authMode);
+        },
+        (error) => {
+          this.authMode = AUTH_MODE.DB;
+        }
+    );
   }
 
   // Convenience getter for easy access to form fields
@@ -60,7 +77,7 @@ export class LoginComponent implements OnInit {
       return;
     } 
     
-    if (environment.authType === 'username') {
+    if (this.authMode === AUTH_MODE.DB) {
       var isRemember = this.f.rememberMe.value;
 
       this.authenticationService.login(this.f.userName.value, this.f.password.value,isRemember)

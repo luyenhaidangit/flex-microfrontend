@@ -4,10 +4,9 @@
 
 export const environment = {
   production: false,
-  authType: 'username',
   defaultauth: 'database',
   flexServer: {
-    apiUrl: 'https://localhost:7207/api'
+    apiUrl: 'https://localhost:5000/api'
   },
   externalService: {
     translateServiceUrl: "http://localhost:4200/assets/i18n/",
