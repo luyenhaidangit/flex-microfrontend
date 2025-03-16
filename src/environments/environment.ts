@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   defaultauth: 'database',
   flexServer: {
-    apiUrl: 'https://localhost:5000/api'
+    apiUrl: 'https://localhost:5000'
   },
   externalService: {
     translateServiceUrl: "http://localhost:4200/assets/i18n/",

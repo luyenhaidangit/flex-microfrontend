@@ -4,11 +4,9 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
 
 import { ToastService } from 'angular-toastify';
 
-import { environment } from '../../../../environments/environment';
 import { AuthenticationService } from '../../../core/services/auth.service';
 import { ConfigService } from 'src/app/core/services/config.service';
 import { AUTH_MODE } from 'src/app/core/constants/config-values.constant';
-import { log } from 'console';
 
 @Component({
   selector: 'app-login',
@@ -56,7 +54,7 @@ export class LoginComponent implements OnInit {
       .subscribe(
         (result: any) => {
           this.authMode = result?.data ? result.data : AUTH_MODE.DB;
-          log(this.authMode);
+          console.log(this.authMode);
         },
         (error) => {
           this.authMode = AUTH_MODE.DB;

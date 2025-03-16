@@ -8,17 +8,19 @@ import { AuthenticationService } from '../services/auth.service';
 import { AuthfakeauthenticationService } from '../services/authfake.service';
 
 import { environment } from '../../../environments/environment';
+import { ConfigService } from '../services/config.service';
+import { AUTH_MODE } from '../constants/config-values.constant';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard {
   constructor(
     private router: Router,
     private authenticationService: AuthenticationService,
-    private authFackservice: AuthfakeauthenticationService
+    private configService: ConfigService
   ) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    if (environment.authType === 'username') {
+    if (this.configService.authMode === AUTH_MODE.DB) {
       const currentUser = this.authenticationService.GetCurrentUser();
 
       // Refresh user info if current user is null
