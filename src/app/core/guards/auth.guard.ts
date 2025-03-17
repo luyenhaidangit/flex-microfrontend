@@ -20,6 +20,7 @@ export class AuthGuard {
   ) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+
     if (this.configService.authMode === AUTH_MODE.DB) {
       const currentUser = this.authenticationService.GetCurrentUser();
 

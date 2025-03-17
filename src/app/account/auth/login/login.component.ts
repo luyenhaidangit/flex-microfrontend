@@ -49,17 +49,6 @@ export class LoginComponent implements OnInit {
 
     // Reset login status
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-
-    this.configService.getConfigByKey('AUTH_MODE')
-      .subscribe(
-        (result: any) => {
-          this.authMode = result?.data ? result.data : AUTH_MODE.DB;
-          console.log(this.authMode);
-        },
-        (error) => {
-          this.authMode = AUTH_MODE.DB;
-        }
-    );
   }
 
   // Convenience getter for easy access to form fields

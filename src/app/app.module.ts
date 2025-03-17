@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
@@ -26,6 +26,8 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpInterceptor } from './core/interceptors/http.interceptor';
 import { ToastrModule } from 'ngx-toastr';
 import { AngularToastifyModule } from 'angular-toastify';
+import { appInitializerFactory } from './core/initializers/app.initializers';
+import { ConfigService } from './core/services/config.service';
 
 export function createTranslateLoader(http: HttpClient): any {
   return new TranslateHttpLoader(http, environment.externalService.translateServiceUrl, '.json');
@@ -61,7 +63,8 @@ export function createTranslateLoader(http: HttpClient): any {
   ],
   bootstrap: [AppComponent],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: HttpInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: HttpInterceptor, multi: true },
+    { provide: APP_INITIALIZER, useFactory: appInitializerFactory, deps: [ConfigService], multi: true}
   ],
 })
 export class AppModule { }

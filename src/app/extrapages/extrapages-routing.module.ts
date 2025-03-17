@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { MaintenanceComponent } from './maintenance/maintenance.component';
 import { Page404Component } from './page404/page404.component';
-import { Page500Component } from './page500/page500.component';
+import { ErrorPageComponent } from './errorpage/errorpage.component';
 import { LockscreenComponent } from './lockscreen/lockscreen.component';
 import { Login2Component } from '../account/auth/login2/login2.component';
 import { Lockscreen2Component } from './lockscreen2/lockscreen2.component';
@@ -30,7 +30,7 @@ const routes: Routes = [
     },
     {
         path: '500',
-        component: Page500Component
+        component: ErrorPageComponent
     },
     {
         path: 'login-2',

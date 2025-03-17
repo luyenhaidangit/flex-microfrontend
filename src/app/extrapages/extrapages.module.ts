@@ -8,7 +8,7 @@ import { ExtrapagesRoutingModule } from './extrapages-routing.module';
 
 import { MaintenanceComponent } from './maintenance/maintenance.component';
 import { Page404Component } from './page404/page404.component';
-import { Page500Component } from './page500/page500.component';
+import { ErrorPageComponent } from './errorpage/errorpage.component';
 import { LockscreenComponent } from './lockscreen/lockscreen.component';
 import { Lockscreen2Component } from './lockscreen2/lockscreen2.component';
 import { ConfirmmailComponent } from './confirmmail/confirmmail.component';
@@ -21,7 +21,7 @@ import { ComingsoonComponent } from './comingsoon/comingsoon.component';
 
 @NgModule({
   // tslint:disable-next-line: max-line-length
-  declarations: [MaintenanceComponent, Page404Component, Page500Component, LockscreenComponent, Lockscreen2Component, ConfirmmailComponent, Confirmmail2Component, VerificationComponent, Verification2Component, SteptwoverificationComponent, Steptwoverification2Component, ComingsoonComponent],
+  declarations: [MaintenanceComponent, Page404Component, ErrorPageComponent, LockscreenComponent, Lockscreen2Component, ConfirmmailComponent, Confirmmail2Component, VerificationComponent, Verification2Component, SteptwoverificationComponent, Steptwoverification2Component, ComingsoonComponent],
   imports: [
     CommonModule,
     CarouselModule,
