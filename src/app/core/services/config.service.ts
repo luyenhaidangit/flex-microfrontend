@@ -41,7 +41,7 @@ export class ConfigService {
       }),
       mapTo(void 0),
       catchError(err => {
-        this.errorPageService.navigateToErrorPage('Máy chủ gặp sự cố, vui lòng thử lại sau!', 500);
+        this.errorPageService.navigateToErrorPage('Máy chủ gặp sự cố, vui lòng thử lại sau!', 500, false);
         console.error('Error loading AuthMode:', err);
         return of(void 0);
       })

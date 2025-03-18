@@ -3,9 +3,22 @@
       <div class="row">
           <div class="col-lg-12">
               <div class="text-center mb-5">
-                  <h1 class="display-2 fw-medium">5<i class="bx bx-buoy bx-spin text-primary display-3"></i>0</h1>
-                  <h4 class="text-uppercase">Lỗi máy chủ nội bộ!</h4>
-                  <div class="mt-5 text-center">
+                <ng-container [ngSwitch]="errorPageService.statusCode">
+                    <h1 *ngSwitchCase="500" class="display-2 fw-medium">
+                      5<i class="bx bx-buoy bx-spin text-primary display-3"></i>0
+                    </h1>
+                    <h1 *ngSwitchCase="404" class="display-2 fw-medium">
+                      4<i class="bx bx-error-circle text-warning display-3"></i>4
+                    </h1>
+                    <h1 *ngSwitchCase="403" class="display-2 fw-medium">
+                      4<i class="bx bx-lock text-danger display-3"></i>3
+                    </h1>
+                    <h1 *ngSwitchDefault class="display-2 fw-medium">
+                      {{ errorPageService.statusCode }}
+                    </h1>
+                  </ng-container> 
+                  <h4 class="text-uppercase">{{ errorPageService.errorMessage$ | async }}</h4>
+                  <div *ngIf="errorPageService.navigationEnabled" class="mt-5 text-center">
                       <a class="btn btn-primary" routerLink="/">Trang điều khiển</a>
                   </div>
               </div>

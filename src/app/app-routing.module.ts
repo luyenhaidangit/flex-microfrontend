@@ -13,7 +13,7 @@ const routes: Routes = [
   { path: '', component: LayoutComponent, loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule), canActivate: [AuthGuard] },
   { path: 'pages', loadChildren: () => import('./extrapages/extrapages.module').then(m => m.ExtrapagesModule), canActivate: [AuthGuard] },
   { path: 'crypto-ico-landing', component: CyptolandingComponent },
-  { path: 'error/:code', component: ErrorPageComponent },
+  { path: 'error', component: ErrorPageComponent },
   { path: '**', component: Page404Component },
 ];
 
