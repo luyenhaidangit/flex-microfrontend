@@ -3,7 +3,6 @@ import { HttpClient } from "@angular/common/http";
 import { Observable, of } from 'rxjs';
 import { tap, mapTo, catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { AUTH_MODE } from '../constants/config-values.constant';
 import { CONFIG_KEYS } from '../constants/config-key.constant';
 import { ErrorPageService } from './error-page.service';
 
@@ -13,7 +12,6 @@ import { ErrorPageService } from './error-page.service';
 
 export class ConfigService {
 
-  private apiUrl = environment.flexServer.apiUrl;
   URL = environment.externalService.configServiceUrl;
 
   constructor(private http: HttpClient, private errorPageService: ErrorPageService) { }
@@ -26,7 +24,7 @@ export class ConfigService {
   }
 
   getConfigByKey(key: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/api/config/get-config-by-key?key=${key}`);
+    return this.http.get(`/api/config/get-config-by-key?key=${key}`);
   }
 
   /**

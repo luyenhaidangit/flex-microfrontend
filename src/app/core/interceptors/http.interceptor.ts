@@ -17,7 +17,7 @@ export class HttpInterceptor implements HttpSystemInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Set default baseurl
     if (!request.url.startsWith('http') && !request.url.startsWith('https')) {
-      request = request.clone({ url: `${environment.flexServer.apiUrl}${request.url}` });
+      request = request.clone({ url: `${environment.apiBaseUrl}${request.url}` });
     }
 
     // Loading when call request

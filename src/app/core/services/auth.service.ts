@@ -1,9 +1,4 @@
 import { Injectable } from '@angular/core';
-
-import { getFirebaseBackend } from '../../authUtils';
-
-import { User } from '../models/auth.models';
-
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { LocalStorage } from '../enums/local-storage.enum';
@@ -70,7 +65,7 @@ export class AuthenticationService {
 
     // Get User Profile
     public GetUserProfile() { 
-        return this.http.post('/auth/user-profile',null);
+        return this.http.get('/api/aspnet-identity/auth/me');
     }
 }
 
