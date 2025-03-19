@@ -9,6 +9,15 @@ import { JobsComponent } from "./jobs/jobs.component";
 
 const routes: Routes = [
     {
+        path: '',
+        redirectTo: '/dashboard',
+        pathMatch: 'full'
+    },
+    {
+        path: 'dashboard',
+        component: DefaultComponent
+    },
+    {
         path: 'default',
         component: DefaultComponent
     },
