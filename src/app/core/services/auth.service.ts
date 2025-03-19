@@ -20,7 +20,7 @@ export class AuthenticationService {
             rememberMe: rememberMe
         };
       
-        return this.http.post('/auth/login', body);
+        return this.http.post('/api/aspnet-identity/auth/login', body);
     }
 
     public logout() {

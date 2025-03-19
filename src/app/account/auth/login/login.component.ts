@@ -5,7 +5,6 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
 import { ToastService } from 'angular-toastify';
 
 import { AuthenticationService } from '../../../core/services/auth.service';
-import { ConfigService } from 'src/app/core/services/config.service';
 import { AUTH_MODE } from 'src/app/core/constants/config-values.constant';
 
 @Component({
@@ -36,8 +35,7 @@ export class LoginComponent implements OnInit {
     private router: Router, 
     private route: ActivatedRoute,
     private authenticationService: AuthenticationService,
-    private toastService: ToastService,
-    private configService: ConfigService 
+    private toastService: ToastService
   ) { }
 
   ngOnInit() {
