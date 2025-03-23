@@ -31,24 +31,51 @@ export class DepartmentComponent implements OnInit {
         label: 100,
         value: 100
     }
-]
+  ];
+
+  DEFAULT_STATUS_OPTIONS = [
+    {
+      label: 'Trạng thái',
+      value: ''
+    },
+    {
+        label: 'Hoạt động',
+        value: 'A'
+    },
+    {
+        label: 'Chờ duyệt',
+        value: 'P'
+    }
+  ]
+
+  searchParams: any = {
+    pageIndex: 1,
+    pageSize: 10,
+    name: '',
+    status: ''
+  }
 
   constructor(private systemService: SystemService) { }
 
   ngOnInit(): void {
     this.breadCrumbItems = [{ label: 'Quản trị hệ thống' }, { label: 'Quản lý phòng ban', active: true }];
-    this.getItems({ pageIndex: 1, pageSize: 10 });
+    this.getItems({ ...this.searchParams });
   }
 
   // Data
   getItems(request: any){
-    this.systemService.searchDepartments(request).subscribe((result: any) => {
+    this.systemService.getDepartmentPaging(request).subscribe((result: any) => {
+      console.log(result);
       if(result.isSuccess){
         const { items, ...pagedInfo } = result.data;
         this.items = items;
         this.pagedInfo = pagedInfo;
       }
     });
+  }
+
+  searchPaging(event: any){
+    this.getItems(event);
   }
 
   getStatusText(status: number): string {

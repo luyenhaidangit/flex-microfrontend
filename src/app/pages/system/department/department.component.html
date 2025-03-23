@@ -5,24 +5,48 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-xl-10 col-md-9 col-sm-12">
+                    <div class="group-action row mb-3">
+                        <div class="group-action__left col-xl-10 col-md-9 col-sm-12">
                             <div class="row">
                                 <div class="form-group col-4">
                                     <input
                                        class="form-control"
                                        type="text"
                                        placeholder="Tên phòng ban"
+                                       [(ngModel)]="searchParams.name"
                                        />
                                 </div>
+                                <div class="form-group col-4">
+                                    <select [(ngModel)]="searchParams.status" class="form-select">
+                                        <option *ngFor="let item of DEFAULT_STATUS_OPTIONS;" [ngValue]="item.value" [attr.selected]="item.value === searchParams.status ? true : null">{{ item.label }}</option>
+                                    </select>
+                                </div>
+                                <!-- <div class="mb-3 row">
+                                    <label class="col-md-2 col-form-label">Select</label>
+                                    <div class="col-md-10">
+                                        <select class="form-select">
+                                            <option>Select</option>
+                                            <option>Large select</option>
+                                            <option>Small select</option>
+                                        </select>
+                                    </div>
+                                </div> -->
+                                <!-- <div class="form-group col-4">
+                                    <div class="row">
+                                        <div class="custom-control custom-switch ml-3" dir="ltr">
+                                            <input type="checkbox" class="custom-control-input" id="status" name="status" [(ngModel)]="searchParams.status" [checked]="searchParams.status" disabled>
+                                            <label class="custom-control-label" for="status">Trạng thái</label>
+                                        </div>
+                                    </div>
+                                </div> -->
                                 <div class="form-group col-1">
-                                    <button type="button" class="btn btn-primary waves-effect waves-light">
+                                    <button (click)="getItems(searchParams)" type="button" class="btn btn-primary waves-effect waves-light">
                                         <i class="bx bx-search-alt-2"></i>
                                     </button>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xl-2 col-md-4 col-sm-12 text-end">
+                        <div class="group-action__right col-xl-2 col-md-3 col-sm-12">
                             <button type="button" class="btn btn-success waves-effect waves-light">
                                 <i class="fas fa-plus me-1"></i> Thêm mới
                             </button>
@@ -35,9 +59,9 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Tên phòng ban</th>
+                                    <th>Địa chỉ</th>
                                     <th>Mô tả</th>
                                     <th>Trạng thái</th>
-                                    <th>Độ ưu tiên</th>
                                     <th>Thao tác</th>
                                   </tr>
                             </thead>
@@ -46,13 +70,13 @@
                                     <tr *ngFor="let item of items;">
                                         <td>{{ item.id }}</td>
                                         <td>{{ item?.name }}</td>
+                                        <td>{{ item?.address }}</td>
                                         <td>{{ item?.description }}</td>
                                         <td>
                                             <span class="badge {{ getStatusClass(item?.status) }}">
                                                 {{ getStatusText(item?.status) }}
                                             </span>
                                         </td>
-                                        <td>{{ item?.priority }}</td>
                                         <td class="action-column">
                                             <span class="text-info"><i class="fas fa-eye"></i></span>
                                             <span class="text-warning ms-2"><i class="fas fa-pen"></i></span>

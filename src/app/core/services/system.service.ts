@@ -9,7 +9,7 @@ export class SystemService {
   constructor(private http: HttpClient) { }
 
   // Department
-  searchDepartments(request: any): Observable<any> {
-    return this.http.get('/department/get-paging', request);
+  getDepartmentPaging(params: any): Observable<any> {
+    return this.http.get('/api/department/get-department-paging', { params });
   }
 }

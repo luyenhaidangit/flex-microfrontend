@@ -1,3 +1,4 @@
-export const STATUS_INFO: { [key: number]: { text: string; class: string } } = {
-    1: { text: 'Hoạt động', class: 'bg-success' },
+export const STATUS_INFO: { [key: string]: { text: string; class: string } } = {
+    'A': { text: 'Hoạt động', class: 'bg-success' },
+    'P': { text: 'Chờ duyệt', class: 'bg-warning' },
 };

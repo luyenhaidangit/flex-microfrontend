@@ -441,3 +441,7 @@ input::-ms-reveal {
 .action-column > span {
     cursor: pointer;
 }
+
+.group-action__right button{
+    height: fit-content !important;
+}
