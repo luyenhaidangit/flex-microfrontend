@@ -35,7 +35,7 @@ export class DepartmentComponent implements OnInit {
 
   DEFAULT_STATUS_OPTIONS = [
     {
-      label: 'Trạng thái',
+      label: 'Hoàn tất',
       value: ''
     },
     {
