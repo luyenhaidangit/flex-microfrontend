@@ -1,0 +1,26 @@
+.blog-card {
+    .nav {
+        align-items: end;
+        justify-content: flex-end;
+    }
+    h5 {
+        // position: absolute;
+        top: 10px;    
+    }
+    .card-body {
+        padding: 1.25rem 0 0;
+    }
+}
+
+.group-action__right {
+    text-align: right;
+    margin-top: 0;
+}
+
+@media (max-width: 768px) {
+    .group-action__right {
+        text-align: left;
+        margin-top: 6px;
+    }
+}
+  

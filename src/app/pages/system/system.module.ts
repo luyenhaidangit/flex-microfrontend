@@ -15,9 +15,10 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { DepartmentComponent } from './department/department.component';
+import { BranchComponent } from './branch/branch.component';
 
 @NgModule({
-  declarations: [DepartmentComponent],
+  declarations: [DepartmentComponent, BranchComponent],
   imports: [
     CommonModule,
     SystemRoutingModule,

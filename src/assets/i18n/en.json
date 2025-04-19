@@ -74,6 +74,7 @@
     "SYSTEM": {
       "TEXT": "Hệ thống",
       "MANAGESYSTEM": "Quản trị hệ thống",
+      "MANAGESYSTEM.BRANCH": "Quản lý chi nhánh",
       "MANAGESYSTEM.DEPARTMENT": "Quản lý phòng ban"
     },
     "MENU": {

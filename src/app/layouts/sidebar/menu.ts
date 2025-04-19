@@ -59,6 +59,12 @@ export const MENU: MenuItem[] = [
         subItems: [
             {
                 id: 14,
+                label: 'MENUITEMS.SYSTEM.MANAGESYSTEM.BRANCH',
+                link: '/system/branch',
+                parentId: 13
+            },
+            {
+                id: 14,
                 label: 'MENUITEMS.SYSTEM.MANAGESYSTEM.DEPARTMENT',
                 link: '/system/department',
                 parentId: 13
