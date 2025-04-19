@@ -1,88 +1,100 @@
 import { Component, OnInit } from '@angular/core';
 import { SystemService } from 'src/app/core/services/system.service';
-import { STATUS_INFO } from './branch.constant';
+
+interface BranchSearch {
+  pageIndex: number;
+  pageSize: number;
+  keyword?: string;
+  status?: string;          // '', 'ACTIVE', 'PENDING', 'INACTIVE'
+}
 
 @Component({
-  selector: 'app-bloglist',
+  selector: 'app-branch',
   templateUrl: './branch.component.html',
   styleUrls: ['./branch.component.scss']
 })
 export class BranchComponent implements OnInit {
 
-  // Ui
-  breadCrumbItems: Array<{}>;
-  items: any = [];
-  pagedInfo: any = {};
+  breadCrumbItems = [
+    { label: 'Quản trị hệ thống' },
+    { label: 'Quản lý chi nhánh', active: true }
+  ];
 
+  /* table data & paging */
+  items: any[] = [];
+  pagedInfo = {
+    pageIndex : 1,
+    pageSize  : 10,
+    totalPages: 0,
+    totalItems: 0
+  };
+
+  /* search params */
+  searchParams: BranchSearch = {
+    pageIndex: 1,
+    pageSize : 10,
+    keyword  : '',
+    status   : ''
+  };
+
+  /** trạng thái -> text / badge class */
+  STATUS_MAP: Record<string, { text: string; class: string }> = {
+    ACTIVE  : { text: 'Hoạt động', class: 'bg-success'   },
+    PENDING : { text: 'Chờ duyệt', class: 'bg-warning'   },
+    INACTIVE: { text: 'Ngừng',     class: 'bg-secondary' }
+  };
+
+  /* combo page size & status list */
   DEFAULT_PER_PAGE_OPTIONS = [
-    {
-        label: 10,
-        value: 10
-    },
-    {
-        label: 25,
-        value: 25
-    },
-    {
-        label: 50,
-        value: 50
-    },
-    {
-        label: 100,
-        value: 100
-    }
+    { label: 10,  value: 10  },
+    { label: 25,  value: 25  },
+    { label: 50,  value: 50  },
+    { label: 100, value: 100 }
   ];
 
   DEFAULT_STATUS_OPTIONS = [
-    {
-      label: 'Hoàn tất',
-      value: ''
-    },
-    {
-        label: 'Hoạt động',
-        value: 'A'
-    },
-    {
-        label: 'Chờ duyệt',
-        value: 'P'
-    }
-  ]
+    { label: 'Tất cả',   value: ''         },
+    { label: 'Hoạt động', value: 'ACTIVE'  },
+    { label: 'Chờ duyệt', value: 'PENDING' },
+    { label: 'Ngừng',     value: 'INACTIVE'}
+  ];
 
-  searchParams: any = {
-    pageIndex: 1,
-    pageSize: 10,
-    name: '',
-    status: ''
-  }
-
-  constructor(private systemService: SystemService) { }
+  constructor(private systemService: SystemService) {}
 
   ngOnInit(): void {
-    this.breadCrumbItems = [{ label: 'Quản trị hệ thống' }, { label: 'Quản lý phòng ban', active: true }];
-    this.getItems({ ...this.searchParams });
+    this.getItems();
   }
 
-  // Data
-  getItems(request: any){
-    this.systemService.getDepartmentPaging(request).subscribe((result: any) => {
-      console.log(result);
-      if(result.isSuccess){
-        const { items, ...pagedInfo } = result.data;
-        this.items = items;
-        this.pagedInfo = pagedInfo;
-      }
-    });
+  /* call API */
+  getItems(): void {
+    this.systemService.getBranchesPaging(this.searchParams)
+      .subscribe(res => {
+        if (res?.isSuccess) {
+          const { items, ...page } = res.data;
+          this.items     = items ?? [];
+          this.pagedInfo = {
+            pageIndex : page.pageIndex,
+            pageSize  : page.pageSize,
+            totalPages: page.totalPages,
+            totalItems: page.totalItems
+          };
+        }
+      });
   }
 
-  searchPaging(event: any){
-    this.getItems(event);
+  /* paging */
+  changePage(page: number): void {
+    if (page < 1 || page > this.pagedInfo.totalPages || page === this.pagedInfo.pageIndex) { return; }
+    this.searchParams.pageIndex = page;
+    this.getItems();
   }
 
-  getStatusText(status: number): string {
-    return STATUS_INFO[status]?.text || 'Unknown';
+  changePageSize(): void {
+    this.searchParams.pageIndex = 1;           // reset về trang 1
+    this.getItems();
   }
 
-  getStatusClass(status: number): string {
-    return STATUS_INFO[status]?.class || '';
-  }
+  /* helpers */
+  getStatusText(code: string)  { return this.STATUS_MAP[code]?.text  || code; }
+  getStatusClass(code: string) { return this.STATUS_MAP[code]?.class || 'bg-light'; }
 }

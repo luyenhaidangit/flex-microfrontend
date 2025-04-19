@@ -12,4 +12,9 @@ export class SystemService {
   getDepartmentPaging(params: any): Observable<any> {
     return this.http.get('/api/department/get-department-paging', { params });
   }
+
+  // Branch
+  getBranchesPaging(req: any): Observable<any> {
+    return this.http.get<any>('api/branches/get-branches-paging', { params: req as any });
+  }
 }
