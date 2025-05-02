@@ -21,17 +21,6 @@
                            [(ngModel)]="searchParams.keyword">
                   </div>
   
-                  <!-- status -->
-                  <div class="form-group col-4">
-                    <select class="form-select"
-                            [(ngModel)]="searchParams.status">
-                      <option *ngFor="let opt of DEFAULT_STATUS_OPTIONS"
-                              [ngValue]="opt.value">
-                        {{ opt.label }}
-                      </option>
-                    </select>
-                  </div>
-  
                   <!-- search btn -->
                   <div class="form-group col-1">
                     <button class="btn btn-primary waves-effect waves-light"
