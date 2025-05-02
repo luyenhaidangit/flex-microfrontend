@@ -62,10 +62,9 @@
                     <!-- pending -->
                     <td>
                       <ng-container *ngIf="item.pendingAction; else noPending">
-                        <i class="fas fa-hourglass-half"
-                        style="color: #fd7e14;"
-                           tooltip="Chờ duyệt: {{ item.pendingAction === 'CREATE' ? 'Tạo mới' : 'Cập nhật' }}">
-                        </i>
+                        <span *ngIf="item.pendingAction === 'CREATE'" class="badge badge-soft-success">Chờ duyệt thêm</span>
+                        <span *ngIf="item.pendingAction === 'UPDATE'" class="badge badge-soft-warning">Chờ duyệt sửa</span>
+                        <span *ngIf="item.pendingAction === 'DELETE'" class="badge badge-soft-danger">Chờ duyệt xóa</span>
                       </ng-container>
                       <ng-template #noPending>—</ng-template>
                     </td>
@@ -110,7 +109,7 @@
             <!-- ============ PAGINATION ============ -->
             <div class="table-filter d-flex justify-content-between align-items-center mt-2">
               <ul class="pagination mb-0">
-                <li class="page-item"
+                <li class="page-item cursor-pointer"
                     [class.disabled]="pagedInfo.pageIndex === 1">
                   <a class="page-link" (click)="changePage(pagedInfo.pageIndex - 1)">
                     <i class="mdi mdi-chevron-left"></i>
@@ -118,14 +117,14 @@
                 </li>
   
                 <li *ngFor="let _ of [].constructor(pagedInfo.totalPages); let idx = index"
-                    class="page-item"
+                    class="page-item cursor-pointer"
                     [class.active]="pagedInfo.pageIndex === idx + 1">
                   <a class="page-link" (click)="changePage(idx + 1)">
                     {{ idx + 1 }}
                   </a>
                 </li>
   
-                <li class="page-item"
+                <li class="page-item cursor-pointer"
                     [class.disabled]="pagedInfo.pageIndex === pagedInfo.totalPages">
                   <a class="page-link" (click)="changePage(pagedInfo.pageIndex + 1)">
                     <i class="mdi mdi-chevron-right"></i>
