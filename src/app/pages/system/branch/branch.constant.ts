@@ -34,3 +34,9 @@ export const STATUS_INFO: { [key: string]: { text: string; class: string } } = {
 //     </option>
 //   </select>
 // </div>
+
+// STATUS_MAP: Record<string, { text: string; class: string }> = {
+//     ACTIVE  : { text: 'Hoạt động', class: 'bg-success'   },
+//     PENDING : { text: 'Chờ duyệt', class: 'bg-warning'   },
+//     INACTIVE: { text: 'Ngừng',     class: 'bg-secondary' }
+//   };
