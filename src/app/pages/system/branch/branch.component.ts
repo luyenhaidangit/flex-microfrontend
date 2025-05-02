@@ -103,7 +103,14 @@ export class BranchComponent implements OnInit {
         this.getItems();
       },
       error: (err) => {
-        this.toastService.error('Tạo yêu cầu thất bại!');
+        let errorMsg = 'Tạo yêu cầu thất bại!';
+        const apiMsg = err?.error?.message?.toLowerCase();
+
+        if (apiMsg?.includes('branch code already exists')) {
+          errorMsg = 'Mã chi nhánh đã tồn tại';
+        }
+
+        this.toastService.error(errorMsg);
         console.error('Tạo chi nhánh thất bại', err);
       }
     });
