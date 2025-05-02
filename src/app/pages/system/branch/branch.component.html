@@ -40,7 +40,6 @@
             <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
               <thead>
                 <tr>
-                  <th>#</th>
                   <th>Mã CN</th>
                   <th>Tên chi nhánh</th>
                   <th>Trạng thái</th>
@@ -49,8 +48,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let item of items; let i = index">
-                  <td>{{ (pagingState.pageIndex - 1) * pagingState.pageSize + i + 1 }}</td>
+                <tr *ngFor="let item of items;">
                   <td>{{ item.code }}</td>
                   <td>{{ item.name }}</td>
                   <td>{{ item.address }}</td>
@@ -219,17 +217,17 @@
         </div>
         <div class="col-md-12 position-relative">
           <label class="form-label">Địa chỉ</label>
-          <textarea class="form-control" formControlName="address" rows="3" placeholder="Nhập địa chỉ"
-                    [ngClass]="{'is-invalid': submitted && branchForm.controls.address.errors}"></textarea>
-          <div *ngIf="submitted && branchForm.controls.address.errors" class="invalid-tooltip">
-            <span *ngIf="branchForm.controls.address.errors.required">Địa chỉ không được để trống</span>
-          </div>
+          <textarea class="form-control" formControlName="address" rows="2" placeholder="Nhập địa chỉ"></textarea>
+        </div>
+        <div class="col-md-12 position-relative">
+          <label class="form-label">Ghi chú</label>
+          <textarea class="form-control" formControlName="comments" rows="2" placeholder="Ghi chú nếu có"></textarea>
         </div>
       </div>
     </div>
     <div class="modal-footer border-top-0">
       <button type="submit" class="btn btn-primary">
-        <i class="fas fa-save me-1"></i> Lưu lại
+        <i class="fas fa-save me-1"></i> Gửi yêu cầu
       </button>
       <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Hủy</button>
     </div>

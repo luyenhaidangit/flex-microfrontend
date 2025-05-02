@@ -17,4 +17,8 @@ export class SystemService {
   getBranchesPaging(req: any): Observable<any> {
     return this.http.get<any>('/api/branch/get-branches-paging', { params: req as any });
   }
+
+  createBranchRequest(payload: any): Observable<any> {
+    return this.http.post('/api/branch/create-branch-request', payload);
+  }  
 }

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { SystemRoutingModule } from './system-routing.module';
 import { UIModule } from '../../shared/ui/ui.module';
+import { ReactiveFormsModule } from '@angular/forms';
 
 // dropzone
 import { NgxDropzoneModule } from 'ngx-dropzone';
@@ -29,7 +30,8 @@ import { BranchComponent } from './branch/branch.component';
     NgxDropzoneModule,
     FormsModule,
     BsDatepickerModule.forRoot(),
-    PaginationModule.forRoot()
+    PaginationModule.forRoot(),
+    ReactiveFormsModule
   ]
 })
 

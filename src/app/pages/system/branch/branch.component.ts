@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { SystemService } from 'src/app/core/services/system.service';
 import { DEFAULT_PER_PAGE_OPTIONS } from 'src/app/core/constants/shared.constant';
+import { ToastService } from 'angular-toastify';
 
 @Component({
   selector: 'app-branch',
@@ -37,7 +38,8 @@ export class BranchComponent implements OnInit {
   constructor(
     private systemService: SystemService,
     private modalService: BsModalService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -45,7 +47,8 @@ export class BranchComponent implements OnInit {
     this.branchForm = this.fb.group({
       code: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9]+')]],
       name: ['', [Validators.required]],
-      address: ['', [Validators.required]]
+      address: [''],
+      comments: ['']
     });
   }
 
@@ -91,13 +94,19 @@ export class BranchComponent implements OnInit {
     if (this.branchForm.invalid) return;
 
     const payload = this.branchForm.value;
-    console.log('Submitted data:', payload);
-
-    // Giả lập lưu → đóng modal và reset form
-    this.modalRef?.hide();
-    this.branchForm.reset();
-    this.submitted = false;
-    this.getItems();
+    this.systemService.createBranchRequest(payload).subscribe({
+      next: () => {
+        this.toastService.success('Tạo yêu cầu chi nhánh thành công!');
+        this.modalRef?.hide();
+        this.branchForm.reset();
+        this.submitted = false;
+        this.getItems();
+      },
+      error: (err) => {
+        this.toastService.error('Tạo yêu cầu thất bại!');
+        console.error('Tạo chi nhánh thất bại', err);
+      }
+    });
   }
 
   openCreateModal(): void {
@@ -105,4 +114,4 @@ export class BranchComponent implements OnInit {
     this.branchForm.reset();
     this.modalRef = this.modalService.show(this.createTemplateRef, { class: 'modal-lg' });
   }
-}
+} 
