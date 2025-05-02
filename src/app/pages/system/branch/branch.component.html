@@ -67,7 +67,7 @@
 
                   <!-- actions -->
                   <td class="action-column">
-                    <span class="text-info pointer" tooltip="Xem chi tiết">
+                    <span class="text-info pointer" tooltip="Xem chi tiết" (click)="openDetailModal(detailModal, item)">
                       <i class="fas fa-eye"></i>
                     </span>
 
@@ -130,8 +130,62 @@
               / {{ pagingState.totalItems }} tổng số bản ghi
             </div>
           </div>
+
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Chi tiết modal -->
+<ng-template #detailModal>
+  <div class="modal-header">
+    <h5 class="modal-title text-primary fw-semibold">
+      <i class="fas fa-info-circle me-2"></i>Chi tiết chi nhánh
+    </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+  </div>
+  <div class="modal-body px-4 py-3">
+    <div class="row gy-3">
+      <div class="col-md-6">
+        <label class="form-label fw-bold text-muted">Mã CN</label>
+        <div class="text-dark ps-1">{{ selectedItem?.code }}</div>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-bold text-muted">Tên chi nhánh</label>
+        <div class="text-dark ps-1">{{ selectedItem?.name }}</div>
+      </div>
+
+      <div class="col-md-12">
+        <label class="form-label fw-bold text-muted">Địa chỉ</label>
+        <div class="text-dark ps-1">
+          <i class="fas fa-map-marker-alt text-danger me-2"></i>{{ selectedItem?.address }}
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-bold text-muted">Tình trạng xử lý</label>
+        <div class="text-dark ps-1">
+          <ng-container [ngSwitch]="selectedItem?.pendingAction">
+            <span *ngSwitchCase="'CREATE'" class="badge bg-success">Chờ duyệt thêm</span>
+            <span *ngSwitchCase="'UPDATE'" class="badge bg-warning text-dark">Chờ duyệt sửa</span>
+            <span *ngSwitchCase="'DELETE'" class="badge bg-danger">Chờ duyệt xóa</span>
+            <span *ngSwitchDefault class="badge bg-secondary">Không có yêu cầu</span>
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="col-md-6" *ngIf="selectedItem?.requestedDate">
+        <label class="form-label fw-bold text-muted">Ngày yêu cầu</label>
+        <div class="text-dark ps-1">
+          {{ selectedItem.requestedDate | date: 'dd/MM/yyyy HH:mm:ss' }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer border-top-0">
+    <button type="button" class="btn btn-outline-secondary" (click)="modalRef?.hide()">Đóng</button>
+  </div>
+</ng-template>
+

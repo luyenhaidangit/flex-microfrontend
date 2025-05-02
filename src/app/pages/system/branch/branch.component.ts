@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { SystemService } from 'src/app/core/services/system.service';
 import { DEFAULT_PER_PAGE_OPTIONS } from 'src/app/core/constants/shared.constant';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-branch',
@@ -15,6 +16,8 @@ export class BranchComponent implements OnInit {
   ];
 
   items: any[] = [];
+  selectedItem: any = null;
+  modalRef?: BsModalRef;
 
   pagingState = {
     pageIndex : 1,
@@ -26,7 +29,7 @@ export class BranchComponent implements OnInit {
 
   DEFAULT_PER_PAGE_OPTIONS = DEFAULT_PER_PAGE_OPTIONS;
 
-  constructor(private systemService: SystemService) {}
+  constructor(private systemService: SystemService, private modalService: BsModalService) {}
 
   ngOnInit(): void {
     this.getItems();
@@ -62,5 +65,10 @@ export class BranchComponent implements OnInit {
   changePageSize(): void {
     this.pagingState.pageIndex = 1;
     this.getItems();
+  }
+
+  openDetailModal(template: TemplateRef<any>, item: any): void {
+    this.selectedItem = item;
+    this.modalRef = this.modalService.show(template, { class: 'modal-lg' });
   }
 }
