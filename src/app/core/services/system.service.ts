@@ -15,6 +15,6 @@ export class SystemService {
 
   // Branch
   getBranchesPaging(req: any): Observable<any> {
-    return this.http.get<any>('api/branches/get-branches-paging', { params: req as any });
+    return this.http.get<any>('/api/branch/get-branches-paging', { params: req as any });
   }
 }

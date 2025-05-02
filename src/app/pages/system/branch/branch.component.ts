@@ -97,4 +97,14 @@ export class BranchComponent implements OnInit {
   /* helpers */
   getStatusText(code: string)  { return this.STATUS_MAP[code]?.text  || code; }
   getStatusClass(code: string) { return this.STATUS_MAP[code]?.class || 'bg-light'; }
+
+  getPendingRequestText(type: string): string {
+    if (!type) return '';
+    const map: Record<string, string> = {
+      UPDATE: 'Chờ duyệt sửa',
+      CREATE: 'Chờ duyệt thêm',
+      DELETE: 'Chờ duyệt xóa'
+    };
+    return map[type] || 'Chờ duyệt';
+  }
 }

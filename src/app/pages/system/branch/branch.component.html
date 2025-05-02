@@ -58,10 +58,8 @@
                     <th>#</th>
                     <th>Mã CN</th>
                     <th>Tên chi nhánh</th>
-                    <th>Địa chỉ</th>
-                    <th>Khu vực</th>
                     <th>Trạng thái</th>
-                    <th>Pending</th>
+                    <th>Xử lý</th>
                     <th>Thao tác</th>
                   </tr>
                 </thead>
@@ -71,28 +69,45 @@
                     <td>{{ item.code }}</td>
                     <td>{{ item.name }}</td>
                     <td>{{ item.address }}</td>
-                    <td>{{ item.region }}</td>
-  
-                    <!-- status -->
-                    <td>
-                      <span class="badge {{ getStatusClass(item.status) }}">
-                        {{ getStatusText(item.status) }}
-                      </span>
-                    </td>
   
                     <!-- pending -->
                     <td>
-                      <ng-container *ngIf="item.hasPendingRequest; else okTpl">
-                        <span class="badge bg-warning">{{ item.pendingRequestType }}</span>
+                      <ng-container *ngIf="item.pendingAction; else noPending">
+                        <i class="fas fa-hourglass-half"
+                        style="color: #fd7e14;"
+                           tooltip="Chờ duyệt: {{ item.pendingAction === 'CREATE' ? 'Tạo mới' : 'Cập nhật' }}">
+                        </i>
                       </ng-container>
-                      <ng-template #okTpl>—</ng-template>
+                      <ng-template #noPending>—</ng-template>
                     </td>
   
                     <!-- actions -->
                     <td class="action-column">
-                      <span class="text-info"><i class="fas fa-eye"></i></span>
-                      <span class="text-warning ms-2"><i class="fas fa-pen"></i></span>
-                      <span class="text-danger ms-2"><i class="fas fa-trash"></i></span>
+                      <span class="text-info pointer" tooltip="Xem chi tiết">
+                        <i class="fas fa-eye"></i>
+                      </span>
+                    
+                      
+                    
+                      <ng-container *ngIf="item.pendingAction">
+                        <!-- Nếu có pending → hiện nút duyệt -->
+                        <span class="text-success ms-2 pointer" tooltip="Phê duyệt yêu cầu">
+                          <i class="fas fa-check"></i>
+                        </span>
+                        <!-- <span class="text-primary ms-2 pointer" tooltip="Đối chiếu thông tin">
+                          <i class="fas fa-search"></i>
+                        </span> -->
+                      </ng-container>
+                    
+                      <ng-container *ngIf="!item.pendingAction">
+                        <!-- Không pending → cho sửa & xóa -->
+                        <span class="text-warning ms-2 pointer" tooltip="Chỉnh sửa">
+                          <i class="fas fa-pen"></i>
+                        </span>
+                        <span class="text-danger ms-2 pointer" tooltip="Xóa">
+                          <i class="fas fa-trash"></i>
+                        </span>
+                      </ng-container>
                     </td>
                   </tr>
   

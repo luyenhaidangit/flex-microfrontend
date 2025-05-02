@@ -1,26 +1,16 @@
-.blog-card {
-    .nav {
-        align-items: end;
-        justify-content: flex-end;
-    }
-    h5 {
-        // position: absolute;
-        top: 10px;    
-    }
-    .card-body {
-        padding: 1.25rem 0 0;
-    }
-}
-
-.group-action__right {
-    text-align: right;
-    margin-top: 0;
-}
-
-@media (max-width: 768px) {
-    .group-action__right {
-        text-align: left;
-        margin-top: 6px;
-    }
-}
+.text-action-view {
+    color: #3498db;
+  }
+  .text-action-edit {
+    color: #f39c12;
+  }
+  .text-action-delete {
+    color: #e74c3c;
+  }
+  .text-action-pending {
+    color: #fd7e14;
+  }
+  .text-action-assign {
+    color: #8e44ad;
+  }
   
