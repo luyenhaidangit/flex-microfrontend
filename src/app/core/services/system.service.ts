@@ -20,5 +20,9 @@ export class SystemService {
 
   createBranchRequest(payload: any): Observable<any> {
     return this.http.post('/api/branch/create-branch-request', payload);
-  }  
+  }
+
+  approveBranchRequest(requestId: number): Observable<any> {
+    return this.http.post(`/api/branch/approve-branch-request`, { requestId });
+  }
 }

@@ -34,6 +34,7 @@ export class BranchComponent implements OnInit {
   submitted = false;
 
   @ViewChild('createModal') createTemplateRef!: TemplateRef<any>;
+  @ViewChild('approveModal') approveTemplateRef!: TemplateRef<any>;
 
   constructor(
     private systemService: SystemService,
@@ -88,6 +89,17 @@ export class BranchComponent implements OnInit {
     this.modalRef = this.modalService.show(template, { class: 'modal-lg' });
   }
 
+  openCreateModal(): void {
+    this.submitted = false;
+    this.branchForm.reset();
+    this.modalRef = this.modalService.show(this.createTemplateRef, { class: 'modal-lg' });
+  }
+
+  openApproveModal(item: any): void {
+    this.selectedItem = item;
+    this.modalRef = this.modalService.show(this.approveTemplateRef, { class: 'modal-lg' });
+  }
+
   submitBranchForm(): void {
     this.submitted = true;
     if (this.branchForm.invalid) return;
@@ -115,9 +127,19 @@ export class BranchComponent implements OnInit {
     });
   }
 
-  openCreateModal(): void {
-    this.submitted = false;
-    this.branchForm.reset();
-    this.modalRef = this.modalService.show(this.createTemplateRef, { class: 'modal-lg' });
+  approveBranch(): void {
+    const id = this.selectedItem?.requestId;
+    if (!id) return;
+
+    this.systemService.approveBranchRequest(id).subscribe({
+      next: () => {
+        this.toastService.success('Phê duyệt yêu cầu thành công!');
+        this.modalRef?.hide();
+        this.getItems();
+      },
+      error: () => {
+        this.toastService.error('Phê duyệt thất bại!');
+      }
+    });
   }
-} 
+}

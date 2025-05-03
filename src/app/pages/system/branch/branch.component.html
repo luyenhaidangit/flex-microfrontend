@@ -70,7 +70,7 @@
                     </span>
 
                     <ng-container *ngIf="item.pendingAction">
-                      <span class="text-success ms-2 pointer" tooltip="Phê duyệt yêu cầu">
+                      <span class="text-success ms-2 pointer" tooltip="Phê duyệt yêu cầu" (click)="openApproveModal(item)">
                         <i class="fas fa-check"></i>
                       </span>
                     </ng-container>
@@ -229,3 +229,59 @@
     </div>
   </form>
 </ng-template>
+
+<!-- Modal phê duyệt yêu cầu -->
+<ng-template #approveModal>
+  <div class="modal-header">
+    <h5 class="modal-title text-success fw-semibold">
+      <i class="fas fa-check-circle me-2"></i> Phê duyệt yêu cầu chi nhánh
+    </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+  </div>
+  <div class="modal-body px-4 py-3">
+    <div class="row gy-3">
+      <div class="col-md-6">
+        <label class="form-label fw-bold text-muted">Mã CN</label>
+        <div class="text-dark ps-1">{{ selectedItem?.code }}</div>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-bold text-muted">Tên chi nhánh</label>
+        <div class="text-dark ps-1">{{ selectedItem?.name }}</div>
+      </div>
+
+      <div class="col-md-12">
+        <label class="form-label fw-bold text-muted">Địa chỉ</label>
+        <div class="text-dark ps-1">
+          <i class="fas fa-map-marker-alt text-danger me-2"></i>{{ selectedItem?.address || 'Không có' }}
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-bold text-muted">Tình trạng xử lý</label>
+        <div class="text-dark ps-1">
+          <ng-container [ngSwitch]="selectedItem?.pendingAction">
+            <span *ngSwitchCase="'CREATE'" class="badge bg-success">Chờ duyệt thêm</span>
+            <span *ngSwitchCase="'UPDATE'" class="badge bg-warning text-dark">Chờ duyệt sửa</span>
+            <span *ngSwitchCase="'DELETE'" class="badge bg-danger">Chờ duyệt xóa</span>
+            <span *ngSwitchDefault class="badge bg-secondary">Không có yêu cầu</span>
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="col-md-6" *ngIf="selectedItem?.requestedDate">
+        <label class="form-label fw-bold text-muted">Ngày yêu cầu</label>
+        <div class="text-dark ps-1">
+          {{ selectedItem.requestedDate | date: 'dd/MM/yyyy HH:mm:ss' }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer border-top-0">
+    <button type="button" class="btn btn-success" (click)="approveBranch()">
+      <i class="fas fa-check me-1"></i> Duyệt yêu cầu
+    </button>
+    <button type="button" class="btn btn-outline-secondary" (click)="modalRef?.hide()">Hủy</button>
+  </div>
+</ng-template>
+
