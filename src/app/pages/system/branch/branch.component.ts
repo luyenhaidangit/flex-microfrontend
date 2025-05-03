@@ -47,8 +47,7 @@ export class BranchComponent implements OnInit {
     this.branchForm = this.fb.group({
       code: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9]+')]],
       name: ['', [Validators.required]],
-      address: [''],
-      comments: ['']
+      address: ['']
     });
   }
 
