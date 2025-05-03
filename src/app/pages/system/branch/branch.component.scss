@@ -13,4 +13,38 @@
   .text-action-assign {
     color: #8e44ad;
   }
-  
+
+.comparison-table {
+  .table {
+    th, td {
+      vertical-align: middle;
+    }
+  }
+
+  .bg-light-warning {
+    background-color: rgba(255, 193, 7, 0.1);
+  }
+
+  .badge {
+    font-size: 11px;
+    padding: 0.35em 0.65em;
+  }
+}
+
+.diff-highlight {
+  background-color: #fff3cd;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.changes-summary {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+
+  .change-count {
+    color: #fd7e14;
+    font-weight: 600;
+  }
+}

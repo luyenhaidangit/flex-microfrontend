@@ -289,4 +289,21 @@ export class BranchComponent implements OnInit {
       }
     });
   }
+
+  getChangedFieldsCount(): number {
+    if (!this.selectedItem?.currentData || !this.selectedItem?.pendingData) return 0;
+    
+    let count = 0;
+    const { currentData, pendingData } = this.selectedItem;
+    
+    if (currentData.code !== pendingData.code) count++;
+    if (currentData.name !== pendingData.name) count++;
+    if (currentData.address !== pendingData.address) count++;
+    
+    return count;
+  }
+
+  get hasChanges(): boolean {
+    return this.getChangedFieldsCount() > 0;
+  }
 }
