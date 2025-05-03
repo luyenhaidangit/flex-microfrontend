@@ -35,6 +35,9 @@ export class BranchComponent implements OnInit {
 
   @ViewChild('createModal') createTemplateRef!: TemplateRef<any>;
   @ViewChild('approveModal') approveTemplateRef!: TemplateRef<any>;
+  @ViewChild('rejectModal') rejectTemplateRef!: TemplateRef<any>;
+  rejectForm!: FormGroup;
+  submittedReject = false;
 
   constructor(
     private systemService: SystemService,
@@ -50,6 +53,10 @@ export class BranchComponent implements OnInit {
       name: ['', [Validators.required]],
       address: ['']
     });
+
+    this.rejectForm = this.fb.group({
+      reason: ['', Validators.required]
+    });    
   }
 
   get searchParams(): any {
@@ -142,4 +149,29 @@ export class BranchComponent implements OnInit {
       }
     });
   }
+
+  openRejectModal(item: any): void {
+    this.selectedItem = item;
+    this.submittedReject = false;
+    this.rejectForm.reset();
+    this.modalRef = this.modalService.show(this.rejectTemplateRef, { class: 'modal-md' });
+  }
+  
+  confirmRejectBranch(): void {
+    this.submittedReject = true;
+    if (this.rejectForm.invalid) return;
+  
+    const reason = this.rejectForm.value.reason;
+    this.systemService.rejectBranchRequest(this.selectedItem.requestId,reason).subscribe({
+      next: () => {
+        this.toastService.success('Đã từ chối yêu cầu thành công!');
+        this.modalRef?.hide();
+        this.getItems();
+      },
+      error: () => {
+        this.toastService.error('Từ chối yêu cầu thất bại!');
+      }
+    });
+  }
+  
 }

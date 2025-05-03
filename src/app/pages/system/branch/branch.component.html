@@ -73,6 +73,9 @@
                       <span class="text-success ms-2 pointer" tooltip="Phê duyệt yêu cầu" (click)="openApproveModal(item)">
                         <i class="fas fa-check"></i>
                       </span>
+                      <span class="text-danger ms-2 pointer" tooltip="Từ chối yêu cầu" (click)="openRejectModal(item)">
+                        <i class="fas fa-times"></i>
+                      </span>                      
                     </ng-container>
 
                     <ng-container *ngIf="!item.pendingAction">
@@ -284,4 +287,37 @@
     <button type="button" class="btn btn-outline-secondary" (click)="modalRef?.hide()">Hủy</button>
   </div>
 </ng-template>
+
+<ng-template #rejectModal>
+  <form [formGroup]="rejectForm" (ngSubmit)="confirmRejectBranch()" class="needs-validation">
+    <div class="modal-header">
+      <h5 class="modal-title text-danger fw-semibold">
+        <i class="fas fa-times-circle me-2"></i> Từ chối yêu cầu
+      </h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+    </div>
+    <div class="modal-body px-4 py-3">
+      <div class="position-relative">
+        <label class="form-label">Lý do từ chối</label>
+        <textarea
+          class="form-control"
+          formControlName="reason"
+          rows="3"
+          placeholder="Nhập lý do từ chối..."
+          [ngClass]="{'is-invalid': submittedReject && rejectForm.controls.reason.errors}">
+        </textarea>
+        <div *ngIf="submittedReject && rejectForm.controls.reason.errors" class="invalid-tooltip">
+          <span *ngIf="rejectForm.controls.reason.errors.required">Lý do không được để trống</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer border-top-0">
+      <button type="submit" class="btn btn-danger">
+        <i class="fas fa-times me-1"></i> Xác nhận từ chối
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Hủy</button>
+    </div>
+  </form>
+</ng-template>
+
 
