@@ -47,4 +47,16 @@ export class SystemService {
       params: { code }
     });
   }
+
+  deleteBranchRequest(payload: {code: string, name: string, address?: string}): Observable<any> {
+    return this.http.post(`/api/branch/delete-branch-request`, payload);
+  }
+
+  approveBranchDeleteRequest(requestId: number): Observable<any> {
+    return this.http.post(`/api/branch/approve-delete-request`, { requestId });
+  }
+
+  rejectBranchDeleteRequest(requestId: number, comment: string): Observable<any> {
+    return this.http.post(`/api/branch/reject-delete-request`, { requestId, comment });
+  }
 }

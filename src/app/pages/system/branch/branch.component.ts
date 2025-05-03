@@ -39,6 +39,9 @@ export class BranchComponent implements OnInit {
   @ViewChild('editModal') editTemplateRef!: TemplateRef<any>;
   @ViewChild('approveEditModal') approveEditTemplateRef!: TemplateRef<any>;
   @ViewChild('rejectEditModal') rejectEditTemplateRef!: TemplateRef<any>;
+  @ViewChild('deleteModal') deleteTemplateRef!: TemplateRef<any>;
+  @ViewChild('approveDeleteModal') approveDeleteTemplateRef!: TemplateRef<any>;
+  @ViewChild('rejectDeleteModal') rejectDeleteTemplateRef!: TemplateRef<any>;
   rejectForm!: FormGroup;
   submittedReject = false;
 
@@ -286,6 +289,77 @@ export class BranchComponent implements OnInit {
       },
       error: () => {
         this.toastService.error('Từ chối yêu cầu sửa thất bại!');
+      }
+    });
+  }
+
+  openDeleteModal(item: any): void {
+    this.selectedItem = item;
+    this.modalRef = this.modalService.show(this.deleteTemplateRef, { class: 'modal-md' });
+  }
+
+  confirmDeleteBranch(): void {
+    if (!this.selectedItem?.code || !this.selectedItem?.name) return;
+
+    const payload = {
+      code: this.selectedItem.code,
+      name: this.selectedItem.name,
+      address: this.selectedItem.address
+    };
+
+    this.systemService.deleteBranchRequest(payload).subscribe({
+      next: () => {
+        this.toastService.success('Đã gửi yêu cầu xóa thành công!');
+        this.modalRef?.hide();
+        this.getItems();
+      },
+      error: () => {
+        this.toastService.error('Gửi yêu cầu xóa thất bại!');
+      }
+    });
+  }
+
+  openApproveDeleteModal(item: any): void {
+    this.selectedItem = item;
+    this.modalRef = this.modalService.show(this.approveDeleteTemplateRef, { class: 'modal-md' });
+  }
+
+  approveDeleteBranch(): void {
+    const id = this.selectedItem?.requestId;
+    if (!id) return;
+
+    this.systemService.approveBranchDeleteRequest(id).subscribe({
+      next: () => {
+        this.toastService.success('Phê duyệt yêu cầu xóa thành công!');
+        this.modalRef?.hide();
+        this.getItems();
+      },
+      error: () => {
+        this.toastService.error('Phê duyệt yêu cầu xóa thất bại!');
+      }
+    });
+  }
+
+  openRejectDeleteModal(item: any): void {
+    this.selectedItem = item;
+    this.submittedReject = false;
+    this.rejectForm.reset();
+    this.modalRef = this.modalService.show(this.rejectDeleteTemplateRef, { class: 'modal-md' });
+  }
+
+  confirmRejectDeleteBranch(): void {
+    this.submittedReject = true;
+    if (this.rejectForm.invalid) return;
+
+    const reason = this.rejectForm.value.reason;
+    this.systemService.rejectBranchDeleteRequest(this.selectedItem.requestId, reason).subscribe({
+      next: () => {
+        this.toastService.success('Đã từ chối yêu cầu xóa thành công!');
+        this.modalRef?.hide();
+        this.getItems();
+      },
+      error: () => {
+        this.toastService.error('Từ chối yêu cầu xóa thất bại!');
       }
     });
   }

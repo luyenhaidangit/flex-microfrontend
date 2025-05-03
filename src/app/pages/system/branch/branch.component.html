@@ -87,11 +87,20 @@
                       </span>
                     </ng-container>
 
+                    <ng-container *ngIf="item.pendingAction === 'DELETE'">
+                      <span class="text-success ms-2 pointer" tooltip="Phê duyệt yêu cầu xóa" (click)="openApproveDeleteModal(item)">
+                        <i class="fas fa-check"></i>
+                      </span>
+                      <span class="text-danger ms-2 pointer" tooltip="Từ chối yêu cầu xóa" (click)="openRejectDeleteModal(item)">
+                        <i class="fas fa-times"></i>
+                      </span>
+                    </ng-container>
+
                     <ng-container *ngIf="!item.pendingAction">
                       <span class="text-warning ms-2 pointer" tooltip="Chỉnh sửa" (click)="openEditModal(item)">
                         <i class="fas fa-pen"></i>
                       </span>
-                      <span class="text-danger ms-2 pointer" tooltip="Xóa">
+                      <span class="text-danger ms-2 pointer" tooltip="Xóa" (click)="openDeleteModal(item)">
                         <i class="fas fa-trash"></i>
                       </span>
                     </ng-container>
@@ -508,4 +517,80 @@
       <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Hủy</button>
     </div>
   </form>
+</ng-template>
+
+<!-- Modal xác nhận xóa -->
+<ng-template #deleteModal>
+  <div class="modal-header">
+    <h5 class="modal-title text-danger fw-semibold">
+      <i class="fas fa-trash-alt me-2"></i>Xác nhận xóa chi nhánh
+    </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+  </div>
+  <div class="modal-body px-4 py-3">
+    <div class="alert alert-warning">
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      Bạn có chắc chắn muốn yêu cầu xóa chi nhánh này?
+    </div>
+    <div class="mt-3">
+      <div class="mb-2">
+        <span class="fw-bold text-muted">Mã CN:</span>
+        <span class="ps-2">{{ selectedItem?.code }}</span>
+      </div>
+      <div class="mb-2">
+        <span class="fw-bold text-muted">Tên chi nhánh:</span>
+        <span class="ps-2">{{ selectedItem?.name }}</span>
+      </div>
+      <div class="mb-2">
+        <span class="fw-bold text-muted">Địa chỉ:</span>
+        <span class="ps-2">{{ selectedItem?.address || 'Không có' }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer border-top-0">
+    <button type="button" class="btn btn-danger" (click)="confirmDeleteBranch()">
+      <i class="fas fa-trash-alt me-1"></i> Xác nhận xóa
+    </button>
+    <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Hủy</button>
+  </div>
+</ng-template>
+
+<!-- Modal phê duyệt yêu cầu xóa -->
+<ng-template #approveDeleteModal>
+  <div class="modal-header">
+    <h5 class="modal-title text-success fw-semibold">
+      <i class="fas fa-check-circle me-2"></i> Phê duyệt yêu cầu xóa chi nhánh
+    </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+  </div>
+  <div class="modal-body px-4 py-3">
+    <div class="alert alert-warning">
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      Bạn có chắc chắn muốn phê duyệt yêu cầu xóa chi nhánh này?
+    </div>
+    <div class="mt-3">
+      <div class="mb-2">
+        <span class="fw-bold text-muted">Mã CN:</span>
+        <span class="ps-2">{{ selectedItem?.code }}</span>
+      </div>
+      <div class="mb-2">
+        <span class="fw-bold text-muted">Tên chi nhánh:</span>
+        <span class="ps-2">{{ selectedItem?.name }}</span>
+      </div>
+      <div class="mb-2">
+        <span class="fw-bold text-muted">Địa chỉ:</span>
+        <span class="ps-2">{{ selectedItem?.address || 'Không có' }}</span>
+      </div>
+      <div class="mb-2">
+        <span class="fw-bold text-muted">Ngày yêu cầu:</span>
+        <span class="ps-2">{{ selectedItem?.requestedDate | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer border-top-0">
+    <button type="button" class="btn btn-success" (click)="approveDeleteBranch()">
+      <i class="fas fa-check me-1"></i> Duyệt yêu cầu
+    </button>
+    <button type="button" class="btn btn-outline-secondary" (click)="modalRef?.hide()">Hủy</button>
+  </div>
 </ng-template>
