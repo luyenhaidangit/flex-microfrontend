@@ -594,3 +594,56 @@
     <button type="button" class="btn btn-outline-secondary" (click)="modalRef?.hide()">Hủy</button>
   </div>
 </ng-template>
+
+<!-- Modal từ chối yêu cầu xóa -->
+<ng-template #rejectDeleteModal>
+  <form [formGroup]="rejectForm" (ngSubmit)="confirmRejectDeleteBranch()" class="needs-validation">
+    <div class="modal-header">
+      <h5 class="modal-title text-danger fw-semibold">
+        <i class="fas fa-times-circle me-2"></i> Từ chối yêu cầu xóa
+      </h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+    </div>
+    <div class="modal-body px-4 py-3">
+      <div class="row gy-3">
+        <div class="col-md-12">
+          <h6 class="text-muted mb-3">Thông tin chi nhánh:</h6>
+          <div class="p-3 bg-light rounded">
+            <div class="mb-2">
+              <span class="fw-bold text-muted">Mã CN:</span>
+              <span class="ps-2">{{ selectedItem?.code }}</span>
+            </div>
+            <div class="mb-2">
+              <span class="fw-bold text-muted">Tên chi nhánh:</span>
+              <span class="ps-2">{{ selectedItem?.name }}</span>
+            </div>
+            <div class="mb-2">
+              <span class="fw-bold text-muted">Địa chỉ:</span>
+              <span class="ps-2">{{ selectedItem?.address || 'Không có' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 position-relative mt-3">
+          <label class="form-label">Lý do từ chối</label>
+          <textarea
+            class="form-control"
+            formControlName="reason"
+            rows="3"
+            placeholder="Nhập lý do từ chối..."
+            [ngClass]="{'is-invalid': submittedReject && rejectForm.controls.reason.errors}">
+          </textarea>
+          <div *ngIf="submittedReject && rejectForm.controls.reason.errors" class="invalid-tooltip">
+            <span *ngIf="rejectForm.controls.reason.errors.required">Lý do không được để trống</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer border-top-0">
+      <button type="submit" class="btn btn-danger">
+        <i class="fas fa-times me-1"></i> Xác nhận từ chối
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Hủy</button>
+    </div>
+  </form>
+</ng-template>
