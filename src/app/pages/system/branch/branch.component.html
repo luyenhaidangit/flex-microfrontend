@@ -69,19 +69,28 @@
                       <i class="fas fa-eye"></i>
                     </span>
 
-                    <ng-container *ngIf="item.pendingAction">
+                    <ng-container *ngIf="item.pendingAction === 'CREATE'">
                       <span class="text-success ms-2 pointer" tooltip="Phê duyệt yêu cầu" (click)="openApproveModal(item)">
                         <i class="fas fa-check"></i>
                       </span>
                       <span class="text-danger ms-2 pointer" tooltip="Từ chối yêu cầu" (click)="openRejectModal(item)">
                         <i class="fas fa-times"></i>
-                      </span>                      
+                      </span>
+                    </ng-container>
+
+                    <ng-container *ngIf="item.pendingAction === 'UPDATE'">
+                      <span class="text-success ms-2 pointer" tooltip="Phê duyệt yêu cầu sửa" (click)="openApproveEditModal(item)">
+                        <i class="fas fa-check"></i>
+                      </span>
+                      <span class="text-danger ms-2 pointer" tooltip="Từ chối yêu cầu sửa" (click)="openRejectEditModal(item)">
+                        <i class="fas fa-times"></i>
+                      </span>
                     </ng-container>
 
                     <ng-container *ngIf="!item.pendingAction">
                       <span class="text-warning ms-2 pointer" tooltip="Chỉnh sửa" (click)="openEditModal(item)">
                         <i class="fas fa-pen"></i>
-                      </span>                      
+                      </span>
                       <span class="text-danger ms-2 pointer" tooltip="Xóa">
                         <i class="fas fa-trash"></i>
                       </span>
@@ -357,6 +366,121 @@
     <div class="modal-footer border-top-0">
       <button type="submit" class="btn btn-warning">
         <i class="fas fa-save me-1"></i> Gửi yêu cầu cập nhật
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Hủy</button>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Modal phê duyệt yêu cầu sửa -->
+<ng-template #approveEditModal>
+  <div class="modal-header">
+    <h5 class="modal-title text-success fw-semibold">
+      <i class="fas fa-check-circle me-2"></i> Phê duyệt yêu cầu sửa chi nhánh
+    </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+  </div>
+  <div class="modal-body px-4 py-3">
+    <div class="row gy-3">
+      <div class="col-md-12">
+        <h6 class="text-muted mb-3">Thông tin hiện tại:</h6>
+        <div class="current-info p-3 bg-light rounded">
+          <div class="mb-2">
+            <span class="fw-bold text-muted">Mã CN:</span>
+            <span class="ps-2">{{ selectedItem?.currentData?.code }}</span>
+          </div>
+          <div class="mb-2">
+            <span class="fw-bold text-muted">Tên chi nhánh:</span>
+            <span class="ps-2">{{ selectedItem?.currentData?.name }}</span>
+          </div>
+          <div class="mb-2">
+            <span class="fw-bold text-muted">Địa chỉ:</span>
+            <span class="ps-2">{{ selectedItem?.currentData?.address || 'Không có' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-12 mt-4">
+        <h6 class="text-muted mb-3">Thông tin cập nhật:</h6>
+        <div class="updated-info p-3 bg-light rounded">
+          <div class="mb-2">
+            <span class="fw-bold text-muted">Mã CN:</span>
+            <span class="ps-2">{{ selectedItem?.pendingData?.code }}</span>
+          </div>
+          <div class="mb-2">
+            <span class="fw-bold text-muted">Tên chi nhánh:</span>
+            <span class="ps-2">{{ selectedItem?.pendingData?.name }}</span>
+          </div>
+          <div class="mb-2">
+            <span class="fw-bold text-muted">Địa chỉ:</span>
+            <span class="ps-2">{{ selectedItem?.pendingData?.address || 'Không có' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 mt-3">
+        <label class="form-label fw-bold text-muted">Ngày yêu cầu</label>
+        <div class="text-dark ps-1">
+          {{ selectedItem?.requestedDate | date: 'dd/MM/yyyy HH:mm:ss' }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer border-top-0">
+    <button type="button" class="btn btn-success" (click)="approveEditBranch()">
+      <i class="fas fa-check me-1"></i> Duyệt yêu cầu
+    </button>
+    <button type="button" class="btn btn-outline-secondary" (click)="modalRef?.hide()">Hủy</button>
+  </div>
+</ng-template>
+
+<!-- Modal từ chối yêu cầu sửa -->
+<ng-template #rejectEditModal>
+  <form [formGroup]="rejectForm" (ngSubmit)="confirmRejectEditBranch()" class="needs-validation">
+    <div class="modal-header">
+      <h5 class="modal-title text-danger fw-semibold">
+        <i class="fas fa-times-circle me-2"></i> Từ chối yêu cầu sửa
+      </h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+    </div>
+    <div class="modal-body px-4 py-3">
+      <div class="row gy-3">
+        <div class="col-md-12">
+          <h6 class="text-muted mb-3">Thông tin yêu cầu sửa:</h6>
+          <div class="p-3 bg-light rounded">
+            <div class="mb-2">
+              <span class="fw-bold text-muted">Mã CN:</span>
+              <span class="ps-2">{{ selectedItem?.pendingData?.code }}</span>
+            </div>
+            <div class="mb-2">
+              <span class="fw-bold text-muted">Tên chi nhánh:</span>
+              <span class="ps-2">{{ selectedItem?.pendingData?.name }}</span>
+            </div>
+            <div class="mb-2">
+              <span class="fw-bold text-muted">Địa chỉ:</span>
+              <span class="ps-2">{{ selectedItem?.pendingData?.address || 'Không có' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 position-relative mt-3">
+          <label class="form-label">Lý do từ chối</label>
+          <textarea
+            class="form-control"
+            formControlName="reason"
+            rows="3"
+            placeholder="Nhập lý do từ chối..."
+            [ngClass]="{'is-invalid': submittedReject && rejectForm.controls.reason.errors}">
+          </textarea>
+          <div *ngIf="submittedReject && rejectForm.controls.reason.errors" class="invalid-tooltip">
+            <span *ngIf="rejectForm.controls.reason.errors.required">Lý do không được để trống</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer border-top-0">
+      <button type="submit" class="btn btn-danger">
+        <i class="fas fa-times me-1"></i> Xác nhận từ chối
       </button>
       <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Hủy</button>
     </div>

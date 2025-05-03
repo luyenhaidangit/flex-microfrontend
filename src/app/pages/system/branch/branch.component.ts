@@ -37,6 +37,8 @@ export class BranchComponent implements OnInit {
   @ViewChild('approveModal') approveTemplateRef!: TemplateRef<any>;
   @ViewChild('rejectModal') rejectTemplateRef!: TemplateRef<any>;
   @ViewChild('editModal') editTemplateRef!: TemplateRef<any>;
+  @ViewChild('approveEditModal') approveEditTemplateRef!: TemplateRef<any>;
+  @ViewChild('rejectEditModal') rejectEditTemplateRef!: TemplateRef<any>;
   rejectForm!: FormGroup;
   submittedReject = false;
 
@@ -203,6 +205,87 @@ export class BranchComponent implements OnInit {
       },
       error: () => {
         this.toastService.error('Cập nhật chi nhánh thất bại!');
+      }
+    });
+  }
+
+  openApproveEditModal(item: any): void {
+    this.systemService.getPendingUpdateRequest(item.code).subscribe({
+      next: (res) => {
+        if (res?.isSuccess) {
+          this.selectedItem = {
+            ...item,
+            currentData: {
+              code: item.code,
+              name: item.name,
+              address: item.address
+            },
+            pendingData: res.data,
+            requestId: res.data.requestId
+          };
+          this.modalRef = this.modalService.show(this.approveEditTemplateRef, { class: 'modal-lg' });
+        }
+      },
+      error: () => {
+        this.toastService.error('Không thể lấy thông tin yêu cầu thay đổi!');
+      }
+    });
+  }
+
+  openRejectEditModal(item: any): void {
+    this.systemService.getPendingUpdateRequest(item.code).subscribe({
+      next: (res) => {
+        if (res?.isSuccess) {
+          this.selectedItem = {
+            ...item,
+            currentData: {
+              code: item.code,
+              name: item.name,
+              address: item.address
+            },
+            pendingData: res.data,
+            requestId: res.data.requestId
+          };
+          this.submittedReject = false;
+          this.rejectForm.reset();
+          this.modalRef = this.modalService.show(this.rejectEditTemplateRef, { class: 'modal-lg' });
+        }
+      },
+      error: () => {
+        this.toastService.error('Không thể lấy thông tin yêu cầu thay đổi!');
+      }
+    });
+  }
+
+  approveEditBranch(): void {
+    const id = this.selectedItem?.requestId;
+    if (!id) return;
+
+    this.systemService.approveBranchEditRequest(id).subscribe({
+      next: () => {
+        this.toastService.success('Phê duyệt yêu cầu sửa thành công!');
+        this.modalRef?.hide();
+        this.getItems();
+      },
+      error: () => {
+        this.toastService.error('Phê duyệt yêu cầu sửa thất bại!');
+      }
+    });
+  }
+
+  confirmRejectEditBranch(): void {
+    this.submittedReject = true;
+    if (this.rejectForm.invalid) return;
+
+    const reason = this.rejectForm.value.reason;
+    this.systemService.rejectBranchEditRequest(this.selectedItem.requestId, reason).subscribe({
+      next: () => {
+        this.toastService.success('Đã từ chối yêu cầu sửa thành công!');
+        this.modalRef?.hide();
+        this.getItems();
+      },
+      error: () => {
+        this.toastService.error('Từ chối yêu cầu sửa thất bại!');
       }
     });
   }

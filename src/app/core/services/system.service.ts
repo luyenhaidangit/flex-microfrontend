@@ -34,4 +34,17 @@ export class SystemService {
     return this.http.post(`/api/branch/update-branch-request`, payload);
   }
 
+  approveBranchEditRequest(requestId: number): Observable<any> {
+    return this.http.post(`/api/branch/approve-update-request`, { requestId });
+  }
+
+  rejectBranchEditRequest(requestId: number, comment: string): Observable<any> {
+    return this.http.post(`/api/branch/reject-update-request`, { requestId, comment });
+  }
+
+  getPendingUpdateRequest(code: string): Observable<any> {
+    return this.http.get('/api/branch/get-pending-update-request', {
+      params: { code }
+    });
+  }
 }
