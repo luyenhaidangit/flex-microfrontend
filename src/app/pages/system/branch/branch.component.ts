@@ -36,6 +36,7 @@ export class BranchComponent implements OnInit {
   @ViewChild('createModal') createTemplateRef!: TemplateRef<any>;
   @ViewChild('approveModal') approveTemplateRef!: TemplateRef<any>;
   @ViewChild('rejectModal') rejectTemplateRef!: TemplateRef<any>;
+  @ViewChild('editModal') editTemplateRef!: TemplateRef<any>;
   rejectForm!: FormGroup;
   submittedReject = false;
 
@@ -173,5 +174,36 @@ export class BranchComponent implements OnInit {
       }
     });
   }
+
+  openEditModal(item: any): void {
+    this.selectedItem = item;
+    this.branchForm.patchValue({
+      code: item.code,
+      name: item.name,
+      address: item.address
+    });
+    this.modalRef = this.modalService.show(this.editTemplateRef, { class: 'modal-lg' });
+  }
   
+  submitEditBranchForm(): void {
+    this.submitted = true;
+    if (this.branchForm.invalid || !this.selectedItem) return;
+  
+    const payload = {
+      code: this.branchForm.value.code,
+      name: this.branchForm.value.name,
+      address: this.branchForm.value.address,
+    };
+  
+    this.systemService.updateBranchRequest(payload).subscribe({
+      next: () => {
+        this.toastService.success('Cập nhật chi nhánh thành công!');
+        this.modalRef?.hide();
+        this.getItems();
+      },
+      error: () => {
+        this.toastService.error('Cập nhật chi nhánh thất bại!');
+      }
+    });
+  }
 }

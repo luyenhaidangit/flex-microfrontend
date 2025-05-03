@@ -29,4 +29,9 @@ export class SystemService {
   rejectBranchRequest(requestId: number, comment: string): Observable<any> {
     return this.http.post(`/api/branch/reject-branch-request`, { requestId, comment });
   }
+
+  updateBranchRequest(payload: any): Observable<any> {
+    return this.http.post(`/api/branch/update-branch-request`, payload);
+  }
+
 }

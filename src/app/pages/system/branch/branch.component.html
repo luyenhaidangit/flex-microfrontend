@@ -79,9 +79,9 @@
                     </ng-container>
 
                     <ng-container *ngIf="!item.pendingAction">
-                      <span class="text-warning ms-2 pointer" tooltip="Chỉnh sửa">
+                      <span class="text-warning ms-2 pointer" tooltip="Chỉnh sửa" (click)="openEditModal(item)">
                         <i class="fas fa-pen"></i>
-                      </span>
+                      </span>                      
                       <span class="text-danger ms-2 pointer" tooltip="Xóa">
                         <i class="fas fa-trash"></i>
                       </span>
@@ -320,4 +320,45 @@
   </form>
 </ng-template>
 
-
+<!-- Modal chỉnh sửa chi nhánh -->
+<ng-template #editModal>
+  <form [formGroup]="branchForm" (ngSubmit)="submitEditBranchForm()" class="needs-validation">
+    <div class="modal-header">
+      <h5 class="modal-title text-warning fw-semibold">
+        <i class="fas fa-pen me-2"></i>Chỉnh sửa chi nhánh
+      </h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+    </div>
+    <div class="modal-body px-4 py-3">
+      <div class="row gy-3">
+        <div class="col-md-6 position-relative">
+          <label class="form-label">Mã CN</label>
+          <input type="text" class="form-control" formControlName="code" placeholder="Nhập mã CN"
+                 [ngClass]="{'is-invalid': submitted && branchForm.controls.code.errors}" />
+          <div *ngIf="submitted && branchForm.controls.code.errors" class="invalid-tooltip">
+            <span *ngIf="branchForm.controls.code.errors.required">Mã CN không được để trống</span>
+            <span *ngIf="branchForm.controls.code.errors.pattern">Chỉ cho phép chữ và số</span>
+          </div>
+        </div>
+        <div class="col-md-6 position-relative">
+          <label class="form-label">Tên chi nhánh</label>
+          <input type="text" class="form-control" formControlName="name" placeholder="Nhập tên chi nhánh"
+                 [ngClass]="{'is-invalid': submitted && branchForm.controls.name.errors}" />
+          <div *ngIf="submitted && branchForm.controls.name.errors" class="invalid-tooltip">
+            <span *ngIf="branchForm.controls.name.errors.required">Tên không được để trống</span>
+          </div>
+        </div>
+        <div class="col-md-12 position-relative">
+          <label class="form-label">Địa chỉ</label>
+          <textarea class="form-control" formControlName="address" rows="2" placeholder="Nhập địa chỉ"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer border-top-0">
+      <button type="submit" class="btn btn-warning">
+        <i class="fas fa-save me-1"></i> Gửi yêu cầu cập nhật
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Hủy</button>
+    </div>
+  </form>
+</ng-template>
