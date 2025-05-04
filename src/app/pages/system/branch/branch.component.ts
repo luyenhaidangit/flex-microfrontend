@@ -144,7 +144,11 @@ export class BranchComponent implements OnInit {
     const id = this.selectedItem?.requestId;
     if (!id) return;
 
-    this.systemService.approveBranchRequest(id).subscribe({
+    this.systemService.processBranchRequest({
+      id,
+      isApprove: true,
+      actionType: 'CREATE'
+    }).subscribe({
       next: () => {
         this.toastService.success('Phê duyệt yêu cầu thành công!');
         this.modalRef?.hide();
@@ -166,9 +170,16 @@ export class BranchComponent implements OnInit {
   confirmRejectBranch(): void {
     this.submittedReject = true;
     if (this.rejectForm.invalid) return;
-  
-    const reason = this.rejectForm.value.reason;
-    this.systemService.rejectBranchRequest(this.selectedItem.requestId,reason).subscribe({
+
+    const id = this.selectedItem?.requestId;
+    if (!id) return;
+
+    this.systemService.processBranchRequest({
+      id,
+      isApprove: false,
+      actionType: 'CREATE',
+      comment: this.rejectForm.value.reason
+    }).subscribe({
       next: () => {
         this.toastService.success('Đã từ chối yêu cầu thành công!');
         this.modalRef?.hide();
@@ -264,7 +275,11 @@ export class BranchComponent implements OnInit {
     const id = this.selectedItem?.requestId;
     if (!id) return;
 
-    this.systemService.approveBranchEditRequest(id).subscribe({
+    this.systemService.processBranchRequest({
+      id,
+      isApprove: true,
+      actionType: 'UPDATE'
+    }).subscribe({
       next: () => {
         this.toastService.success('Phê duyệt yêu cầu sửa thành công!');
         this.modalRef?.hide();
@@ -280,8 +295,15 @@ export class BranchComponent implements OnInit {
     this.submittedReject = true;
     if (this.rejectForm.invalid) return;
 
-    const reason = this.rejectForm.value.reason;
-    this.systemService.rejectBranchEditRequest(this.selectedItem.requestId, reason).subscribe({
+    const id = this.selectedItem?.requestId;
+    if (!id) return;
+
+    this.systemService.processBranchRequest({
+      id,
+      isApprove: false,
+      actionType: 'UPDATE',
+      comment: this.rejectForm.value.reason
+    }).subscribe({
       next: () => {
         this.toastService.success('Đã từ chối yêu cầu sửa thành công!');
         this.modalRef?.hide();
@@ -328,7 +350,11 @@ export class BranchComponent implements OnInit {
     const id = this.selectedItem?.requestId;
     if (!id) return;
 
-    this.systemService.approveBranchDeleteRequest(id).subscribe({
+    this.systemService.processBranchRequest({
+      id,
+      isApprove: true,
+      actionType: 'DELETE'
+    }).subscribe({
       next: () => {
         this.toastService.success('Phê duyệt yêu cầu xóa thành công!');
         this.modalRef?.hide();
@@ -351,8 +377,15 @@ export class BranchComponent implements OnInit {
     this.submittedReject = true;
     if (this.rejectForm.invalid) return;
 
-    const reason = this.rejectForm.value.reason;
-    this.systemService.rejectBranchDeleteRequest(this.selectedItem.requestId, reason).subscribe({
+    const id = this.selectedItem?.requestId;
+    if (!id) return;
+
+    this.systemService.processBranchRequest({
+      id,
+      isApprove: false,
+      actionType: 'DELETE',
+      comment: this.rejectForm.value.reason
+    }).subscribe({
       next: () => {
         this.toastService.success('Đã từ chối yêu cầu xóa thành công!');
         this.modalRef?.hide();

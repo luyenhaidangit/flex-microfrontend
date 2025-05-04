@@ -18,45 +18,42 @@ export class SystemService {
     return this.http.get<any>('/api/branch/get-branches-paging', { params: req as any });
   }
 
+  // Thay thế các API riêng lẻ bằng một method chung
+  processBranchRequest(payload: {
+    id: number, 
+    isApprove: boolean,
+    actionType?: string,
+    comment?: string
+  }): Observable<any> {
+    return this.http.post('/api/branch/process-branch-request', payload);
+  }
+
+  // Giữ lại các API tạo request và lấy thông tin
   createBranchRequest(payload: any): Observable<any> {
-    return this.http.post('/api/branch/create-branch-request', payload);
-  }
-
-  approveBranchRequest(requestId: number): Observable<any> {
-    return this.http.post(`/api/branch/approve-branch-request`, { requestId });
-  }
-
-  rejectBranchRequest(requestId: number, comment: string): Observable<any> {
-    return this.http.post(`/api/branch/reject-branch-request`, { requestId, comment });
+    return this.http.post('/api/branch/request', {
+      ...payload,
+      requestType: 'CREATE'
+    });
   }
 
   updateBranchRequest(payload: any): Observable<any> {
-    return this.http.post(`/api/branch/update-branch-request`, payload);
-  }
-
-  approveBranchEditRequest(requestId: number): Observable<any> {
-    return this.http.post(`/api/branch/approve-update-request`, { requestId });
-  }
-
-  rejectBranchEditRequest(requestId: number, comment: string): Observable<any> {
-    return this.http.post(`/api/branch/reject-update-request`, { requestId, comment });
-  }
-
-  getPendingUpdateRequest(code: string): Observable<any> {
-    return this.http.get('/api/branch/get-pending-update-request', {
-      params: { code }
+    return this.http.post('/api/branch/request', {
+      ...payload,
+      requestType: 'UPDATE'
     });
   }
 
   deleteBranchRequest(payload: {code: string, name: string, address?: string}): Observable<any> {
-    return this.http.post(`/api/branch/delete-branch-request`, payload);
+    return this.http.post('/api/branch/request', {
+      ...payload,
+      requestType: 'DELETE'
+    });
   }
 
-  approveBranchDeleteRequest(requestId: number): Observable<any> {
-    return this.http.post(`/api/branch/approve-delete-request`, { requestId });
-  }
-
-  rejectBranchDeleteRequest(requestId: number, comment: string): Observable<any> {
-    return this.http.post(`/api/branch/reject-delete-request`, { requestId, comment });
+  // Giữ lại API get pending update
+  getPendingUpdateRequest(code: string): Observable<any> {
+    return this.http.get('/api/branch/get-pending-update-request', {
+      params: { code }
+    });
   }
 }
