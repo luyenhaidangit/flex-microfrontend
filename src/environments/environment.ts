@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   defaultauth: 'database',
-  apiBaseUrl: 'https://localhost:5000',
+  apiBaseUrl: 'https://localhost:7000',
   externalService: {
     translateServiceUrl: "http://localhost:4200/assets/i18n/",
     configServiceUrl: "http://localhost:4200/assets/dashboard.json"
