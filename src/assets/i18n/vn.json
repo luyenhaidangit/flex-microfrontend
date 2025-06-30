@@ -73,10 +73,12 @@
     },
     "SYSTEM": {
       "TEXT": "Hệ thống",
-      "MANAGESYSTEM": "Quản trị hệ thống",
-      "MANAGESYSTEM.BRANCH": "Quản lý chi nhánh",
-      "MANAGESYSTEM.DEPARTMENT": "Quản lý phòng ban",
-      "MANAGESYSTEM.ROLE": "Quản lý vai trò"
+      "MANAGESYSTEM": {
+        "TEXT": "Quản trị hệ thống",
+        "BRANCH": "Quản lý chi nhánh",
+        "DEPARTMENT": "Quản lý phòng ban",
+        "ROLE": "Quản lý vai trò"
+      }
     },
     "MENU": {
       "TEXT": "Hệ thống"
