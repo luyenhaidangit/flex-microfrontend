@@ -65,7 +65,7 @@ export class AuthenticationService {
 
     // Get User Profile
     public GetUserProfile() { 
-        return this.http.get('/api/aspnet-identity/auth/me');
+        return this.http.get('/api/auth/me');
     }
 }
 
