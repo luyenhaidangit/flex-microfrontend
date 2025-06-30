@@ -18,8 +18,10 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { DepartmentComponent } from './department/department.component';
 import { BranchComponent } from './branch/branch.component';
 
+import { RoleComponent } from './role/role.component';
+
 @NgModule({
-  declarations: [DepartmentComponent, BranchComponent],
+  declarations: [DepartmentComponent, BranchComponent, RoleComponent],
   imports: [
     CommonModule,
     SystemRoutingModule,
