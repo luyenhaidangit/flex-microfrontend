@@ -9,8 +9,13 @@ export class RoleService {
 
   constructor(private http: HttpClient) {}
 
+
   getRoles(params: any): Observable<any> {
     return this.http.get<any>(this.apiUrl, { params });
+  }
+
+  getRoleDetail(code: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${code}`);
   }
 
   getAllRoles(): Observable<any[]> {
@@ -23,19 +28,19 @@ export class RoleService {
     return this.http.post<any>(this.apiUrl, data);
   }
 
-  updateRole(id: string, data: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, data);
+  updateRole(code: string, data: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${code}`, data);
   }
 
-  deleteRole(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`);
+  deleteRole(code: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${code}`);
   }
 
-  approveRole(id: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/${id}/approve`, {});
+  approveRole(code: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/${code}/approve`, {});
   }
 
-  rejectRole(id: string, reason: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/${id}/reject`, { reason });
+  rejectRole(code: string, reason: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/${code}/reject`, { reason });
   }
 }

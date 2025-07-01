@@ -98,8 +98,24 @@ export class RoleComponent implements OnInit {
   }
 
   openDetailModal(template: TemplateRef<any>, item: any): void {
-    this.selectedItem = item;
-    this.modalRef = this.modalService.show(template, { class: 'modal-lg' });
+    const code = item?.code;
+    if (!code) {
+      this.toastService.error('Không tìm thấy mã vai trò!');
+      this.selectedItem = item;
+      this.modalRef = this.modalService.show(template, { class: 'modal-lg' });
+      return;
+    }
+    this.roleService.getRoleDetail(code).subscribe({
+      next: (res) => {
+        this.selectedItem = res?.data || item;
+        this.modalRef = this.modalService.show(template, { class: 'modal-lg' });
+      },
+      error: () => {
+        this.toastService.error('Không thể lấy thông tin chi tiết vai trò!');
+        this.selectedItem = item;
+        this.modalRef = this.modalService.show(template, { class: 'modal-lg' });
+      }
+    });
   }
 
   openCreateModal(): void {
@@ -139,9 +155,9 @@ export class RoleComponent implements OnInit {
   }
 
   approveRole(): void {
-    const id = this.selectedItem?.id;
-    if (!id) return;
-    this.roleService.approveRole(id).subscribe({
+    const code = this.selectedItem?.code;
+    if (!code) return;
+    this.roleService.approveRole(code).subscribe({
       next: () => {
         this.toastService.success('Phê duyệt yêu cầu thành công!');
         this.modalRef?.hide();
@@ -163,9 +179,9 @@ export class RoleComponent implements OnInit {
   confirmRejectRole(): void {
     this.submittedReject = true;
     if (this.rejectForm.invalid) return;
-    const id = this.selectedItem?.id;
-    if (!id) return;
-    this.roleService.rejectRole(id, this.rejectForm.value.reason).subscribe({
+    const code = this.selectedItem?.code;
+    if (!code) return;
+    this.roleService.rejectRole(code, this.rejectForm.value.reason).subscribe({
       next: () => {
         this.toastService.success('Đã từ chối yêu cầu thành công!');
         this.modalRef?.hide();
@@ -195,7 +211,7 @@ export class RoleComponent implements OnInit {
       name: this.roleForm.value.name,
       description: this.roleForm.value.description,
     };
-    this.roleService.updateRole(this.selectedItem.id, payload).subscribe({
+    this.roleService.updateRole(this.selectedItem.code, payload).subscribe({
       next: () => {
         this.toastService.success('Cập nhật vai trò thành công!');
         this.modalRef?.hide();
@@ -213,8 +229,8 @@ export class RoleComponent implements OnInit {
   }
 
   confirmDeleteRole(): void {
-    if (!this.selectedItem?.id) return;
-    this.roleService.deleteRole(this.selectedItem.id).subscribe({
+    if (!this.selectedItem?.code) return;
+    this.roleService.deleteRole(this.selectedItem.code).subscribe({
       next: () => {
         this.toastService.success('Đã gửi yêu cầu xóa thành công!');
         this.modalRef?.hide();
