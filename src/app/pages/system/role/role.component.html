@@ -78,23 +78,7 @@
                       </span>
                     </ng-container>
 
-                    <ng-container *ngIf="item.pendingAction === 'UPDATE'">
-                      <span class="text-success ms-2 pointer" tooltip="Phê duyệt yêu cầu sửa" (click)="openApproveEditModal(item)">
-                        <i class="fas fa-check"></i>
-                      </span>
-                      <span class="text-danger ms-2 pointer" tooltip="Từ chối yêu cầu sửa" (click)="openRejectEditModal(item)">
-                        <i class="fas fa-times"></i>
-                      </span>
-                    </ng-container>
 
-                    <ng-container *ngIf="item.pendingAction === 'DELETE'">
-                      <span class="text-success ms-2 pointer" tooltip="Phê duyệt yêu cầu xóa" (click)="openApproveDeleteModal(item)">
-                        <i class="fas fa-check"></i>
-                      </span>
-                      <span class="text-danger ms-2 pointer" tooltip="Từ chối yêu cầu xóa" (click)="openRejectDeleteModal(item)">
-                        <i class="fas fa-times"></i>
-                      </span>
-                    </ng-container>
 
                     <ng-container *ngIf="!item.pendingAction">
                       <span class="text-warning ms-2 pointer" tooltip="Chỉnh sửa" (click)="openEditModal(item)">
@@ -156,4 +140,252 @@
   </div>
 </div>
 
-<!-- Các modal chi tiết, thêm mới, chỉnh sửa, phê duyệt, từ chối, xóa sẽ được bổ sung tương tự branch -->
+<!-- Modal chi tiết vai trò -->
+<ng-template #detailModal>
+  <div class="modal-header">
+    <h5 class="modal-title text-primary fw-semibold">
+      <i class="fas fa-info-circle me-2"></i>Chi tiết vai trò
+    </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+  </div>
+  <div class="modal-body px-4 py-3">
+    <div class="row gy-3">
+      <div class="col-md-6">
+        <label class="form-label fw-bold text-muted">Mã vai trò</label>
+        <div class="text-dark ps-1">{{ selectedItem?.code }}</div>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-bold text-muted">Tên vai trò</label>
+        <div class="text-dark ps-1">{{ selectedItem?.name }}</div>
+      </div>
+
+      <div class="col-md-12">
+        <label class="form-label fw-bold text-muted">Mô tả</label>
+        <div class="text-dark ps-1">{{ selectedItem?.description || 'Không có' }}</div>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-bold text-muted">Tình trạng xử lý</label>
+        <div class="text-dark ps-1">
+          <ng-container [ngSwitch]="selectedItem?.pendingAction">
+            <span *ngSwitchCase="'CREATE'" class="badge bg-success">Chờ duyệt thêm</span>
+            <span *ngSwitchDefault class="badge bg-secondary">Không có yêu cầu</span>
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="col-md-6" *ngIf="selectedItem?.requestedDate">
+        <label class="form-label fw-bold text-muted">Ngày yêu cầu</label>
+        <div class="text-dark ps-1">
+          {{ selectedItem.requestedDate | date: 'dd/MM/yyyy HH:mm:ss' }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer border-top-0">
+    <button type="button" class="btn btn-outline-secondary" (click)="modalRef?.hide()">Đóng</button>
+  </div>
+</ng-template>
+
+<!-- Modal thêm mới vai trò -->
+<ng-template #createModal>
+  <form [formGroup]="roleForm" (ngSubmit)="submitRoleForm()" class="needs-validation">
+    <div class="modal-header">
+      <h5 class="modal-title text-success fw-semibold">
+        <i class="fas fa-plus-circle me-2"></i>Thêm mới vai trò
+      </h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+    </div>
+    <div class="modal-body px-4 py-3">
+      <div class="row gy-3">
+        <div class="col-md-6 position-relative">
+          <label class="form-label">Mã vai trò</label>
+          <input type="text" class="form-control" formControlName="code" placeholder="Nhập mã vai trò"
+                 [ngClass]="{'is-invalid': submitted && roleForm.controls.code.errors}" />
+          <div *ngIf="submitted && roleForm.controls.code.errors" class="invalid-tooltip">
+            <span *ngIf="roleForm.controls.code.errors.required">Mã vai trò không được để trống</span>
+            <span *ngIf="roleForm.controls.code.errors.pattern">Chỉ cho phép chữ và số</span>
+          </div>
+        </div>
+        <div class="col-md-6 position-relative">
+          <label class="form-label">Tên vai trò</label>
+          <input type="text" class="form-control" formControlName="name" placeholder="Nhập tên vai trò"
+                 [ngClass]="{'is-invalid': submitted && roleForm.controls.name.errors}" />
+          <div *ngIf="submitted && roleForm.controls.name.errors" class="invalid-tooltip">
+            <span *ngIf="roleForm.controls.name.errors.required">Tên không được để trống</span>
+          </div>
+        </div>
+        <div class="col-md-12 position-relative">
+          <label class="form-label">Mô tả</label>
+          <textarea class="form-control" formControlName="description" rows="2" placeholder="Nhập mô tả"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer border-top-0">
+      <button type="submit" class="btn btn-primary">
+        <i class="fas fa-save me-1"></i> Gửi yêu cầu
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Hủy</button>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Modal phê duyệt yêu cầu -->
+<ng-template #approveModal>
+  <div class="modal-header">
+    <h5 class="modal-title text-success fw-semibold">
+      <i class="fas fa-check-circle me-2"></i> Phê duyệt yêu cầu vai trò
+    </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+  </div>
+  <div class="modal-body px-4 py-3">
+    <div class="row gy-3">
+      <div class="col-md-6">
+        <label class="form-label fw-bold text-muted">Mã vai trò</label>
+        <div class="text-dark ps-1">{{ selectedItem?.code }}</div>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-bold text-muted">Tên vai trò</label>
+        <div class="text-dark ps-1">{{ selectedItem?.name }}</div>
+      </div>
+
+      <div class="col-md-12">
+        <label class="form-label fw-bold text-muted">Mô tả</label>
+        <div class="text-dark ps-1">{{ selectedItem?.description || 'Không có' }}</div>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-bold text-muted">Tình trạng xử lý</label>
+        <div class="text-dark ps-1">
+          <span class="badge bg-success">Chờ duyệt thêm</span>
+        </div>
+      </div>
+
+      <div class="col-md-6" *ngIf="selectedItem?.requestedDate">
+        <label class="form-label fw-bold text-muted">Ngày yêu cầu</label>
+        <div class="text-dark ps-1">{{ selectedItem?.requestedDate | date:'dd/MM/yyyy HH:mm:ss' }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer border-top-0">
+    <button type="button" class="btn btn-success" (click)="approveRole()">
+      <i class="fas fa-check me-1"></i> Duyệt yêu cầu
+    </button>
+    <button type="button" class="btn btn-outline-secondary" (click)="modalRef?.hide()">Hủy</button>
+  </div>
+</ng-template>
+
+<!-- Modal từ chối yêu cầu -->
+<ng-template #rejectModal>
+  <form [formGroup]="rejectForm" (ngSubmit)="confirmRejectRole()" class="needs-validation">
+    <div class="modal-header">
+      <h5 class="modal-title text-danger fw-semibold">
+        <i class="fas fa-times-circle me-2"></i> Từ chối yêu cầu
+      </h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+    </div>
+    <div class="modal-body px-4 py-3">
+      <div class="position-relative">
+        <label class="form-label">Lý do từ chối</label>
+        <textarea
+          class="form-control"
+          formControlName="reason"
+          rows="3"
+          placeholder="Nhập lý do từ chối..."
+          [ngClass]="{'is-invalid': submittedReject && rejectForm.controls.reason.errors}">
+        </textarea>
+        <div *ngIf="submittedReject && rejectForm.controls.reason.errors" class="invalid-tooltip">
+          <span *ngIf="rejectForm.controls.reason.errors.required">Lý do không được để trống</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer border-top-0">
+      <button type="submit" class="btn btn-danger">
+        <i class="fas fa-times me-1"></i> Xác nhận từ chối
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Hủy</button>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Modal chỉnh sửa vai trò -->
+<ng-template #editModal>
+  <form [formGroup]="roleForm" (ngSubmit)="submitEditRoleForm()" class="needs-validation">
+    <div class="modal-header">
+      <h5 class="modal-title text-warning fw-semibold">
+        <i class="fas fa-pen me-2"></i>Chỉnh sửa vai trò
+      </h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+    </div>
+    <div class="modal-body px-4 py-3">
+      <div class="row gy-3">
+        <div class="col-md-6 position-relative">
+          <label class="form-label">Mã vai trò</label>
+          <input type="text" class="form-control" formControlName="code" placeholder="Nhập mã vai trò"
+                 [ngClass]="{'is-invalid': submitted && roleForm.controls.code.errors}" />
+          <div *ngIf="submitted && roleForm.controls.code.errors" class="invalid-tooltip">
+            <span *ngIf="roleForm.controls.code.errors.required">Mã vai trò không được để trống</span>
+            <span *ngIf="roleForm.controls.code.errors.pattern">Chỉ cho phép chữ và số</span>
+          </div>
+        </div>
+        <div class="col-md-6 position-relative">
+          <label class="form-label">Tên vai trò</label>
+          <input type="text" class="form-control" formControlName="name" placeholder="Nhập tên vai trò"
+                 [ngClass]="{'is-invalid': submitted && roleForm.controls.name.errors}" />
+          <div *ngIf="submitted && roleForm.controls.name.errors" class="invalid-tooltip">
+            <span *ngIf="roleForm.controls.name.errors.required">Tên không được để trống</span>
+          </div>
+        </div>
+        <div class="col-md-12 position-relative">
+          <label class="form-label">Mô tả</label>
+          <textarea class="form-control" formControlName="description" rows="2" placeholder="Nhập mô tả"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer border-top-0">
+      <button type="submit" class="btn btn-warning">
+        <i class="fas fa-save me-1"></i> Lưu thay đổi
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Hủy</button>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Modal xác nhận xóa -->
+<ng-template #deleteModal>
+  <div class="modal-header">
+    <h5 class="modal-title text-danger fw-semibold">
+      <i class="fas fa-trash-alt me-2"></i>Xác nhận xóa vai trò
+    </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+  </div>
+  <div class="modal-body px-4 py-3">
+    <div class="alert alert-warning">
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      Bạn có chắc chắn muốn xóa vai trò này?
+    </div>
+    <div class="mt-3">
+      <div class="mb-2">
+        <span class="fw-bold text-muted">Mã vai trò:</span>
+        <span class="ps-2">{{ selectedItem?.code }}</span>
+      </div>
+      <div class="mb-2">
+        <span class="fw-bold text-muted">Tên vai trò:</span>
+        <span class="ps-2">{{ selectedItem?.name }}</span>
+      </div>
+      <div class="mb-2">
+        <span class="fw-bold text-muted">Mô tả:</span>
+        <span class="ps-2">{{ selectedItem?.description || 'Không có' }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer border-top-0">
+    <button type="button" class="btn btn-danger" (click)="confirmDeleteRole()">
+      <i class="fas fa-trash-alt me-1"></i> Xác nhận xóa
+    </button>
+    <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Hủy</button>
+  </div>
+</ng-template>
+
