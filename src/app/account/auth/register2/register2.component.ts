@@ -7,6 +7,7 @@ import { AuthenticationService } from '../../../core/services/auth.service';
 import { environment } from '../../../../environments/environment';
 import { first } from 'rxjs/operators';
 import { UserProfileService } from '../../../core/services/user.service';
+import { RoleService } from '../../../pages/system/role/role.service';
 
 @Component({
   selector: 'app-register2',
@@ -19,9 +20,16 @@ export class Register2Component implements OnInit {
   submitted:any = false;
   error:any = '';
   successmsg:any = false;
+  roles: any[] = [];
 
-  constructor(private formBuilder: UntypedFormBuilder, private route: ActivatedRoute, private router: Router, private authenticationService: AuthenticationService,
-    private userService: UserProfileService) { }
+  constructor(
+    private formBuilder: UntypedFormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
+    private authenticationService: AuthenticationService,
+    private userService: UserProfileService,
+    private roleService: RoleService
+  ) { }
   // set the currenr year
   year: number = new Date().getFullYear();
 
@@ -30,7 +38,9 @@ export class Register2Component implements OnInit {
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
+      roleId: ['', Validators.required],
     });
+    this.roleService.getAllRoles().subscribe(roles => this.roles = roles);
   }
 
   // convenience getter for easy access to form fields

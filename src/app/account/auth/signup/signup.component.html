@@ -71,6 +71,18 @@
                   </div>
                 </div>
 
+                <div class="mb-3">
+                  <label for="role" class="form-label">Role</label>
+                  <select formControlName="roleId" class="form-control" id="role"
+                          [ngClass]="{ 'is-invalid': submitted && f.roleId.errors }">
+                    <option value="">Select role</option>
+                    <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
+                  </select>
+                  <div *ngIf="submitted && f.roleId.errors" class="invalid-feedback">
+                    <div *ngIf="f.roleId.errors.required">Role is required</div>
+                  </div>
+                </div>
+
                 <div class="mt-4 d-grid">
                   <button class="btn btn-primary" type="submit">Register</button>
                 </div>

@@ -6,6 +6,7 @@ import { AuthenticationService } from '../../../core/services/auth.service';
 import { environment } from '../../../../environments/environment';
 import { first } from 'rxjs/operators';
 import { UserProfileService } from '../../../core/services/user.service';
+import { RoleService } from '../../../pages/system/role/role.service';
 
 @Component({
   selector: 'app-signup',
@@ -18,20 +19,30 @@ export class SignupComponent implements OnInit {
   submitted:any = false;
   error:any = '';
   successmsg:any = false;
+  roles: any[] = [];
 
   // set the currenr year
   year: number = new Date().getFullYear();
 
   // tslint:disable-next-line: max-line-length
-  constructor(private formBuilder: UntypedFormBuilder, private route: ActivatedRoute, private router: Router, private authenticationService: AuthenticationService,
-    private userService: UserProfileService) { }
+  constructor(
+    private formBuilder: UntypedFormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
+    private authenticationService: AuthenticationService,
+    private userService: UserProfileService,
+    private roleService: RoleService
+  ) { }
 
   ngOnInit() {
     this.signupForm = this.formBuilder.group({
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
+      roleId: ['', Validators.required],
     });
+
+    this.roleService.getAllRoles().subscribe(roles => this.roles = roles);
   }
 
   // convenience getter for easy access to form fields
