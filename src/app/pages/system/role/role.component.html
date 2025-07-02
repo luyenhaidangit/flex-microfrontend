@@ -44,6 +44,10 @@
                     <th>Mã vai trò</th>
                     <th>Tên vai trò</th>
                     <th>Mô tả</th>
+                    <th>Trạng thái</th>
+                    <th>Người tạo</th>
+                    <th>Ngày tạo</th>
+                    <th>Ngày duyệt</th>
                     <th>Xử lý</th>
                     <th>Thao tác</th>
                   </tr>
@@ -53,6 +57,10 @@
                     <td><app-skeleton width="80px" height="20px"></app-skeleton></td>
                     <td><app-skeleton width="120px" height="20px"></app-skeleton></td>
                     <td><app-skeleton width="180px" height="20px"></app-skeleton></td>
+                    <td><app-skeleton width="60px" height="20px"></app-skeleton></td>
+                    <td><app-skeleton width="100px" height="20px"></app-skeleton></td>
+                    <td><app-skeleton width="100px" height="20px"></app-skeleton></td>
+                    <td><app-skeleton width="100px" height="20px"></app-skeleton></td>
                     <td><app-skeleton width="60px" height="20px"></app-skeleton></td>
                     <td><app-skeleton width="100px" height="20px"></app-skeleton></td>
                   </tr>
@@ -66,6 +74,10 @@
                     <th>Mã vai trò</th>
                     <th>Tên vai trò</th>
                     <th>Mô tả</th>
+                    <th>Trạng thái</th>
+                    <th>Người tạo</th>
+                    <th>Ngày tạo</th>
+                    <th>Ngày duyệt</th>
                     <th>Xử lý</th>
                     <th>Thao tác</th>
                   </tr>
@@ -75,6 +87,18 @@
                     <td>{{ item.code }}</td>
                     <td>{{ item.name }}</td>
                     <td>{{ item.description }}</td>
+                    <td>
+                      <span [ngClass]="{
+                        'badge badge-soft-warning': item.status === 'Pending',
+                        'badge badge-soft-success': item.status === 'Approved',
+                        'badge badge-soft-danger': item.status === 'Rejected'
+                      }">
+                        {{ item.status }}
+                      </span>
+                    </td>
+                    <td>{{ item.createdBy }}</td>
+                    <td>{{ item.createdDate | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+                    <td>{{ item.status === 'Approved' ? (item.approveDate | date: 'dd/MM/yyyy HH:mm:ss') : '—' }}</td>
                     <td>
                       <ng-container *ngIf="item.pendingAction; else noPending">
                         <span *ngIf="item.pendingAction === 'CREATE'" class="badge badge-soft-success">Chờ duyệt thêm</span>
@@ -106,7 +130,7 @@
                     </td>
                   </tr>
                   <tr *ngIf="items.length === 0">
-                    <td colspan="8" class="text-center">Không có dữ liệu</td>
+                    <td colspan="9" class="text-center">Không có dữ liệu</td>
                   </tr>
                 </tbody>
               </table>
@@ -169,32 +193,37 @@
         <label class="form-label fw-bold text-muted">Mã vai trò</label>
         <div class="text-dark ps-1">{{ selectedItem?.code }}</div>
       </div>
-
       <div class="col-md-6">
         <label class="form-label fw-bold text-muted">Tên vai trò</label>
         <div class="text-dark ps-1">{{ selectedItem?.name }}</div>
       </div>
-
       <div class="col-md-12">
         <label class="form-label fw-bold text-muted">Mô tả</label>
         <div class="text-dark ps-1">{{ selectedItem?.description || 'Không có' }}</div>
       </div>
-
       <div class="col-md-6">
-        <label class="form-label fw-bold text-muted">Tình trạng xử lý</label>
+        <label class="form-label fw-bold text-muted">Trạng thái</label>
         <div class="text-dark ps-1">
-          <ng-container [ngSwitch]="selectedItem?.pendingAction">
-            <span *ngSwitchCase="'CREATE'" class="badge bg-success">Chờ duyệt thêm</span>
-            <span *ngSwitchDefault class="badge bg-secondary">Không có yêu cầu</span>
-          </ng-container>
+          <span [ngClass]="{
+            'badge badge-soft-warning': selectedItem?.status === 'Pending',
+            'badge badge-soft-success': selectedItem?.status === 'Approved',
+            'badge badge-soft-danger': selectedItem?.status === 'Rejected'
+          }">
+            {{ selectedItem?.status }}
+          </span>
         </div>
       </div>
-
-      <div class="col-md-6" *ngIf="selectedItem?.requestedDate">
-        <label class="form-label fw-bold text-muted">Ngày yêu cầu</label>
-        <div class="text-dark ps-1">
-          {{ selectedItem.requestedDate | date: 'dd/MM/yyyy HH:mm:ss' }}
-        </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold text-muted">Người tạo</label>
+        <div class="text-dark ps-1">{{ selectedItem?.createdBy }}</div>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold text-muted">Ngày tạo</label>
+        <div class="text-dark ps-1">{{ selectedItem?.createdDate | date: 'dd/MM/yyyy HH:mm:ss' }}</div>
+      </div>
+      <div class="col-md-6" *ngIf="selectedItem?.status === 'Approved'">
+        <label class="form-label fw-bold text-muted">Ngày duyệt</label>
+        <div class="text-dark ps-1">{{ selectedItem?.approveDate | date: 'dd/MM/yyyy HH:mm:ss' }}</div>
       </div>
     </div>
   </div>
@@ -403,4 +432,5 @@
     <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Hủy</button>
   </div>
 </ng-template>
+
 
