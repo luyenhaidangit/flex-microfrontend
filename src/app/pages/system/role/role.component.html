@@ -96,8 +96,8 @@
                         {{ item.status }}
                       </span>
                     </td>
-                    <td>{{ item.createdBy }}</td>
-                    <td>{{ item.createdDate | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+                    <td>{{ item.requestedBy }}</td>
+                    <td>{{ item.requestedDate | date: 'dd/MM/yyyy' }}</td>
                     <td>{{ item.status === 'Approved' ? (item.approveDate | date: 'dd/MM/yyyy HH:mm:ss') : '—' }}</td>
                     <td>
                       <ng-container *ngIf="item.pendingAction; else noPending">
@@ -215,11 +215,11 @@
       </div>
       <div class="col-md-6">
         <label class="form-label fw-bold text-muted">Người tạo</label>
-        <div class="text-dark ps-1">{{ selectedItem?.createdBy }}</div>
+        <div class="text-dark ps-1">{{ selectedItem?.requestedBy }}</div>
       </div>
       <div class="col-md-6">
         <label class="form-label fw-bold text-muted">Ngày tạo</label>
-        <div class="text-dark ps-1">{{ selectedItem?.createdDate | date: 'dd/MM/yyyy HH:mm:ss' }}</div>
+        <div class="text-dark ps-1">{{ selectedItem?.requestedDate | date: 'dd/MM/yyyy HH:mm:ss' }}</div>
       </div>
       <div class="col-md-6" *ngIf="selectedItem?.status === 'Approved'">
         <label class="form-label fw-bold text-muted">Ngày duyệt</label>
