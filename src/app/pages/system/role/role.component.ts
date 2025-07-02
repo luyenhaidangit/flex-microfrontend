@@ -20,6 +20,7 @@ export class RoleComponent implements OnInit {
   items: any[] = [];
   selectedItem: any = null;
   modalRef?: BsModalRef;
+  isLoading = false;
 
   pagingState = {
     pageIndex : 1,
@@ -71,17 +72,24 @@ export class RoleComponent implements OnInit {
   }
 
   getItems(): void {
+    this.isLoading = true;
     this.roleService.getRoles(this.searchParams)
-      .subscribe(res => {
-        if (res?.isSuccess) {
-          const { items, ...page } = res.data;
-          this.items = items ?? [];
-          Object.assign(this.pagingState, {
-            pageIndex : page.pageIndex,
-            pageSize  : page.pageSize,
-            totalPages: page.totalPages,
-            totalItems: page.totalItems
-          });
+      .subscribe({
+        next: (res) => {
+          if (res?.isSuccess) {
+            const { items, ...page } = res.data;
+            this.items = items ?? [];
+            Object.assign(this.pagingState, {
+              pageIndex : page.pageIndex,
+              pageSize  : page.pageSize,
+              totalPages: page.totalPages,
+              totalItems: page.totalItems
+            });
+          }
+          this.isLoading = false;
+        },
+        error: () => {
+          this.isLoading = false;
         }
       });
   }

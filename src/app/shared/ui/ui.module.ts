@@ -10,8 +10,10 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { PagetitleComponent } from './pagetitle/pagetitle.component';
 import { LoaderComponent } from './loader/loader.component';
 import { LoadingComponent } from './loading/loading.component';
+import { SkeletonComponent } from './skeleton/skeleton.component';
+
 @NgModule({
-  declarations: [PagetitleComponent,  LoaderComponent, LoadingComponent],
+  declarations: [PagetitleComponent,  LoaderComponent, LoadingComponent, SkeletonComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -19,6 +21,6 @@ import { LoadingComponent } from './loading/loading.component';
     TimepickerModule.forRoot(),
     BsDropdownModule.forRoot()
   ],
-  exports: [PagetitleComponent, LoaderComponent, LoadingComponent]
+  exports: [PagetitleComponent, LoaderComponent, LoadingComponent, SkeletonComponent]
 })
 export class UIModule { }
