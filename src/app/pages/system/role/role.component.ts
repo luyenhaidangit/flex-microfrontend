@@ -79,7 +79,6 @@ export class RoleComponent implements OnInit {
   loadCurrentUser() {
     // Try to get from service, fallback to localStorage
     this.currentUser = this.authService.GetCurrentUser();
-    console.log(this.currentUser);
     if (!this.currentUser) {
       const token = this.authService.getAuthToken();
       if (token && token.user) {

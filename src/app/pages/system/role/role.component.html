@@ -188,6 +188,9 @@
   <div class="modal-header">
     <h5 class="modal-title text-primary fw-semibold">
       <i class="fas fa-info-circle me-2"></i>Chi tiết vai trò
+      <span *ngIf="(selectedItem?.status || '').toUpperCase() === 'DRF'" class="badge font-size-11 badge-soft-secondary ms-2" style="vertical-align: middle;">
+        NHÁP
+      </span>
     </h5>
     <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
   </div>
