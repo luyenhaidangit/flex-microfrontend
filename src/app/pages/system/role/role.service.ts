@@ -24,6 +24,7 @@ export class RoleService {
     }).pipe(map(res => res?.data?.items ?? []));
   }
 
+  // createRole and updateRole accept status, requestedBy, requestedDate, rejectReason for draft/save/submit/reject flows
   createRole(data: any): Observable<any> {
     return this.http.post<any>(this.apiUrl, data);
   }

@@ -4,6 +4,7 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { RoleService } from './role.service';
 import { DEFAULT_PER_PAGE_OPTIONS } from 'src/app/core/constants/shared.constant';
 import { ToastService } from 'angular-toastify';
+import { AuthenticationService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-role',
@@ -47,11 +48,18 @@ export class RoleComponent implements OnInit {
   rejectForm!: FormGroup;
   submittedReject = false;
 
+  currentUser: any;
+  showSubmitConfirm = false;
+  rejectedReason: string | null = null;
+
+  now: Date = new Date();
+
   constructor(
     private roleService: RoleService,
     private modalService: BsModalService,
     private fb: FormBuilder,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private authService: AuthenticationService
   ) {}
 
   ngOnInit(): void {
@@ -64,6 +72,24 @@ export class RoleComponent implements OnInit {
     this.rejectForm = this.fb.group({
       reason: ['', Validators.required]
     });
+    this.loadCurrentUser();
+  }
+
+  loadCurrentUser() {
+    // Try to get from service, fallback to localStorage
+    this.currentUser = this.authService.GetCurrentUser();
+    console.log(this.authService.GetCurrentUser());
+    if (!this.currentUser) {
+      const token = this.authService.getAuthToken();
+      if (token && token.user) {
+        this.currentUser = token.user;
+      } else {
+        try {
+          const userStr = localStorage.getItem('currentUser');
+          if (userStr) this.currentUser = JSON.parse(userStr);
+        } catch {}
+      }
+    }
   }
 
   get searchParams(): any {
@@ -129,6 +155,7 @@ export class RoleComponent implements OnInit {
   openCreateModal(): void {
     this.submitted = false;
     this.roleForm.reset();
+    this.rejectedReason = null;
     this.modalRef = this.modalService.show(this.createTemplateRef, { class: 'modal-lg' });
   }
 
@@ -208,6 +235,7 @@ export class RoleComponent implements OnInit {
       name: item.name,
       description: item.description
     });
+    this.rejectedReason = item.status === 'Rejected' ? item.rejectReason : null;
     this.modalRef = this.modalService.show(this.editTemplateRef, { class: 'modal-lg' });
   }
 
@@ -246,6 +274,70 @@ export class RoleComponent implements OnInit {
       },
       error: () => {
         this.toastService.error('Gửi yêu cầu xóa thất bại!');
+      }
+    });
+  }
+
+  saveDraftRole(): void {
+    this.submitted = true;
+    if (this.roleForm.invalid) return;
+    const payload = {
+      ...this.roleForm.value,
+      status: 'Draft',
+      requestedBy: this.currentUser?.username || 'UNKNOWN',
+      requestedDate: new Date()
+    };
+    this.roleService.createRole(payload).subscribe({
+      next: () => {
+        this.toastService.success('Lưu nháp vai trò thành công!');
+        this.modalRef?.hide();
+        this.roleForm.reset();
+        this.submitted = false;
+        this.getItems();
+      },
+      error: (err) => {
+        let errorMsg = 'Lưu nháp thất bại!';
+        const apiMsg = err?.error?.message?.toLowerCase();
+        if (apiMsg?.includes('role code already exists')) {
+          errorMsg = 'Mã vai trò đã tồn tại';
+        }
+        this.toastService.error(errorMsg);
+      }
+    });
+  }
+
+  openSubmitConfirm(): void {
+    this.showSubmitConfirm = true;
+  }
+  closeSubmitConfirm(): void {
+    this.showSubmitConfirm = false;
+  }
+  submitRoleForApproval(): void {
+    this.submitted = true;
+    if (this.roleForm.invalid) return;
+    const payload = {
+      ...this.roleForm.value,
+      status: 'Pending',
+      requestedBy: this.currentUser?.username || 'UNKNOWN',
+      requestedDate: new Date()
+    };
+    this.roleService.createRole(payload).subscribe({
+      next: () => {
+        this.toastService.success('Gửi yêu cầu phê duyệt thành công!');
+        this.modalRef?.hide();
+        this.roleForm.reset();
+        this.submitted = false;
+        this.getItems();
+        this.showSubmitConfirm = false;
+      },
+      error: (err) => {
+        let errorMsg = 'Gửi yêu cầu thất bại!';
+        const apiMsg = err?.error?.message?.toLowerCase();
+        if (apiMsg?.includes('role code already exists')) {
+          errorMsg = 'Mã vai trò đã tồn tại';
+        }
+        this.toastService.error(errorMsg);
+        this.showSubmitConfirm = false;
       }
     });
   }
