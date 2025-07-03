@@ -342,4 +342,14 @@ export class RoleComponent implements OnInit {
     const value = event.target.value.toUpperCase().replace(/\s+/g, '');
     this.roleForm.get(controlName)?.setValue(value, { emitEvent: false });
   }
+
+  statusLabel(status: string): string {
+    switch ((status || '').toUpperCase()) {
+      case 'DRF': return 'Nháp';
+      case 'UNA': return 'Chờ duyệt';
+      case 'AUT': return 'Đã duyệt';
+      case 'REJ': return 'Từ chối';
+      default: return status;
+    }
+  }
 }

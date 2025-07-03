@@ -88,13 +88,16 @@
                     <td>{{ item.name }}</td>
                     <td>{{ item.description }}</td>
                     <td>
-                      <span [ngClass]="{
-                        'badge badge-soft-warning': item.status === 'Pending',
-                        'badge badge-soft-success': item.status === 'Approved',
-                        'badge badge-soft-danger': item.status === 'Rejected',
-                        'badge badge-soft-secondary': item.status === 'Draft'
-                      }">
-                        {{ item.status }}
+                      <span 
+                        class="badge font-size-11"
+                        [ngClass]="{
+                          'badge-soft-secondary': (item.status || '').toUpperCase() === 'DRF',
+                          'badge-soft-warning': (item.status || '').toUpperCase() === 'UNA',
+                          'badge-soft-success': (item.status || '').toUpperCase() === 'AUT',
+                          'badge-soft-danger': (item.status || '').toUpperCase() === 'REJ'
+                        }"
+                      >
+                        {{ statusLabel(item.status) }}
                       </span>
                     </td>
                     <td>{{ item.requestedBy }}</td>
@@ -206,12 +209,12 @@
         <label class="form-label fw-bold text-muted">Trạng thái</label>
         <div class="text-dark ps-1">
           <span [ngClass]="{
-            'badge badge-soft-warning': selectedItem?.status === 'Pending',
-            'badge badge-soft-success': selectedItem?.status === 'Approved',
-            'badge badge-soft-danger': selectedItem?.status === 'Rejected',
-            'badge badge-soft-secondary': selectedItem?.status === 'Draft'
-          }">
-            {{ selectedItem?.status }}
+            'badge badge-soft-secondary': (selectedItem?.status || '').toUpperCase() === 'DRF',
+            'badge badge-soft-warning': (selectedItem?.status || '').toUpperCase() === 'UNA',
+            'badge badge-soft-success': (selectedItem?.status || '').toUpperCase() === 'AUT',
+            'badge badge-soft-danger': (selectedItem?.status || '').toUpperCase() === 'REJ'
+          }" style="font-size: 3px;">
+            {{ statusLabel(selectedItem?.status) }}
           </span>
         </div>
       </div>
