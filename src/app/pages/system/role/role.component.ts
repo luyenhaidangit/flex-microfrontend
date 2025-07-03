@@ -135,8 +135,6 @@ export class RoleComponent implements OnInit {
     const code = item?.code;
     if (!code) {
       this.toastService.error('Không tìm thấy mã vai trò!');
-      this.selectedItem = item;
-      this.modalRef = this.modalService.show(template, { class: 'modal-lg' });
       return;
     }
     this.roleService.getRoleDetail(code).subscribe({
