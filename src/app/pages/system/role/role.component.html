@@ -253,7 +253,8 @@
         <div class="col-md-6 position-relative">
           <label class="form-label">Mã vai trò <span class="text-danger">*</span></label>
           <input type="text" class="form-control" formControlName="code" placeholder="Nhập mã vai trò"
-                 [ngClass]="{'is-invalid': submitted && roleForm.controls.code.errors}" />
+                 [ngClass]="{'is-invalid': submitted && roleForm.controls.code.errors}"
+                 appUpperNoSpace />
           <div *ngIf="submitted && roleForm.controls.code.errors" class="invalid-tooltip">
             <span *ngIf="roleForm.controls.code.errors.required">Mã vai trò không được để trống</span>
             <span *ngIf="roleForm.controls.code.errors.pattern">Chỉ cho phép chữ và số</span>
@@ -402,7 +403,8 @@
         <div class="col-md-6 position-relative">
           <label class="form-label">Mã vai trò <span class="text-danger">*</span></label>
           <input type="text" class="form-control" formControlName="code" placeholder="Nhập mã vai trò"
-                 [ngClass]="{'is-invalid': submitted && roleForm.controls.code.errors}" />
+                 [ngClass]="{'is-invalid': submitted && roleForm.controls.code.errors}"
+                 appUpperNoSpace />
           <div *ngIf="submitted && roleForm.controls.code.errors" class="invalid-tooltip">
             <span *ngIf="roleForm.controls.code.errors.required">Mã vai trò không được để trống</span>
             <span *ngIf="roleForm.controls.code.errors.pattern">Chỉ cho phép chữ và số</span>

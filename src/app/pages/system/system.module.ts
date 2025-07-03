@@ -19,6 +19,7 @@ import { DepartmentComponent } from './department/department.component';
 import { BranchComponent } from './branch/branch.component';
 
 import { RoleComponent } from './role/role.component';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [DepartmentComponent, BranchComponent, RoleComponent],
@@ -33,7 +34,8 @@ import { RoleComponent } from './role/role.component';
     FormsModule,
     BsDatepickerModule.forRoot(),
     PaginationModule.forRoot(),
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SharedModule
   ]
 })
 

@@ -336,4 +336,10 @@ export class RoleComponent implements OnInit {
       }
     });
   }
+
+  // Hàm xử lý input: upperCase và loại bỏ dấu cách, có thể tái sử dụng cho các input khác
+  onInputUpperNoSpace(controlName: string, event: any) {
+    const value = event.target.value.toUpperCase().replace(/\s+/g, '');
+    this.roleForm.get(controlName)?.setValue(value, { emitEvent: false });
+  }
 }
