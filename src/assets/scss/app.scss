@@ -96,3 +96,7 @@ File: Main Css File
 // @import "custom/rtl/bootstrap-rtl";
 // @import "custom/rtl/components-rtl";
 // @import "custom/rtl/pages-rtl";
+
+input:hover, textarea:hover {
+  cursor: pointer !important;
+}
