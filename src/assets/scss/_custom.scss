@@ -445,3 +445,8 @@ input::-ms-reveal {
 .group-action__right button{
     height: fit-content !important;
 }
+
+input:hover,
+textarea:hover {
+    cursor: pointer !important;
+}
