@@ -351,6 +351,24 @@ export class RoleComponent implements OnInit {
     }
   }
 
+  getStatusBadgeClass(status: string): string {
+    const s = (status || '').toUpperCase();
+    if (s === 'DRF') return 'badge badge-soft-secondary';
+    if (s === 'UNA') return 'badge badge-soft-warning';
+    if (s === 'AUT') return 'badge badge-soft-success';
+    if (s === 'REJ') return 'badge badge-soft-danger';
+    return 'badge badge-soft-light';
+  }
+
+  getStatusLabel(status: string): string {
+    const s = (status || '').toUpperCase();
+    if (s === 'DRF') return 'Nháp';
+    if (s === 'UNA') return 'Chờ duyệt';
+    if (s === 'AUT') return 'Đã duyệt';
+    if (s === 'REJ') return 'Từ chối';
+    return status;
+  }
+
   openDeleteDraftModal(): void {
     this.modalRef = this.modalService.show(this.deleteDraftModal, { class: 'modal-md' });
   }

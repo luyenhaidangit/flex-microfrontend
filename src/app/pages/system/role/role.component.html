@@ -188,8 +188,8 @@
   <div class="modal-header">
     <h5 class="modal-title text-primary fw-semibold">
       <i class="fas fa-info-circle me-2"></i>Chi tiết vai trò
-      <span *ngIf="(selectedItem?.status || '').toUpperCase() === 'DRF'" class="badge font-size-11 badge-soft-secondary ms-2" style="vertical-align: middle;">
-        NHÁP
+      <span *ngIf="selectedItem?.status" [ngClass]="getStatusBadgeClass(selectedItem?.status)" style="vertical-align: middle; font-size: 1em; font-weight: 500; margin-left: 8px;">
+        {{ getStatusLabel(selectedItem?.status) }}
       </span>
     </h5>
     <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
@@ -211,14 +211,13 @@
       <div class="col-md-6">
         <label class="form-label fw-bold text-muted">Trạng thái</label>
         <div class="text-dark ps-1">
-          <span [ngClass]="{
-            'badge badge-soft-secondary': (selectedItem?.status || '').toUpperCase() === 'DRF',
-            'badge badge-soft-warning': (selectedItem?.status || '').toUpperCase() === 'UNA',
-            'badge badge-soft-success': (selectedItem?.status || '').toUpperCase() === 'AUT',
-            'badge badge-soft-danger': (selectedItem?.status || '').toUpperCase() === 'REJ'
-          }" style="font-size: 3px;">
-            {{ statusLabel(selectedItem?.status) }}
+          <span *ngIf="selectedItem?.status; else noStatus"
+                [ngClass]="getStatusBadgeClass(selectedItem?.status)">
+            {{ getStatusLabel(selectedItem?.status) }}
           </span>
+          <ng-template #noStatus>
+            <span class="badge badge-soft-light">Không xác định</span>
+          </ng-template>
         </div>
       </div>
       <div class="col-md-6">
