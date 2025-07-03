@@ -282,12 +282,12 @@ export class RoleComponent implements OnInit {
     this.submitted = true;
     if (this.roleForm.invalid) return;
     const payload = {
-      ...this.roleForm.value,
-      status: 'Draft',
-      requestedBy: this.currentUser?.username || 'UNKNOWN',
-      requestedDate: new Date()
+      code: this.roleForm.value.code,
+      name: this.roleForm.value.name,
+      description: this.roleForm.value.description,
+      status: 'Draft'
     };
-    this.roleService.createRole(payload).subscribe({
+    this.roleService.saveDraftRole(payload).subscribe({
       next: () => {
         this.toastService.success('Lưu nháp vai trò thành công!');
         this.modalRef?.hide();
@@ -295,13 +295,8 @@ export class RoleComponent implements OnInit {
         this.submitted = false;
         this.getItems();
       },
-      error: (err) => {
-        let errorMsg = 'Lưu nháp thất bại!';
-        const apiMsg = err?.error?.message?.toLowerCase();
-        if (apiMsg?.includes('role code already exists')) {
-          errorMsg = 'Mã vai trò đã tồn tại';
-        }
-        this.toastService.error(errorMsg);
+      error: () => {
+        this.toastService.error('Lưu nháp thất bại!');
       }
     });
   }

@@ -44,4 +44,8 @@ export class RoleService {
   rejectRole(code: string, reason: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/${code}/reject`, { reason });
   }
+
+  saveDraftRole(data: any) {
+    return this.http.post<any>('/api/roles/requests/create', data);
+  }
 }
