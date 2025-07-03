@@ -45,6 +45,7 @@ export class RoleComponent implements OnInit {
   @ViewChild('deleteModal') deleteTemplateRef!: TemplateRef<any>;
   @ViewChild('approveDeleteModal') approveDeleteTemplateRef!: TemplateRef<any>;
   @ViewChild('rejectDeleteModal') rejectDeleteTemplateRef!: TemplateRef<any>;
+  @ViewChild('deleteDraftModal') deleteDraftModal!: TemplateRef<any>;
   rejectForm!: FormGroup;
   submittedReject = false;
 
@@ -351,5 +352,15 @@ export class RoleComponent implements OnInit {
       case 'REJ': return 'Từ chối';
       default: return status;
     }
+  }
+
+  openDeleteDraftModal(): void {
+    this.modalRef = this.modalService.show(this.deleteDraftModal, { class: 'modal-md' });
+  }
+
+  confirmDeleteDraft(): void {
+    // TODO: Implement draft deletion logic
+    this.toastService.info('Chức năng xoá nháp đang được phát triển.');
+    this.modalRef?.hide();
   }
 }

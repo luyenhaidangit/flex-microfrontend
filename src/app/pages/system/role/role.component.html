@@ -437,15 +437,25 @@
     </div>
     <div class="modal-footer border-top-0 d-flex justify-content-between">
       <div>
-        <button type="button" class="btn btn-secondary me-2" (click)="modalRef?.hide()">Hủy</button>
+        <button *ngIf="(selectedItem?.status || '').toUpperCase() === 'DRF'" type="button" class="btn btn-danger" (click)="openDeleteDraftModal()">
+          <i class="fas fa-trash-alt me-1"></i> Xoá nháp
+        </button>
       </div>
       <div>
-        <button type="button" class="btn btn-outline-primary me-2" (click)="saveDraftRole()">
-          <i class="fas fa-save me-1"></i> Lưu nháp
-        </button>
-        <button type="button" class="btn btn-primary" (click)="openSubmitConfirm()">
-          <i class="fas fa-paper-plane me-1"></i> Gửi duyệt
-        </button>
+        <button type="button" class="btn btn-secondary me-2" (click)="modalRef?.hide()">Hủy</button>
+        <ng-container *ngIf="(selectedItem?.status || '').toUpperCase() === 'DRF'; else normalEditBtns">
+          <button type="button" class="btn btn-outline-primary me-2" (click)="saveDraftRole()">
+            <i class="fas fa-save me-1"></i> Lưu nháp
+          </button>
+          <button type="button" class="btn btn-primary" (click)="openSubmitConfirm()">
+            <i class="fas fa-paper-plane me-1"></i> Gửi duyệt
+          </button>
+        </ng-container>
+        <ng-template #normalEditBtns>
+          <button type="button" class="btn btn-warning" (click)="submitEditRoleForm()">
+            <i class="fas fa-save me-1"></i> Lưu thay đổi
+          </button>
+        </ng-template>
       </div>
     </div>
   </form>
@@ -487,6 +497,28 @@
   <div class="modal-footer border-top-0">
     <button type="button" class="btn btn-danger" (click)="confirmDeleteRole()">
       <i class="fas fa-trash-alt me-1"></i> Xác nhận xóa
+    </button>
+    <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Hủy</button>
+  </div>
+</ng-template>
+
+<!-- Modal xác nhận xóa nháp -->
+<ng-template #deleteDraftModal>
+  <div class="modal-header">
+    <h5 class="modal-title text-danger fw-semibold">
+      <i class="fas fa-trash-alt me-2"></i>Xác nhận xoá bản nháp
+    </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+  </div>
+  <div class="modal-body px-4 py-3">
+    <div class="alert alert-warning">
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      Bạn có chắc chắn muốn xoá bản nháp này?
+    </div>
+  </div>
+  <div class="modal-footer border-top-0">
+    <button type="button" class="btn btn-danger" (click)="confirmDeleteDraft()">
+      <i class="fas fa-trash-alt me-1"></i> Xác nhận xoá
     </button>
     <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Hủy</button>
   </div>
