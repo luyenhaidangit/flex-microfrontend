@@ -48,4 +48,8 @@ export class RoleService {
   saveDraftRole(data: any) {
     return this.http.post<any>('/api/roles/requests/create', data);
   }
+
+  cancelDraftRequest(requestId: number): Observable<any> {
+    return this.http.post<any>(`/api/roles/requests/${requestId}/cancel`, {});
+  }
 }
