@@ -55,6 +55,10 @@ export class RoleComponent implements OnInit {
 
   now: Date = new Date();
 
+  // Tab navigation state
+  activeTab: 'approved' | 'pending' = 'approved';
+  pendingCount: number = 0;
+
   constructor(
     private roleService: RoleService,
     private modalService: BsModalService,
@@ -74,6 +78,14 @@ export class RoleComponent implements OnInit {
       reason: ['', Validators.required]
     });
     this.loadCurrentUser();
+  }
+
+  switchTab(tab: 'approved' | 'pending') {
+    if (this.activeTab === tab) return;
+    this.activeTab = tab;
+    // TODO: load data for the selected tab
+    // if (tab === 'approved') this.getItems();
+    // else this.getPendingRequests();
   }
 
   loadCurrentUser() {

@@ -13,6 +13,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { TabsModule } from 'ngx-bootstrap/tabs';
 
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { DepartmentComponent } from './department/department.component';
@@ -35,7 +36,8 @@ import { SharedModule } from '../../shared/shared.module';
     BsDatepickerModule.forRoot(),
     PaginationModule.forRoot(),
     ReactiveFormsModule,
-    SharedModule
+    SharedModule,
+    TabsModule.forRoot()
   ]
 })
 
