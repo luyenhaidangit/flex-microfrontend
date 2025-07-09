@@ -47,7 +47,7 @@
     <tabset class="nav-pills nav-tabs mb-3" (selectTab)="switchTab($event.heading === 'Tất cả vai trò' ? 'approved' : 'pending')">
       <tab heading="Tất cả vai trò">
         <!-- ============ TABLE ============ -->
-        <div class="table-responsive mt-3">
+        <div class="table-responsive">
           <ng-container *ngIf="isLoading; else tableContent">
             <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
               <thead>
