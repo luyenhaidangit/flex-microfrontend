@@ -43,7 +43,7 @@
     </div>
   </div>
 
-  <tabset [justified]="true" class="nav-tabs mb-3" (selectTab)="switchTab($event.heading === 'Tất cả vai trò' ? 'approved' : 'pending')">
+  <tabset [justified]="true" class="nav-pills nav-tabs mb-3" (selectTab)="switchTab($event.heading === 'Tất cả vai trò' ? 'approved' : 'pending')">
     <tab heading="Tất cả vai trò">
       <!-- ============ TABLE ============ -->
       <div class="table-responsive">
