@@ -1,3 +1,6 @@
+// $white: #fff;
+// @import 'src/assets/scss/_variables';
+
 h2 {
   color: #1976d2;
 }
@@ -64,4 +67,65 @@ h2 {
 .badge-soft-danger {
   background-color: #f8d7da;
   color: #721c24;
+}
+
+.role-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  padding-bottom: 12px;
+}
+
+.role-header .form-control,
+.role-header .form-select {
+  min-height: 40px;
+  border-radius: 6px;
+}
+
+.role-header .btn-primary {
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(85,110,230,0.08);
+  font-weight: 600;
+}
+
+.role-header .btn-primary:active,
+.role-header .btn-primary:focus {
+  box-shadow: 0 0 0 2px rgba(85,110,230,0.15);
+}
+
+.action-icon {
+  font-size: 18px !important;
+  margin-right: 8px;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
+  border-radius: 4px;
+  padding: 4px;
+}
+.action-icon:last-child { margin-right: 0; }
+.action-icon:hover {
+  background: #f3f6fd;
+  transform: scale(1.1);
+}
+
+.table thead th {
+  font-weight: 700;
+  background: #f8f9fa;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.table tbody tr:hover {
+  background: #f6f8ff;
+}
+
+@media (max-width: 991.98px) {
+  .role-header .row > div {
+    margin-bottom: 10px;
+  }
+  .role-header .btn-primary {
+    width: 100%;
+    margin-top: 8px;
+  }
 }

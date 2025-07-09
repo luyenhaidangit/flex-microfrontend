@@ -28,7 +28,9 @@ export class RoleComponent implements OnInit {
     pageSize  : 10,
     totalPages: 0,
     totalItems: 0,
-    keyword   : ''
+    keyword   : '',
+    status    : '', // fix lỗi thiếu status
+    createdDate: null // fix lỗi thiếu createdDate
   };
 
   DEFAULT_PER_PAGE_OPTIONS = DEFAULT_PER_PAGE_OPTIONS;
