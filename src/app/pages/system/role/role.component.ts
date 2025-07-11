@@ -414,6 +414,14 @@ export class RoleComponent implements OnInit {
     return status;
   }
 
+  getRequestTypeLabel(requestType: string): string {
+    const type = (requestType || '').toUpperCase();
+    if (type === 'CREATE') return 'Tạo mới';
+    if (type === 'UPDATE') return 'Cập nhật';
+    if (type === 'DELETE') return 'Xoá';
+    return requestType;
+  }
+
   openDeleteDraftModal(): void {
     this.modalRef = this.modalService.show(this.deleteDraftModal, { class: 'modal-md' });
   }

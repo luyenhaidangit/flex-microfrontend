@@ -209,6 +209,7 @@
                   <th>Tên vai trò</th>
                   <th>Mô tả</th>
                   <th>Trạng thái</th>
+                  <th>Loại yêu cầu</th>
                   <th>Người tạo</th>
                   <th>Ngày tạo</th>
                   <th>Ngày duyệt</th>
@@ -221,6 +222,7 @@
                   <td><app-skeleton width="120px" height="20px"></app-skeleton></td>
                   <td><app-skeleton width="180px" height="20px"></app-skeleton></td>
                   <td><app-skeleton width="60px" height="20px"></app-skeleton></td>
+                  <td><app-skeleton width="80px" height="20px"></app-skeleton></td>
                   <td><app-skeleton width="100px" height="20px"></app-skeleton></td>
                   <td><app-skeleton width="100px" height="20px"></app-skeleton></td>
                   <td><app-skeleton width="100px" height="20px"></app-skeleton></td>
@@ -237,6 +239,7 @@
                   <th>Tên vai trò</th>
                   <th>Mô tả</th>
                   <th>Trạng thái</th>
+                  <th>Loại yêu cầu</th>
                   <th>Người tạo</th>
                   <th>Ngày tạo</th>
                   <th>Ngày duyệt</th>
@@ -251,6 +254,17 @@
                   <td>
                     <span class="badge font-size-11 badge-soft-warning">
                       {{ statusLabel(item.status) }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="badge font-size-11"
+                      [ngClass]="{
+                        'badge-soft-success': (item.requestType || '').toUpperCase() === 'CREATE',
+                        'badge-soft-warning': (item.requestType || '').toUpperCase() === 'UPDATE',
+                        'badge-soft-danger': (item.requestType || '').toUpperCase() === 'DELETE'
+                      }"
+                    >
+                      {{ getRequestTypeLabel(item.requestType) }}
                     </span>
                   </td>
                   <td>{{ item.requestedBy }}</td>
@@ -269,7 +283,7 @@
                   </td>
                 </tr>
                 <tr *ngIf="pendingItems.length === 0">
-                  <td colspan="8" class="text-center">Không có yêu cầu chờ duyệt</td>
+                  <td colspan="9" class="text-center">Không có yêu cầu chờ duyệt</td>
                 </tr>
               </tbody>
             </table>
