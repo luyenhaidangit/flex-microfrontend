@@ -504,6 +504,15 @@ export class RoleComponent implements OnInit {
 
   hasChanges(field: string): boolean {
     if (!this.requestDetailData?.oldData || !this.requestDetailData?.newData) return false;
+    
+    if (field === 'permissions') {
+      // Compare permissions arrays
+      const oldPerms = this.getPermissions(this.requestDetailData.oldData);
+      const newPerms = this.getPermissions(this.requestDetailData.newData);
+      return oldPerms.length !== newPerms.length || 
+             JSON.stringify(oldPerms) !== JSON.stringify(newPerms);
+    }
+    
     return this.requestDetailData.oldData[field] !== this.requestDetailData.newData[field];
   }
 
@@ -522,7 +531,32 @@ export class RoleComponent implements OnInit {
   getChangedFieldsCount(): number {
     if (!this.requestDetailData?.oldData || !this.requestDetailData?.newData) return 0;
     
-    const fields = ['code', 'name', 'description', 'status'];
+    const fields = ['roleCode', 'roleName', 'description'];
     return fields.filter(field => this.hasChanges(field)).length;
+  }
+
+  // New helper methods for the actual API response structure
+  getRoleCode(data: any): string {
+    return data?.roleCode || '—';
+  }
+
+  getRoleName(data: any): string {
+    return data?.roleName || '—';
+  }
+
+  getPermissions(data: any): any[] {
+    return data?.permissions || [];
+  }
+
+  getCreatedBy(): string {
+    return this.requestDetailData?.createdBy || '—';
+  }
+
+  getCreatedDate(): string {
+    return this.requestDetailData?.createdDate || '—';
+  }
+
+  getRequestType(): string {
+    return this.requestDetailData?.type || '—';
   }
 }
