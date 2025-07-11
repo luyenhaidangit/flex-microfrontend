@@ -683,11 +683,7 @@
                  </div>
                  <div class="col-6">
                    <small class="text-muted">Loại yêu cầu:</small>
-                   <div>
-                     <span [ngClass]="getRequestTypeBadgeClass(getRequestType())">
-                       {{ getRequestTypeLabel(getRequestType()) }}
-                     </span>
-                   </div>
+                  <div class="fw-bold">{{ getRequestTypeLabel(getRequestType()) }}</div>
                  </div>
                </div>
             </div>
