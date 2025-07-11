@@ -19,6 +19,7 @@ export class RoleComponent implements OnInit {
   ];
 
   items: any[] = [];
+  pendingItems: any[] = []; // Danh sách vai trò chờ duyệt
   selectedItem: any = null;
   modalRef?: BsModalRef;
   isLoading = false;
@@ -83,11 +84,21 @@ export class RoleComponent implements OnInit {
   }
 
   switchTab(tab: 'approved' | 'pending' | 'draft') {
-    if (this.activeTab === tab) return;
+    console.log('switchTab', tab); 
+    // Luôn gọi lại API khi chuyển tab, kể cả khi tab không đổi
     this.activeTab = tab;
-    // TODO: load data for the selected tab
-    // if (tab === 'approved') this.getItems();
-    // else this.getPendingRequests();
+    this.pagingState.pageIndex = 1; // Reset về trang đầu tiên khi chuyển tab
+    this.search();
+    // Có thể thêm logic cho draft nếu cần
+  }
+
+  debugTab(event: any) {
+    console.log('Tab event:', event);
+    let tab: 'approved' | 'pending' | 'draft' = 'approved';
+    if (event.heading === 'Tất cả') tab = 'approved';
+    else if (event.heading === 'Chờ duyệt') tab = 'pending';
+    else if (event.heading === 'Nháp') tab = 'draft';
+    this.switchTab(tab);
   }
 
   loadCurrentUser() {
@@ -113,7 +124,9 @@ export class RoleComponent implements OnInit {
 
   getItems(): void {
     this.isLoading = true;
-    this.roleService.getRoles(this.searchParams)
+    // Chỉ lấy vai trò đã duyệt cho tab 'Tất cả'
+    const params = { ...this.searchParams, status: 'AUT' };
+    this.roleService.getRoles(params)
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
@@ -134,15 +147,42 @@ export class RoleComponent implements OnInit {
       });
   }
 
+  getPendingItems(): void {
+    this.isLoading = true;
+    // Giả sử API lấy vai trò chờ duyệt là getRoles với status='UNA' (chờ duyệt)
+    const params = { ...this.searchParams, status: 'UNA' };
+    this.roleService.getRoles(params)
+      .subscribe({
+        next: (res) => {
+          if (res?.isSuccess) {
+            this.pendingItems = res.data?.items ?? [];
+          } else {
+            this.pendingItems = [];
+          }
+          this.isLoading = false;
+        },
+        error: () => {
+          this.pendingItems = [];
+          this.isLoading = false;
+        }
+      });
+  }
+
+  // Thay đổi các hàm tìm kiếm/phân trang để gọi đúng API theo tab
+  search(): void {
+    if (this.activeTab === 'pending') this.getPendingItems();
+    else this.getItems();
+  }
+
   changePage(page: number): void {
     if (page < 1 || page > this.pagingState.totalPages || page === this.pagingState.pageIndex) return;
     this.pagingState.pageIndex = page;
-    this.getItems();
+    this.search();
   }
 
   changePageSize(): void {
     this.pagingState.pageIndex = 1;
-    this.getItems();
+    this.search();
   }
 
   openDetailModal(template: TemplateRef<any>, item: any): void {
