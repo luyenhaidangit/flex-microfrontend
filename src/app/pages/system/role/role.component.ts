@@ -92,15 +92,6 @@ export class RoleComponent implements OnInit {
     // Có thể thêm logic cho draft nếu cần
   }
 
-  debugTab(event: any) {
-    console.log('Tab event:', event);
-    let tab: 'approved' | 'pending' | 'draft' = 'approved';
-    if (event.heading === 'Tất cả') tab = 'approved';
-    else if (event.heading === 'Chờ duyệt') tab = 'pending';
-    else if (event.heading === 'Nháp') tab = 'draft';
-    this.switchTab(tab);
-  }
-
   loadCurrentUser() {
     // Try to get from service, fallback to localStorage
     this.currentUser = this.authService.GetCurrentUser();

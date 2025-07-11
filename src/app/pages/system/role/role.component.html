@@ -55,8 +55,8 @@
   </div>
 
   <div class="bg-white rounded shadow-sm p-3">
-    <tabset class="nav-pills nav-tabs mb-3" (selectTab)="debugTab('')">
-      <tab heading="Tất cả" (click)="debugTab('')">
+    <tabset class="nav-pills nav-tabs mb-3">
+      <tab heading="Tất cả" (selectTab)="switchTab($event.heading === 'Tất cả' ? 'approved' : $event.heading === 'Nháp' ? 'draft' : 'pending')">
         <!-- ============ TABLE ============ -->
         <div class="table-responsive">
           <ng-container *ngIf="isLoading; else tableContent">
@@ -199,7 +199,7 @@
           </div>
         </div>
       </tab>
-      <tab heading="Chờ duyệt">
+      <tab heading="Chờ duyệt" (selectTab)="switchTab($event.heading === 'Tất cả' ? 'approved' : $event.heading === 'Nháp' ? 'draft' : 'pending')">
         <!-- Hiển thị bảng danh sách vai trò chờ duyệt -->
         <div class="table-responsive">
           <ng-container *ngIf="isLoading; else pendingTableContent">
@@ -277,7 +277,7 @@
           </ng-template>
         </div>
       </tab>
-      <tab heading="Nháp">
+      <tab heading="Nháp" (selectTab)="switchTab($event.heading === 'Tất cả' ? 'approved' : $event.heading === 'Nháp' ? 'draft' : 'pending')">
         <div class="alert alert-secondary">Danh sách vai trò ở trạng thái <b>Nháp</b> sẽ hiển thị ở đây.</div>
       </tab>
     </tabset>
