@@ -55,8 +55,8 @@
   </div>
 
   <div class="bg-white rounded shadow-sm p-3">
-    <tabset class="nav-pills nav-tabs mb-3" (selectTab)="switchTab($event.heading === 'Tất cả vai trò' ? 'approved' : 'pending')">
-      <tab heading="Tất cả vai trò">
+    <tabset class="nav-pills nav-tabs mb-3" (selectTab)="switchTab($event.heading === 'Tất cả' ? 'approved' : 'pending')">
+      <tab heading="Tất cả">
         <!-- ============ TABLE ============ -->
         <div class="table-responsive">
           <ng-container *ngIf="isLoading; else tableContent">
@@ -199,11 +199,7 @@
           </div>
         </div>
       </tab>
-      <tab>
-        <ng-template tabHeading>
-          Yêu cầu phê duyệt
-          <span class="badge bg-warning ms-1" *ngIf="pendingCount > 0">{{pendingCount}}</span>
-        </ng-template>
+      <tab heading="Chờ duyệt">
         <!-- TODO: Hiển thị bảng yêu cầu phê duyệt ở đây -->
         <div class="alert alert-info">Chức năng danh sách yêu cầu phê duyệt sẽ được bổ sung.</div>
       </tab>
