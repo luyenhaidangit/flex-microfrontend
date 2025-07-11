@@ -55,7 +55,7 @@
   </div>
 
   <div class="bg-white rounded shadow-sm p-3">
-    <tabset class="nav-pills nav-tabs mb-3" (selectTab)="switchTab($event.heading === 'Tất cả' ? 'approved' : 'pending')">
+    <tabset class="nav-pills nav-tabs mb-3" (selectTab)="switchTab($event.heading === 'Tất cả' ? 'approved' : $event.heading === 'Nháp' ? 'draft' : 'pending')">
       <tab heading="Tất cả">
         <!-- ============ TABLE ============ -->
         <div class="table-responsive">
@@ -202,6 +202,9 @@
       <tab heading="Chờ duyệt">
         <!-- TODO: Hiển thị bảng yêu cầu phê duyệt ở đây -->
         <div class="alert alert-info">Chức năng danh sách yêu cầu phê duyệt sẽ được bổ sung.</div>
+      </tab>
+      <tab heading="Nháp">
+        <div class="alert alert-secondary">Danh sách vai trò ở trạng thái <b>Nháp</b> sẽ hiển thị ở đây.</div>
       </tab>
     </tabset>
   </div>

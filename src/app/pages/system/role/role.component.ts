@@ -58,7 +58,7 @@ export class RoleComponent implements OnInit {
   now: Date = new Date();
 
   // Tab navigation state
-  activeTab: 'approved' | 'pending' = 'approved';
+  activeTab: 'approved' | 'pending' | 'draft' = 'approved';
   pendingCount: number = 0;
 
   constructor(
@@ -82,7 +82,7 @@ export class RoleComponent implements OnInit {
     this.loadCurrentUser();
   }
 
-  switchTab(tab: 'approved' | 'pending') {
+  switchTab(tab: 'approved' | 'pending' | 'draft') {
     if (this.activeTab === tab) return;
     this.activeTab = tab;
     // TODO: load data for the selected tab
