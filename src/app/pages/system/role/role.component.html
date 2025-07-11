@@ -56,7 +56,7 @@
 
   <div class="bg-white rounded shadow-sm p-3">
     <tabset class="nav-pills nav-tabs mb-3">
-      <tab heading="Tất cả" (selectTab)="switchTab($event.heading === 'Tất cả' ? 'approved' : $event.heading === 'Nháp' ? 'draft' : 'pending')">
+      <tab heading="Đã duyệt" (selectTab)="switchTab('approved')">
         <!-- ============ TABLE ============ -->
         <div class="table-responsive">
           <ng-container *ngIf="isLoading; else tableContent">
@@ -199,8 +199,7 @@
           </div>
         </div>
       </tab>
-      <tab heading="Chờ duyệt" (selectTab)="switchTab($event.heading === 'Tất cả' ? 'approved' : $event.heading === 'Nháp' ? 'draft' : 'pending')">
-        <!-- Hiển thị bảng danh sách vai trò chờ duyệt -->
+      <tab heading="Chờ duyệt" (selectTab)="switchTab('pending')">
         <div class="table-responsive">
           <ng-container *ngIf="isLoading; else pendingTableContent">
             <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
@@ -277,12 +276,11 @@
           </ng-template>
         </div>
       </tab>
-      <tab heading="Nháp" (selectTab)="switchTab($event.heading === 'Tất cả' ? 'approved' : $event.heading === 'Nháp' ? 'draft' : 'pending')">
+      <tab heading="Nháp" (selectTab)="switchTab('draft')">
         <div class="alert alert-secondary">Danh sách vai trò ở trạng thái <b>Nháp</b> sẽ hiển thị ở đây.</div>
       </tab>
     </tabset>
   </div>
-
 </div>
 
 <!-- Modal chi tiết vai trò -->
