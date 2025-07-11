@@ -49,6 +49,7 @@ export class RoleComponent implements OnInit {
   @ViewChild('approveDeleteModal') approveDeleteTemplateRef!: TemplateRef<any>;
   @ViewChild('rejectDeleteModal') rejectDeleteTemplateRef!: TemplateRef<any>;
   @ViewChild('deleteDraftModal') deleteDraftModal!: TemplateRef<any>;
+  @ViewChild('requestDetailModal') requestDetailTemplateRef!: TemplateRef<any>;
   rejectForm!: FormGroup;
   submittedReject = false;
 
@@ -61,6 +62,10 @@ export class RoleComponent implements OnInit {
   // Tab navigation state
   activeTab: 'approved' | 'pending' | 'draft' = 'approved';
   pendingCount: number = 0;
+
+  // Enhanced detail modal properties
+  requestDetailData: any = null;
+  isLoadingRequestDetail = false;
 
   constructor(
     private roleService: RoleService,
@@ -191,6 +196,40 @@ export class RoleComponent implements OnInit {
         this.toastService.error('Không thể lấy thông tin chi tiết vai trò!');
         this.selectedItem = item;
         this.modalRef = this.modalService.show(template, { class: 'modal-lg' });
+      }
+    });
+  }
+
+  // Enhanced detail modal for role requests with comparison
+  openRequestDetailModal(item: any): void {
+    const requestId = item?.requestId || item?.id;
+    if (!requestId) {
+      this.toastService.error('Không tìm thấy ID yêu cầu!');
+      return;
+    }
+
+    this.isLoadingRequestDetail = true;
+    this.requestDetailData = null;
+    this.selectedItem = item;
+
+    this.roleService.getRoleRequestDetail(requestId).subscribe({
+      next: (res) => {
+        if (res?.isSuccess) {
+          this.requestDetailData = res.data;
+          this.modalRef = this.modalService.show(this.requestDetailTemplateRef, { 
+            class: 'modal-xl',
+            backdrop: 'static',
+            keyboard: false
+          });
+        } else {
+          this.toastService.error('Không thể lấy thông tin chi tiết yêu cầu!');
+        }
+        this.isLoadingRequestDetail = false;
+      },
+      error: (err) => {
+        console.error('Error fetching request detail:', err);
+        this.toastService.error('Không thể lấy thông tin chi tiết yêu cầu!');
+        this.isLoadingRequestDetail = false;
       }
     });
   }
@@ -430,5 +469,60 @@ export class RoleComponent implements OnInit {
     // TODO: Implement draft deletion logic
     this.toastService.info('Chức năng xoá nháp đang được phát triển.');
     this.modalRef?.hide();
+  }
+
+  // Helper methods for enhanced detail modal
+  getRequestTypeIcon(requestType: string): string {
+    const type = (requestType || '').toUpperCase();
+    switch (type) {
+      case 'CREATE': return 'fas fa-plus-circle';
+      case 'UPDATE': return 'fas fa-edit';
+      case 'DELETE': return 'fas fa-trash-alt';
+      default: return 'fas fa-question-circle';
+    }
+  }
+
+  getRequestTypeColor(requestType: string): string {
+    const type = (requestType || '').toUpperCase();
+    switch (type) {
+      case 'CREATE': return 'text-success';
+      case 'UPDATE': return 'text-warning';
+      case 'DELETE': return 'text-danger';
+      default: return 'text-muted';
+    }
+  }
+
+  getRequestTypeBadgeClass(requestType: string): string {
+    const type = (requestType || '').toUpperCase();
+    switch (type) {
+      case 'CREATE': return 'badge-soft-success';
+      case 'UPDATE': return 'badge-soft-warning';
+      case 'DELETE': return 'badge-soft-danger';
+      default: return 'badge-soft-light';
+    }
+  }
+
+  hasChanges(field: string): boolean {
+    if (!this.requestDetailData?.oldData || !this.requestDetailData?.newData) return false;
+    return this.requestDetailData.oldData[field] !== this.requestDetailData.newData[field];
+  }
+
+  getFieldValue(data: any, field: string): string {
+    return data?.[field] || '—';
+  }
+
+  getFieldDisplayValue(data: any, field: string): string {
+    const value = this.getFieldValue(data, field);
+    if (field === 'status') {
+      return this.getStatusLabel(value);
+    }
+    return value;
+  }
+
+  getChangedFieldsCount(): number {
+    if (!this.requestDetailData?.oldData || !this.requestDetailData?.newData) return 0;
+    
+    const fields = ['code', 'name', 'description', 'status'];
+    return fields.filter(field => this.hasChanges(field)).length;
   }
 }

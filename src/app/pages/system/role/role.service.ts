@@ -18,6 +18,11 @@ export class RoleService {
     return this.http.get<any>(`${this.apiUrl}/${code}`);
   }
 
+  // New method to get role request details for comparison
+  getRoleRequestDetail(requestId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/role-requests/${requestId}`);
+  }
+
   getAllRoles(): Observable<any[]> {
     return this.http.get<any>(this.apiUrl, {
       params: { pageIndex: 1, pageSize: 1000 }
