@@ -4,41 +4,52 @@
   <div class="role-header sticky-top bg-white p-3 mb-3" style="z-index: 10;">
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-2">
       <div class="flex-grow-1"></div>
-      <div class="d-flex gap-2 ms-auto">
+      <div class="d-flex gap-2">
         <button type="button" class="btn btn-success fw-bold shadow-sm" (click)="openCreateModal()" style="min-width: 120px;">
           <i class="fas fa-plus me-1"></i> Thêm mới
         </button>
         <button type="button" class="btn btn-outline-secondary">
           <i class="fas fa-file-export me-1"></i> Xuất
         </button>
-        <button type="button" class="btn btn-outline-success">
-          <i class="fas fa-check me-1"></i> Duyệt
-        </button>
       </div>
     </div>
     <div class="row gx-3 gy-2 align-items-end">
       <div class="col-md-4 mb-2 mb-md-0">
-        <input class="form-control" type="text" placeholder="Từ khóa tìm kiếm" [(ngModel)]="pagingState.keyword">
+        <div class="form-group">
+          <label class="form-label fw-bold text-muted" for="keywordInput">Từ khóa tìm kiếm</label>
+          <input id="keywordInput" class="form-control" type="text" placeholder="Nhập từ khóa..." [(ngModel)]="pagingState.keyword">
+        </div>
       </div>
       <div class="col-md-3 mb-2 mb-md-0">
-        <select class="form-select" [(ngModel)]="pagingState.status">
-          <option value="">Tất cả trạng thái</option>
-          <option value="DRF">Nháp</option>
-          <option value="UNA">Chờ duyệt</option>
-          <option value="AUT">Đã duyệt</option>
-          <option value="REJ">Từ chối</option>
-        </select>
+        <div class="form-group">
+          <label class="form-label fw-bold text-muted" for="statusSelect">Trạng thái</label>
+          <select id="statusSelect" class="form-select" [(ngModel)]="pagingState.status">
+            <option value="">Tất cả trạng thái</option>
+            <option value="DRF">Nháp</option>
+            <option value="UNA">Chờ duyệt</option>
+            <option value="AUT">Đã duyệt</option>
+            <option value="REJ">Từ chối</option>
+          </select>
+        </div>
       </div>
-      <div class="col-md-3 mb-2 mb-md-0 position-relative">
-        <span class="position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); color: #bfc9da; pointer-events: none;">
-          <i class="bx bx-calendar"></i>
-        </span>
-        <input type="text" class="form-control ps-5" placeholder="Ngày tạo" bsDatepicker [(ngModel)]="pagingState.createdDate" [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD/MM/YYYY' }">
+      <div class="col-md-3 mb-2 mb-md-0">
+        <div class="form-group">
+          <label class="form-label fw-bold text-muted" for="createdDateInput">Ngày tạo</label>
+          <div class="position-relative">
+            <span class="position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); color: #bfc9da; pointer-events: none;">
+              <i class="bx bx-calendar"></i>
+            </span>
+            <input id="createdDateInput" type="text" class="form-control ps-5" placeholder="Chọn ngày..." bsDatepicker [(ngModel)]="pagingState.createdDate" [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD/MM/YYYY' }">
+          </div>
+        </div>
       </div>
       <div class="col-md-2">
-        <button class="btn btn-primary w-100" (click)="getItems()">
-          <i class="bx bx-search-alt-2"></i> Tìm kiếm
-        </button>
+        <div class="form-group">
+          <label class="form-label d-block" style="visibility:hidden">Tìm kiếm</label>
+          <button class="btn btn-primary w-100" (click)="getItems()">
+            <i class="bx bx-search-alt-2"></i> Tìm kiếm
+          </button>
+        </div>
       </div>
     </div>
   </div>
