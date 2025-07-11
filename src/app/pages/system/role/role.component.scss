@@ -166,3 +166,28 @@ h2 {
 :host ::ng-deep .tab-content {
   margin-top: 1rem;
 }
+
+.summary-block {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  min-height: 64px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  margin-bottom: 1rem;
+  i {
+    font-size: 1.7rem;
+    margin-right: 1rem;
+    opacity: 0.85;
+  }
+  .fw-bold {
+    font-size: 1.1rem;
+    margin-right: 0.5rem;
+  }
+  b {
+    font-weight: 700;
+  }
+}
