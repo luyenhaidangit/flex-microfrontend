@@ -42,12 +42,12 @@ export class RoleService {
     return this.http.delete<any>(`${this.apiUrl}/${code}`);
   }
 
-  approveRole(code: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/${code}/approve`, {});
+  approveRole(requestId: string | number): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/requests/${requestId}/approve`, {});
   }
 
-  rejectRole(code: string, reason: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/${code}/reject`, { reason });
+  rejectRole(requestId: string | number, reason: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/requests/${requestId}/reject`, { reason });
   }
 
   saveDraftRole(data: any) {

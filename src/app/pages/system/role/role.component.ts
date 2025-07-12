@@ -166,8 +166,12 @@ export class RoleComponent implements OnInit {
 
   // Thay đổi các hàm tìm kiếm/phân trang để gọi đúng API theo tab
   search(): void {
-    if (this.activeTab === 'pending') this.getPendingItems();
-    else this.getItems();
+    if (this.activeTab === 'pending') {
+      this.getPendingItems();
+    } else if (this.activeTab === 'approved') {
+      this.getItems();
+    }
+    // Có thể thêm logic cho draft nếu cần
   }
 
   changePage(page: number): void {
@@ -272,22 +276,32 @@ export class RoleComponent implements OnInit {
   }
 
   approveRole(): void {
-    const code = this.selectedItem?.code;
-    if (!code) return;
-    this.roleService.approveRole(code).subscribe({
+    // Lấy requestId từ requestDetailData hoặc selectedItem
+    const requestId = this.requestDetailData?.requestId || this.selectedItem?.requestId || this.selectedItem?.id;
+    if (!requestId) {
+      this.toastService.error('Không tìm thấy ID yêu cầu!');
+      return;
+    }
+
+    this.roleService.approveRole(requestId).subscribe({
       next: () => {
         this.toastService.success('Phê duyệt yêu cầu thành công!');
         this.modalRef?.hide();
-        this.getItems();
+        // Reload data dựa trên tab hiện tại
+        this.search();
       },
-      error: () => {
+      error: (err) => {
+        console.error('Approve role error:', err);
         this.toastService.error('Phê duyệt thất bại!');
       }
     });
   }
 
-  openRejectModal(item: any): void {
-    this.selectedItem = item;
+  openRejectModal(item?: any): void {
+    // Nếu không có item được truyền, sử dụng selectedItem hiện tại (từ modal chi tiết)
+    if (item) {
+      this.selectedItem = item;
+    }
     this.submittedReject = false;
     this.rejectForm.reset();
     this.modalRef = this.modalService.show(this.rejectTemplateRef, { class: 'modal-md' });
@@ -296,15 +310,23 @@ export class RoleComponent implements OnInit {
   confirmRejectRole(): void {
     this.submittedReject = true;
     if (this.rejectForm.invalid) return;
-    const code = this.selectedItem?.code;
-    if (!code) return;
-    this.roleService.rejectRole(code, this.rejectForm.value.reason).subscribe({
+    
+    // Lấy requestId từ requestDetailData hoặc selectedItem
+    const requestId = this.requestDetailData?.requestId || this.selectedItem?.requestId || this.selectedItem?.id;
+    if (!requestId) {
+      this.toastService.error('Không tìm thấy ID yêu cầu!');
+      return;
+    }
+
+    this.roleService.rejectRole(requestId, this.rejectForm.value.reason).subscribe({
       next: () => {
         this.toastService.success('Đã từ chối yêu cầu thành công!');
         this.modalRef?.hide();
-        this.getItems();
+        // Reload data dựa trên tab hiện tại
+        this.search();
       },
-      error: () => {
+      error: (err) => {
+        console.error('Reject role error:', err);
         this.toastService.error('Từ chối yêu cầu thất bại!');
       }
     });
@@ -544,7 +566,7 @@ export class RoleComponent implements OnInit {
     return data?.roleName || '—';
   }
 
-  getDescription(data: any): string {
+  getRoleDescription(data: any): string {
     return data?.description || '—';
   }
 
