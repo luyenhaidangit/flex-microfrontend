@@ -460,10 +460,12 @@
     </div>
   </div>
   <div class="modal-footer border-top-0">
-    <button type="button" class="btn btn-success" (click)="approveRole()">
-      <i class="fas fa-check me-1"></i> Duyệt yêu cầu
+    <button type="button" class="btn btn-success" (click)="approveRole()" [disabled]="isApproving">
+      <i class="fas fa-check me-1" *ngIf="!isApproving"></i>
+      <span class="spinner-border spinner-border-sm me-1" *ngIf="isApproving" role="status" aria-hidden="true"></span>
+      {{ isApproving ? 'Đang duyệt...' : 'Duyệt yêu cầu' }}
     </button>
-    <button type="button" class="btn btn-outline-secondary" (click)="modalRef?.hide()">Hủy</button>
+    <button type="button" class="btn btn-outline-secondary" (click)="closeModal()" [disabled]="isApproving">Hủy</button>
   </div>
 </ng-template>
 
@@ -492,10 +494,12 @@
       </div>
     </div>
     <div class="modal-footer border-top-0">
-      <button type="submit" class="btn btn-danger">
-        <i class="fas fa-times me-1"></i> Xác nhận từ chối
+      <button type="submit" class="btn btn-danger" [disabled]="isRejecting">
+        <i class="fas fa-times me-1" *ngIf="!isRejecting"></i>
+        <span class="spinner-border spinner-border-sm me-1" *ngIf="isRejecting" role="status" aria-hidden="true"></span>
+        {{ isRejecting ? 'Đang từ chối...' : 'Xác nhận từ chối' }}
       </button>
-      <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Hủy</button>
+      <button type="button" class="btn btn-secondary" (click)="closeModal()" [disabled]="isRejecting">Hủy</button>
     </div>
   </form>
 </ng-template>
@@ -857,22 +861,21 @@
   </div>
 
   <div class="modal-footer border-top-0">
-    <!-- Action buttons based on request type and status -->
     <div class="d-flex justify-content-between w-100">
       <div>
-        <button type="button" class="btn btn-outline-secondary" (click)="modalRef?.hide()">
+        <button type="button" class="btn btn-outline-secondary" (click)="closeModal()" [disabled]="isApproving || isRejecting">
           <i class="fas fa-times me-1"></i> Đóng
         </button>
       </div>
       
-      <div *ngIf="requestDetailData?.status === 'UNA'">
-        <button type="button" class="btn btn-success me-2" (click)="approveRole()">
-          <i class="fas fa-check me-1"></i> Duyệt
+        <button type="button" class="btn btn-success me-2" (click)="approveRole()" [disabled]="isApproving || isRejecting">
+          <i class="fas fa-check me-1" *ngIf="!isApproving"></i>
+          <span class="spinner-border spinner-border-sm me-1" *ngIf="isApproving" role="status" aria-hidden="true"></span>
+          {{ isApproving ? 'Đang duyệt...' : 'Duyệt' }}
         </button>
-        <button type="button" class="btn btn-danger" (click)="openRejectModal()">
+        <button type="button" class="btn btn-danger" (click)="openRejectModal()" [disabled]="isApproving || isRejecting">
           <i class="fas fa-times me-1"></i> Từ chối
         </button>
-      </div>
     </div>
   </div>
 </ng-template>

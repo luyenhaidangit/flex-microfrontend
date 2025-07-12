@@ -66,6 +66,10 @@ export class RoleComponent implements OnInit {
   // Enhanced detail modal properties
   requestDetailData: any = null;
   isLoadingRequestDetail = false;
+  
+  // Loading states for approve/reject actions
+  isApproving = false;
+  isRejecting = false;
 
   constructor(
     private roleService: RoleService,
@@ -215,6 +219,10 @@ export class RoleComponent implements OnInit {
     this.isLoadingRequestDetail = true;
     this.requestDetailData = null;
     this.selectedItem = item;
+    
+    // Reset loading states
+    this.isApproving = false;
+    this.isRejecting = false;
 
     this.roleService.getRoleRequestDetail(requestId).subscribe({
       next: (res) => {
@@ -223,7 +231,13 @@ export class RoleComponent implements OnInit {
           this.modalRef = this.modalService.show(this.requestDetailTemplateRef, { 
             class: 'modal-xl',
             backdrop: 'static',
-            keyboard: false
+            keyboard: false,
+            ignoreBackdropClick: true
+          });
+          
+          // Reset loading states when modal is hidden
+          this.modalRef.onHidden?.subscribe(() => {
+            this.resetLoadingStates();
           });
         } else {
           this.toastService.error('Không thể lấy thông tin chi tiết yêu cầu!');
@@ -232,10 +246,41 @@ export class RoleComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error fetching request detail:', err);
-        this.toastService.error('Không thể lấy thông tin chi tiết yêu cầu!');
+        let errorMsg = 'Không thể lấy thông tin chi tiết yêu cầu!';
+        
+        // Handle specific error messages
+        if (err?.error?.message) {
+          errorMsg = err.error.message;
+        } else if (err?.status === 404) {
+          errorMsg = 'Không tìm thấy yêu cầu!';
+        } else if (err?.status === 403) {
+          errorMsg = 'Bạn không có quyền xem chi tiết yêu cầu này!';
+        }
+        
+        this.toastService.error(errorMsg);
         this.isLoadingRequestDetail = false;
       }
     });
+  }
+
+  // Method to reset all loading states
+  private resetLoadingStates(): void {
+    this.isApproving = false;
+    this.isRejecting = false;
+  }
+
+  // Method to close modal and reset states
+  closeModal(): void {
+    // If an action is in progress, show confirmation
+    if (this.isApproving || this.isRejecting) {
+      if (confirm('Có một thao tác đang được thực hiện. Bạn có chắc chắn muốn hủy?')) {
+        this.cancelAction();
+        this.modalRef?.hide();
+      }
+    } else {
+      this.modalRef?.hide();
+      this.resetLoadingStates();
+    }
   }
 
   openCreateModal(): void {
@@ -247,7 +292,17 @@ export class RoleComponent implements OnInit {
 
   openApproveModal(item: any): void {
     this.selectedItem = item;
-    this.modalRef = this.modalService.show(this.approveTemplateRef, { class: 'modal-lg' });
+    this.modalRef = this.modalService.show(this.approveTemplateRef, { 
+      class: 'modal-lg',
+      backdrop: 'static',
+      keyboard: false,
+      ignoreBackdropClick: true
+    });
+    
+    // Reset loading states when modal is hidden
+    this.modalRef.onHidden?.subscribe(() => {
+      this.resetLoadingStates();
+    });
   }
 
   submitRoleForm(): void {
@@ -276,6 +331,9 @@ export class RoleComponent implements OnInit {
   }
 
   approveRole(): void {
+    // Prevent double submission
+    if (this.isApproving) return;
+    
     // Lấy requestId từ requestDetailData hoặc selectedItem
     const requestId = this.requestDetailData?.requestId || this.selectedItem?.requestId || this.selectedItem?.id;
     if (!requestId) {
@@ -283,16 +341,32 @@ export class RoleComponent implements OnInit {
       return;
     }
 
+    this.isApproving = true;
     this.roleService.approveRole(requestId).subscribe({
-      next: () => {
+      next: (res) => {
         this.toastService.success('Phê duyệt yêu cầu thành công!');
         this.modalRef?.hide();
         // Reload data dựa trên tab hiện tại
         this.search();
+        this.isApproving = false;
       },
       error: (err) => {
         console.error('Approve role error:', err);
-        this.toastService.error('Phê duyệt thất bại!');
+        let errorMsg = 'Phê duyệt thất bại!';
+        
+        // Handle specific error messages
+        if (err?.error?.message) {
+          errorMsg = err.error.message;
+        } else if (err?.status === 404) {
+          errorMsg = 'Không tìm thấy yêu cầu phê duyệt!';
+        } else if (err?.status === 403) {
+          errorMsg = 'Bạn không có quyền phê duyệt yêu cầu này!';
+        } else if (err?.status === 409) {
+          errorMsg = 'Yêu cầu đã được xử lý trước đó!';
+        }
+        
+        this.toastService.error(errorMsg);
+        this.isApproving = false;
       }
     });
   }
@@ -304,12 +378,25 @@ export class RoleComponent implements OnInit {
     }
     this.submittedReject = false;
     this.rejectForm.reset();
-    this.modalRef = this.modalService.show(this.rejectTemplateRef, { class: 'modal-md' });
+    this.modalRef = this.modalService.show(this.rejectTemplateRef, { 
+      class: 'modal-md',
+      backdrop: 'static',
+      keyboard: false,
+      ignoreBackdropClick: true
+    });
+    
+    // Reset loading states when modal is hidden
+    this.modalRef.onHidden?.subscribe(() => {
+      this.resetLoadingStates();
+    });
   }
 
   confirmRejectRole(): void {
     this.submittedReject = true;
     if (this.rejectForm.invalid) return;
+    
+    // Prevent double submission
+    if (this.isRejecting) return;
     
     // Lấy requestId từ requestDetailData hoặc selectedItem
     const requestId = this.requestDetailData?.requestId || this.selectedItem?.requestId || this.selectedItem?.id;
@@ -318,18 +405,62 @@ export class RoleComponent implements OnInit {
       return;
     }
 
+    this.isRejecting = true;
     this.roleService.rejectRole(requestId, this.rejectForm.value.reason).subscribe({
-      next: () => {
+      next: (res) => {
         this.toastService.success('Đã từ chối yêu cầu thành công!');
         this.modalRef?.hide();
         // Reload data dựa trên tab hiện tại
         this.search();
+        this.isRejecting = false;
       },
       error: (err) => {
         console.error('Reject role error:', err);
-        this.toastService.error('Từ chối yêu cầu thất bại!');
+        let errorMsg = 'Từ chối yêu cầu thất bại!';
+        
+        // Handle specific error messages
+        if (err?.error?.message) {
+          errorMsg = err.error.message;
+        } else if (err?.status === 404) {
+          errorMsg = 'Không tìm thấy yêu cầu để từ chối!';
+        } else if (err?.status === 403) {
+          errorMsg = 'Bạn không có quyền từ chối yêu cầu này!';
+        } else if (err?.status === 409) {
+          errorMsg = 'Yêu cầu đã được xử lý trước đó!';
+        } else if (err?.status === 400) {
+          errorMsg = 'Lý do từ chối không hợp lệ!';
+        }
+        
+        this.toastService.error(errorMsg);
+        this.isRejecting = false;
       }
     });
+  }
+
+  // Method to handle action cancellation
+  cancelAction(): void {
+    if (this.isApproving || this.isRejecting) {
+      this.toastService.warn('Đã hủy thao tác đang thực hiện');
+    }
+    this.resetLoadingStates();
+  }
+
+  // Method to handle modal backdrop click
+  onBackdropClick(): void {
+    if (this.isApproving || this.isRejecting) {
+      this.toastService.warn('Không thể đóng modal khi đang thực hiện thao tác');
+      return;
+    }
+    this.closeModal();
+  }
+
+  // Method to handle ESC key press
+  onEscKey(): void {
+    if (this.isApproving || this.isRejecting) {
+      this.toastService.warn('Không thể đóng modal khi đang thực hiện thao tác');
+      return;
+    }
+    this.closeModal();
   }
 
   openEditModal(item: any): void {
