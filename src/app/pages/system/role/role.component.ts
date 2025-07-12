@@ -19,7 +19,7 @@ export class RoleComponent implements OnInit {
   ];
 
   items: any[] = [];
-  pendingItems: any[] = []; // Danh sách vai trò chờ duyệt
+  pendingItems: any[] = [];
   selectedItem: any = null;
   modalRef?: BsModalRef;
   isLoading = false;
@@ -30,8 +30,8 @@ export class RoleComponent implements OnInit {
     totalPages: 0,
     totalItems: 0,
     keyword   : '',
-    status    : '', // fix lỗi thiếu status
-    createdDate: null // fix lỗi thiếu createdDate
+    status    : '',
+    createdDate: null
   };
 
   DEFAULT_PER_PAGE_OPTIONS = DEFAULT_PER_PAGE_OPTIONS;
@@ -56,8 +56,6 @@ export class RoleComponent implements OnInit {
   currentUser: any;
   showSubmitConfirm = false;
   rejectedReason: string | null = null;
-
-  now: Date = new Date();
 
   // Tab navigation state
   activeTab: 'approved' | 'pending' | 'draft' = 'approved';

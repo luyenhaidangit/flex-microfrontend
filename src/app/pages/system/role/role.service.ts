@@ -9,7 +9,6 @@ export class RoleService {
 
   constructor(private http: HttpClient) {}
 
-
   getRoles(params: any): Observable<any> {
     return this.http.get<any>(this.apiUrl, { params });
   }
