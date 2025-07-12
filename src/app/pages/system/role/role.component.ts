@@ -155,7 +155,15 @@ export class RoleComponent implements OnInit {
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
-            this.pendingItems = res.data?.items ?? [];
+            const { items, ...page } = res.data;
+            this.pendingItems = items ?? [];
+            // Cập nhật thông tin phân trang cho tab pending
+            Object.assign(this.pagingState, {
+              pageIndex : page.pageIndex,
+              pageSize  : page.pageSize,
+              totalPages: page.totalPages,
+              totalItems: page.totalItems
+            });
           } else {
             this.pendingItems = [];
           }

@@ -281,6 +281,42 @@
             </table>
           </ng-template>
         </div>
+
+        <!-- ============ PAGINATION FOR PENDING TAB ============ -->
+        <div class="table-filter d-flex justify-content-between align-items-center mt-2">
+          <ul class="pagination mb-0">
+            <li class="page-item cursor-pointer" [class.disabled]="pagingState.pageIndex === 1">
+              <a class="page-link" (click)="changePage(pagingState.pageIndex - 1)">
+                <i class="mdi mdi-chevron-left"></i>
+              </a>
+            </li>
+
+            <li *ngFor="let _ of [].constructor(pagingState.totalPages); let idx = index"
+                class="page-item cursor-pointer"
+                [class.active]="pagingState.pageIndex === idx + 1">
+              <a class="page-link" (click)="changePage(idx + 1)">
+                {{ idx + 1 }}
+              </a>
+            </li>
+
+            <li class="page-item cursor-pointer" [class.disabled]="pagingState.pageIndex === pagingState.totalPages">
+              <a class="page-link" (click)="changePage(pagingState.pageIndex + 1)">
+                <i class="mdi mdi-chevron-right"></i>
+              </a>
+            </li>
+          </ul>
+
+          <!-- page size -->
+          <div class="per-page">
+            Hiển thị
+            <select class="mx-1 cursor-pointer" [(ngModel)]="pagingState.pageSize" (change)="changePageSize()">
+              <option *ngFor="let opt of DEFAULT_PER_PAGE_OPTIONS" [ngValue]="opt.value" class="cursor-pointer">
+                {{ opt.label }}
+              </option>
+            </select>
+            / {{ pagingState.totalItems }} tổng số bản ghi
+          </div>
+        </div>
       </tab>
       <tab heading="Nháp" (selectTab)="switchTab('draft')">
         <div class="alert alert-secondary">Danh sách vai trò ở trạng thái <b>Nháp</b> sẽ hiển thị ở đây.</div>

@@ -268,3 +268,23 @@ h2 {
 .alert-success {
   border-left: 4px solid #28a745;
 }
+
+// Thêm các selector cụ thể hơn để override
+:host ::ng-deep .angular-toastify-icon-container {
+  width: 12px !important;
+  height: 12px !important;
+  opacity: 1 !important;
+}
+
+:host ::ng-deep .angular-toastify__toast .angular-toastify-icon-container {
+  width: 12px !important;
+  height: 12px !important;
+  opacity: 1 !important;
+}
+
+// Nếu vẫn không work, thử với global styles
+::ng-deep .angular-toastify-icon-container {
+  width: 12px !important;
+  height: 12px !important;
+  opacity: 1 !important;
+}

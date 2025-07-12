@@ -48,4 +48,63 @@ ngx-dropzone-preview {
   }
 }
 
+// Global styles for Angular Toastify icon size
+.angular-toastify-icon-container {
+  width: 12px !important;
+  height: 12px !important;
+  opacity: 1 !important;
+}
+
+.angular-toastify__toast .angular-toastify-icon-container {
+  width: 12px !important;
+  height: 12px !important;
+  opacity: 1 !important;
+}
+
+// Force override with higher specificity
+body .angular-toastify-icon-container {
+  width: 12px !important;
+  height: 12px !important;
+  opacity: 1 !important;
+}
+
+// Maximum specificity override
+html body .angular-toastify-icon-container,
+html body .angular-toastify__toast .angular-toastify-icon-container,
+html body .angular-toastify__toast-body .angular-toastify-icon-container {
+  width: 12px !important;
+  height: 12px !important;
+  opacity: 1 !important;
+  min-width: 12px !important;
+  min-height: 12px !important;
+  max-width: 12px !important;
+  max-height: 12px !important;
+}
+
+// Force override with !important and higher specificity
+html body .angular-toastify-icon-container,
+html body .angular-toastify__toast .angular-toastify-icon-container,
+html body .angular-toastify__toast-body .angular-toastify-icon-container,
+html body .angular-toastify__toast .angular-toastify-icon-container svg,
+html body .angular-toastify__toast-body .angular-toastify-icon-container svg {
+  width: 12px !important;
+  height: 12px !important;
+  opacity: 1 !important;
+  min-width: 12px !important;
+  min-height: 12px !important;
+  max-width: 12px !important;
+  max-height: 12px !important;
+  transform: scale(1) !important;
+  font-size: 12px !important;
+}
+
+// Override any inline styles
+html body .angular-toastify-icon-container[style*="width"],
+html body .angular-toastify__toast .angular-toastify-icon-container[style*="width"],
+html body .angular-toastify__toast-body .angular-toastify-icon-container[style*="width"] {
+  width: 12px !important;
+  height: 12px !important;
+  opacity: 1 !important;
+}
+
 
