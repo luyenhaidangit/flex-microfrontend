@@ -544,6 +544,10 @@ export class RoleComponent implements OnInit {
     return data?.roleName || '—';
   }
 
+  getDescription(data: any): string {
+    return data?.description || '—';
+  }
+
   getPermissions(data: any): any[] {
     return data?.permissions || [];
   }

@@ -727,27 +727,24 @@
          </div>
          <div class="card-body">
            <div class="row g-3">
-             <div class="col-md-6">
-               <label class="form-label fw-bold text-muted">Mã vai trò</label>
-               <div class="text-dark ps-2 py-2 bg-success bg-opacity-10 rounded">
-                 {{ getRoleCode(requestDetailData.newData) }}
+                           <div class="col-md-6">
+                <label class="form-label fw-bold text-muted">Mã vai trò</label>
+                <div class="text-dark ps-2 py-2 bg-success bg-opacity-10 rounded min-height-40">
+                  {{ getRoleCode(requestDetailData.newData) || '—' }}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold text-muted">Tên vai trò</label>
+                <div class="text-dark ps-2 py-2 bg-success bg-opacity-10 rounded min-height-40">
+                  {{ getRoleName(requestDetailData.newData) || '—' }}
+                </div>
+              </div>
+              <div class="col-md-12">
+                <label class="form-label fw-bold text-muted">Quyền hạn</label>
+               <div class="text-dark ps-2 py-2 bg-success bg-opacity-10 rounded min-height-40">
+                 {{ getRoleDescription(requestDetailData.newData) || '—' }}
                </div>
-             </div>
-             <div class="col-md-6">
-               <label class="form-label fw-bold text-muted">Tên vai trò</label>
-               <div class="text-dark ps-2 py-2 bg-success bg-opacity-10 rounded">
-                 {{ getRoleName(requestDetailData.newData) }}
-               </div>
-             </div>
-             <div class="col-md-12">
-               <label class="form-label fw-bold text-muted">Quyền hạn</label>
-               <div class="text-dark ps-2 py-2 bg-success bg-opacity-10 rounded">
-                 <span *ngIf="getPermissions(requestDetailData.newData).length > 0; else noPermissions">
-                   {{ getPermissions(requestDetailData.newData).length }} quyền hạn
-                 </span>
-                 <ng-template #noPermissions>Không có quyền hạn</ng-template>
-               </div>
-             </div>
+              </div>
            </div>
          </div>
        </div>
@@ -816,27 +813,27 @@
              <strong>Cảnh báo:</strong> Vai trò này sẽ bị xóa vĩnh viễn sau khi được phê duyệt.
            </div>
            <div class="row g-3">
-             <div class="col-md-6">
-               <label class="form-label fw-bold text-muted">Mã vai trò</label>
-               <div class="text-dark ps-2 py-2 bg-danger bg-opacity-10 rounded">
-                 {{ getRoleCode(requestDetailData.oldData) }}
-               </div>
-             </div>
-             <div class="col-md-6">
-               <label class="form-label fw-bold text-muted">Tên vai trò</label>
-               <div class="text-dark ps-2 py-2 bg-danger bg-opacity-10 rounded">
-                 {{ getRoleName(requestDetailData.oldData) }}
-               </div>
-             </div>
-             <div class="col-md-12">
-               <label class="form-label fw-bold text-muted">Quyền hạn</label>
-               <div class="text-dark ps-2 py-2 bg-danger bg-opacity-10 rounded">
-                 <span *ngIf="getPermissions(requestDetailData.oldData).length > 0; else noPermissionsDelete">
-                   {{ getPermissions(requestDetailData.oldData).length }} quyền hạn
-                 </span>
-                 <ng-template #noPermissionsDelete>Không có quyền hạn</ng-template>
-               </div>
-             </div>
+                           <div class="col-md-6">
+                <label class="form-label fw-bold text-muted">Mã vai trò</label>
+                <div class="text-dark ps-2 py-2 bg-danger bg-opacity-10 rounded min-height-40">
+                  {{ getRoleCode(requestDetailData.oldData) || '—' }}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold text-muted">Tên vai trò</label>
+                <div class="text-dark ps-2 py-2 bg-danger bg-opacity-10 rounded min-height-40">
+                  {{ getRoleName(requestDetailData.oldData) || '—' }}
+                </div>
+              </div>
+              <div class="col-md-12">
+                <label class="form-label fw-bold text-muted">Quyền hạn</label>
+                <div class="text-dark ps-2 py-2 bg-danger bg-opacity-10 rounded min-height-40">
+                  <span *ngIf="getPermissions(requestDetailData.oldData).length > 0; else noPermissionsDelete">
+                    {{ getPermissions(requestDetailData.oldData).length }} quyền hạn
+                  </span>
+                  <ng-template #noPermissionsDelete>Không có quyền hạn</ng-template>
+                </div>
+              </div>
            </div>
          </div>
        </div>

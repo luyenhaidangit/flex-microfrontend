@@ -191,3 +191,10 @@ h2 {
     font-weight: 700;
   }
 }
+
+// Minimum height for form fields
+.min-height-40 {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+}
