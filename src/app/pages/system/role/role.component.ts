@@ -316,7 +316,8 @@ export class RoleComponent implements OnInit {
         this.modalRef?.hide();
         this.roleForm.reset();
         this.submitted = false;
-        this.getItems();
+        // Reload data dựa trên tab hiện tại
+        this.search();
       },
       error: (err) => {
         let errorMsg = 'Tạo yêu cầu thất bại!';
@@ -486,7 +487,8 @@ export class RoleComponent implements OnInit {
       next: () => {
         this.toastService.success('Cập nhật vai trò thành công!');
         this.modalRef?.hide();
-        this.getItems();
+        // Reload data dựa trên tab hiện tại
+        this.search();
       },
       error: () => {
         this.toastService.error('Cập nhật vai trò thất bại!');
@@ -505,7 +507,8 @@ export class RoleComponent implements OnInit {
       next: () => {
         this.toastService.success('Đã gửi yêu cầu xóa thành công!');
         this.modalRef?.hide();
-        this.getItems();
+        // Reload data dựa trên tab hiện tại
+        this.search();
       },
       error: () => {
         this.toastService.error('Gửi yêu cầu xóa thất bại!');
@@ -528,7 +531,8 @@ export class RoleComponent implements OnInit {
         this.modalRef?.hide();
         this.roleForm.reset();
         this.submitted = false;
-        this.getItems();
+        // Reload data dựa trên tab hiện tại
+        this.search();
       },
       error: () => {
         this.toastService.error('Lưu nháp thất bại!');
@@ -547,7 +551,8 @@ export class RoleComponent implements OnInit {
         this.modalRef?.hide();
         this.roleForm.reset();
         this.submitted = false;
-        this.getItems();
+        // Reload data dựa trên tab hiện tại
+        this.search();
       },
       error: (err) => {
         const msg = err?.error?.message || 'Gửi duyệt thất bại!';
