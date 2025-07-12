@@ -308,25 +308,32 @@ export class RoleComponent implements OnInit {
     }
   }
 
+  /**
+   * Hàm mở modal dùng chung
+   * @param template TemplateRef<any> của modal
+   * @param options Các options cho modalService.show
+   */
+  openModal(template: TemplateRef<any>, options: any = {}): void {
+    this.modalRef = this.modalService.show(template, options);
+    this.modalRef.onHidden?.subscribe(() => {
+      this.resetLoadingStates();
+    });
+  }
+
   openCreateModal(): void {
     this.submitted = false;
     this.roleForm.reset();
     this.rejectedReason = null;
-    this.modalRef = this.modalService.show(this.createTemplateRef, { class: 'modal-lg' });
+    this.openModal(this.createTemplateRef, { class: 'modal-lg' });
   }
 
   openApproveModal(item: any): void {
     this.selectedItem = item;
-    this.modalRef = this.modalService.show(this.approveTemplateRef, { 
+    this.openModal(this.approveTemplateRef, {
       class: 'modal-lg',
       backdrop: 'static',
       keyboard: false,
       ignoreBackdropClick: true
-    });
-    
-    // Reset loading states when modal is hidden
-    this.modalRef.onHidden?.subscribe(() => {
-      this.resetLoadingStates();
     });
   }
 
@@ -398,21 +405,33 @@ export class RoleComponent implements OnInit {
   }
 
   openRejectModal(item?: any): void {
-    // Nếu không có item được truyền, sử dụng selectedItem hiện tại (từ modal chi tiết)
     if (item) {
       this.selectedItem = item;
     }
     this.submittedReject = false;
     this.rejectForm.reset();
-    this.modalRef = this.modalService.show(this.rejectTemplateRef, { 
-      class: 'modal-md',
+    this.openModal(this.rejectTemplateRef, {
+      class: 'modal-md reject-modal-overlay',
       backdrop: 'static',
       keyboard: false,
       ignoreBackdropClick: true
     });
-    
-    // Reset loading states when modal is hidden
+    // Gán class cho backdrop nhiều lần để chắc chắn overlay được áp dụng
+    const addBackdropClass = () => {
+      const backdrop = document.querySelector('.modal-backdrop');
+      if (backdrop && !backdrop.classList.contains('reject-modal-backdrop')) {
+        backdrop.classList.add('reject-modal-backdrop');
+      }
+    };
+    addBackdropClass();
+    let tries = 0;
+    const interval = setInterval(() => {
+      addBackdropClass();
+      tries++;
+      if (tries > 10) clearInterval(interval);
+    }, 50);
     this.modalRef.onHidden?.subscribe(() => {
+      clearInterval(interval);
       this.resetLoadingStates();
     });
   }
@@ -494,17 +513,6 @@ export class RoleComponent implements OnInit {
     this.closeModal();
   }
 
-  openEditModal(item: any): void {
-    this.selectedItem = item;
-    this.roleForm.patchValue({
-      code: item.code,
-      name: item.name,
-      description: item.description
-    });
-    this.rejectedReason = item.status === 'Rejected' ? item.rejectReason : null;
-    this.modalRef = this.modalService.show(this.editTemplateRef, { class: 'modal-lg' });
-  }
-
   submitEditRoleForm(): void {
     this.submitted = true;
     if (this.roleForm.invalid || !this.selectedItem) return;
@@ -524,11 +532,6 @@ export class RoleComponent implements OnInit {
         this.toastService.error('Cập nhật vai trò thất bại!');
       }
     });
-  }
-
-  openDeleteModal(item: any): void {
-    this.selectedItem = item;
-    this.modalRef = this.modalService.show(this.deleteTemplateRef, { class: 'modal-md' });
   }
 
   confirmDeleteRole(): void {
