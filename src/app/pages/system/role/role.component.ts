@@ -536,38 +536,22 @@ export class RoleComponent implements OnInit {
     });
   }
 
-  openSubmitConfirm(): void {
-    this.showSubmitConfirm = true;
-  }
-  closeSubmitConfirm(): void {
-    this.showSubmitConfirm = false;
-  }
-  submitRoleForApproval(): void {
+  // Thêm hàm gửi duyệt đơn giản
+  onSubmitRole(): void {
     this.submitted = true;
     if (this.roleForm.invalid) return;
-    const payload = {
-      ...this.roleForm.value,
-      status: 'Pending',
-      requestedBy: this.currentUser?.username || 'UNKNOWN',
-      requestedDate: new Date()
-    };
+    const payload = this.roleForm.value;
     this.roleService.createRole(payload).subscribe({
       next: () => {
-        this.toastService.success('Gửi yêu cầu phê duyệt thành công!');
+        this.toastService.success('Gửi duyệt thành công!');
         this.modalRef?.hide();
         this.roleForm.reset();
         this.submitted = false;
         this.getItems();
-        this.showSubmitConfirm = false;
       },
       error: (err) => {
-        let errorMsg = 'Gửi yêu cầu thất bại!';
-        const apiMsg = err?.error?.message?.toLowerCase();
-        if (apiMsg?.includes('role code already exists')) {
-          errorMsg = 'Mã vai trò đã tồn tại';
-        }
-        this.toastService.error(errorMsg);
-        this.showSubmitConfirm = false;
+        const msg = err?.error?.message || 'Gửi duyệt thất bại!';
+        this.toastService.error(msg);
       }
     });
   }

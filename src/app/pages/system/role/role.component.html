@@ -396,29 +396,12 @@
         <button type="button" class="btn btn-outline-primary me-2" (click)="saveDraftRole()">
           <i class="fas fa-save me-1"></i> Lưu nháp
         </button>
-        <button type="button" class="btn btn-primary" (click)="openSubmitConfirm()">
+        <button type="button" class="btn btn-primary" (click)="onSubmitRole()">
           <i class="fas fa-paper-plane me-1"></i> Gửi duyệt
         </button>
       </div>
     </div>
   </form>
-</ng-template>
-
-<!-- Modal xác nhận gửi duyệt -->
-<ng-template #submitConfirmModal>
-  <div class="modal-header">
-    <h5 class="modal-title text-primary fw-semibold">
-      <i class="fas fa-question-circle me-2"></i> Xác nhận gửi duyệt
-    </h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="closeSubmitConfirm()"></button>
-  </div>
-  <div class="modal-body px-4 py-3">
-    <div>Bạn có chắc chắn muốn gửi yêu cầu phê duyệt vai trò này không?</div>
-  </div>
-  <div class="modal-footer border-top-0">
-    <button type="button" class="btn btn-secondary" (click)="closeSubmitConfirm()">Hủy</button>
-    <button type="button" class="btn btn-primary" (click)="submitRoleForApproval()">Xác nhận</button>
-  </div>
 </ng-template>
 
 <!-- Modal phê duyệt yêu cầu -->
@@ -559,7 +542,7 @@
           <button type="button" class="btn btn-outline-primary me-2" (click)="saveDraftRole()">
             <i class="fas fa-save me-1"></i> Lưu nháp
           </button>
-          <button type="button" class="btn btn-primary" (click)="openSubmitConfirm()">
+          <button type="button" class="btn btn-primary" (click)="onSubmitRole()">
             <i class="fas fa-paper-plane me-1"></i> Gửi duyệt
           </button>
         </ng-container>
