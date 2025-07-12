@@ -87,9 +87,28 @@ export class RoleComponent implements OnInit {
       description: ['']
     });
     this.rejectForm = this.fb.group({
-      reason: ['', Validators.required]
+      reason: ['', [Validators.required]]
     });
     this.loadCurrentUser();
+    
+    // Override toast icon size with JavaScript
+    this.overrideToastIconSize();
+  }
+
+  private overrideToastIconSize(): void {
+    // Override toast icon size after a short delay to ensure DOM is ready
+    setTimeout(() => {
+      const iconContainers = document.querySelectorAll('.angular-toastify-icon-container');
+      iconContainers.forEach((container: any) => {
+        container.style.width = '12px';
+        container.style.height = '12px';
+        container.style.opacity = '1';
+        container.style.minWidth = '12px';
+        container.style.minHeight = '12px';
+        container.style.maxWidth = '12px';
+        container.style.maxHeight = '12px';
+      });
+    }, 100);
   }
 
   switchTab(tab: 'approved' | 'pending' | 'draft') {
@@ -407,6 +426,13 @@ export class RoleComponent implements OnInit {
     // Prevent double submission
     if (this.isRejecting) return;
     
+    // Validate reason length
+    const reason = this.rejectForm.value.reason?.trim();
+    if (!reason || reason.length < 5) {
+      this.toastService.error('Lý do từ chối phải có ít nhất 5 ký tự!');
+      return;
+    }
+    
     // Lấy requestId từ requestDetailData hoặc selectedItem
     const requestId = this.requestDetailData?.requestId || this.selectedItem?.requestId || this.selectedItem?.id;
     if (!requestId) {
@@ -415,7 +441,7 @@ export class RoleComponent implements OnInit {
     }
 
     this.isRejecting = true;
-    this.roleService.rejectRole(requestId, this.rejectForm.value.reason).subscribe({
+    this.roleService.rejectRole(requestId, reason).subscribe({
       next: (res) => {
         this.toastService.success('Đã từ chối yêu cầu thành công!');
         this.modalRef?.hide();
@@ -438,6 +464,8 @@ export class RoleComponent implements OnInit {
           errorMsg = 'Yêu cầu đã được xử lý trước đó!';
         } else if (err?.status === 400) {
           errorMsg = 'Lý do từ chối không hợp lệ!';
+        } else if (err?.status === 500) {
+          errorMsg = 'Lỗi máy chủ, vui lòng thử lại sau!';
         }
         
         this.toastService.error(errorMsg);
