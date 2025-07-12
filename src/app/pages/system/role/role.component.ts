@@ -428,10 +428,6 @@ export class RoleComponent implements OnInit {
     
     // Validate reason length
     const reason = this.rejectForm.value.reason?.trim();
-    if (!reason || reason.length < 5) {
-      this.toastService.error('Lý do từ chối phải có ít nhất 5 ký tự!');
-      return;
-    }
     
     // Lấy requestId từ requestDetailData hoặc selectedItem
     const requestId = this.requestDetailData?.requestId || this.selectedItem?.requestId || this.selectedItem?.id;
