@@ -867,15 +867,14 @@
           <i class="fas fa-times me-1"></i> Đóng
         </button>
       </div>
-      
-        <button type="button" class="btn btn-success me-2" (click)="approveRole()" [disabled]="isApproving || isRejecting">
-          <i class="fas fa-check me-1" *ngIf="!isApproving"></i>
-          <span class="spinner-border spinner-border-sm me-1" *ngIf="isApproving" role="status" aria-hidden="true"></span>
-          {{ isApproving ? 'Đang duyệt...' : 'Duyệt' }}
+      <div>
+        <button type="button" class="btn btn-success me-2" (click)="approveRole()">
+            Duyệt
         </button>
-        <button type="button" class="btn btn-danger" (click)="openRejectModal()" [disabled]="isApproving || isRejecting">
+        <button type="button" class="btn btn-danger" (click)="openRejectModal()">
           <i class="fas fa-times me-1"></i> Từ chối
         </button>
+      </div>
     </div>
   </div>
 </ng-template>
