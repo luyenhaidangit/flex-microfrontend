@@ -416,20 +416,14 @@ export class RoleComponent implements OnInit {
       const oldModalRef = this.modalRef;
       oldModalRef.onHidden?.subscribe(() => {
         this.openModal(this.rejectTemplateRef, {
-          class: 'modal-md reject-modal-overlay',
-          backdrop: 'static',
-          keyboard: false,
-          ignoreBackdropClick: true
+          class: 'modal-md'
         });
       });
       oldModalRef.hide();
     } else {
       // Nếu không có modal nào mở, mở luôn modal reject
       this.openModal(this.rejectTemplateRef, {
-        class: 'modal-md reject-modal-overlay',
-        backdrop: 'static',
-        keyboard: false,
-        ignoreBackdropClick: true
+        class: 'modal-md'
       });
     }
   }
