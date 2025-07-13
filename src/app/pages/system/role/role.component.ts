@@ -410,30 +410,28 @@ export class RoleComponent implements OnInit {
     }
     this.submittedReject = false;
     this.rejectForm.reset();
-    this.openModal(this.rejectTemplateRef, {
-      class: 'modal-md reject-modal-overlay',
-      backdrop: 'static',
-      keyboard: false,
-      ignoreBackdropClick: true
-    });
-    // Gán class cho backdrop nhiều lần để chắc chắn overlay được áp dụng
-    const addBackdropClass = () => {
-      const backdrop = document.querySelector('.modal-backdrop');
-      if (backdrop && !backdrop.classList.contains('reject-modal-backdrop')) {
-        backdrop.classList.add('reject-modal-backdrop');
-      }
-    };
-    addBackdropClass();
-    let tries = 0;
-    const interval = setInterval(() => {
-      addBackdropClass();
-      tries++;
-      if (tries > 10) clearInterval(interval);
-    }, 50);
-    this.modalRef.onHidden?.subscribe(() => {
-      clearInterval(interval);
-      this.resetLoadingStates();
-    });
+
+    // Nếu đang có modal mở, chờ đóng xong mới mở modal reject
+    if (this.modalRef) {
+      const oldModalRef = this.modalRef;
+      oldModalRef.onHidden?.subscribe(() => {
+        this.openModal(this.rejectTemplateRef, {
+          class: 'modal-md reject-modal-overlay',
+          backdrop: 'static',
+          keyboard: false,
+          ignoreBackdropClick: true
+        });
+      });
+      oldModalRef.hide();
+    } else {
+      // Nếu không có modal nào mở, mở luôn modal reject
+      this.openModal(this.rejectTemplateRef, {
+        class: 'modal-md reject-modal-overlay',
+        backdrop: 'static',
+        keyboard: false,
+        ignoreBackdropClick: true
+      });
+    }
   }
 
   confirmRejectRole(): void {
