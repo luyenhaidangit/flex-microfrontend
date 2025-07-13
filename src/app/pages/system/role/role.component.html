@@ -444,47 +444,40 @@
 <ng-template #approveModal>
   <div class="modal-header">
     <h5 class="modal-title text-success fw-semibold">
-      <i class="fas fa-check-circle me-2"></i> Phê duyệt yêu cầu vai trò
+      <i class="fas fa-check-circle me-2"></i> Xác nhận duyệt yêu cầu
     </h5>
     <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
   </div>
   <div class="modal-body px-4 py-3">
-    <div class="row gy-3">
-      <div class="col-md-6">
-        <label class="form-label fw-bold text-muted">Mã vai trò</label>
-        <div class="text-dark ps-1">{{ selectedItem?.code }}</div>
-      </div>
-
-      <div class="col-md-6">
-        <label class="form-label fw-bold text-muted">Tên vai trò</label>
-        <div class="text-dark ps-1">{{ selectedItem?.name }}</div>
-      </div>
-
-      <div class="col-md-12">
-        <label class="form-label fw-bold text-muted">Mô tả</label>
-        <div class="text-dark ps-1">{{ selectedItem?.description || 'Không có' }}</div>
-      </div>
-
-      <div class="col-md-6">
-        <label class="form-label fw-bold text-muted">Tình trạng xử lý</label>
-        <div class="text-dark ps-1">
-          <span class="badge bg-success">Chờ duyệt thêm</span>
+    <div class="card border-0 bg-light">
+      <div class="card-body">
+        <h6 class="card-title text-muted mb-3">
+          <i class="fas fa-info-circle me-2"></i>Thông tin yêu cầu
+        </h6>
+        <div class="row g-2">
+          <div class="col-6">
+            <small class="text-muted">ID yêu cầu:</small>
+            <div class="fw-bold">{{ selectedItem?.requestId || selectedItem?.id }}</div>
+          </div>
+          <div class="col-6">
+            <small class="text-muted">Người tạo:</small>
+            <div class="fw-bold">{{ selectedItem?.requestedBy }}</div>
+          </div>
+          <div class="col-6">
+            <small class="text-muted">Ngày tạo:</small>
+            <div class="fw-bold">{{ selectedItem?.requestedDate | date:'dd/MM/yyyy' }}</div>
+          </div>
+          <div class="col-6">
+            <small class="text-muted">Loại yêu cầu:</small>
+            <div class="fw-bold">{{ getRequestTypeLabel(selectedItem?.requestType) }}</div>
+          </div>
         </div>
-      </div>
-
-      <div class="col-md-6" *ngIf="selectedItem?.requestedDate">
-        <label class="form-label fw-bold text-muted">Ngày yêu cầu</label>
-        <div class="text-dark ps-1">{{ selectedItem?.requestedDate | date:'dd/MM/yyyy HH:mm:ss' }}</div>
       </div>
     </div>
   </div>
   <div class="modal-footer border-top-0">
-    <button type="button" class="btn btn-success" (click)="approveRole()" [disabled]="isApproving">
-      <i class="fas fa-check me-1" *ngIf="!isApproving"></i>
-      <span class="spinner-border spinner-border-sm me-1" *ngIf="isApproving" role="status" aria-hidden="true"></span>
-      {{ isApproving ? 'Đang duyệt...' : 'Duyệt yêu cầu' }}
-    </button>
-    <button type="button" class="btn btn-outline-secondary" (click)="closeModal()" [disabled]="isApproving">Hủy</button>
+    <button type="button" class="btn btn-success" (click)="approveRole()">Xác nhận</button>
+    <button type="button" class="btn btn-outline-secondary" (click)="modalRef?.hide()">Hủy</button>
   </div>
 </ng-template>
 
