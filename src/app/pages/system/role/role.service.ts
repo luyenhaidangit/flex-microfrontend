@@ -46,10 +46,8 @@ export class RoleService {
   }
 
   rejectRole(requestId: string | number, reason: string): Observable<any> {
-    // Gửi reason như JSON string để phù hợp với API [FromBody] string reason
-    return this.http.post<any>(`${this.apiUrl}/requests/${requestId}/reject`, JSON.stringify(reason), {
-      headers: { 'Content-Type': 'application/json' }
-    });
+    // Gửi reason đúng dạng object { reason: string } theo API mới
+    return this.http.post<any>(`${this.apiUrl}/requests/${requestId}/reject`, { reason });
   }
 
   saveDraftRole(data: any) {
