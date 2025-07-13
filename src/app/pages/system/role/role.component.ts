@@ -411,7 +411,7 @@ export class RoleComponent implements OnInit {
     this.submittedReject = false;
     this.rejectForm.reset();
 
-    // Nếu đang có modal mở, chờ đóng xong mới mở modal reject
+    // If modal is open, wait for it to close before opening reject modal
     if (this.modalRef) {
       const oldModalRef = this.modalRef;
       oldModalRef.onHidden?.subscribe(() => {
@@ -421,7 +421,6 @@ export class RoleComponent implements OnInit {
       });
       oldModalRef.hide();
     } else {
-      // Nếu không có modal nào mở, mở luôn modal reject
       this.openModal(this.rejectTemplateRef, {
         class: 'modal-md'
       });
