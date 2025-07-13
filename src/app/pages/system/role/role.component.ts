@@ -90,8 +90,9 @@ export class RoleComponent implements OnInit {
     });
 
     // Load data
+    this.currentUser = this.authService.getCurrentUser();
     this.getItems();
-    this.currentUser = this.authService.getCurrentUser(); // Lấy user hiện tại nếu cần dùng biến
+    
     // Override toast icon size with JavaScript
     this.overrideToastIconSize();
   }
