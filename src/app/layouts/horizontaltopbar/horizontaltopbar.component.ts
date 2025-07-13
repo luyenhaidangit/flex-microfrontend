@@ -70,7 +70,7 @@ export class HorizontaltopbarComponent implements OnInit, AfterViewInit {
 
   // Get Current User
   public GetCurrentUser(): any{
-    return this.authService.GetCurrentUser();
+    return this.authService.getCurrentUser();
   }
 
   setLanguage(text: string, lang: string, flag: string) {

@@ -67,7 +67,7 @@ export class TopbarComponent implements OnInit {
 
   // Get Current User
   public GetCurrentUser(): any{
-    return this.authService.GetCurrentUser();
+    return this.authService.getCurrentUser();
   }
 
   /**

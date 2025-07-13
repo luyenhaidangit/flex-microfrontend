@@ -78,17 +78,20 @@ export class RoleComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getItems();
+    // Initialize forms
     this.roleForm = this.fb.group({
       code: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9]+')]],
       name: ['', [Validators.required]],
       description: ['']
     });
+
     this.rejectForm = this.fb.group({
       reason: ['', [Validators.required]]
     });
-    this.loadCurrentUser();
-    
+
+    // Load data
+    this.getItems();
+    this.currentUser = this.authService.getCurrentUser(); // Lấy user hiện tại nếu cần dùng biến
     // Override toast icon size with JavaScript
     this.overrideToastIconSize();
   }
@@ -116,22 +119,6 @@ export class RoleComponent implements OnInit {
     this.pagingState.pageIndex = 1; // Reset về trang đầu tiên khi chuyển tab
     this.search();
     // Có thể thêm logic cho draft nếu cần
-  }
-
-  loadCurrentUser() {
-    // Try to get from service, fallback to localStorage
-    this.currentUser = this.authService.GetCurrentUser();
-    if (!this.currentUser) {
-      const token = this.authService.getAuthToken();
-      if (token && token.user) {
-        this.currentUser = token.user;
-      } else {
-        try {
-          const userStr = localStorage.getItem('currentUser');
-          if (userStr) this.currentUser = JSON.parse(userStr);
-        } catch {}
-      }
-    }
   }
 
   get searchParams(): any {
