@@ -303,6 +303,7 @@ export class RoleComponent implements OnInit {
   openModal(template: TemplateRef<any>, options: any = {}): void {
     this.modalRef = this.modalService.show(template, options);
     this.modalRef.onHidden?.subscribe(() => {
+      this.modalRef = null;
       this.resetLoadingStates();
     });
   }
@@ -398,18 +399,24 @@ export class RoleComponent implements OnInit {
     this.submittedReject = false;
     this.rejectForm.reset();
 
-    // If modal is open, wait for it to close before opening reject modal
     if (this.modalRef) {
       const oldModalRef = this.modalRef;
       oldModalRef.onHidden?.subscribe(() => {
+        this.modalRef = null;
         this.openModal(this.rejectTemplateRef, {
-          class: 'modal-md'
+          class: 'modal-md',
+          backdrop: 'static',
+          keyboard: false,
+          ignoreBackdropClick: true
         });
       });
       oldModalRef.hide();
     } else {
       this.openModal(this.rejectTemplateRef, {
-        class: 'modal-md'
+        class: 'modal-md',
+        backdrop: 'static',
+        keyboard: false,
+        ignoreBackdropClick: true
       });
     }
   }
