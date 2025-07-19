@@ -114,7 +114,6 @@ export class RoleComponent implements OnInit {
   }
 
   switchTab(tab: 'approved' | 'pending' | 'draft') {
-    console.log('switchTab', tab); 
     // Luôn gọi lại API khi chuyển tab, kể cả khi tab không đổi
     this.activeTab = tab;
     this.pagingState.pageIndex = 1; // Reset về trang đầu tiên khi chuyển tab
