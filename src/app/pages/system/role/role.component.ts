@@ -58,7 +58,7 @@ export class RoleComponent implements OnInit {
   rejectedReason: string | null = null;
 
   // Tab navigation state
-  activeTab: 'approved' | 'pending' | 'draft' = 'approved';
+  activeTab: 'approved' | 'pending' = 'approved';
   pendingCount: number = 0;
 
   // Enhanced detail modal properties
@@ -113,12 +113,11 @@ export class RoleComponent implements OnInit {
     }, 100);
   }
 
-  switchTab(tab: 'approved' | 'pending' | 'draft') {
+  switchTab(tab: 'approved' | 'pending') {
     // Luôn gọi lại API khi chuyển tab, kể cả khi tab không đổi
     this.activeTab = tab;
     this.pagingState.pageIndex = 1; // Reset về trang đầu tiên khi chuyển tab
     this.search();
-    // Có thể thêm logic cho draft nếu cần
   }
 
   get searchParams(): any {
@@ -187,10 +186,9 @@ export class RoleComponent implements OnInit {
   search(): void {
     if (this.activeTab === 'pending') {
       this.getPendingItems();
-    } else if (this.activeTab === 'approved') {
+    } else {
       this.getItems();
     }
-    // Có thể thêm logic cho draft nếu cần
   }
 
   changePage(page: number): void {
@@ -622,15 +620,7 @@ export class RoleComponent implements OnInit {
     return requestType;
   }
 
-  openDeleteDraftModal(): void {
-    this.modalRef = this.modalService.show(this.deleteDraftModal, { class: 'modal-md' });
-  }
-
-  confirmDeleteDraft(): void {
-    // TODO: Implement draft deletion logic
-    this.toastService.info('Chức năng xoá nháp đang được phát triển.');
-    this.modalRef?.hide();
-  }
+  // Xóa các hàm openDeleteDraftModal, confirmDeleteDraft, và logic liên quan đến nháp nếu có
 
   // Helper methods for enhanced detail modal
   getRequestTypeIcon(requestType: string): string {
