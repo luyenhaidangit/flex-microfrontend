@@ -426,9 +426,7 @@ export class RoleComponent implements OnInit {
     this.submittedReject = true;
     if (this.rejectForm.invalid) return;
     
-    // Prevent double submission
-    if (this.isRejecting) return;
-    
+    // Không cần kiểm tra hoặc set isRejecting nữa
     // Validate reason length
     const reason = this.rejectForm.value.reason?.trim();
     
@@ -439,14 +437,14 @@ export class RoleComponent implements OnInit {
       return;
     }
 
-    this.isRejecting = true;
+    // Gửi request từ chối, không cần set isRejecting
     this.roleService.rejectRole(requestId, reason).subscribe({
       next: (res) => {
         this.toastService.success('Đã từ chối yêu cầu thành công!');
         this.modalRef?.hide();
         // Reload data dựa trên tab hiện tại
         this.search();
-        this.isRejecting = false;
+        // Không cần set isRejecting = false
       },
       error: (err) => {
         console.error('Reject role error:', err);
@@ -468,7 +466,7 @@ export class RoleComponent implements OnInit {
         }
         
         this.toastService.error(errorMsg);
-        this.isRejecting = false;
+        // Không cần set isRejecting = false
       }
     });
   }
