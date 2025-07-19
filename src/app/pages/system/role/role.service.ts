@@ -9,6 +9,16 @@ export class RoleService {
 
   constructor(private http: HttpClient) {}
 
+  // Get all approved roles with pagination
+  getApprovedRoles(params: any): Observable<any> {
+    return this.http.get<any>(this.apiUrl + '/approved', { params });
+  }
+
+  // Get all pending roles with pagination
+  getPendingRoles(params: any): Observable<any> {
+    return this.http.get<any>(this.apiUrl + '/pending', { params });
+  }
+
   // Get all roles with pagination
   getRoles(params: any): Observable<any> {
     return this.http.get<any>(this.apiUrl, { params });

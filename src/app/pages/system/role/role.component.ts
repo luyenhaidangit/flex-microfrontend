@@ -132,9 +132,9 @@ export class RoleComponent implements OnInit {
 
   getItems(): void {
     this.isLoading = true;
-    // Chỉ lấy vai trò đã duyệt cho tab 'Tất cả'
-    const params = { ...this.searchParams, status: 'AUT' };
-    this.roleService.getRoles(params)
+    // Gọi API lấy vai trò đã duyệt
+    const params = { ...this.searchParams };
+    this.roleService.getApprovedRoles(params)
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
@@ -157,15 +157,14 @@ export class RoleComponent implements OnInit {
 
   getPendingItems(): void {
     this.isLoading = true;
-    // Giả sử API lấy vai trò chờ duyệt là getRoles với status='UNA' (chờ duyệt)
-    const params = { ...this.searchParams, status: 'UNA' };
-    this.roleService.getRoles(params)
+    // Gọi API lấy vai trò chờ duyệt
+    const params = { ...this.searchParams };
+    this.roleService.getPendingRoles(params)
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
             const { items, ...page } = res.data;
             this.pendingItems = items ?? [];
-            // Cập nhật thông tin phân trang cho tab pending
             Object.assign(this.pagingState, {
               pageIndex : page.pageIndex,
               pageSize  : page.pageSize,
