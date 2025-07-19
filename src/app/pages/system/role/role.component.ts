@@ -206,12 +206,12 @@ export class RoleComponent implements OnInit {
   }
 
   openDetailModal(template: TemplateRef<any>, item: any): void {
-    const code = item?.code;
-    if (!code) {
-      this.toastService.error('Không tìm thấy mã vai trò!');
+    const id = item?.id;
+    if (!id) {
+      this.toastService.error('Không tìm thấy ID vai trò!');
       return;
     }
-    this.roleService.getRoleDetail(code).subscribe({
+    this.roleService.getRoleDetail(id).subscribe({
       next: (res) => {
         this.selectedItem = res?.data || item;
         this.modalRef = this.modalService.show(template, { class: 'modal-lg' });

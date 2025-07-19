@@ -14,8 +14,9 @@ export class RoleService {
     return this.http.get<any>(this.apiUrl, { params });
   }
 
-  getRoleDetail(code: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${code}`);
+  // Get role detail by id
+  getRoleDetail(id: number | string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
   // New method to get role request details for comparison
