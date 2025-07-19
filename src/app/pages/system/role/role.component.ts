@@ -123,7 +123,11 @@ export class RoleComponent implements OnInit {
 
   get searchParams(): any {
     const { pageIndex, pageSize, keyword } = this.pagingState;
-    return { pageIndex, pageSize, keyword };
+    const params: any = { pageIndex, pageSize };
+    if (keyword && keyword.trim() !== '') {
+      params.keyword = keyword;
+    }
+    return params;
   }
 
   getItems(): void {

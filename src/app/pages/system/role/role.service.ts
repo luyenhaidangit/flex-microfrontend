@@ -9,6 +9,7 @@ export class RoleService {
 
   constructor(private http: HttpClient) {}
 
+  // Get all roles with pagination
   getRoles(params: any): Observable<any> {
     return this.http.get<any>(this.apiUrl, { params });
   }
