@@ -6,6 +6,8 @@ import { DEFAULT_PER_PAGE_OPTIONS } from 'src/app/core/constants/shared.constant
 import { ToastService } from 'angular-toastify';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { Role, PagingState, RequestDetailData } from './role.models';
+import { UiStateService } from 'src/app/core/services/ui-state.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-role',
@@ -75,10 +77,15 @@ export class RoleComponent implements OnInit {
     private modalService: BsModalService,
     private fb: FormBuilder,
     private toastService: ToastService,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
   ) {}
 
+
   ngOnInit(): void {
+    // Load data
+    this.currentUser = this.authService.getCurrentUser();
+    this.getItems();
+
     // Initialize forms
     this.roleForm = this.fb.group({
       code: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9]+')]],
@@ -89,10 +96,6 @@ export class RoleComponent implements OnInit {
     this.rejectForm = this.fb.group({
       reason: ['', [Validators.required]]
     });
-
-    // Load data
-    this.currentUser = this.authService.getCurrentUser();
-    this.getItems();
     
     // Override toast icon size with JavaScript
     this.overrideToastIconSize();
@@ -138,6 +141,9 @@ export class RoleComponent implements OnInit {
     // Gọi API lấy vai trò đã duyệt
     const params = { ...this.searchParams };
     this.roleService.getApprovedRoles(params)
+      .pipe(
+        finalize(() => this.isLoading = false)
+      )
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
@@ -150,10 +156,8 @@ export class RoleComponent implements OnInit {
               totalItems: page.totalItems
             });
           }
-          this.isLoading = false;
         },
         error: () => {
-          this.isLoading = false;
         }
       });
   }
@@ -207,12 +211,12 @@ export class RoleComponent implements OnInit {
   }
 
   openDetailModal(template: TemplateRef<any>, item: any): void {
-    const id = item?.id;
-    if (!id) {
-      this.toastService.error('Không tìm thấy ID vai trò!');
+    const code = item?.code;
+    if (!code) {
+      this.toastService.error('Không tìm thấy mã vai trò!');
       return;
     }
-    this.roleService.getRoleDetail(id).subscribe({
+    this.roleService.getApprovedRoleByCode(code).subscribe({
       next: (res) => {
         this.selectedItem = res?.data || item;
         this.modalRef = this.modalService.show(template, { class: 'modal-lg' });

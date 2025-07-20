@@ -20,14 +20,9 @@ export class RoleService {
     return this.http.get<any>(this.apiUrl + '/pending', { params });
   }
 
-  // Get all roles with pagination
-  getRoles(params: any): Observable<any> {
-    return this.http.get<any>(this.apiUrl, { params });
-  }
-
-  // Get role detail by id
-  getRoleDetail(id: number | string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  // Get approved role detail by code
+  getApprovedRoleByCode(code: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/approved/${code}`);
   }
 
   // New method to get role request details for comparison
