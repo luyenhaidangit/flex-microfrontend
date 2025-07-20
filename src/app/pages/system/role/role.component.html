@@ -23,12 +23,10 @@
       <div class="col-md-3 mb-2 mb-md-0">
         <div class="form-group">
           <label class="form-label fw-bold text-muted" for="statusSelect">Trạng thái</label>
-          <select id="statusSelect" class="form-select" [(ngModel)]="pagingState.status">
+          <select id="statusSelect" class="form-select" [(ngModel)]="pagingState.isActive">
             <option value="">Tất cả trạng thái</option>
-            <option value="DRF">Nháp</option>
-            <option value="UNA">Chờ duyệt</option>
-            <option value="AUT">Đã duyệt</option>
-            <option value="REJ">Từ chối</option>
+            <option [ngValue]="true">Hoạt động</option>
+            <option [ngValue]="false">Không hoạt động</option>
           </select>
         </div>
       </div>

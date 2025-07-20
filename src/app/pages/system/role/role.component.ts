@@ -30,7 +30,7 @@ export class RoleComponent implements OnInit {
     totalPages: 0,
     totalItems: 0,
     keyword   : '',
-    status    : '',
+    isActive  : null,
     createdDate: null
   };
 
@@ -121,10 +121,13 @@ export class RoleComponent implements OnInit {
   }
 
   get searchParams(): any {
-    const { pageIndex, pageSize, keyword } = this.pagingState;
+    const { pageIndex, pageSize, keyword, isActive } = this.pagingState;
     const params: any = { pageIndex, pageSize };
     if (keyword && keyword.trim() !== '') {
       params.keyword = keyword;
+    }
+    if (isActive !== null && isActive !== undefined) {
+      params.isActive = isActive;
     }
     return params;
   }
