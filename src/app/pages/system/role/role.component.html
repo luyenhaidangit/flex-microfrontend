@@ -57,6 +57,7 @@
       <tab heading="Đã duyệt" (selectTab)="switchTab('approved')">
         <!-- ============ TABLE ============ -->
         <div class="table-responsive">
+          <!-- Skeleton -->
           <ng-container *ngIf="isLoading; else tableContent">
             <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
               <thead>
@@ -87,6 +88,7 @@
               </tbody>
             </table>
           </ng-container>
+          <!-- Content -->
           <ng-template #tableContent>
             <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
               <thead>
