@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-export type BadgeType = 'status' | 'request' | 'pending' | 'custom';
+export type BadgeType = 'status' | 'request' | 'pending' | 'roleStatus' | 'custom';
 
 export interface BadgeConfig {
   label: string;
@@ -18,12 +18,12 @@ const DEFAULT_CONFIGS: Record<BadgeType, BadgeTypeConfig> = {
     ACTIVE: {
       label: 'Hoạt động',
       class: 'badge-soft-success',
-      value: true
+      value: 'Y'
     },
     INACTIVE: {
       label: 'Không hoạt động',
       class: 'badge-soft-danger',
-      value: false
+      value: 'N'
     },
     UNKNOWN: {
       label: 'Không xác định',
@@ -68,6 +68,33 @@ const DEFAULT_CONFIGS: Record<BadgeType, BadgeTypeConfig> = {
       label: 'Chờ duyệt xoá',
       class: 'badge-soft-danger',
       value: 'DELETE'
+    },
+    UNKNOWN: {
+      label: 'Không xác định',
+      class: 'badge-soft-light',
+      value: 'UNKNOWN'
+    }
+  },
+  roleStatus: {
+    DRAFT: {
+      label: 'Nháp',
+      class: 'badge-soft-secondary',
+      value: 'DRAFT'
+    },
+    PENDING: {
+      label: 'Chờ duyệt',
+      class: 'badge-soft-warning',
+      value: 'PENDING'
+    },
+    APPROVED: {
+      label: 'Đã duyệt',
+      class: 'badge-soft-success',
+      value: 'APPROVED'
+    },
+    REJECTED: {
+      label: 'Từ chối',
+      class: 'badge-soft-danger',
+      value: 'REJECTED'
     },
     UNKNOWN: {
       label: 'Không xác định',
@@ -140,12 +167,18 @@ export class BadgeComponent implements OnInit {
   }
 
   private isValueMatch(configValue: any): boolean {
-    if (typeof this.value === 'boolean' && typeof configValue === 'boolean') {
-      return this.value === configValue;
+    // Handle boolean to string conversion for IS_ACTIVE field
+    if (typeof this.value === 'boolean') {
+      const stringValue = this.value ? 'Y' : 'N';
+      return stringValue === configValue;
     }
+    
+    // Handle string comparison (case-insensitive)
     if (typeof this.value === 'string' && typeof configValue === 'string') {
       return this.value.toUpperCase() === configValue.toUpperCase();
     }
+    
+    // Direct comparison for other types
     return this.value === configValue;
   }
 } 

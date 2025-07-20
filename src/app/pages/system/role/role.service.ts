@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Role, PagingRequest } from './role.models';
 
 @Injectable({ providedIn: 'root' })
 export class RoleService {

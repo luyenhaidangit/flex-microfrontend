@@ -5,6 +5,7 @@ import { RoleService } from './role.service';
 import { DEFAULT_PER_PAGE_OPTIONS } from 'src/app/core/constants/shared.constant';
 import { ToastService } from 'angular-toastify';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
+import { Role, PagingState, RequestDetailData } from './role.models';
 
 @Component({
   selector: 'app-role',
@@ -18,13 +19,13 @@ export class RoleComponent implements OnInit {
     { label: 'Quản lý vai trò', active: true }
   ];
 
-  items: any[] = [];
-  pendingItems: any[] = [];
-  selectedItem: any = null;
+  items: Role[] = [];
+  pendingItems: Role[] = [];
+  selectedItem: Role | null = null;
   modalRef?: BsModalRef;
   isLoading = false;
 
-  pagingState = {
+  pagingState: PagingState = {
     pageIndex : 1,
     pageSize  : 10,
     totalPages: 0,
@@ -62,7 +63,7 @@ export class RoleComponent implements OnInit {
   pendingCount: number = 0;
 
   // Enhanced detail modal properties
-  requestDetailData: any = null;
+  requestDetailData: RequestDetailData | null = null;
   isLoadingRequestDetail = false;
   
   // Loading states for approve/reject actions
@@ -589,30 +590,38 @@ export class RoleComponent implements OnInit {
 
   statusLabel(status: string): string {
     switch ((status || '').toUpperCase()) {
-      case 'DRF': return 'Nháp';
-      case 'UNA': return 'Chờ duyệt';
-      case 'AUT': return 'Đã duyệt';
-      case 'REJ': return 'Từ chối';
+      case 'DRAFT': return 'Nháp';
+      case 'PENDING': return 'Chờ duyệt';
+      case 'APPROVED': return 'Đã duyệt';
+      case 'REJECTED': return 'Từ chối';
       default: return status;
     }
   }
 
   getStatusBadgeClass(status: string): string {
     const s = (status || '').toUpperCase();
-    if (s === 'DRF') return 'badge badge-soft-secondary';
-    if (s === 'UNA') return 'badge badge-soft-warning';
-    if (s === 'AUT') return 'badge badge-soft-success';
-    if (s === 'REJ') return 'badge badge-soft-danger';
+    if (s === 'DRAFT') return 'badge badge-soft-secondary';
+    if (s === 'PENDING') return 'badge badge-soft-warning';
+    if (s === 'APPROVED') return 'badge badge-soft-success';
+    if (s === 'REJECTED') return 'badge badge-soft-danger';
     return 'badge badge-soft-light';
   }
 
   getStatusLabel(status: string): string {
     const s = (status || '').toUpperCase();
-    if (s === 'DRF') return 'Nháp';
-    if (s === 'UNA') return 'Chờ duyệt';
-    if (s === 'AUT') return 'Đã duyệt';
-    if (s === 'REJ') return 'Từ chối';
+    if (s === 'DRAFT') return 'Nháp';
+    if (s === 'PENDING') return 'Chờ duyệt';
+    if (s === 'APPROVED') return 'Đã duyệt';
+    if (s === 'REJECTED') return 'Từ chối';
     return status;
+  }
+
+  getRequestTypeLabel(requestType: string): string {
+    const type = (requestType || '').toUpperCase();
+    if (type === 'CREATE') return 'Tạo mới';
+    if (type === 'UPDATE') return 'Cập nhật';
+    if (type === 'DELETE') return 'Xoá';
+    return requestType;
   }
 
 
