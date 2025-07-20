@@ -107,25 +107,15 @@
                   <td>{{ item.code }}</td>
                   <td>{{ item.name }}</td>
                   <td>{{ item.description }}</td>
-                  <td>
-                    <span 
-                      class="badge font-size-11"
-                      [ngClass]="{
-                        'badge-soft-success': item.isActive === true,
-                        'badge-soft-danger': item.isActive === false
-                      }"
-                    >
-                      {{ getFriendlyStatus(item.isActive) }}
-                    </span>
-                  </td>
+                                      <td>
+                      <app-badge [value]="item.isActive" type="status"></app-badge>
+                    </td>
                   <td>{{ item.requestedBy }}</td>
                   <td>{{ item.requestedDate | date: 'dd/MM/yyyy' }}</td>
                   <td>{{ item.status === 'Approved' ? (item.approveDate | date: 'dd/MM/yyyy HH:mm:ss') : '—' }}</td>
                   <td>
                     <ng-container *ngIf="item.pendingAction; else noPending">
-                      <span *ngIf="item.pendingAction === 'CREATE'" class="badge badge-soft-success">Chờ duyệt thêm</span>
-                      <span *ngIf="item.pendingAction === 'UPDATE'" class="badge badge-soft-warning">Chờ duyệt sửa</span>
-                      <span *ngIf="item.pendingAction === 'DELETE'" class="badge badge-soft-danger">Chờ duyệt xoá</span>
+                      <app-badge [value]="item.pendingAction" type="pending"></app-badge>
                     </ng-container>
                     <ng-template #noPending>—</ng-template>
                   </td>
@@ -245,15 +235,7 @@
                   <td>{{ item.name }}</td>
                   <td>{{ item.description }}</td>
                   <td>
-                    <span class="badge font-size-11"
-                      [ngClass]="{
-                        'badge-soft-success': (item.requestType || '').toUpperCase() === 'CREATE',
-                        'badge-soft-warning': (item.requestType || '').toUpperCase() === 'UPDATE',
-                        'badge-soft-danger': (item.requestType || '').toUpperCase() === 'DELETE'
-                      }"
-                    >
-                      {{ getRequestTypeLabel(item.requestType) }}
-                    </span>
+                    <app-badge [value]="item.requestType" type="request"></app-badge>
                   </td>
                   <td>{{ item.requestedBy }}</td>
                   <td>{{ item.requestedDate | date: 'dd/MM/yyyy' }}</td>

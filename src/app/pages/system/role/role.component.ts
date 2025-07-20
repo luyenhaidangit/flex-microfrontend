@@ -615,13 +615,7 @@ export class RoleComponent implements OnInit {
     return status;
   }
 
-  getRequestTypeLabel(requestType: string): string {
-    const type = (requestType || '').toUpperCase();
-    if (type === 'CREATE') return 'Tạo mới';
-    if (type === 'UPDATE') return 'Cập nhật';
-    if (type === 'DELETE') return 'Xoá';
-    return requestType;
-  }
+
 
   // Xóa các hàm openDeleteDraftModal, confirmDeleteDraft, và logic liên quan đến nháp nếu có
 
@@ -718,13 +712,5 @@ export class RoleComponent implements OnInit {
     return this.requestDetailData?.type || '—';
   }
 
-  getFriendlyStatus(isActive: boolean | null | undefined): string {
-    if (isActive === true) {
-      return 'Hoạt động';
-    } else if (isActive === false) {
-      return 'Không hoạt động';
-    } else {
-      return 'Không xác định';
-    }
-  }
+
 }
