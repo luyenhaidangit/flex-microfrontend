@@ -717,4 +717,14 @@ export class RoleComponent implements OnInit {
   getRequestType(): string {
     return this.requestDetailData?.type || '—';
   }
+
+  getFriendlyStatus(isActive: boolean | null | undefined): string {
+    if (isActive === true) {
+      return 'Hoạt động';
+    } else if (isActive === false) {
+      return 'Không hoạt động';
+    } else {
+      return 'Không xác định';
+    }
+  }
 }

@@ -111,13 +111,11 @@
                     <span 
                       class="badge font-size-11"
                       [ngClass]="{
-                        'badge-soft-secondary': (item.status || '').toUpperCase() === 'DRF',
-                        'badge-soft-warning': (item.status || '').toUpperCase() === 'UNA',
-                        'badge-soft-success': (item.status || '').toUpperCase() === 'AUT',
-                        'badge-soft-danger': (item.status || '').toUpperCase() === 'REJ'
+                        'badge-soft-success': item.isActive === true,
+                        'badge-soft-danger': item.isActive === false
                       }"
                     >
-                      {{ statusLabel(item.status) }}
+                      {{ getFriendlyStatus(item.isActive) }}
                     </span>
                   </td>
                   <td>{{ item.requestedBy }}</td>
