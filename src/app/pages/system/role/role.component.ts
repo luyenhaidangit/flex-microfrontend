@@ -30,8 +30,8 @@ export class RoleComponent implements OnInit {
 
   
   pendingItems: Role[] = [];
-  selectedItem: Role | null = null;
-  modalRef?: BsModalRef;
+  
+  
   isLoading = false;
 
   pagingState: PagingState = {
@@ -60,12 +60,17 @@ export class RoleComponent implements OnInit {
   @ViewChild('rejectDeleteModal') rejectDeleteTemplateRef!: TemplateRef<any>;
   @ViewChild('deleteDraftModal') deleteDraftModal!: TemplateRef<any>;
   @ViewChild('requestDetailModal') requestDetailTemplateRef!: TemplateRef<any>;
+  @ViewChild('detailModal') detailModalTemplateRef!: TemplateRef<any>;
   rejectForm!: FormGroup;
   submittedReject = false;
+
+  // Prepare component
+  modalRef?: BsModalRef | null = null;
 
   // Prepare data for the component
   currentUser: any;
   items: Role[] = [];
+  selectedItem: Role | null = null;
 
   showSubmitConfirm = false;
   rejectedReason: string | null = null;
@@ -172,6 +177,131 @@ export class RoleComponent implements OnInit {
     this.onSearch();
   }
 
+  // Handle view detail item
+  openDetailModal(item: any): void {
+    let keyValue = this.activeTab === 'approved' ? item.code : item.requestId;
+    if (!keyValue) {
+      this.toastService.error('Không tìm thấy bản ghi yêu cầu!');
+      return;
+    }
+
+    this.roleService.getApprovedRoleByCode(keyValue).subscribe({
+      next: (res) => {
+        if (res?.isSuccess) {
+          this.selectedItem = res.data;
+          this.modalRef = this.modalService.show(this.detailModalTemplateRef, { 
+            class: 'modal-xl',
+            backdrop: 'static',
+            keyboard: false,
+            ignoreBackdropClick: true
+          });
+          
+          // Reset loading states when modal is hidden
+          this.modalRef.onHidden?.subscribe(() => {
+            this.resetLoadingStates();
+          });
+        } else {
+          this.toastService.error('Không thể lấy thông tin chi tiết yêu cầu!');
+        }
+        this.isLoadingRequestDetail = false;
+      },
+      error: (err) => {
+        console.error('Error fetching request detail:', err);
+        let errorMsg = 'Không thể lấy thông tin chi tiết yêu cầu!';
+        
+        // Handle specific error messages
+        if (err?.error?.message) {
+          errorMsg = err.error.message;
+        } else if (err?.status === 404) {
+          errorMsg = 'Không tìm thấy yêu cầu!';
+        } else if (err?.status === 403) {
+          errorMsg = 'Bạn không có quyền xem chi tiết yêu cầu này!';
+        }
+        
+        this.toastService.error(errorMsg);
+        this.isLoadingRequestDetail = false;
+      }
+    });
+
+    // this.selectedItem = item;
+    // this.modalRef = this.modalService.show(this.detailTemplateRef, { class: 'modal-lg' });
+  }
+
+  openRequestDetailModal(item: any): void {
+    const requestId = item?.requestId || item?.id;
+    if (!requestId) {
+      this.toastService.error('Không tìm thấy ID yêu cầu!');
+      return;
+    }
+
+    this.isLoadingRequestDetail = true;
+    this.requestDetailData = null;
+    this.selectedItem = item;
+    
+    // Reset loading states
+    this.isApproving = false;
+    this.isRejecting = false;
+
+    this.roleService.getRoleRequestDetail(requestId).subscribe({
+      next: (res) => {
+        if (res?.isSuccess) {
+          this.requestDetailData = res.data;
+          this.modalRef = this.modalService.show(this.requestDetailTemplateRef, { 
+            class: 'modal-xl',
+            backdrop: 'static',
+            keyboard: false,
+            ignoreBackdropClick: true
+          });
+          
+          // Reset loading states when modal is hidden
+          this.modalRef.onHidden?.subscribe(() => {
+            this.resetLoadingStates();
+          });
+        } else {
+          this.toastService.error('Không thể lấy thông tin chi tiết yêu cầu!');
+        }
+        this.isLoadingRequestDetail = false;
+      },
+      error: (err) => {
+        console.error('Error fetching request detail:', err);
+        let errorMsg = 'Không thể lấy thông tin chi tiết yêu cầu!';
+        
+        // Handle specific error messages
+        if (err?.error?.message) {
+          errorMsg = err.error.message;
+        } else if (err?.status === 404) {
+          errorMsg = 'Không tìm thấy yêu cầu!';
+        } else if (err?.status === 403) {
+          errorMsg = 'Bạn không có quyền xem chi tiết yêu cầu này!';
+        }
+        
+        this.toastService.error(errorMsg);
+        this.isLoadingRequestDetail = false;
+      }
+    });
+  }
+
+  openDetailModal1(template: TemplateRef<any>, item: any): void {
+    const code = item?.code;
+    if (!code) {
+      this.toastService.error('Không tìm thấy mã vai trò!');
+      return;
+    }
+    this.roleService.getApprovedRoleByCode(code).subscribe({
+      next: (res) => {
+        this.selectedItem = res?.data || item;
+        this.modalRef = this.modalService.show(template, { class: 'modal-lg' });
+      },
+      error: () => {
+        this.toastService.error('Không thể lấy thông tin chi tiết vai trò!');
+        this.selectedItem = item;
+        this.modalRef = this.modalService.show(template, { class: 'modal-lg' });
+      }
+    });
+  }
+
+  
+
   private overrideToastIconSize(): void {
     // Override toast icon size after a short delay to ensure DOM is ready
     setTimeout(() => {
@@ -235,83 +365,6 @@ export class RoleComponent implements OnInit {
       this.getItems();
     }
   }
-
-  
-
-  openDetailModal(template: TemplateRef<any>, item: any): void {
-    const code = item?.code;
-    if (!code) {
-      this.toastService.error('Không tìm thấy mã vai trò!');
-      return;
-    }
-    this.roleService.getApprovedRoleByCode(code).subscribe({
-      next: (res) => {
-        this.selectedItem = res?.data || item;
-        this.modalRef = this.modalService.show(template, { class: 'modal-lg' });
-      },
-      error: () => {
-        this.toastService.error('Không thể lấy thông tin chi tiết vai trò!');
-        this.selectedItem = item;
-        this.modalRef = this.modalService.show(template, { class: 'modal-lg' });
-      }
-    });
-  }
-
-  // Enhanced detail modal for role requests with comparison
-  openRequestDetailModal(item: any): void {
-    const requestId = item?.requestId || item?.id;
-    if (!requestId) {
-      this.toastService.error('Không tìm thấy ID yêu cầu!');
-      return;
-    }
-
-    this.isLoadingRequestDetail = true;
-    this.requestDetailData = null;
-    this.selectedItem = item;
-    
-    // Reset loading states
-    this.isApproving = false;
-    this.isRejecting = false;
-
-    this.roleService.getRoleRequestDetail(requestId).subscribe({
-      next: (res) => {
-        if (res?.isSuccess) {
-          this.requestDetailData = res.data;
-          this.modalRef = this.modalService.show(this.requestDetailTemplateRef, { 
-            class: 'modal-xl',
-            backdrop: 'static',
-            keyboard: false,
-            ignoreBackdropClick: true
-          });
-          
-          // Reset loading states when modal is hidden
-          this.modalRef.onHidden?.subscribe(() => {
-            this.resetLoadingStates();
-          });
-        } else {
-          this.toastService.error('Không thể lấy thông tin chi tiết yêu cầu!');
-        }
-        this.isLoadingRequestDetail = false;
-      },
-      error: (err) => {
-        console.error('Error fetching request detail:', err);
-        let errorMsg = 'Không thể lấy thông tin chi tiết yêu cầu!';
-        
-        // Handle specific error messages
-        if (err?.error?.message) {
-          errorMsg = err.error.message;
-        } else if (err?.status === 404) {
-          errorMsg = 'Không tìm thấy yêu cầu!';
-        } else if (err?.status === 403) {
-          errorMsg = 'Bạn không có quyền xem chi tiết yêu cầu này!';
-        }
-        
-        this.toastService.error(errorMsg);
-        this.isLoadingRequestDetail = false;
-      }
-    });
-  }
-
   // Method to reset all loading states
   private resetLoadingStates(): void {
     this.isApproving = false;
