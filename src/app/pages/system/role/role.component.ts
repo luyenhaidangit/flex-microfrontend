@@ -111,7 +111,7 @@ export class RoleComponent implements OnInit {
     this.overrideToastIconSize();
   }
 
-  // Handle action pagination
+  // Handle search alll items
   get searchParams(): RoleSearchParams {
     const { pageIndex, pageSize, keyword, isActive } = this.pagingState;
     const params: RoleSearchParams = { pageIndex, pageSize };
@@ -151,6 +151,25 @@ export class RoleComponent implements OnInit {
           console.error('getItems error:', err);
         }
       });
+  }
+
+  onSearch(): void {
+    if (this.activeTab === 'approved') {
+      this.getItems();
+    } else {
+      this.getPendingItems();
+    }
+  }
+
+  changePage(page: number): void {
+    if (page < 1 || page > this.pagingState.totalPages || page === this.pagingState.pageIndex) return;
+    this.pagingState.pageIndex = page;
+    this.onSearch();
+  }
+
+  changePageSize(): void {
+    this.pagingState.pageIndex = 1;
+    this.onSearch();
   }
 
   private overrideToastIconSize(): void {
@@ -217,16 +236,7 @@ export class RoleComponent implements OnInit {
     }
   }
 
-  changePage(page: number): void {
-    if (page < 1 || page > this.pagingState.totalPages || page === this.pagingState.pageIndex) return;
-    this.pagingState.pageIndex = page;
-    this.search();
-  }
-
-  changePageSize(): void {
-    this.pagingState.pageIndex = 1;
-    this.search();
-  }
+  
 
   openDetailModal(template: TemplateRef<any>, item: any): void {
     const code = item?.code;

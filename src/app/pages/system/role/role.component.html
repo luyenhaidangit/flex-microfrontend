@@ -33,7 +33,7 @@
       <div class="col-md-2">
         <div class="form-group">
           <label class="form-label d-block" style="visibility:hidden">Tìm kiếm</label>
-          <button class="btn btn-primary w-100" (click)="search()">
+          <button class="btn btn-primary w-100" (click)="onSearch()">
             <i class="bx bx-search-alt-2"></i> Tìm kiếm
           </button>
         </div>
@@ -87,9 +87,7 @@
                   <td>{{ item.code }}</td>
                   <td>{{ item.name }}</td>
                   <td>{{ item.description }}</td>
-                  <td>
-                      <app-badge [value]="item.isActive" type="status"></app-badge>
-                    </td>
+                  <td><app-badge [value]="item.isActive" type="status"></app-badge></td>
                   <td class="action-column">
                     <span class="text-info pointer" tooltip="Xem chi tiết" (click)="openRequestDetailModal(item)">
                       <i class="fas fa-eye"></i>
