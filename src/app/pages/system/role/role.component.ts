@@ -9,6 +9,13 @@ import { Role, PagingState, RequestDetailData } from './role.models';
 import { UiStateService } from 'src/app/core/services/ui-state.service';
 import { finalize } from 'rxjs/operators';
 
+interface RoleSearchParams {
+  pageIndex: number;
+  pageSize: number;
+  keyword?: string;
+  isActive?: boolean | null;
+}
+
 @Component({
   selector: 'app-role',
   templateUrl: './role.component.html',
@@ -21,7 +28,7 @@ export class RoleComponent implements OnInit {
     { label: 'Quản lý vai trò', active: true }
   ];
 
-  items: Role[] = [];
+  
   pendingItems: Role[] = [];
   selectedItem: Role | null = null;
   modalRef?: BsModalRef;
@@ -56,7 +63,10 @@ export class RoleComponent implements OnInit {
   rejectForm!: FormGroup;
   submittedReject = false;
 
+  // Prepare data for the component
   currentUser: any;
+  items: Role[] = [];
+
   showSubmitConfirm = false;
   rejectedReason: string | null = null;
 
@@ -101,6 +111,47 @@ export class RoleComponent implements OnInit {
     this.overrideToastIconSize();
   }
 
+  // Handle action pagination
+  get searchParams(): RoleSearchParams {
+    const { pageIndex, pageSize, keyword, isActive } = this.pagingState;
+    const params: RoleSearchParams = { pageIndex, pageSize };
+    if (keyword?.trim()) params.keyword = keyword.trim();
+    if (isActive !== null && isActive !== undefined) params.isActive = isActive;
+    return params;
+  }
+
+  private updatePagingState(page: Partial<PagingState>) {
+    Object.assign(this.pagingState, {
+      pageIndex: page.pageIndex,
+      pageSize: page.pageSize,
+      totalPages: page.totalPages,
+      totalItems: page.totalItems
+    });
+  }
+
+  getItems(): void {
+    this.isLoading = true;
+    this.roleService.getApprovedRoles({ ...this.searchParams })
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: (res) => {
+          if (res?.isSuccess) {
+            const { items, ...page } = res.data;
+            this.items = items ?? [];
+            this.updatePagingState(page);
+          } else {
+            this.items = [];
+            this.toastService.error('Không lấy được danh sách vai trò!');
+          }
+        },
+        error: (err) => {
+          this.items = [];
+          this.toastService.error('Đã xảy ra lỗi khi lấy danh sách vai trò!');
+          console.error('getItems error:', err);
+        }
+      });
+  }
+
   private overrideToastIconSize(): void {
     // Override toast icon size after a short delay to ensure DOM is ready
     setTimeout(() => {
@@ -124,43 +175,9 @@ export class RoleComponent implements OnInit {
     this.search();
   }
 
-  get searchParams(): any {
-    const { pageIndex, pageSize, keyword, isActive } = this.pagingState;
-    const params: any = { pageIndex, pageSize };
-    if (keyword && keyword.trim() !== '') {
-      params.keyword = keyword;
-    }
-    if (isActive !== null && isActive !== undefined) {
-      params.isActive = isActive;
-    }
-    return params;
-  }
+  
 
-  getItems(): void {
-    this.isLoading = true;
-    // Gọi API lấy vai trò đã duyệt
-    const params = { ...this.searchParams };
-    this.roleService.getApprovedRoles(params)
-      .pipe(
-        finalize(() => this.isLoading = false)
-      )
-      .subscribe({
-        next: (res) => {
-          if (res?.isSuccess) {
-            const { items, ...page } = res.data;
-            this.items = items ?? [];
-            Object.assign(this.pagingState, {
-              pageIndex : page.pageIndex,
-              pageSize  : page.pageSize,
-              totalPages: page.totalPages,
-              totalItems: page.totalItems
-            });
-          }
-        },
-        error: () => {
-        }
-      });
-  }
+  
 
   getPendingItems(): void {
     this.isLoading = true;
