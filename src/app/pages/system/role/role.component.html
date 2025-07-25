@@ -24,21 +24,10 @@
         <div class="form-group">
           <label class="form-label fw-bold text-muted" for="statusSelect">Trạng thái</label>
           <select id="statusSelect" class="form-select" [(ngModel)]="pagingState.isActive">
-            <option value="">Tất cả trạng thái</option>
+            <option [ngValue]="null">Tất cả trạng thái</option>
             <option [ngValue]="true">Hoạt động</option>
             <option [ngValue]="false">Không hoạt động</option>
           </select>
-        </div>
-      </div>
-      <div class="col-md-3 mb-2 mb-md-0">
-        <div class="form-group">
-          <label class="form-label fw-bold text-muted" for="createdDateInput">Ngày tạo</label>
-          <div class="position-relative">
-            <span class="position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); color: #bfc9da; pointer-events: none;">
-              <i class="bx bx-calendar"></i>
-            </span>
-            <input id="createdDateInput" type="text" class="form-control ps-5" placeholder="Chọn ngày..." bsDatepicker [(ngModel)]="pagingState.createdDate" [bsConfig]="{ showWeekNumbers: false, dateInputFormat: 'DD/MM/YYYY' }">
-          </div>
         </div>
       </div>
       <div class="col-md-2">

@@ -13,7 +13,7 @@ interface RoleSearchParams {
   pageIndex: number;
   pageSize: number;
   keyword?: string;
-  isActive?: boolean | null;
+  isActive?: 'Y' | 'N' | null;
 }
 
 @Component({
@@ -116,7 +116,8 @@ export class RoleComponent implements OnInit {
     const { pageIndex, pageSize, keyword, isActive } = this.pagingState;
     const params: RoleSearchParams = { pageIndex, pageSize };
     if (keyword?.trim()) params.keyword = keyword.trim();
-    if (isActive !== null && isActive !== undefined) params.isActive = isActive;
+    if (isActive === true) params.isActive = 'Y';
+    else if (isActive === false) params.isActive = 'N';
     return params;
   }
 
