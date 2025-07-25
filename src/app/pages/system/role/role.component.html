@@ -280,62 +280,81 @@
   <div class="modal-header">
     <h5 class="modal-title text-primary fw-semibold">
       <i class="fas fa-info-circle me-2"></i>Chi tiết vai trò
+      <app-badge *ngIf="selectedItem?.status" [value]="selectedItem?.status" type="roleStatus" [tooltip]="getStatusTooltip(selectedItem?.status)"></app-badge>
     </h5>
     <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
   </div>
   <div class="modal-body px-4 py-3">
-    <div class="row gy-2">
-      <div class="col-md-6">
-        <label class="form-label fw-bold text-muted">Mã vai trò</label>
-        <div class="text-dark ps-1">{{ selectedItem?.code || '—' }}</div>
-      </div>
-      <div class="col-md-6">
-        <label class="form-label fw-bold text-muted">Tên vai trò</label>
-        <div class="text-dark ps-1">{{ selectedItem?.name || '—' }}</div>
-      </div>
-      <div class="col-md-6">
-        <label class="form-label fw-bold text-muted">Mô tả</label>
-        <div class="text-dark ps-1">{{ selectedItem?.description || '—' }}</div>
-      </div>
-      <div class="col-md-6">
-        <label class="form-label fw-bold text-muted">Trạng thái</label>
-        <div class="text-dark ps-1">
-          <app-badge *ngIf="selectedItem?.status" [value]="selectedItem?.status" type="roleStatus"></app-badge>
-          <span *ngIf="!selectedItem?.status" class="badge badge-soft-light">Không xác định</span>
+    <tabset>
+      <tab heading="Thông tin">
+        <div class="row gy-2">
+          <div class="col-md-6">
+            <label class="form-label fw-bold text-muted">Mã vai trò</label>
+            <div class="text-dark ps-1">{{ selectedItem?.code || '—' }}</div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-bold text-muted">Tên vai trò</label>
+            <div class="text-dark ps-1">{{ selectedItem?.name || '—' }}</div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-bold text-muted">Mô tả</label>
+            <div class="text-dark ps-1">{{ selectedItem?.description || '—' }}</div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-bold text-muted">Trạng thái</label>
+            <div class="text-dark ps-1">
+              <app-badge *ngIf="selectedItem?.status" [value]="selectedItem?.status" type="roleStatus"></app-badge>
+              <span *ngIf="!selectedItem?.status" class="badge badge-soft-light">Không xác định</span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-bold text-muted">Người tạo</label>
+            <div class="text-dark ps-1">{{ selectedItem?.requestedBy || '—' }}</div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-bold text-muted">Ngày tạo</label>
+            <div class="text-dark ps-1">{{ selectedItem?.requestedDate ? (selectedItem?.requestedDate | date: 'dd/MM/yyyy HH:mm:ss') : '—' }}</div>
+          </div>
+          <div class="col-md-6" *ngIf="selectedItem?.status === 'APPROVED'">
+            <label class="form-label fw-bold text-muted">Người duyệt</label>
+            <div class="text-dark ps-1">{{ selectedItem?.approvedBy || '—' }}</div>
+          </div>
+          <div class="col-md-6" *ngIf="selectedItem?.status === 'APPROVED'">
+            <label class="form-label fw-bold text-muted">Ngày duyệt</label>
+            <div class="text-dark ps-1">{{ selectedItem?.approveDate ? (selectedItem?.approveDate | date: 'dd/MM/yyyy HH:mm:ss') : '—' }}</div>
+          </div>
+          <div class="col-md-12" *ngIf="selectedItem?.permissions?.length">
+            <label class="form-label fw-bold text-muted">Quyền hạn</label>
+            <div class="text-dark ps-1">
+              <ng-container *ngFor="let perm of selectedItem.permissions">
+                <span class="badge bg-secondary me-1">{{ perm }}</span>
+              </ng-container>
+            </div>
+          </div>
+          <div *ngIf="selectedItem?.status === 'REJECTED' && selectedItem?.rejectReason" class="alert alert-danger mt-3">
+            <i class="fas fa-ban me-2"></i>
+            <strong>Lý do từ chối:</strong> {{ selectedItem?.rejectReason }}
+            <div class="small text-muted mt-1">
+              Từ chối bởi: {{ selectedItem?.rejectedBy || '—' }} lúc {{ selectedItem?.rejectedDate | date:'dd/MM/yyyy' }}
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="col-md-6">
-        <label class="form-label fw-bold text-muted">Người tạo</label>
-        <div class="text-dark ps-1">{{ selectedItem?.requestedBy || '—' }}</div>
-      </div>
-      <div class="col-md-6">
-        <label class="form-label fw-bold text-muted">Ngày tạo</label>
-        <div class="text-dark ps-1">{{ selectedItem?.requestedDate ? (selectedItem?.requestedDate | date: 'dd/MM/yyyy HH:mm:ss') : '—' }}</div>
-      </div>
-      <div class="col-md-6" *ngIf="selectedItem?.status === 'APPROVED'">
-        <label class="form-label fw-bold text-muted">Người duyệt</label>
-        <div class="text-dark ps-1">{{ selectedItem?.approvedBy || '—' }}</div>
-      </div>
-      <div class="col-md-6" *ngIf="selectedItem?.status === 'APPROVED'">
-        <label class="form-label fw-bold text-muted">Ngày duyệt</label>
-        <div class="text-dark ps-1">{{ selectedItem?.approveDate ? (selectedItem?.approveDate | date: 'dd/MM/yyyy HH:mm:ss') : '—' }}</div>
-      </div>
-      <div class="col-md-12" *ngIf="selectedItem?.permissions?.length">
-        <label class="form-label fw-bold text-muted">Quyền hạn</label>
-        <div class="text-dark ps-1">
-          <ng-container *ngFor="let perm of selectedItem.permissions">
-            <span class="badge bg-secondary me-1">{{ perm }}</span>
-          </ng-container>
+      </tab>
+      <tab heading="Lịch sử thay đổi">
+        <div *ngIf="selectedItem?.activityLog?.length; else noHistory">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item" *ngFor="let log of selectedItem.activityLog">
+              <span class="fw-bold">Hành động:</span> {{ log.action }}
+              <span class="fw-bold ms-3">Người thực hiện:</span> {{ log.actor }}
+              <span class="fw-bold ms-3">Thời gian:</span> {{ log.timestamp | date:'dd/MM/yyyy HH:mm' }}
+            </li>
+          </ul>
         </div>
-      </div>
-      <div *ngIf="selectedItem?.status === 'REJECTED' && selectedItem?.rejectReason" class="alert alert-danger mt-3">
-        <i class="fas fa-ban me-2"></i>
-        <strong>Lý do từ chối:</strong> {{ selectedItem?.rejectReason }}
-        <div class="small text-muted mt-1">
-          Từ chối bởi: {{ selectedItem?.rejectedBy || '—' }} lúc {{ selectedItem?.rejectedDate | date:'dd/MM/yyyy' }}
-        </div>
-      </div>
-    </div>
+        <ng-template #noHistory>
+          <div class="text-muted text-center py-3">Chưa có lịch sử thay đổi cho vai trò này.</div>
+        </ng-template>
+      </tab>
+    </tabset>
   </div>
   <div class="modal-footer border-top-0">
     <button type="button" class="btn btn-outline-secondary" (click)="modalRef?.hide()">Đóng</button>
