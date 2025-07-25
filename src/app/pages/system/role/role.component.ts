@@ -185,11 +185,19 @@ export class RoleComponent implements OnInit {
       return;
     }
 
+    this.isLoadingRequestDetail = true;
+    this.requestDetailData = null;
+    this.selectedItem = item;
+
+    // Reset loading states
+    this.isApproving = false;
+    this.isRejecting = false;
+
     this.roleService.getApprovedRoleByCode(keyValue).subscribe({
       next: (res) => {
         if (res?.isSuccess) {
-          this.selectedItem = res.data;
-          this.modalRef = this.modalService.show(this.detailModalTemplateRef, { 
+          this.requestDetailData = res.data;
+          this.modalRef = this.modalService.show(this.requestDetailTemplateRef, { 
             class: 'modal-xl',
             backdrop: 'static',
             keyboard: false,
@@ -222,9 +230,6 @@ export class RoleComponent implements OnInit {
         this.isLoadingRequestDetail = false;
       }
     });
-
-    // this.selectedItem = item;
-    // this.modalRef = this.modalService.show(this.detailTemplateRef, { class: 'modal-lg' });
   }
 
   openRequestDetailModal(item: any): void {
