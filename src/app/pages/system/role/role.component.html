@@ -275,7 +275,7 @@
   </div>
 </div>
 
-<!-- Modal chi tiết vai trò -->
+<!-- Detail Modal -->
 <ng-template #detailModal>
   <div class="modal-header">
     <h5 class="modal-title text-primary fw-semibold">
@@ -303,25 +303,8 @@
           <div class="col-md-6">
             <label class="form-label fw-bold text-muted">Trạng thái</label>
             <div class="text-dark ps-1">
-              <app-badge *ngIf="selectedItem?.status" [value]="selectedItem?.status" type="roleStatus"></app-badge>
-              <span *ngIf="!selectedItem?.status" class="badge badge-soft-light">Không xác định</span>
+              <app-badge [value]="selectedItem?.isActive" type="status"></app-badge>
             </div>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-bold text-muted">Người tạo</label>
-            <div class="text-dark ps-1">{{ selectedItem?.requestedBy || '—' }}</div>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-bold text-muted">Ngày tạo</label>
-            <div class="text-dark ps-1">{{ selectedItem?.requestedDate ? (selectedItem?.requestedDate | date: 'dd/MM/yyyy HH:mm:ss') : '—' }}</div>
-          </div>
-          <div class="col-md-6" *ngIf="selectedItem?.status === 'APPROVED'">
-            <label class="form-label fw-bold text-muted">Người duyệt</label>
-            <div class="text-dark ps-1">{{ selectedItem?.approvedBy || '—' }}</div>
-          </div>
-          <div class="col-md-6" *ngIf="selectedItem?.status === 'APPROVED'">
-            <label class="form-label fw-bold text-muted">Ngày duyệt</label>
-            <div class="text-dark ps-1">{{ selectedItem?.approveDate ? (selectedItem?.approveDate | date: 'dd/MM/yyyy HH:mm:ss') : '—' }}</div>
           </div>
           <div class="col-md-12" *ngIf="selectedItem?.permissions?.length">
             <label class="form-label fw-bold text-muted">Quyền hạn</label>

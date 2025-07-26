@@ -190,7 +190,11 @@ export class RoleComponent implements OnInit {
       this.roleService.getApprovedRoleByCode(code).subscribe({
         next: (res) => {
           this.selectedItem = res?.data || item;
-          this.modalRef = this.modalService.show(this.detailModalTemplateRef, { class: 'modal-lg' });
+          this.modalRef = this.modalService.show(this.detailModalTemplateRef, { 
+            class: 'modal-xl',
+            backdrop: 'static',
+            keyboard: false, 
+          });
           this.isLoadingRequestDetail = false;
         },
         error: () => {
@@ -822,5 +826,15 @@ export class RoleComponent implements OnInit {
     return this.requestDetailData?.type || '—';
   }
 
+  getStatusTooltip(status: string): string {
+    const s = (status || '').toUpperCase();
+    switch (s) {
+      case 'DRAFT': return 'Vai trò đang ở trạng thái nháp, chưa được gửi duyệt';
+      case 'PENDING': return 'Vai trò đang chờ phê duyệt từ người có thẩm quyền';
+      case 'APPROVED': return 'Vai trò đã được phê duyệt và có thể sử dụng';
+      case 'REJECTED': return 'Vai trò đã bị từ chối, cần chỉnh sửa và gửi lại';
+      default: return 'Trạng thái không xác định';
+    }
+  }
 
 }
