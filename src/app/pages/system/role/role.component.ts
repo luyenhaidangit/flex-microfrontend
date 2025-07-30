@@ -347,7 +347,6 @@ export class RoleComponent implements OnInit {
         return;
       }
       this.selectedItem = null;
-      this.isLoading = true;
       this.roleService.getApprovedRoleByCode(code).subscribe({
         next: (res) => {
           this.selectedItem = res?.data || item;
@@ -361,13 +360,11 @@ export class RoleComponent implements OnInit {
             backdrop: 'static',
             keyboard: false, 
           });
-          this.isLoading = false;
         },
         error: () => {
           this.toastService.error('Không thể lấy thông tin chi tiết vai trò!');
           this.selectedItem = item;
           this.modalRef = this.modalService.show(this.detailModalTemplateRef, { class: 'modal-lg' });
-          this.isLoading = false;
         }
       });
     } else {
@@ -377,7 +374,6 @@ export class RoleComponent implements OnInit {
         this.toastService.error('Không tìm thấy ID yêu cầu!');
         return;
       }
-      this.isLoading = true;
       this.requestDetailData = null;
       this.selectedItem = item;
       this.isApproving = false;
@@ -398,7 +394,6 @@ export class RoleComponent implements OnInit {
           } else {
             this.toastService.error('Không thể lấy thông tin chi tiết yêu cầu!');
           }
-          this.isLoading = false;
         },
         error: (err) => {
           console.error('Error fetching request detail:', err);
@@ -411,7 +406,6 @@ export class RoleComponent implements OnInit {
             errorMsg = 'Bạn không có quyền xem chi tiết yêu cầu này!';
           }
           this.toastService.error(errorMsg);
-          this.isLoading = false;
         }
       });
     }
@@ -424,7 +418,6 @@ export class RoleComponent implements OnInit {
       return;
     }
 
-    this.isLoading = true;
     this.requestDetailData = null;
     this.selectedItem = item;
     
@@ -450,7 +443,6 @@ export class RoleComponent implements OnInit {
         } else {
           this.toastService.error('Không thể lấy thông tin chi tiết yêu cầu!');
         }
-        this.isLoading = false;
       },
       error: (err) => {
         console.error('Error fetching request detail:', err);
@@ -466,7 +458,6 @@ export class RoleComponent implements OnInit {
         }
         
         this.toastService.error(errorMsg);
-        this.isLoading = false;
       }
     });
   }
@@ -483,9 +474,7 @@ export class RoleComponent implements OnInit {
       return;
     }
 
-    this.isLoading = true;
     this.roleService.getRoleChangeHistory(this.selectedItem.code)
-      .pipe(finalize(() => this.isLoading = false))
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
@@ -549,7 +538,6 @@ export class RoleComponent implements OnInit {
   }
 
   getPendingItems(): void {
-    this.isLoading = true;
     // Gọi API lấy vai trò chờ duyệt
     const params = { ...this.searchParams };
     this.roleService.getPendingRoles(params)
@@ -567,11 +555,9 @@ export class RoleComponent implements OnInit {
           } else {
             this.pendingItems = [];
           }
-          this.isLoading = false;
         },
         error: () => {
           this.pendingItems = [];
-          this.isLoading = false;
         }
       });
   }
