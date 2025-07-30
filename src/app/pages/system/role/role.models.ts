@@ -22,6 +22,13 @@ export interface Role {
   requestType?: 'CREATE' | 'UPDATE' | 'DELETE';
 }
 
+export interface RoleSearchParams {
+  pageIndex: number;
+  pageSize: number;
+  keyword?: string;
+  isActive?: 'Y' | 'N' | null;
+}
+
 export interface PagingState {
   pageIndex: number;
   pageSize: number;

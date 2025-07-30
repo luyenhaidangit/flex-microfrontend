@@ -5,16 +5,8 @@ import { RoleService } from './role.service';
 import { DEFAULT_PER_PAGE_OPTIONS } from 'src/app/core/constants/shared.constant';
 import { ToastService } from 'angular-toastify';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
-import { Role, PagingState, RequestDetailData } from './role.models';
-import { UiStateService } from 'src/app/core/services/ui-state.service';
+import { Role, PagingState, RequestDetailData, RoleSearchParams } from './role.models';
 import { finalize } from 'rxjs/operators';
-
-interface RoleSearchParams {
-  pageIndex: number;
-  pageSize: number;
-  keyword?: string;
-  isActive?: 'Y' | 'N' | null;
-}
 
 @Component({
   selector: 'app-role',
@@ -49,9 +41,6 @@ export class RoleComponent implements OnInit {
   roleForm!: FormGroup;
   submitted = false;
 
-  // Expandable row state for change history
-  expandedRows: Set<number> = new Set();
-
   @ViewChild('createModal') createTemplateRef!: TemplateRef<any>;
   @ViewChild('approveModal') approveTemplateRef!: TemplateRef<any>;
   @ViewChild('rejectModal') rejectTemplateRef!: TemplateRef<any>;
@@ -74,6 +63,8 @@ export class RoleComponent implements OnInit {
   currentUser: any;
   items: Role[] = [];
   selectedItem: Role | null = null;
+  expandedRows: Set<number> = new Set();
+  changeHistory: any[] = [];
 
   showSubmitConfirm = false;
   rejectedReason: string | null = null;
@@ -89,9 +80,6 @@ export class RoleComponent implements OnInit {
   // Loading states for approve/reject actions
   isApproving = false;
   isRejecting = false;
-
-  // Change history loading state
-  changeHistory: any[] = [];
 
   constructor(
     private roleService: RoleService,
@@ -529,10 +517,6 @@ export class RoleComponent implements OnInit {
     this.pagingState.pageIndex = 1; // Reset về trang đầu tiên khi chuyển tab
     this.search();
   }
-
-  
-
-  
 
   getPendingItems(): void {
     this.isLoading = true;
