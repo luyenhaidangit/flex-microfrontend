@@ -288,3 +288,88 @@ h2 {
   height: 12px !important;
   opacity: 1 !important;
 }
+
+// Expandable row styles for change history table
+.cursor-pointer {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.cursor-pointer:hover {
+  background-color: #f8f9fa !important;
+}
+
+.table-active {
+  background-color: #e3f2fd !important;
+  border-left: 3px solid #2196f3;
+}
+
+.expanded-row {
+  background-color: #f8f9fa;
+  
+  td {
+    border-top: none;
+    padding: 0;
+  }
+  
+  .bg-light {
+    background-color: #f8f9fa !important;
+  }
+  
+  .table-sm {
+    font-size: 0.875rem;
+    
+    th {
+      font-weight: 600;
+      color: #495057;
+      border-bottom: 1px solid #dee2e6;
+      padding: 0.5rem;
+    }
+    
+    td {
+      padding: 0.5rem;
+      vertical-align: middle;
+    }
+  }
+  
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.25em 0.5em;
+  }
+  
+  .bg-danger {
+    background-color: #dc3545 !important;
+  }
+  
+  .bg-success {
+    background-color: #28a745 !important;
+  }
+}
+
+// Animation for expand/collapse
+.fas.fa-chevron-right,
+.fas.fa-chevron-down {
+  transition: transform 0.2s ease;
+}
+
+.fas.fa-chevron-down {
+  transform: rotate(0deg);
+}
+
+.fas.fa-chevron-right {
+  transform: rotate(0deg);
+}
+
+// Responsive adjustments for expandable rows
+@media (max-width: 768px) {
+  .expanded-row {
+    .table-responsive {
+      font-size: 0.8rem;
+    }
+    
+    .table-sm th,
+    .table-sm td {
+      padding: 0.25rem;
+    }
+  }
+}

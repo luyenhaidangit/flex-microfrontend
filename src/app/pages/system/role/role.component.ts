@@ -49,6 +49,9 @@ export class RoleComponent implements OnInit {
   roleForm!: FormGroup;
   submitted = false;
 
+  // Expandable row state for change history
+  expandedRows: Set<number> = new Set();
+
   @ViewChild('createModal') createTemplateRef!: TemplateRef<any>;
   @ViewChild('approveModal') approveTemplateRef!: TemplateRef<any>;
   @ViewChild('rejectModal') rejectTemplateRef!: TemplateRef<any>;
@@ -87,6 +90,9 @@ export class RoleComponent implements OnInit {
   isApproving = false;
   isRejecting = false;
 
+  // Change history loading state
+  changeHistory: any[] = [];
+
   constructor(
     private roleService: RoleService,
     private modalService: BsModalService,
@@ -114,6 +120,178 @@ export class RoleComponent implements OnInit {
     
     // Override toast icon size with JavaScript
     this.overrideToastIconSize();
+  }
+
+  // Mock data for testing expandable rows
+  private getMockChangeHistory(): any[] {
+    return [
+      {
+        id: 1,
+        timestamp: new Date('2024-01-15T14:30:00'),
+        actor: {
+          id: 1,
+          userName: 'admin_maker',
+          email: 'admin.maker@company.com',
+          fullName: 'Nguyễn Văn A'
+        },
+        statusBefore: 'DRAFT',
+        statusBeforeLabel: 'Nháp',
+        statusAfter: 'PENDING',
+        statusAfterLabel: 'Chờ duyệt',
+        description: 'Gửi vai trò để phê duyệt',
+        changes: {
+          'status': 'DRAFT',
+          'roleName': 'Quản lý hệ thống',
+          'description': 'Vai trò quản lý toàn bộ hệ thống'
+        },
+        rawData: {
+          before: {
+            'status': 'DRAFT',
+            'roleName': 'Quản lý hệ thống',
+            'description': 'Vai trò quản lý toàn bộ hệ thống',
+            'isActive': false
+          },
+          after: {
+            'status': 'PENDING',
+            'roleName': 'Quản lý hệ thống',
+            'description': 'Vai trò quản lý toàn bộ hệ thống',
+            'isActive': false
+          }
+        }
+      },
+      {
+        id: 2,
+        timestamp: new Date('2024-01-16T09:15:00'),
+        actor: {
+          id: 2,
+          userName: 'admin_checker',
+          email: 'admin.checker@company.com',
+          fullName: 'Trần Thị B'
+        },
+        statusBefore: 'PENDING',
+        statusBeforeLabel: 'Chờ duyệt',
+        statusAfter: 'APPROVED',
+        statusAfterLabel: 'Đã duyệt',
+        description: 'Phê duyệt vai trò quản lý hệ thống',
+        changes: {
+          'status': 'PENDING',
+          'isActive': false
+        },
+        rawData: {
+          before: {
+            'status': 'PENDING',
+            'roleName': 'Quản lý hệ thống',
+            'description': 'Vai trò quản lý toàn bộ hệ thống',
+            'isActive': false
+          },
+          after: {
+            'status': 'APPROVED',
+            'roleName': 'Quản lý hệ thống',
+            'description': 'Vai trò quản lý toàn bộ hệ thống',
+            'isActive': true
+          }
+        }
+      },
+      {
+        id: 3,
+        timestamp: new Date('2024-01-17T16:45:00'),
+        actor: {
+          id: 1,
+          userName: 'admin_maker',
+          email: 'admin.maker@company.com',
+          fullName: 'Nguyễn Văn A'
+        },
+        statusBefore: 'APPROVED',
+        statusBeforeLabel: 'Đã duyệt',
+        statusAfter: 'APPROVED',
+        statusAfterLabel: 'Đã duyệt',
+        description: 'Cập nhật thông tin vai trò',
+        changes: {
+          'roleName': 'Quản lý hệ thống',
+          'description': 'Vai trò quản lý toàn bộ hệ thống',
+          'isActive': true
+        },
+        rawData: {
+          before: {
+            'status': 'APPROVED',
+            'roleName': 'Quản lý hệ thống',
+            'description': 'Vai trò quản lý toàn bộ hệ thống',
+            'isActive': true
+          },
+          after: {
+            'status': 'APPROVED',
+            'roleName': 'Quản lý hệ thống v2.0',
+            'description': 'Vai trò quản lý toàn bộ hệ thống với quyền mở rộng',
+            'isActive': true
+          }
+        }
+      },
+      {
+        id: 4,
+        timestamp: new Date('2024-01-18T11:20:00'),
+        actor: {
+          id: 3,
+          userName: 'system_admin',
+          email: 'system.admin@company.com',
+          fullName: 'Lê Văn C'
+        },
+        statusBefore: 'APPROVED',
+        statusBeforeLabel: 'Đã duyệt',
+        statusAfter: 'APPROVED',
+        statusAfterLabel: 'Đã duyệt',
+        description: 'Tạm thời vô hiệu hóa vai trò',
+        changes: {
+          'isActive': true
+        },
+        rawData: {
+          before: {
+            'status': 'APPROVED',
+            'roleName': 'Quản lý hệ thống v2.0',
+            'description': 'Vai trò quản lý toàn bộ hệ thống với quyền mở rộng',
+            'isActive': true
+          },
+          after: {
+            'status': 'APPROVED',
+            'roleName': 'Quản lý hệ thống v2.0',
+            'description': 'Vai trò quản lý toàn bộ hệ thống với quyền mở rộng',
+            'isActive': false
+          }
+        }
+      },
+      {
+        id: 5,
+        timestamp: new Date('2024-01-19T08:30:00'),
+        actor: {
+          id: 1,
+          userName: 'admin_maker',
+          email: 'admin.maker@company.com',
+          fullName: 'Nguyễn Văn A'
+        },
+        statusBefore: 'APPROVED',
+        statusBeforeLabel: 'Đã duyệt',
+        statusAfter: 'APPROVED',
+        statusAfterLabel: 'Đã duyệt',
+        description: 'Kích hoạt lại vai trò và cập nhật mô tả',
+        changes: {
+          'description': 'Vai trò quản lý toàn bộ hệ thống với quyền mở rộng',
+          'isActive': false
+        },
+        rawData: {
+          before: {
+            'status': 'APPROVED',
+            'roleName': 'Quản lý hệ thống v2.0',
+            'description': 'Vai trò quản lý toàn bộ hệ thống với quyền mở rộng',
+            'isActive': false
+          },
+          after: {
+            'status': 'APPROVED',
+            'roleName': 'Quản lý hệ thống v2.0',
+            'description': 'Vai trò quản lý toàn bộ hệ thống với quyền mở rộng và bảo mật nâng cao',
+            'isActive': true
+          }
+        }
+      }
+    ];
   }
 
   // Handle search alll items
@@ -190,6 +368,11 @@ export class RoleComponent implements OnInit {
       this.roleService.getApprovedRoleByCode(code).subscribe({
         next: (res) => {
           this.selectedItem = res?.data || item;
+          
+          // Reset change history when opening modal
+          this.changeHistory = [];
+          this.expandedRows.clear();
+          
           this.modalRef = this.modalService.show(this.detailModalTemplateRef, { 
             class: 'modal-xl',
             backdrop: 'static',
@@ -790,7 +973,13 @@ export class RoleComponent implements OnInit {
     return value;
   }
 
-  getChangedFieldsCount(): number {
+  getChangedFieldsCount(changes?: any): number {
+    if (changes) {
+      // Cho lịch sử thay đổi
+      return Object.keys(changes).length;
+    }
+    
+    // Cho request detail
     if (!this.requestDetailData?.oldData || !this.requestDetailData?.newData) return 0;
     
     const fields = ['roleCode', 'roleName', 'description'];
@@ -835,6 +1024,114 @@ export class RoleComponent implements OnInit {
       case 'REJECTED': return 'Vai trò đã bị từ chối, cần chỉnh sửa và gửi lại';
       default: return 'Trạng thái không xác định';
     }
+  }
+
+  viewChangeDetails(history: any): void {
+    // Hiển thị modal với JSON chi tiết
+    const jsonData = {
+      before: history.rawData?.before,
+      after: history.rawData?.after,
+      changes: history.changes
+    };
+    
+    // Có thể mở modal hoặc hiển thị trong console
+    console.log('Change Details:', jsonData);
+    this.toastService.info('Xem chi tiết trong Console (F12)');
+  }
+
+  compareChanges(history: any): void {
+    const compareData = {
+      before: history.rawData?.before,
+      after: history.rawData?.after,
+      changes: history.changes,
+      description: history.description
+    };
+    console.log('Compare Data:', compareData);
+    this.toastService.info('Tính năng so sánh đang được phát triển');
+  }
+
+  // Expandable row methods for change history
+  toggleRowExpansion(historyIndex: number): void {
+    if (this.expandedRows.has(historyIndex)) {
+      this.expandedRows.delete(historyIndex);
+    } else {
+      this.expandedRows.add(historyIndex);
+    }
+  }
+
+  // Load change history when history tab is opened
+  loadChangeHistory(): void {
+    if (!this.selectedItem?.code) {
+      this.toastService.error('Không tìm thấy mã vai trò!');
+      return;
+    }
+
+    // Only load if not already loaded
+    if (this.changeHistory.length > 0) {
+      return;
+    }
+
+    this.isLoading = true;
+    this.roleService.getRoleChangeHistory(this.selectedItem.code).subscribe({
+      next: (res) => {
+        if (res?.isSuccess) {
+          this.changeHistory = res.data || [];
+        } else {
+          this.changeHistory = [];
+          this.toastService.error('Không thể lấy lịch sử thay đổi!');
+        }
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching change history:', err);
+        this.changeHistory = [];
+        
+        // For testing purposes, use mock data if API fails
+        this.changeHistory = this.getMockChangeHistory();
+        this.toastService.warn('Sử dụng dữ liệu mẫu cho lịch sử thay đổi');
+        this.isLoading = false;
+      }
+    });
+  }
+
+  isRowExpanded(historyIndex: number): boolean {
+    return this.expandedRows.has(historyIndex);
+  }
+
+  getChangedFields(history: any): string[] {
+    if (!history.changes) return [];
+    return Object.keys(history.changes);
+  }
+
+  getFieldBeforeValue(history: any, field: string): string {
+    if (!history.rawData?.before) return '—';
+    return history.rawData.before[field] || '—';
+  }
+
+  getFieldAfterValue(history: any, field: string): string {
+    if (!history.rawData?.after) return '—';
+    return history.rawData.after[field] || '—';
+  }
+
+  getFieldDisplayName(field: string): string {
+    const fieldNames: { [key: string]: string } = {
+      'roleCode': 'Mã vai trò',
+      'roleName': 'Tên vai trò', 
+      'name': 'Tên vai trò',
+      'code': 'Mã vai trò',
+      'description': 'Mô tả',
+      'isActive': 'Trạng thái hoạt động',
+      'status': 'Trạng thái phê duyệt'
+    };
+    return fieldNames[field] || field;
+  }
+
+  getFieldValueDisplay(value: any): string {
+    if (value === null || value === undefined) return '—';
+    if (typeof value === 'boolean') {
+      return value ? 'Hoạt động' : 'Không hoạt động';
+    }
+    return String(value);
   }
 
 }

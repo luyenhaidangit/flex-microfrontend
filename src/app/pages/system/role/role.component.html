@@ -271,6 +271,114 @@
           </div>
         </div>
       </tab>
+      <!-- History tab -->
+      <tab heading="Lịch sử thay đổi" (click)="loadChangeHistory()">
+        <div class="table-responsive">
+          <ng-container *ngIf="isLoading; else historyTableContent">
+            <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
+              <thead>
+                <tr>
+                  <th>Mã vai trò</th>
+                  <th>Tên vai trò</th>
+                  <th>Mô tả</th>
+                  <th>Trạng thái</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let i of [1,2,3,4,5]">
+                  <td><app-skeleton width="80px" height="20px"></app-skeleton></td>
+                  <td><app-skeleton width="120px" height="20px"></app-skeleton></td>
+                  <td><app-skeleton width="180px" height="20px"></app-skeleton></td>
+                  <td><app-skeleton width="60px" height="20px"></app-skeleton></td>
+                  <td><app-skeleton width="100px" height="20px"></app-skeleton></td>
+                </tr>
+              </tbody>
+            </table>
+          </ng-container>
+          <ng-template #historyTableContent>
+            <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
+              <thead>
+                <tr>
+                  <th>Mã vai trò</th>
+                  <th>Tên vai trò</th>
+                  <th>Mô tả</th>
+                  <th>Trạng thái</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of items;">
+                  <td>{{ item.code }}</td>
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.description }}</td>
+                  <td><app-badge [value]="item.isActive" type="status"></app-badge></td>
+                  <td class="action-column">
+                    <span class="text-info pointer" tooltip="Xem chi tiết" (click)="openDetailModal(item)">
+                      <i class="fas fa-eye"></i>
+                    </span>
+                    <ng-container *ngIf="item.pendingAction === 'CREATE'">
+                      <span class="text-success ms-2 pointer" tooltip="Phê duyệt yêu cầu" (click)="openApproveModal(item)">
+                        <i class="fas fa-check"></i>
+                      </span>
+                      <span class="text-danger ms-2 pointer" tooltip="Từ chối yêu cầu" (click)="openRejectModal(item)">
+                        <i class="fas fa-times"></i>
+                      </span>
+                    </ng-container>
+                    <ng-container *ngIf="!item.pendingAction">
+                      <span class="text-warning ms-2 pointer" tooltip="Chỉnh sửa" (click)="openEditModal(item)">
+                        <i class="fas fa-pen"></i>
+                      </span>
+                      <span class="text-danger ms-2 pointer" tooltip="Xoá" (click)="openDeleteModal(item)">
+                        <i class="fas fa-trash"></i>
+                      </span>
+                    </ng-container>
+                  </td>
+                </tr>
+                <tr *ngIf="items.length === 0">
+                  <td colspan="5" class="text-center">Không có dữ liệu</td>
+                </tr>
+              </tbody>
+            </table>
+          </ng-template>
+        </div>
+
+        <!-- Pagination -->
+        <div class="table-filter d-flex justify-content-between align-items-center mt-2">
+          <ul class="pagination mb-0">
+            <li class="page-item cursor-pointer" [class.disabled]="pagingState.pageIndex === 1">
+              <a class="page-link" (click)="changePage(pagingState.pageIndex - 1)">
+                <i class="mdi mdi-chevron-left"></i>
+              </a>
+            </li>
+
+            <li *ngFor="let _ of [].constructor(pagingState.totalPages); let idx = index"
+                class="page-item cursor-pointer"
+                [class.active]="pagingState.pageIndex === idx + 1">
+              <a class="page-link" (click)="changePage(idx + 1)">
+                {{ idx + 1 }}
+              </a>
+            </li>
+
+            <li class="page-item cursor-pointer" [class.disabled]="pagingState.pageIndex === pagingState.totalPages">
+              <a class="page-link" (click)="changePage(pagingState.pageIndex + 1)">
+                <i class="mdi mdi-chevron-right"></i>
+              </a>
+            </li>
+          </ul>
+
+          <!-- page size -->
+          <div class="per-page">
+            Hiển thị
+            <select class="mx-1 cursor-pointer" [(ngModel)]="pagingState.pageSize" (change)="changePageSize()">
+              <option *ngFor="let opt of DEFAULT_PER_PAGE_OPTIONS" [ngValue]="opt.value" class="cursor-pointer">
+                {{ opt.label }}
+              </option>
+            </select>
+            / {{ pagingState.totalItems }} tổng số bản ghi
+          </div>
+        </div>
+      </tab>
     </tabset>
   </div>
 </div>
@@ -323,19 +431,136 @@
           </div>
         </div>
       </tab>
-      <tab heading="Lịch sử thay đổi">
-        <div *ngIf="selectedItem?.activityLog?.length; else noHistory">
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item" *ngFor="let log of selectedItem.activityLog">
-              <span class="fw-bold">Hành động:</span> {{ log.action }}
-              <span class="fw-bold ms-3">Người thực hiện:</span> {{ log.actor }}
-              <span class="fw-bold ms-3">Thời gian:</span> {{ log.timestamp | date:'dd/MM/yyyy HH:mm' }}
-            </li>
-          </ul>
+                      <tab heading="Lịch sử thay đổi" (selectTab)="loadChangeHistory()">
+                  <div class="mt-3">
+                    <!-- Loading state -->
+                    <div *ngIf="isLoading" class="text-center py-4">
+                      <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Đang tải...</span>
+                      </div>
+                      <p class="mt-2 text-muted">Đang tải lịch sử thay đổi...</p>
+                    </div>
+
+                    <!-- History content -->
+                    <div *ngIf="!isLoading">
+            <div *ngIf="changeHistory?.length; else noHistory">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead class="table-light">
+                    <tr>
+                      <th style="width: 40px;"></th> <!-- New column for expand/collapse icon -->
+                      <th>Thời gian thay đổi</th>
+                      <th>Người thực hiện</th>
+                      <th>Trạng thái trước → sau</th>
+                      <th>Mô tả thay đổi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngFor="let history of changeHistory; let i = index">
+                      <!-- Main row -->
+                      <tr class="cursor-pointer" 
+                          (click)="toggleRowExpansion(i)"
+                          [class.table-active]="isRowExpanded(i)">
+                        <td class="text-center">
+                          <i class="fas" 
+                             [class.fa-chevron-down]="isRowExpanded(i)"
+                             [class.fa-chevron-right]="!isRowExpanded(i)"
+                             [class.text-primary]="isRowExpanded(i)"></i>
+                        </td>
+                        <td>
+                          <div class="fw-bold">{{ history.timestamp | date:'dd/MM/yyyy' }}</div>
+                          <small class="text-muted">{{ history.timestamp | date:'HH:mm:ss' }}</small>
+                        </td>
+                        <td>
+                          <div class="fw-bold">{{ history.actor.userName }}</div>
+                          <small class="text-muted">{{ history.actor.email }}</small>
+                        </td>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <span class="badge me-2" [ngClass]="getStatusBadgeClass(history.statusBefore)">
+                              {{ history.statusBeforeLabel }}
+                            </span>
+                            <i class="fas fa-arrow-right text-muted mx-2"></i>
+                            <span class="badge" [ngClass]="getStatusBadgeClass(history.statusAfter)">
+                              {{ history.statusAfterLabel }}
+                            </span>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="text-dark">{{ history.description }}</div>
+                          <small class="text-muted" *ngIf="getChangedFieldsCount(history.changes) > 0">
+                            {{ getChangedFieldsCount(history.changes) }} trường thay đổi
+                          </small>
+                        </td>
+                      </tr>
+                      
+                      <!-- Expanded row content -->
+                      <tr *ngIf="isRowExpanded(i)" class="expanded-row">
+                        <td colspan="5" class="p-0">
+                          <div class="bg-light border-top">
+                            <div class="p-3">
+                              <h6 class="text-muted mb-3">
+                                <i class="fas fa-list me-2"></i>Danh sách các field thay đổi
+                              </h6>
+                              <div class="row" *ngIf="getChangedFields(history).length > 0; else noChanges">
+                                <div class="col-12">
+                                  <div class="table-responsive">
+                                    <table class="table table-sm table-borderless">
+                                      <thead class="table-light">
+                                        <tr>
+                                          <th style="width: 200px;">Tên field</th>
+                                          <th style="width: 200px;">Giá trị trước</th>
+                                          <th style="width: 200px;">Giá trị sau</th>
+                                          <th>Thay đổi</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        <tr *ngFor="let field of getChangedFields(history)">
+                                          <td>
+                                            <span class="fw-bold">{{ getFieldDisplayName(field) }}</span>
+                                          </td>
+                                          <td>
+                                            <span class="badge bg-danger text-white">
+                                              {{ getFieldValueDisplay(getFieldBeforeValue(history, field)) }}
+                                            </span>
+                                          </td>
+                                          <td>
+                                            <span class="badge bg-success text-white">
+                                              {{ getFieldValueDisplay(getFieldAfterValue(history, field)) }}
+                                            </span>
+                                          </td>
+                                          <td>
+                                            <i class="fas fa-arrow-right text-muted"></i>
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                              <ng-template #noChanges>
+                                <div class="text-muted text-center py-3">
+                                  <i class="fas fa-info-circle me-2"></i>
+                                  Không có thông tin chi tiết về các field thay đổi
+                                </div>
+                              </ng-template>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <ng-template #noHistory>
+              <div class="text-muted text-center py-4">
+                <i class="fas fa-history text-muted mb-3" style="font-size: 3rem;"></i>
+                <p>Chưa có lịch sử thay đổi cho vai trò này.</p>
+              </div>
+            </ng-template>
+          </div>
         </div>
-        <ng-template #noHistory>
-          <div class="text-muted text-center py-3">Chưa có lịch sử thay đổi cho vai trò này.</div>
-        </ng-template>
       </tab>
     </tabset>
   </div>

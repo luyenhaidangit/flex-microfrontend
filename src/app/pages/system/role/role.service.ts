@@ -25,6 +25,11 @@ export class RoleService {
     return this.http.get<any>(`${this.apiUrl}/approved/${code}`);
   }
 
+  // New method to fetch change history separately
+  getRoleChangeHistory(roleCode: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/roles/${roleCode}/history`);
+  }
+
   // New method to get role request details for comparison
   getRoleRequestDetail(requestId: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/role-requests/${requestId}`);
