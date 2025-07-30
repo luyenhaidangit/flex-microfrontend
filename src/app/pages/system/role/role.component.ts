@@ -15,16 +15,8 @@ import { finalize } from 'rxjs/operators';
 })
 
 export class RoleComponent implements OnInit {
-  breadCrumbItems = [
-    { label: 'Quản trị hệ thống' },
-    { label: 'Quản lý vai trò', active: true }
-  ];
-
   
   pendingItems: Role[] = [];
-  
-  
-  isLoading = false;
 
   pagingState: PagingState = {
     pageIndex : 1,
@@ -57,6 +49,11 @@ export class RoleComponent implements OnInit {
   submittedReject = false;
 
   // Prepare component
+  breadCrumbItems = [
+    { label: 'Quản trị hệ thống' },
+    { label: 'Quản lý vai trò', active: true }
+  ];
+  isLoading = false;
   modalRef?: BsModalRef | null = null;
 
   // Prepare data for the component
@@ -87,7 +84,6 @@ export class RoleComponent implements OnInit {
     private toastService: ToastService,
     private authService: AuthenticationService,
   ) {}
-
 
   ngOnInit(): void {
     // Load data
@@ -488,26 +484,26 @@ export class RoleComponent implements OnInit {
     }
 
     this.isLoading = true;
-    this.roleService.getRoleChangeHistory(this.selectedItem.code).subscribe({
-      next: (res) => {
-        if (res?.isSuccess) {
-          this.changeHistory = res.data || [];
-        } else {
+    this.roleService.getRoleChangeHistory(this.selectedItem.code)
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: (res) => {
+          if (res?.isSuccess) {
+            this.changeHistory = res.data || [];
+          } else {
+            this.changeHistory = [];
+            this.toastService.error('Không thể lấy lịch sử thay đổi!');
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching change history:', err);
           this.changeHistory = [];
-          this.toastService.error('Không thể lấy lịch sử thay đổi!');
+          
+          // For testing purposes, use mock data if API fails
+          this.changeHistory = this.getMockChangeHistory();
+          this.toastService.warn('Sử dụng dữ liệu mẫu cho lịch sử thay đổi');
         }
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error fetching change history:', err);
-        this.changeHistory = [];
-        
-        // For testing purposes, use mock data if API fails
-        this.changeHistory = this.getMockChangeHistory();
-        this.toastService.warn('Sử dụng dữ liệu mẫu cho lịch sử thay đổi');
-        this.isLoading = false;
-      }
-    });
+      });
   }
 
   openDetailModal1(template: TemplateRef<any>, item: any): void {
