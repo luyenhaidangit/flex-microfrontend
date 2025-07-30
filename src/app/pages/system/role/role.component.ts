@@ -75,7 +75,6 @@ export class RoleComponent implements OnInit {
 
   // Enhanced detail modal properties
   requestDetailData: RequestDetailData | null = null;
-  isLoadingRequestDetail = false;
   
   // Loading states for approve/reject actions
   isApproving = false;
@@ -352,7 +351,7 @@ export class RoleComponent implements OnInit {
         return;
       }
       this.selectedItem = null;
-      this.isLoadingRequestDetail = true;
+      this.isLoading = true;
       this.roleService.getApprovedRoleByCode(code).subscribe({
         next: (res) => {
           this.selectedItem = res?.data || item;
@@ -366,13 +365,13 @@ export class RoleComponent implements OnInit {
             backdrop: 'static',
             keyboard: false, 
           });
-          this.isLoadingRequestDetail = false;
+          this.isLoading = false;
         },
         error: () => {
           this.toastService.error('Không thể lấy thông tin chi tiết vai trò!');
           this.selectedItem = item;
           this.modalRef = this.modalService.show(this.detailModalTemplateRef, { class: 'modal-lg' });
-          this.isLoadingRequestDetail = false;
+          this.isLoading = false;
         }
       });
     } else {
@@ -382,7 +381,7 @@ export class RoleComponent implements OnInit {
         this.toastService.error('Không tìm thấy ID yêu cầu!');
         return;
       }
-      this.isLoadingRequestDetail = true;
+      this.isLoading = true;
       this.requestDetailData = null;
       this.selectedItem = item;
       this.isApproving = false;
@@ -403,7 +402,7 @@ export class RoleComponent implements OnInit {
           } else {
             this.toastService.error('Không thể lấy thông tin chi tiết yêu cầu!');
           }
-          this.isLoadingRequestDetail = false;
+          this.isLoading = false;
         },
         error: (err) => {
           console.error('Error fetching request detail:', err);
@@ -416,7 +415,7 @@ export class RoleComponent implements OnInit {
             errorMsg = 'Bạn không có quyền xem chi tiết yêu cầu này!';
           }
           this.toastService.error(errorMsg);
-          this.isLoadingRequestDetail = false;
+          this.isLoading = false;
         }
       });
     }
@@ -429,7 +428,7 @@ export class RoleComponent implements OnInit {
       return;
     }
 
-    this.isLoadingRequestDetail = true;
+    this.isLoading = true;
     this.requestDetailData = null;
     this.selectedItem = item;
     
@@ -455,7 +454,7 @@ export class RoleComponent implements OnInit {
         } else {
           this.toastService.error('Không thể lấy thông tin chi tiết yêu cầu!');
         }
-        this.isLoadingRequestDetail = false;
+        this.isLoading = false;
       },
       error: (err) => {
         console.error('Error fetching request detail:', err);
@@ -471,7 +470,42 @@ export class RoleComponent implements OnInit {
         }
         
         this.toastService.error(errorMsg);
-        this.isLoadingRequestDetail = false;
+        this.isLoading = false;
+      }
+    });
+  }
+
+  // Load change history when history tab is opened
+  loadChangeHistory(): void {
+    if (!this.selectedItem?.code) {
+      this.toastService.error('Không tìm thấy mã vai trò!');
+      return;
+    }
+
+    // Only load if not already loaded
+    if (this.changeHistory.length > 0) {
+      return;
+    }
+
+    this.isLoading = true;
+    this.roleService.getRoleChangeHistory(this.selectedItem.code).subscribe({
+      next: (res) => {
+        if (res?.isSuccess) {
+          this.changeHistory = res.data || [];
+        } else {
+          this.changeHistory = [];
+          this.toastService.error('Không thể lấy lịch sử thay đổi!');
+        }
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching change history:', err);
+        this.changeHistory = [];
+        
+        // For testing purposes, use mock data if API fails
+        this.changeHistory = this.getMockChangeHistory();
+        this.toastService.warn('Sử dụng dữ liệu mẫu cho lịch sử thay đổi');
+        this.isLoading = false;
       }
     });
   }
@@ -1041,41 +1075,6 @@ export class RoleComponent implements OnInit {
     } else {
       this.expandedRows.add(historyIndex);
     }
-  }
-
-  // Load change history when history tab is opened
-  loadChangeHistory(): void {
-    if (!this.selectedItem?.code) {
-      this.toastService.error('Không tìm thấy mã vai trò!');
-      return;
-    }
-
-    // Only load if not already loaded
-    if (this.changeHistory.length > 0) {
-      return;
-    }
-
-    this.isLoading = true;
-    this.roleService.getRoleChangeHistory(this.selectedItem.code).subscribe({
-      next: (res) => {
-        if (res?.isSuccess) {
-          this.changeHistory = res.data || [];
-        } else {
-          this.changeHistory = [];
-          this.toastService.error('Không thể lấy lịch sử thay đổi!');
-        }
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error fetching change history:', err);
-        this.changeHistory = [];
-        
-        // For testing purposes, use mock data if API fails
-        this.changeHistory = this.getMockChangeHistory();
-        this.toastService.warn('Sử dụng dữ liệu mẫu cho lịch sử thay đổi');
-        this.isLoading = false;
-      }
-    });
   }
 
   isRowExpanded(historyIndex: number): boolean {
