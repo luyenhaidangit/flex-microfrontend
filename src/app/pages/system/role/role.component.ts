@@ -16,6 +16,13 @@ import { finalize } from 'rxjs/operators';
 
 export class RoleComponent implements OnInit {
   
+  // Prepare default static data
+  DEFAULT_PER_PAGE_OPTIONS = DEFAULT_PER_PAGE_OPTIONS;
+  breadCrumbItems = [
+    { label: 'Quản trị hệ thống' },
+    { label: 'Quản lý vai trò', active: true }
+  ];
+
   pendingItems: Role[] = [];
 
   pagingState: PagingState = {
@@ -28,12 +35,9 @@ export class RoleComponent implements OnInit {
     createdDate: null
   };
 
-  DEFAULT_PER_PAGE_OPTIONS = DEFAULT_PER_PAGE_OPTIONS;
-
   roleForm!: FormGroup;
   submitted = false;
 
-  @ViewChild('createModal') createTemplateRef!: TemplateRef<any>;
   @ViewChild('approveModal') approveTemplateRef!: TemplateRef<any>;
   @ViewChild('rejectModal') rejectTemplateRef!: TemplateRef<any>;
   @ViewChild('editModal') editTemplateRef!: TemplateRef<any>;
@@ -45,14 +49,11 @@ export class RoleComponent implements OnInit {
   @ViewChild('deleteDraftModal') deleteDraftModal!: TemplateRef<any>;
   @ViewChild('requestDetailModal') requestDetailTemplateRef!: TemplateRef<any>;
   @ViewChild('detailModal') detailModalTemplateRef!: TemplateRef<any>;
+  @ViewChild('createModal') createTemplateRef!: TemplateRef<any>;
   rejectForm!: FormGroup;
   submittedReject = false;
 
   // Prepare component
-  breadCrumbItems = [
-    { label: 'Quản trị hệ thống' },
-    { label: 'Quản lý vai trò', active: true }
-  ];
   isLoading = false;
   modalRef?: BsModalRef | null = null;
 
@@ -268,6 +269,13 @@ export class RoleComponent implements OnInit {
       });
   }
 
+  openCreateModal(): void {
+    this.submitted = false;
+    this.roleForm.reset();
+    this.rejectedReason = null;
+    this.openModal(this.createTemplateRef, { class: 'modal-lg' });
+  }
+
   openDetailModal1(template: TemplateRef<any>, item: any): void {
     const code = item?.code;
     if (!code) {
@@ -425,13 +433,6 @@ export class RoleComponent implements OnInit {
       this.modalRef = null;
       this.resetLoadingStates();
     });
-  }
-
-  openCreateModal(): void {
-    this.submitted = false;
-    this.roleForm.reset();
-    this.rejectedReason = null;
-    this.openModal(this.createTemplateRef, { class: 'modal-lg' });
   }
 
   openApproveModal(item: any): void {
