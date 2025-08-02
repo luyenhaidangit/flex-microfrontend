@@ -237,57 +237,6 @@ export class RoleComponent implements OnInit {
     }
   }
 
-  openRequestDetailModal(item: any): void {
-    const requestId = item?.requestId || item?.id;
-    if (!requestId) {
-      this.toastService.error('Không tìm thấy ID yêu cầu!');
-      return;
-    }
-
-    this.requestDetailData = null;
-    this.selectedItem = item;
-    
-    // Reset loading states
-    this.isApproving = false;
-    this.isRejecting = false;
-
-    this.roleService.getRoleRequestDetail(requestId).subscribe({
-      next: (res) => {
-        if (res?.isSuccess) {
-          this.requestDetailData = res.data;
-          this.modalRef = this.modalService.show(this.requestDetailTemplateRef, { 
-            class: 'modal-xl',
-            backdrop: 'static',
-            keyboard: false,
-            ignoreBackdropClick: true
-          });
-          
-          // Reset loading states when modal is hidden
-          this.modalRef.onHidden?.subscribe(() => {
-            this.resetLoadingStates();
-          });
-        } else {
-          this.toastService.error('Không thể lấy thông tin chi tiết yêu cầu!');
-        }
-      },
-      error: (err) => {
-        console.error('Error fetching request detail:', err);
-        let errorMsg = 'Không thể lấy thông tin chi tiết yêu cầu!';
-        
-        // Handle specific error messages
-        if (err?.error?.message) {
-          errorMsg = err.error.message;
-        } else if (err?.status === 404) {
-          errorMsg = 'Không tìm thấy yêu cầu!';
-        } else if (err?.status === 403) {
-          errorMsg = 'Bạn không có quyền xem chi tiết yêu cầu này!';
-        }
-        
-        this.toastService.error(errorMsg);
-      }
-    });
-  }
-
   // Load change history when history tab is opened
   loadChangeHistory(): void {
     if (!this.selectedItem?.code) {
@@ -334,6 +283,57 @@ export class RoleComponent implements OnInit {
         this.toastService.error('Không thể lấy thông tin chi tiết vai trò!');
         this.selectedItem = item;
         this.modalRef = this.modalService.show(template, { class: 'modal-lg' });
+      }
+    });
+  }
+
+    openRequestDetailModal(item: any): void {
+    const requestId = item?.requestId || item?.id;
+    if (!requestId) {
+      this.toastService.error('Không tìm thấy ID yêu cầu!');
+      return;
+    }
+
+    this.requestDetailData = null;
+    this.selectedItem = item;
+    
+    // Reset loading states
+    this.isApproving = false;
+    this.isRejecting = false;
+
+    this.roleService.getRoleRequestDetail(requestId).subscribe({
+      next: (res) => {
+        if (res?.isSuccess) {
+          this.requestDetailData = res.data;
+          this.modalRef = this.modalService.show(this.requestDetailTemplateRef, { 
+            class: 'modal-xl',
+            backdrop: 'static',
+            keyboard: false,
+            ignoreBackdropClick: true
+          });
+          
+          // Reset loading states when modal is hidden
+          this.modalRef.onHidden?.subscribe(() => {
+            this.resetLoadingStates();
+          });
+        } else {
+          this.toastService.error('Không thể lấy thông tin chi tiết yêu cầu!');
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching request detail:', err);
+        let errorMsg = 'Không thể lấy thông tin chi tiết yêu cầu!';
+        
+        // Handle specific error messages
+        if (err?.error?.message) {
+          errorMsg = err.error.message;
+        } else if (err?.status === 404) {
+          errorMsg = 'Không tìm thấy yêu cầu!';
+        } else if (err?.status === 403) {
+          errorMsg = 'Bạn không có quyền xem chi tiết yêu cầu này!';
+        }
+        
+        this.toastService.error(errorMsg);
       }
     });
   }
