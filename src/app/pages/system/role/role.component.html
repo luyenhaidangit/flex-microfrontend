@@ -447,19 +447,19 @@
         <div class="col-md-6 position-relative">
           <label class="form-label">Mã vai trò <span class="text-danger">*</span></label>
           <input type="text" class="form-control" formControlName="code" placeholder="Nhập mã vai trò"
-                 [ngClass]="{'is-invalid': submitted && roleForm.controls.code.errors}"
+                 [ngClass]="{'is-invalid': roleForm.controls.code.touched && roleForm.controls.code.invalid}"
                  appUpperNoSpace />
-          <div *ngIf="submitted && roleForm.controls.code.errors" class="invalid-tooltip">
-            <span *ngIf="roleForm.controls.code.errors.required">Mã vai trò không được để trống</span>
-            <span *ngIf="roleForm.controls.code.errors.pattern">Chỉ cho phép chữ và số</span>
+          <div *ngIf="roleForm.controls.code.touched && roleForm.controls.code.invalid" class="invalid-tooltip">
+            <span *ngIf="roleForm.controls.code.errors?.required">Mã vai trò không được để trống</span>
+            <span *ngIf="roleForm.controls.code.errors?.pattern">Chỉ cho phép chữ và số</span>
           </div>
         </div>
         <div class="col-md-6 position-relative">
           <label class="form-label">Tên vai trò <span class="text-danger">*</span></label>
           <input type="text" class="form-control" formControlName="name" placeholder="Nhập tên vai trò"
-                 [ngClass]="{'is-invalid': submitted && roleForm.controls.name.errors}" />
-          <div *ngIf="submitted && roleForm.controls.name.errors" class="invalid-tooltip">
-            <span *ngIf="roleForm.controls.name.errors.required">Tên vai trò không được để trống</span>
+                 [ngClass]="{'is-invalid': roleForm.controls.name.touched && roleForm.controls.name.invalid}" />
+          <div *ngIf="roleForm.controls.name.touched && roleForm.controls.name.invalid" class="invalid-tooltip">
+            <span *ngIf="roleForm.controls.name.errors?.required">Tên vai trò không được để trống</span>
           </div>
         </div>
         <div class="col-md-12 position-relative">
@@ -541,10 +541,10 @@
           formControlName="reason"
           rows="3"
           placeholder="Nhập lý do từ chối..."
-          [ngClass]="{'is-invalid': submittedReject && rejectForm.controls.reason.errors}">
+          [ngClass]="{'is-invalid': rejectForm.controls.reason.touched && rejectForm.controls.reason.invalid}">
         </textarea>
-        <div *ngIf="submittedReject && rejectForm.controls.reason.errors" class="invalid-tooltip">
-          <span *ngIf="rejectForm.controls.reason.errors.required">Lý do không được để trống</span>
+        <div *ngIf="rejectForm.controls.reason.touched && rejectForm.controls.reason.invalid" class="invalid-tooltip">
+          <span *ngIf="rejectForm.controls.reason.errors?.required">Lý do không được để trống</span>
         </div>
       </div>
     </div>
@@ -573,19 +573,19 @@
         <div class="col-md-6 position-relative">
           <label class="form-label">Mã vai trò <span class="text-danger">*</span></label>
           <input type="text" class="form-control" formControlName="code" placeholder="Nhập mã vai trò"
-                 [ngClass]="{'is-invalid': submitted && roleForm.controls.code.errors}"
+                 [ngClass]="{'is-invalid': roleForm.controls.code.touched && roleForm.controls.code.invalid}"
                  appUpperNoSpace />
-          <div *ngIf="submitted && roleForm.controls.code.errors" class="invalid-tooltip">
-            <span *ngIf="roleForm.controls.code.errors.required">Mã vai trò không được để trống</span>
-            <span *ngIf="roleForm.controls.code.errors.pattern">Chỉ cho phép chữ và số</span>
+          <div *ngIf="roleForm.controls.code.touched && roleForm.controls.code.invalid" class="invalid-tooltip">
+            <span *ngIf="roleForm.controls.code.errors?.required">Mã vai trò không được để trống</span>
+            <span *ngIf="roleForm.controls.code.errors?.pattern">Chỉ cho phép chữ và số</span>
           </div>
         </div>
         <div class="col-md-6 position-relative">
           <label class="form-label">Tên vai trò <span class="text-danger">*</span></label>
           <input type="text" class="form-control" formControlName="name" placeholder="Nhập tên vai trò"
-                 [ngClass]="{'is-invalid': submitted && roleForm.controls.name.errors}" />
-          <div *ngIf="submitted && roleForm.controls.name.errors" class="invalid-tooltip">
-            <span *ngIf="roleForm.controls.name.errors.required">Tên vai trò không được để trống</span>
+                 [ngClass]="{'is-invalid': roleForm.controls.name.touched && roleForm.controls.name.invalid}" />
+          <div *ngIf="roleForm.controls.name.touched && roleForm.controls.name.invalid" class="invalid-tooltip">
+            <span *ngIf="roleForm.controls.name.errors?.required">Tên vai trò không được để trống</span>
           </div>
         </div>
         <div class="col-md-12 position-relative">

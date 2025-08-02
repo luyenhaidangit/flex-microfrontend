@@ -35,7 +35,6 @@ export class RoleComponent implements OnInit {
   };
 
   roleForm!: FormGroup;
-  submitted = false;
 
   @ViewChild('approveModal') approveTemplateRef!: TemplateRef<any>;
   @ViewChild('rejectModal') rejectTemplateRef!: TemplateRef<any>;
@@ -50,7 +49,6 @@ export class RoleComponent implements OnInit {
   @ViewChild('detailModal') detailModalTemplateRef!: TemplateRef<any>;
   @ViewChild('createModal') createTemplateRef!: TemplateRef<any>;
   rejectForm!: FormGroup;
-  submittedReject = false;
 
   // Prepare component
   isLoading = false;
@@ -267,7 +265,6 @@ export class RoleComponent implements OnInit {
 
   // Open create modal
   openCreateModal(): void {
-    this.submitted = false;
     this.roleForm.reset();
     this.rejectedReason = null;
     this.openModal(this.createTemplateRef, { class: 'modal-lg' });
@@ -275,7 +272,7 @@ export class RoleComponent implements OnInit {
 
   // Submit create role
   onSubmitRole(): void {
-    this.submitted = true;
+    this.roleForm.markAllAsTouched();
     if (this.roleForm.invalid) return;
     const payload = this.roleForm.value;
     this.roleService.createRole(payload).subscribe({
@@ -283,7 +280,6 @@ export class RoleComponent implements OnInit {
         this.toastService.success('Gửi duyệt thành công!');
         this.modalRef?.hide();
         this.roleForm.reset();
-        this.submitted = false;
         // Reload data dựa trên tab hiện tại
         this.search();
       },
@@ -464,7 +460,7 @@ export class RoleComponent implements OnInit {
   }
 
   submitRoleForm(): void {
-    this.submitted = true;
+    this.roleForm.markAllAsTouched();
     if (this.roleForm.invalid) return;
 
     const payload = this.roleForm.value;
@@ -473,7 +469,6 @@ export class RoleComponent implements OnInit {
         this.toastService.success('Tạo yêu cầu vai trò thành công!');
         this.modalRef?.hide();
         this.roleForm.reset();
-        this.submitted = false;
         // Reload data dựa trên tab hiện tại
         this.search();
       },
@@ -534,7 +529,6 @@ export class RoleComponent implements OnInit {
     if (item) {
       this.selectedItem = item;
     }
-    this.submittedReject = false;
     this.rejectForm.reset();
 
     if (this.modalRef) {
@@ -560,7 +554,7 @@ export class RoleComponent implements OnInit {
   }
 
   confirmRejectRole(): void {
-    this.submittedReject = true;
+    this.rejectForm.markAllAsTouched();
     if (this.rejectForm.invalid) return;
     
     // Không cần kiểm tra hoặc set isRejecting nữa
@@ -635,7 +629,7 @@ export class RoleComponent implements OnInit {
   }
 
   submitEditRoleForm(): void {
-    this.submitted = true;
+    this.roleForm.markAllAsTouched();
     if (this.roleForm.invalid || !this.selectedItem) return;
     const payload = {
       code: this.roleForm.value.code,
