@@ -757,21 +757,17 @@ export class RoleComponent implements OnInit {
     return this.requestDetailData.oldData[field] !== this.requestDetailData.newData[field];
   }
 
-  getFieldValue(data: any, field: string): string {
-    return data?.[field] || '—';
-  }
-
-  // New helper methods for the actual API response structure
+  // Helper methods for the actual API response structure
   getRoleCode(data: any): string {
-    return data?.roleCode || '—';
+    return data?.roleCode;
   }
 
   getRoleName(data: any): string {
-    return data?.roleName || '—';
+    return data?.roleName;
   }
 
   getRoleDescription(data: any): string {
-    return data?.description || '—';
+    return data?.description;
   }
 
   getPermissions(data: any): any[] {
@@ -779,14 +775,14 @@ export class RoleComponent implements OnInit {
   }
 
   getCreatedBy(): string {
-    return this.requestDetailData?.createdBy || '—';
+    return this.requestDetailData?.createdBy;
   }
 
   getCreatedDate(): string {
-    return this.requestDetailData?.createdDate || '—';
+    return this.requestDetailData?.createdDate;
   }
 
   getRequestType(): string {
-    return this.requestDetailData?.type || '—';
+    return this.requestDetailData?.type;
   }
 }
