@@ -736,10 +736,10 @@ export class RoleComponent implements OnInit {
   getRequestTypeBadgeClass(requestType: string): string {
     const type = (requestType || '').toUpperCase();
     switch (type) {
-      case 'CREATE': return 'badge-soft-success';
-      case 'UPDATE': return 'badge-soft-warning';
-      case 'DELETE': return 'badge-soft-danger';
-      default: return 'badge-soft-light';
+      case 'CREATE': return 'badge bg-success';
+      case 'UPDATE': return 'badge bg-warning';
+      case 'DELETE': return 'badge bg-danger';
+      default: return 'badge bg-secondary';
     }
   }
 
@@ -780,6 +780,18 @@ export class RoleComponent implements OnInit {
 
   getCreatedDate(): string {
     return this.requestDetailData?.createdDate;
+  }
+
+  // Format changes JSON for better display
+  formatChanges(changes: string): string {
+    if (!changes) return '';
+    
+    try {
+      const parsed = JSON.parse(changes);
+      return JSON.stringify(parsed, null, 2);
+    } catch (e) {
+      return changes; // Return original if parsing fails
+    }
   }
 
   getRequestType(): string {

@@ -373,3 +373,93 @@ h2 {
     }
   }
 }
+
+// Changes display styles
+.changes-display {
+  .changes-summary {
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    padding: 0.5rem;
+    border-left: 3px solid #007bff;
+    
+    small {
+      font-size: 0.75rem;
+      line-height: 1.4;
+    }
+  }
+  
+              .changes-details {
+              summary {
+                font-size: 0.8rem;
+                color: #007bff;
+                font-weight: 500;
+                cursor: pointer;
+                padding: 0.25rem 0;
+                transition: color 0.2s ease;
+                list-style: none;
+                
+                &:hover {
+                  color: #0056b3;
+                }
+                
+                &::-webkit-details-marker {
+                  display: none;
+                }
+                
+                &::-moz-list-bullet {
+                  display: none;
+                }
+              }
+    
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+        
+        &:hover {
+          background: #a8a8a8;
+        }
+      }
+    }
+  }
+}
+
+// Responsive adjustments for changes display
+@media (max-width: 768px) {
+  .changes-display {
+    .changes-summary {
+      padding: 0.25rem;
+      
+      small {
+        font-size: 0.7rem;
+      }
+    }
+    
+    .changes-details {
+      summary {
+        font-size: 0.75rem;
+      }
+      
+      pre {
+        font-size: 0.7rem;
+        max-height: 100px;
+      }
+    }
+  }
+}

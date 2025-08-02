@@ -344,6 +344,7 @@
                       <th>Thông tin duyệt</th>
                       <th>Trạng thái</th>
                       <th>Mô tả thay đổi</th>
+                      <th>Thông tin thay đổi</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -397,6 +398,18 @@
                         </td>
                         <td>
                           <div class="text-dark">{{ history.description }}</div>
+                        </td>
+                        <td>
+                          <div class="text-dark" *ngIf="history.changes">
+                            <div class="changes-display">
+                              <details class="changes-details">
+                                  <summary class="text-primary cursor-pointer">
+                                    <i class="fas fa-eye me-1"></i>Xem chi tiết
+                                  </summary>
+                                <pre class="mt-2 mb-0 p-2 bg-light rounded" style="font-size: 0.8rem; max-height: 150px; overflow-y: auto;">{{ formatChanges(history.changes) }}</pre>
+                              </details>
+                            </div>
+                          </div>
                         </td>
                       </tr>
                     </ng-container>
