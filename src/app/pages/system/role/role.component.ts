@@ -4,7 +4,6 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { RoleService } from './role.service';
 import { DEFAULT_PER_PAGE_OPTIONS } from 'src/app/core/constants/shared.constant';
 import { ToastService } from 'angular-toastify';
-import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { Role, PagingState, RequestDetailData, RoleSearchParams } from './role.models';
 import { finalize } from 'rxjs/operators';
 
@@ -58,7 +57,6 @@ export class RoleComponent implements OnInit {
   modalRef?: BsModalRef | null = null;
 
   // Prepare data for the component
-  currentUser: any;
   items: Role[] = [];
   selectedItem: Role | null = null;
   changeHistory: any[] = [];
@@ -81,13 +79,11 @@ export class RoleComponent implements OnInit {
     private roleService: RoleService,
     private modalService: BsModalService,
     private fb: FormBuilder,
-    private toastService: ToastService,
-    private authService: AuthenticationService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
     // Load data
-    this.currentUser = this.authService.getCurrentUser();
     this.getItems();
 
     // Initialize forms
