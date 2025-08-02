@@ -345,7 +345,7 @@ export class RoleComponent implements OnInit {
         },
         statusBefore: this.getPreviousStatus(item.status),
         statusAfter: item.status,
-        description: this.generateDescription(item),
+        description: item.description,
         changes: changes,
         rawData: {
           before: this.extractBeforeData(changes),
@@ -385,32 +385,6 @@ export class RoleComponent implements OnInit {
   // Extract after data from changes object
   private extractAfterData(changes: any): any {
     return { ...changes };
-  }
-
-  // Generate description based on status and changes
-  private generateDescription(item: any): string {
-    if (item.description) {
-      return item.description;
-    }
-
-    const status = item.status?.toUpperCase();
-    const changes = typeof item.changes === 'string' ? 
-      JSON.parse(item.changes || '{}') : item.changes;
-    
-    const changeCount = Object.keys(changes).length;
-    
-    switch (status) {
-      case 'AUT':
-        return `Phê duyệt vai trò${changeCount > 0 ? ` với ${changeCount} thay đổi` : ''}`;
-      case 'REJ':
-        return `Từ chối vai trò${changeCount > 0 ? ` với ${changeCount} thay đổi` : ''}`;
-      case 'PEN':
-        return `Gửi vai trò để phê duyệt${changeCount > 0 ? ` với ${changeCount} thay đổi` : ''}`;
-      default:
-        return changeCount > 0 ? 
-          `Cập nhật vai trò với ${changeCount} thay đổi` : 
-          'Thay đổi thông tin vai trò';
-    }
   }
 
   openDetailModal1(template: TemplateRef<any>, item: any): void {
