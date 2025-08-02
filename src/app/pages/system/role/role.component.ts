@@ -287,7 +287,7 @@ export class RoleComponent implements OnInit {
     });
   }
 
-    openRequestDetailModal(item: any): void {
+  openRequestDetailModal(item: any): void {
     const requestId = item?.requestId || item?.id;
     if (!requestId) {
       this.toastService.error('Không tìm thấy ID yêu cầu!');
