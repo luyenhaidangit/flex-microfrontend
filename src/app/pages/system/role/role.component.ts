@@ -60,7 +60,6 @@ export class RoleComponent implements OnInit {
   currentUser: any;
   items: Role[] = [];
   selectedItem: Role | null = null;
-  expandedRows: Set<number> = new Set();
   changeHistory: any[] = [];
 
   showSubmitConfirm = false;
@@ -103,178 +102,9 @@ export class RoleComponent implements OnInit {
     
     // Override toast icon size with JavaScript
     this.overrideToastIconSize();
-  }
-
-  // Mock data for testing expandable rows
-  private getMockChangeHistory(): any[] {
-    return [
-      {
-        id: 1,
-        timestamp: new Date('2024-01-15T14:30:00'),
-        actor: {
-          id: 1,
-          userName: 'admin_maker',
-          email: 'admin.maker@company.com',
-          fullName: 'Nguyễn Văn A'
-        },
-        statusBefore: 'DRAFT',
-        statusBeforeLabel: 'Nháp',
-        statusAfter: 'PENDING',
-        statusAfterLabel: 'Chờ duyệt',
-        description: 'Gửi vai trò để phê duyệt',
-        changes: {
-          'status': 'DRAFT',
-          'roleName': 'Quản lý hệ thống',
-          'description': 'Vai trò quản lý toàn bộ hệ thống'
-        },
-        rawData: {
-          before: {
-            'status': 'DRAFT',
-            'roleName': 'Quản lý hệ thống',
-            'description': 'Vai trò quản lý toàn bộ hệ thống',
-            'isActive': false
-          },
-          after: {
-            'status': 'PENDING',
-            'roleName': 'Quản lý hệ thống',
-            'description': 'Vai trò quản lý toàn bộ hệ thống',
-            'isActive': false
-          }
-        }
-      },
-      {
-        id: 2,
-        timestamp: new Date('2024-01-16T09:15:00'),
-        actor: {
-          id: 2,
-          userName: 'admin_checker',
-          email: 'admin.checker@company.com',
-          fullName: 'Trần Thị B'
-        },
-        statusBefore: 'PENDING',
-        statusBeforeLabel: 'Chờ duyệt',
-        statusAfter: 'APPROVED',
-        statusAfterLabel: 'Đã duyệt',
-        description: 'Phê duyệt vai trò quản lý hệ thống',
-        changes: {
-          'status': 'PENDING',
-          'isActive': false
-        },
-        rawData: {
-          before: {
-            'status': 'PENDING',
-            'roleName': 'Quản lý hệ thống',
-            'description': 'Vai trò quản lý toàn bộ hệ thống',
-            'isActive': false
-          },
-          after: {
-            'status': 'APPROVED',
-            'roleName': 'Quản lý hệ thống',
-            'description': 'Vai trò quản lý toàn bộ hệ thống',
-            'isActive': true
-          }
-        }
-      },
-      {
-        id: 3,
-        timestamp: new Date('2024-01-17T16:45:00'),
-        actor: {
-          id: 1,
-          userName: 'admin_maker',
-          email: 'admin.maker@company.com',
-          fullName: 'Nguyễn Văn A'
-        },
-        statusBefore: 'APPROVED',
-        statusBeforeLabel: 'Đã duyệt',
-        statusAfter: 'APPROVED',
-        statusAfterLabel: 'Đã duyệt',
-        description: 'Cập nhật thông tin vai trò',
-        changes: {
-          'roleName': 'Quản lý hệ thống',
-          'description': 'Vai trò quản lý toàn bộ hệ thống',
-          'isActive': true
-        },
-        rawData: {
-          before: {
-            'status': 'APPROVED',
-            'roleName': 'Quản lý hệ thống',
-            'description': 'Vai trò quản lý toàn bộ hệ thống',
-            'isActive': true
-          },
-          after: {
-            'status': 'APPROVED',
-            'roleName': 'Quản lý hệ thống v2.0',
-            'description': 'Vai trò quản lý toàn bộ hệ thống với quyền mở rộng',
-            'isActive': true
-          }
-        }
-      },
-      {
-        id: 4,
-        timestamp: new Date('2024-01-18T11:20:00'),
-        actor: {
-          id: 3,
-          userName: 'system_admin',
-          email: 'system.admin@company.com',
-          fullName: 'Lê Văn C'
-        },
-        statusBefore: 'APPROVED',
-        statusBeforeLabel: 'Đã duyệt',
-        statusAfter: 'APPROVED',
-        statusAfterLabel: 'Đã duyệt',
-        description: 'Tạm thời vô hiệu hóa vai trò',
-        changes: {
-          'isActive': true
-        },
-        rawData: {
-          before: {
-            'status': 'APPROVED',
-            'roleName': 'Quản lý hệ thống v2.0',
-            'description': 'Vai trò quản lý toàn bộ hệ thống với quyền mở rộng',
-            'isActive': true
-          },
-          after: {
-            'status': 'APPROVED',
-            'roleName': 'Quản lý hệ thống v2.0',
-            'description': 'Vai trò quản lý toàn bộ hệ thống với quyền mở rộng',
-            'isActive': false
-          }
-        }
-      },
-      {
-        id: 5,
-        timestamp: new Date('2024-01-19T08:30:00'),
-        actor: {
-          id: 1,
-          userName: 'admin_maker',
-          email: 'admin.maker@company.com',
-          fullName: 'Nguyễn Văn A'
-        },
-        statusBefore: 'APPROVED',
-        statusBeforeLabel: 'Đã duyệt',
-        statusAfter: 'APPROVED',
-        statusAfterLabel: 'Đã duyệt',
-        description: 'Kích hoạt lại vai trò và cập nhật mô tả',
-        changes: {
-          'description': 'Vai trò quản lý toàn bộ hệ thống với quyền mở rộng',
-          'isActive': false
-        },
-        rawData: {
-          before: {
-            'status': 'APPROVED',
-            'roleName': 'Quản lý hệ thống v2.0',
-            'description': 'Vai trò quản lý toàn bộ hệ thống với quyền mở rộng',
-            'isActive': false
-          },
-          after: {
-            'status': 'APPROVED',
-            'roleName': 'Quản lý hệ thống v2.0',
-            'description': 'Vai trò quản lý toàn bộ hệ thống với quyền mở rộng và bảo mật nâng cao',
-            'isActive': true
-          }
-        }
-      }
-    ];
+    
+    // Test status labels
+    this.testStatusLabels();
   }
 
   // Handle search alll items
@@ -353,7 +183,6 @@ export class RoleComponent implements OnInit {
           
           // Reset change history when opening modal
           this.changeHistory = [];
-          this.expandedRows.clear();
           
           this.modalRef = this.modalService.show(this.detailModalTemplateRef, { 
             class: 'modal-xl',
@@ -478,7 +307,8 @@ export class RoleComponent implements OnInit {
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
-            this.changeHistory = res.data || [];
+            // Transform the new API response format to match our UI expectations
+            this.changeHistory = this.transformHistoryData(res.data || []);
           } else {
             this.changeHistory = [];
             this.toastService.error('Không thể lấy lịch sử thay đổi!');
@@ -487,12 +317,109 @@ export class RoleComponent implements OnInit {
         error: (err) => {
           console.error('Error fetching change history:', err);
           this.changeHistory = [];
-          
-          // For testing purposes, use mock data if API fails
-          this.changeHistory = this.getMockChangeHistory();
-          this.toastService.warn('Sử dụng dữ liệu mẫu cho lịch sử thay đổi');
+          this.toastService.error('Không thể lấy lịch sử thay đổi!');
         }
       });
+  }
+
+  // Transform the new API response format to match our UI expectations
+  private transformHistoryData(historyData: any[]): any[] {
+    console.log('transformHistoryData called with:', historyData);
+    
+    return historyData.map(item => {
+      console.log('Processing item:', item);
+      
+      // Parse the changes JSON string
+      let changes = {};
+      try {
+        changes = JSON.parse(item.changes || '{}');
+      } catch (e) {
+        console.warn('Failed to parse changes JSON:', item.changes);
+        changes = {};
+      }
+
+      // Determine status labels based on the status field
+      const statusLabel = this.getStatusLabel(item.status);
+      console.log(`Status: "${item.status}" -> Label: "${statusLabel}"`);
+      
+      return {
+        id: item.id,
+        timestamp: new Date(item.makerTime || item.approverTime),
+        actor: {
+          userName: item.makerBy || item.approverBy,
+          email: '', // Not provided in new API
+          fullName: item.makerBy || item.approverBy
+        },
+        statusBefore: this.getPreviousStatus(item.status),
+        statusBeforeLabel: this.getStatusLabel(this.getPreviousStatus(item.status)),
+        statusAfter: item.status,
+        statusAfterLabel: statusLabel,
+        description: this.generateDescription(item),
+        changes: changes,
+        rawData: {
+          before: this.extractBeforeData(changes),
+          after: this.extractAfterData(changes)
+        },
+        // Additional fields from new API
+        makerBy: item.makerBy,
+        makerTime: item.makerTime,
+        approverBy: item.approverBy,
+        approverTime: item.approverTime,
+        status: item.status
+      };
+    });
+  }
+
+  // Helper method to determine previous status based on current status
+  private getPreviousStatus(currentStatus: string): string {
+    switch (currentStatus) {
+      case 'AUT': return 'PENDING'; // Approved -> was PENDING
+      case 'REJ': return 'PENDING'; // Rejected -> was PENDING
+      case 'PEN': return 'DRAFT';   // Pending -> was DRAFT
+      default: return 'DRAFT';
+    }
+  }
+
+  // Extract before data from changes object
+  private extractBeforeData(changes: any): any {
+    const beforeData: any = {};
+    Object.keys(changes).forEach(key => {
+      // For now, we'll set the before value as empty/null
+      // In a real scenario, you might need to get this from a separate API call
+      beforeData[key] = null;
+    });
+    return beforeData;
+  }
+
+  // Extract after data from changes object
+  private extractAfterData(changes: any): any {
+    return { ...changes };
+  }
+
+  // Generate description based on status and changes
+  private generateDescription(item: any): string {
+    if (item.description) {
+      return item.description;
+    }
+
+    const status = item.status?.toUpperCase();
+    const changes = typeof item.changes === 'string' ? 
+      JSON.parse(item.changes || '{}') : item.changes;
+    
+    const changeCount = Object.keys(changes).length;
+    
+    switch (status) {
+      case 'AUT':
+        return `Phê duyệt vai trò${changeCount > 0 ? ` với ${changeCount} thay đổi` : ''}`;
+      case 'REJ':
+        return `Từ chối vai trò${changeCount > 0 ? ` với ${changeCount} thay đổi` : ''}`;
+      case 'PEN':
+        return `Gửi vai trò để phê duyệt${changeCount > 0 ? ` với ${changeCount} thay đổi` : ''}`;
+      default:
+        return changeCount > 0 ? 
+          `Cập nhật vai trò với ${changeCount} thay đổi` : 
+          'Thay đổi thông tin vai trò';
+    }
   }
 
   openDetailModal1(template: TemplateRef<any>, item: any): void {
@@ -890,20 +817,40 @@ export class RoleComponent implements OnInit {
 
   getStatusBadgeClass(status: string): string {
     const s = (status || '').toUpperCase();
-    if (s === 'DRAFT') return 'badge badge-soft-secondary';
-    if (s === 'PENDING') return 'badge badge-soft-warning';
-    if (s === 'APPROVED') return 'badge badge-soft-success';
-    if (s === 'REJECTED') return 'badge badge-soft-danger';
-    return 'badge badge-soft-light';
+    switch (s) {
+      case 'DRAFT': return 'badge badge-soft-secondary';
+      case 'PENDING': return 'badge badge-soft-warning';
+      case 'PEN': return 'badge badge-soft-warning';
+      case 'APPROVED': return 'badge badge-soft-success';
+      case 'AUT': return 'badge badge-soft-success';
+      case 'REJECTED': return 'badge badge-soft-danger';
+      case 'REJ': return 'badge badge-soft-danger';
+      case 'ACTIVE': return 'badge badge-soft-success';
+      case 'INACTIVE': return 'badge badge-soft-secondary';
+      default: return 'badge badge-soft-light';
+    }
   }
 
   getStatusLabel(status: string): string {
-    const s = (status || '').toUpperCase();
-    if (s === 'DRAFT') return 'Nháp';
-    if (s === 'PENDING') return 'Chờ duyệt';
-    if (s === 'APPROVED') return 'Đã duyệt';
-    if (s === 'REJECTED') return 'Từ chối';
-    return status;
+    if (!status) return 'Không xác định';
+    
+    const s = status.toUpperCase().trim();
+    console.log(`getStatusLabel called with: "${status}" -> "${s}"`);
+    
+    switch (s) {
+      case 'DRAFT': return 'Nháp';
+      case 'PENDING': return 'Chờ duyệt';
+      case 'PEN': return 'Chờ duyệt';
+      case 'APPROVED': return 'Đã duyệt';
+      case 'AUT': return 'Đã duyệt';
+      case 'REJECTED': return 'Từ chối';
+      case 'REJ': return 'Từ chối';
+      case 'ACTIVE': return 'Hoạt động';
+      case 'INACTIVE': return 'Không hoạt động';
+      default: 
+        console.warn(`Unknown status: ${status}`);
+        return 'Không xác định';
+    }
   }
 
   getRequestTypeLabel(requestType: string): string {
@@ -973,19 +920,6 @@ export class RoleComponent implements OnInit {
     return value;
   }
 
-  getChangedFieldsCount(changes?: any): number {
-    if (changes) {
-      // Cho lịch sử thay đổi
-      return Object.keys(changes).length;
-    }
-    
-    // Cho request detail
-    if (!this.requestDetailData?.oldData || !this.requestDetailData?.newData) return 0;
-    
-    const fields = ['roleCode', 'roleName', 'description'];
-    return fields.filter(field => this.hasChanges(field)).length;
-  }
-
   // New helper methods for the actual API response structure
   getRoleCode(data: any): string {
     return data?.roleCode || '—';
@@ -1020,83 +954,31 @@ export class RoleComponent implements OnInit {
     switch (s) {
       case 'DRAFT': return 'Vai trò đang ở trạng thái nháp, chưa được gửi duyệt';
       case 'PENDING': return 'Vai trò đang chờ phê duyệt từ người có thẩm quyền';
+      case 'PEN': return 'Vai trò đang chờ phê duyệt từ người có thẩm quyền';
       case 'APPROVED': return 'Vai trò đã được phê duyệt và có thể sử dụng';
+      case 'AUT': return 'Vai trò đã được phê duyệt và có thể sử dụng';
       case 'REJECTED': return 'Vai trò đã bị từ chối, cần chỉnh sửa và gửi lại';
+      case 'REJ': return 'Vai trò đã bị từ chối, cần chỉnh sửa và gửi lại';
+      case 'ACTIVE': return 'Vai trò đang hoạt động';
+      case 'INACTIVE': return 'Vai trò đã bị vô hiệu hóa';
       default: return 'Trạng thái không xác định';
     }
   }
 
-  viewChangeDetails(history: any): void {
-    // Hiển thị modal với JSON chi tiết
-    const jsonData = {
-      before: history.rawData?.before,
-      after: history.rawData?.after,
-      changes: history.changes
-    };
-    
-    // Có thể mở modal hoặc hiển thị trong console
-    console.log('Change Details:', jsonData);
-    this.toastService.info('Xem chi tiết trong Console (F12)');
-  }
 
-  compareChanges(history: any): void {
-    const compareData = {
-      before: history.rawData?.before,
-      after: history.rawData?.after,
-      changes: history.changes,
-      description: history.description
-    };
-    console.log('Compare Data:', compareData);
-    this.toastService.info('Tính năng so sánh đang được phát triển');
-  }
 
-  // Expandable row methods for change history
-  toggleRowExpansion(historyIndex: number): void {
-    if (this.expandedRows.has(historyIndex)) {
-      this.expandedRows.delete(historyIndex);
-    } else {
-      this.expandedRows.add(historyIndex);
-    }
-  }
 
-  isRowExpanded(historyIndex: number): boolean {
-    return this.expandedRows.has(historyIndex);
-  }
 
-  getChangedFields(history: any): string[] {
-    if (!history.changes) return [];
-    return Object.keys(history.changes);
-  }
 
-  getFieldBeforeValue(history: any, field: string): string {
-    if (!history.rawData?.before) return '—';
-    return history.rawData.before[field] || '—';
-  }
 
-  getFieldAfterValue(history: any, field: string): string {
-    if (!history.rawData?.after) return '—';
-    return history.rawData.after[field] || '—';
+  // Test method for status labels
+  private testStatusLabels(): void {
+    console.log('=== Testing Status Labels ===');
+    const testCases = ['AUT', 'aut', 'Aut', 'REJ', 'PEN', 'DRAFT', 'APPROVED', 'REJECTED'];
+    testCases.forEach(status => {
+      const label = this.getStatusLabel(status);
+      console.log(`Status: "${status}" -> Label: "${label}"`);
+    });
+    console.log('=== End Testing ===');
   }
-
-  getFieldDisplayName(field: string): string {
-    const fieldNames: { [key: string]: string } = {
-      'roleCode': 'Mã vai trò',
-      'roleName': 'Tên vai trò', 
-      'name': 'Tên vai trò',
-      'code': 'Mã vai trò',
-      'description': 'Mô tả',
-      'isActive': 'Trạng thái hoạt động',
-      'status': 'Trạng thái phê duyệt'
-    };
-    return fieldNames[field] || field;
-  }
-
-  getFieldValueDisplay(value: any): string {
-    if (value === null || value === undefined) return '—';
-    if (typeof value === 'boolean') {
-      return value ? 'Hoạt động' : 'Không hoạt động';
-    }
-    return String(value);
-  }
-
 }

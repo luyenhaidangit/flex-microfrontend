@@ -340,8 +340,7 @@
                 <table class="table table-hover">
                   <thead class="table-light">
                     <tr>
-                      <th style="width: 40px;"></th> <!-- New column for expand/collapse icon -->
-                      <th>Thông tin thay đổi</th>
+                      <th>Thông tin yêu cầu</th>
                       <th>Thông tin duyệt</th>
                       <th>Trạng thái</th>
                       <th>Mô tả thay đổi</th>
@@ -350,29 +349,49 @@
                   <tbody>
                     <ng-container *ngFor="let history of changeHistory; let i = index">
                       <!-- Main row -->
-                      <tr class="cursor-pointer" 
-                          (click)="toggleRowExpansion(i)"
-                          [class.table-active]="isRowExpanded(i)">
-                        <td class="text-center">
-                          <i class="fas" 
-                             [class.fa-chevron-down]="isRowExpanded(i)"
-                             [class.fa-chevron-right]="!isRowExpanded(i)"
-                             [class.text-primary]="isRowExpanded(i)"></i>
+                      <tr>
+                        <td>
+                          <div class="fw-bold">
+                            <span *ngIf="history.makerBy">
+                              <i class="fas fa-user-edit me-1"></i>{{ history.makerBy }}
+                            </span>
+                            <span *ngIf="!history.makerBy && history.approverBy">
+                              <i class="fas fa-user-check me-1"></i>{{ history.approverBy }}
+                            </span>
+                          </div>
+                          <small class="text-muted">
+                            <span *ngIf="history.makerTime">
+                              <i class="fas fa-calendar me-1"></i>{{ history.makerTime | date:'dd/MM/yyyy' }}
+                              <i class="fas fa-clock ms-2 me-1"></i>{{ history.makerTime | date:'HH:mm:ss' }}
+                            </span>
+                            <span *ngIf="!history.makerTime && history.approverTime">
+                              <i class="fas fa-calendar me-1"></i>{{ history.approverTime | date:'dd/MM/yyyy' }}
+                              <i class="fas fa-clock ms-2 me-1"></i>{{ history.approverTime | date:'HH:mm:ss' }}
+                            </span>
+                          </small>
                         </td>
                         <td>
-                          <div class="fw-bold">{{ history.timestamp | date:'dd/MM/yyyy' }}</div>
-                          <small class="text-muted">{{ history.timestamp | date:'HH:mm:ss' }}</small>
-                        </td>
-                        <td>
-                          <div class="fw-bold">{{ history.actor.userName }}</div>
-                          <small class="text-muted">{{ history.actor.email }}</small>
+                          <div class="fw-bold">
+                            <span *ngIf="history.approverBy">
+                              <i class="fas fa-user-check me-1"></i>{{ history.approverBy }}
+                            </span>
+                            <span *ngIf="!history.approverBy && history.makerBy">
+                              <i class="fas fa-user-edit me-1"></i>{{ history.makerBy }}
+                            </span>
+                          </div>
+                          <small class="text-muted">
+                            <span *ngIf="history.approverTime">
+                              <i class="fas fa-calendar me-1"></i>{{ history.approverTime | date:'dd/MM/yyyy' }}
+                              <i class="fas fa-clock ms-2 me-1"></i>{{ history.approverTime | date:'HH:mm:ss' }}
+                            </span>
+                            <span *ngIf="!history.approverTime && history.makerTime">
+                              <i class="fas fa-calendar me-1"></i>{{ history.makerTime | date:'dd/MM/yyyy' }}
+                              <i class="fas fa-clock ms-2 me-1"></i>{{ history.makerTime | date:'HH:mm:ss' }}
+                            </span>
+                          </small>
                         </td>
                         <td>
                           <div class="d-flex align-items-center">
-                            <span class="badge me-2" [ngClass]="getStatusBadgeClass(history.statusBefore)">
-                              {{ history.statusBeforeLabel }}
-                            </span>
-                            <i class="fas fa-arrow-right text-muted mx-2"></i>
                             <span class="badge" [ngClass]="getStatusBadgeClass(history.statusAfter)">
                               {{ history.statusAfterLabel }}
                             </span>
@@ -380,64 +399,6 @@
                         </td>
                         <td>
                           <div class="text-dark">{{ history.description }}</div>
-                          <small class="text-muted" *ngIf="getChangedFieldsCount(history.changes) > 0">
-                            {{ getChangedFieldsCount(history.changes) }} trường thay đổi
-                          </small>
-                        </td>
-                      </tr>
-                      
-                      <!-- Expanded row content -->
-                      <tr *ngIf="isRowExpanded(i)" class="expanded-row">
-                        <td colspan="5" class="p-0">
-                          <div class="bg-light border-top">
-                            <div class="p-3">
-                              <h6 class="text-muted mb-3">
-                                <i class="fas fa-list me-2"></i>Danh sách các field thay đổi
-                              </h6>
-                              <div class="row" *ngIf="getChangedFields(history).length > 0; else noChanges">
-                                <div class="col-12">
-                                  <div class="table-responsive">
-                                    <table class="table table-sm table-borderless">
-                                      <thead class="table-light">
-                                        <tr>
-                                          <th style="width: 200px;">Tên field</th>
-                                          <th style="width: 200px;">Giá trị trước</th>
-                                          <th style="width: 200px;">Giá trị sau</th>
-                                          <th>Thay đổi</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        <tr *ngFor="let field of getChangedFields(history)">
-                                          <td>
-                                            <span class="fw-bold">{{ getFieldDisplayName(field) }}</span>
-                                          </td>
-                                          <td>
-                                            <span class="badge bg-danger text-white">
-                                              {{ getFieldValueDisplay(getFieldBeforeValue(history, field)) }}
-                                            </span>
-                                          </td>
-                                          <td>
-                                            <span class="badge bg-success text-white">
-                                              {{ getFieldValueDisplay(getFieldAfterValue(history, field)) }}
-                                            </span>
-                                          </td>
-                                          <td>
-                                            <i class="fas fa-arrow-right text-muted"></i>
-                                          </td>
-                                        </tr>
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                </div>
-                              </div>
-                              <ng-template #noChanges>
-                                <div class="text-muted text-center py-3">
-                                  <i class="fas fa-info-circle me-2"></i>
-                                  Không có thông tin chi tiết về các field thay đổi
-                                </div>
-                              </ng-template>
-                            </div>
-                          </div>
                         </td>
                       </tr>
                     </ng-container>
