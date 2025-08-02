@@ -459,31 +459,6 @@ export class RoleComponent implements OnInit {
     });
   }
 
-  submitRoleForm(): void {
-    this.roleForm.markAllAsTouched();
-    if (this.roleForm.invalid) return;
-
-    const payload = this.roleForm.value;
-    this.roleService.createRole(payload).subscribe({
-      next: () => {
-        this.toastService.success('Tạo yêu cầu vai trò thành công!');
-        this.modalRef?.hide();
-        this.roleForm.reset();
-        // Reload data dựa trên tab hiện tại
-        this.search();
-      },
-      error: (err) => {
-        let errorMsg = 'Tạo yêu cầu thất bại!';
-        const apiMsg = err?.error?.message?.toLowerCase();
-        if (apiMsg?.includes('role code already exists')) {
-          errorMsg = 'Mã vai trò đã tồn tại';
-        }
-        this.toastService.error(errorMsg);
-        console.error('Tạo vai trò thất bại', err);
-      }
-    });
-  }
-
   approveRole(): void {
     // Prevent double submission
     if (this.isApproving) return;
