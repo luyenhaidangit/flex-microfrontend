@@ -265,11 +265,33 @@ export class RoleComponent implements OnInit {
       });
   }
 
+  // Open create modal
   openCreateModal(): void {
     this.submitted = false;
     this.roleForm.reset();
     this.rejectedReason = null;
     this.openModal(this.createTemplateRef, { class: 'modal-lg' });
+  }
+
+  // Submit create role
+  onSubmitRole(): void {
+    this.submitted = true;
+    if (this.roleForm.invalid) return;
+    const payload = this.roleForm.value;
+    this.roleService.createRole(payload).subscribe({
+      next: () => {
+        this.toastService.success('Gửi duyệt thành công!');
+        this.modalRef?.hide();
+        this.roleForm.reset();
+        this.submitted = false;
+        // Reload data dựa trên tab hiện tại
+        this.search();
+      },
+      error: (err) => {
+        const msg = err?.error?.message || 'Gửi duyệt thất bại!';
+        this.toastService.error(msg);
+      }
+    });
   }
 
   openDetailModal1(template: TemplateRef<any>, item: any): void {
@@ -644,51 +666,6 @@ export class RoleComponent implements OnInit {
       },
       error: () => {
         this.toastService.error('Gửi yêu cầu xóa thất bại!');
-      }
-    });
-  }
-
-  saveDraftRole(): void {
-    this.submitted = true;
-    if (this.roleForm.invalid) return;
-    const payload = {
-      code: this.roleForm.value.code,
-      name: this.roleForm.value.name,
-      description: this.roleForm.value.description,
-      status: 'Draft'
-    };
-    this.roleService.saveDraftRole(payload).subscribe({
-      next: () => {
-        this.toastService.success('Lưu nháp vai trò thành công!');
-        this.modalRef?.hide();
-        this.roleForm.reset();
-        this.submitted = false;
-        // Reload data dựa trên tab hiện tại
-        this.search();
-      },
-      error: () => {
-        this.toastService.error('Lưu nháp thất bại!');
-      }
-    });
-  }
-
-  // Thêm hàm gửi duyệt đơn giản
-  onSubmitRole(): void {
-    this.submitted = true;
-    if (this.roleForm.invalid) return;
-    const payload = this.roleForm.value;
-    this.roleService.createRole(payload).subscribe({
-      next: () => {
-        this.toastService.success('Gửi duyệt thành công!');
-        this.modalRef?.hide();
-        this.roleForm.reset();
-        this.submitted = false;
-        // Reload data dựa trên tab hiện tại
-        this.search();
-      },
-      error: (err) => {
-        const msg = err?.error?.message || 'Gửi duyệt thất bại!';
-        this.toastService.error(msg);
       }
     });
   }

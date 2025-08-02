@@ -433,7 +433,7 @@
   </div>
 </ng-template>
 
-<!-- Modal thêm mới vai trò -->
+<!-- Create Modal -->
 <ng-template #createModal>
   <form [formGroup]="roleForm" class="needs-validation">
     <div class="modal-header">
@@ -473,9 +473,6 @@
         <button type="button" class="btn btn-secondary me-2" (click)="modalRef?.hide()">Hủy</button>
       </div>
       <div>
-        <button type="button" class="btn btn-outline-primary me-2" (click)="saveDraftRole()">
-          <i class="fas fa-save me-1"></i> Lưu nháp
-        </button>
         <button type="button" class="btn btn-primary" (click)="onSubmitRole()">
           <i class="fas fa-paper-plane me-1"></i> Gửi duyệt
         </button>
