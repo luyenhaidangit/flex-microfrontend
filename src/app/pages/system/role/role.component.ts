@@ -782,18 +782,6 @@ export class RoleComponent implements OnInit {
     return this.requestDetailData?.createdDate;
   }
 
-  // Format changes JSON for better display
-  formatChanges(changes: string): string {
-    if (!changes) return '';
-    
-    try {
-      const parsed = JSON.parse(changes);
-      return JSON.stringify(parsed, null, 2);
-    } catch (e) {
-      return changes; // Return original if parsing fails
-    }
-  }
-
   getRequestType(): string {
     return this.requestDetailData?.type;
   }

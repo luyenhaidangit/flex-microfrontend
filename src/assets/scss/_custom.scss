@@ -450,3 +450,24 @@ input:hover,
 textarea:hover {
     cursor: pointer !important;
 }
+
+// Pretty Json Pipe: PrettyJsonPipe
+.key {
+    color: #d14;
+}
+
+.string {
+    color: #1a1aa6;
+}
+
+.number {
+    color: #008000;
+}
+
+.boolean {
+    color: #aa0d91;
+}
+
+.null {
+    color: gray;
+}
