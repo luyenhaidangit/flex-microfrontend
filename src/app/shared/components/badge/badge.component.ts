@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-export type BadgeType = 'status' | 'request' | 'pending' | 'roleStatus' | 'custom';
+export type BadgeType = 'status' | 'request' | 'pending' | 'custom';
 
 export interface BadgeConfig {
   label: string;
@@ -24,6 +24,41 @@ const DEFAULT_CONFIGS: Record<BadgeType, BadgeTypeConfig> = {
       label: 'Không hoạt động',
       class: 'badge-soft-danger',
       value: 'N'
+    },
+    DRAFT: {
+      label: 'Nháp',
+      class: 'badge-soft-secondary',
+      value: 'DRAFT'
+    },
+    PENDING: {
+      label: 'Chờ duyệt',
+      class: 'badge-soft-warning',
+      value: 'PENDING'
+    },
+    PEN: {
+      label: 'Chờ duyệt',
+      class: 'badge-soft-warning',
+      value: 'PEN'
+    },
+    APPROVED: {
+      label: 'Đã duyệt',
+      class: 'badge-soft-success',
+      value: 'APPROVED'
+    },
+    AUT: {
+      label: 'Đã duyệt',
+      class: 'badge-soft-success',
+      value: 'AUT'
+    },
+    REJECTED: {
+      label: 'Từ chối',
+      class: 'badge-soft-danger',
+      value: 'REJECTED'
+    },
+    REJ: {
+      label: 'Từ chối',
+      class: 'badge-soft-danger',
+      value: 'REJ'
     },
     UNKNOWN: {
       label: 'Không xác định',
@@ -68,48 +103,6 @@ const DEFAULT_CONFIGS: Record<BadgeType, BadgeTypeConfig> = {
       label: 'Chờ duyệt xoá',
       class: 'badge-soft-danger',
       value: 'DELETE'
-    },
-    UNKNOWN: {
-      label: 'Không xác định',
-      class: 'badge-soft-light',
-      value: 'UNKNOWN'
-    }
-  },
-  roleStatus: {
-    DRAFT: {
-      label: 'Nháp',
-      class: 'badge-soft-secondary',
-      value: 'DRAFT'
-    },
-    PENDING: {
-      label: 'Chờ duyệt',
-      class: 'badge-soft-warning',
-      value: 'PENDING'
-    },
-    PEN: {
-      label: 'Chờ duyệt',
-      class: 'badge-soft-warning',
-      value: 'PEN'
-    },
-    APPROVED: {
-      label: 'Đã duyệt',
-      class: 'badge-soft-success',
-      value: 'APPROVED'
-    },
-    AUT: {
-      label: 'Đã duyệt',
-      class: 'badge-soft-success',
-      value: 'AUT'
-    },
-    REJECTED: {
-      label: 'Từ chối',
-      class: 'badge-soft-danger',
-      value: 'REJECTED'
-    },
-    REJ: {
-      label: 'Từ chối',
-      class: 'badge-soft-danger',
-      value: 'REJ'
     },
     UNKNOWN: {
       label: 'Không xác định',
