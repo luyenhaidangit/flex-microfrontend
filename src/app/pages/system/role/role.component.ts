@@ -304,8 +304,8 @@ export class RoleComponent implements OnInit {
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
-            // Transform the new API response format to match our UI expectations
-            this.changeHistory = this.transformHistoryData(res.data || []);
+            // Use the API response directly without transformation
+            this.changeHistory = res.data || [];
           } else {
             this.changeHistory = [];
             this.toastService.error('Không thể lấy lịch sử thay đổi!');
@@ -317,74 +317,6 @@ export class RoleComponent implements OnInit {
           this.toastService.error('Không thể lấy lịch sử thay đổi!');
         }
       });
-  }
-
-  // Transform the new API response format to match our UI expectations
-  private transformHistoryData(historyData: any[]): any[] {
-    console.log('transformHistoryData called with:', historyData);
-    
-    return historyData.map(item => {
-      console.log('Processing item:', item);
-      
-      // Parse the changes JSON string
-      let changes = {};
-      try {
-        changes = JSON.parse(item.changes || '{}');
-      } catch (e) {
-        console.warn('Failed to parse changes JSON:', item.changes);
-        changes = {};
-      }
-      
-      return {
-        id: item.id,
-        timestamp: new Date(item.makerTime || item.approverTime),
-        actor: {
-          userName: item.makerBy || item.approverBy,
-          email: '', // Not provided in new API
-          fullName: item.makerBy || item.approverBy
-        },
-        statusBefore: this.getPreviousStatus(item.status),
-        statusAfter: item.status,
-        description: item.description,
-        changes: changes,
-        rawData: {
-          before: this.extractBeforeData(changes),
-          after: this.extractAfterData(changes)
-        },
-        // Additional fields from new API
-        makerBy: item.makerBy,
-        makerTime: item.makerTime,
-        approverBy: item.approverBy,
-        approverTime: item.approverTime,
-        status: item.status
-      };
-    });
-  }
-
-  // Helper method to determine previous status based on current status
-  private getPreviousStatus(currentStatus: string): string {
-    switch (currentStatus) {
-      case 'AUT': return 'PENDING'; // Approved -> was PENDING
-      case 'REJ': return 'PENDING'; // Rejected -> was PENDING
-      case 'PEN': return 'DRAFT';   // Pending -> was DRAFT
-      default: return 'DRAFT';
-    }
-  }
-
-  // Extract before data from changes object
-  private extractBeforeData(changes: any): any {
-    const beforeData: any = {};
-    Object.keys(changes).forEach(key => {
-      // For now, we'll set the before value as empty/null
-      // In a real scenario, you might need to get this from a separate API call
-      beforeData[key] = null;
-    });
-    return beforeData;
-  }
-
-  // Extract after data from changes object
-  private extractAfterData(changes: any): any {
-    return { ...changes };
   }
 
   openDetailModal1(template: TemplateRef<any>, item: any): void {
@@ -768,32 +700,6 @@ export class RoleComponent implements OnInit {
   onInputUpperNoSpace(controlName: string, event: any) {
     const value = event.target.value.toUpperCase().replace(/\s+/g, '');
     this.roleForm.get(controlName)?.setValue(value, { emitEvent: false });
-  }
-
-  statusLabel(status: string): string {
-    switch ((status || '').toUpperCase()) {
-      case 'DRAFT': return 'Nháp';
-      case 'PENDING': return 'Chờ duyệt';
-      case 'APPROVED': return 'Đã duyệt';
-      case 'REJECTED': return 'Từ chối';
-      default: return status;
-    }
-  }
-
-  getStatusBadgeClass(status: string): string {
-    const s = (status || '').toUpperCase();
-    switch (s) {
-      case 'DRAFT': return 'badge badge-soft-secondary';
-      case 'PENDING': return 'badge badge-soft-warning';
-      case 'PEN': return 'badge badge-soft-warning';
-      case 'APPROVED': return 'badge badge-soft-success';
-      case 'AUT': return 'badge badge-soft-success';
-      case 'REJECTED': return 'badge badge-soft-danger';
-      case 'REJ': return 'badge badge-soft-danger';
-      case 'ACTIVE': return 'badge badge-soft-success';
-      case 'INACTIVE': return 'badge badge-soft-secondary';
-      default: return 'badge badge-soft-light';
-    }
   }
 
   getRequestTypeLabel(requestType: string): string {
