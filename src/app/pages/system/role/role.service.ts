@@ -15,11 +15,6 @@ export class RoleService {
     return this.http.get<any>(this.apiUrl + '/approved', { params });
   }
 
-  // Get all pending roles with pagination
-  getPendingRoles(params: any): Observable<any> {
-    return this.http.get<any>(this.apiUrl + '/pending', { params });
-  }
-
   // Get approved role detail by code
   getApprovedRoleByCode(code: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/approved/${code}`);
@@ -27,7 +22,12 @@ export class RoleService {
 
   // New method to fetch change history separately
   getRoleChangeHistory(roleCode: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/roles/${roleCode}/history`);
+    return this.http.get<any>(`${this.apiUrl}/approved/${roleCode}/history`);
+  }
+
+  // Get all pending roles with pagination
+  getPendingRoles(params: any): Observable<any> {
+    return this.http.get<any>(this.apiUrl + '/pending', { params });
   }
 
   // New method to get role request details for comparison
