@@ -6,7 +6,6 @@ import { DEFAULT_PER_PAGE_OPTIONS } from 'src/app/core/constants/shared.constant
 import { ToastService } from 'angular-toastify';
 import { Role, PagingState, RequestDetailData, RoleSearchParams } from './role.models';
 import { finalize } from 'rxjs/operators';
-
 @Component({
   selector: 'app-role',
   templateUrl: './role.component.html',
@@ -21,6 +20,10 @@ export class RoleComponent implements OnInit {
     { label: 'Quản trị hệ thống' },
     { label: 'Quản lý vai trò', active: true }
   ];
+
+  @ViewChild('detailModal') detailModalTemplateRef!: TemplateRef<any>;
+  @ViewChild('createModal') createTemplateRef!: TemplateRef<any>;
+  @ViewChild('editModal') editTemplateRef!: TemplateRef<any>;
 
   pendingItems: Role[] = [];
 
@@ -38,7 +41,6 @@ export class RoleComponent implements OnInit {
 
   @ViewChild('approveModal') approveTemplateRef!: TemplateRef<any>;
   @ViewChild('rejectModal') rejectTemplateRef!: TemplateRef<any>;
-  @ViewChild('editModal') editTemplateRef!: TemplateRef<any>;
   @ViewChild('approveEditModal') approveEditTemplateRef!: TemplateRef<any>;
   @ViewChild('rejectEditModal') rejectEditTemplateRef!: TemplateRef<any>;
   @ViewChild('deleteModal') deleteTemplateRef!: TemplateRef<any>;
@@ -46,8 +48,6 @@ export class RoleComponent implements OnInit {
   @ViewChild('rejectDeleteModal') rejectDeleteTemplateRef!: TemplateRef<any>;
   @ViewChild('deleteDraftModal') deleteDraftModal!: TemplateRef<any>;
   @ViewChild('requestDetailModal') requestDetailTemplateRef!: TemplateRef<any>;
-  @ViewChild('detailModal') detailModalTemplateRef!: TemplateRef<any>;
-  @ViewChild('createModal') createTemplateRef!: TemplateRef<any>;
   rejectForm!: FormGroup;
 
   // Prepare component
