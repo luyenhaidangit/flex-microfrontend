@@ -280,7 +280,7 @@
   <div class="modal-header">
     <h5 class="modal-title text-primary fw-semibold">
       <i class="fas fa-info-circle me-2"></i>Chi tiết vai trò
-      <app-badge *ngIf="selectedItem?.status" [value]="selectedItem?.status" type="roleStatus" [tooltip]="getStatusTooltip(selectedItem?.status)"></app-badge>
+      <app-badge *ngIf="selectedItem?.status" [value]="selectedItem?.status" type="roleStatus"></app-badge>
     </h5>
     <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
   </div>
@@ -392,9 +392,7 @@
                         </td>
                         <td>
                           <div class="d-flex align-items-center">
-                            <span class="badge" [ngClass]="getStatusBadgeClass(history.statusAfter)">
-                              {{ history.statusAfterLabel }}
-                            </span>
+                            <app-badge [value]="history?.status" type="roleStatus"></app-badge>
                           </div>
                         </td>
                         <td>

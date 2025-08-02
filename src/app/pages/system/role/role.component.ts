@@ -102,9 +102,6 @@ export class RoleComponent implements OnInit {
     
     // Override toast icon size with JavaScript
     this.overrideToastIconSize();
-    
-    // Test status labels
-    this.testStatusLabels();
   }
 
   // Handle search alll items
@@ -337,10 +334,6 @@ export class RoleComponent implements OnInit {
         console.warn('Failed to parse changes JSON:', item.changes);
         changes = {};
       }
-
-      // Determine status labels based on the status field
-      const statusLabel = this.getStatusLabel(item.status);
-      console.log(`Status: "${item.status}" -> Label: "${statusLabel}"`);
       
       return {
         id: item.id,
@@ -351,9 +344,7 @@ export class RoleComponent implements OnInit {
           fullName: item.makerBy || item.approverBy
         },
         statusBefore: this.getPreviousStatus(item.status),
-        statusBeforeLabel: this.getStatusLabel(this.getPreviousStatus(item.status)),
         statusAfter: item.status,
-        statusAfterLabel: statusLabel,
         description: this.generateDescription(item),
         changes: changes,
         rawData: {
@@ -831,28 +822,6 @@ export class RoleComponent implements OnInit {
     }
   }
 
-  getStatusLabel(status: string): string {
-    if (!status) return 'Không xác định';
-    
-    const s = status.toUpperCase().trim();
-    console.log(`getStatusLabel called with: "${status}" -> "${s}"`);
-    
-    switch (s) {
-      case 'DRAFT': return 'Nháp';
-      case 'PENDING': return 'Chờ duyệt';
-      case 'PEN': return 'Chờ duyệt';
-      case 'APPROVED': return 'Đã duyệt';
-      case 'AUT': return 'Đã duyệt';
-      case 'REJECTED': return 'Từ chối';
-      case 'REJ': return 'Từ chối';
-      case 'ACTIVE': return 'Hoạt động';
-      case 'INACTIVE': return 'Không hoạt động';
-      default: 
-        console.warn(`Unknown status: ${status}`);
-        return 'Không xác định';
-    }
-  }
-
   getRequestTypeLabel(requestType: string): string {
     const type = (requestType || '').toUpperCase();
     if (type === 'CREATE') return 'Tạo mới';
@@ -912,14 +881,6 @@ export class RoleComponent implements OnInit {
     return data?.[field] || '—';
   }
 
-  getFieldDisplayValue(data: any, field: string): string {
-    const value = this.getFieldValue(data, field);
-    if (field === 'status') {
-      return this.getStatusLabel(value);
-    }
-    return value;
-  }
-
   // New helper methods for the actual API response structure
   getRoleCode(data: any): string {
     return data?.roleCode || '—';
@@ -947,38 +908,5 @@ export class RoleComponent implements OnInit {
 
   getRequestType(): string {
     return this.requestDetailData?.type || '—';
-  }
-
-  getStatusTooltip(status: string): string {
-    const s = (status || '').toUpperCase();
-    switch (s) {
-      case 'DRAFT': return 'Vai trò đang ở trạng thái nháp, chưa được gửi duyệt';
-      case 'PENDING': return 'Vai trò đang chờ phê duyệt từ người có thẩm quyền';
-      case 'PEN': return 'Vai trò đang chờ phê duyệt từ người có thẩm quyền';
-      case 'APPROVED': return 'Vai trò đã được phê duyệt và có thể sử dụng';
-      case 'AUT': return 'Vai trò đã được phê duyệt và có thể sử dụng';
-      case 'REJECTED': return 'Vai trò đã bị từ chối, cần chỉnh sửa và gửi lại';
-      case 'REJ': return 'Vai trò đã bị từ chối, cần chỉnh sửa và gửi lại';
-      case 'ACTIVE': return 'Vai trò đang hoạt động';
-      case 'INACTIVE': return 'Vai trò đã bị vô hiệu hóa';
-      default: return 'Trạng thái không xác định';
-    }
-  }
-
-
-
-
-
-
-
-  // Test method for status labels
-  private testStatusLabels(): void {
-    console.log('=== Testing Status Labels ===');
-    const testCases = ['AUT', 'aut', 'Aut', 'REJ', 'PEN', 'DRAFT', 'APPROVED', 'REJECTED'];
-    testCases.forEach(status => {
-      const label = this.getStatusLabel(status);
-      console.log(`Status: "${status}" -> Label: "${label}"`);
-    });
-    console.log('=== End Testing ===');
   }
 }

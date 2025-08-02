@@ -86,15 +86,30 @@ const DEFAULT_CONFIGS: Record<BadgeType, BadgeTypeConfig> = {
       class: 'badge-soft-warning',
       value: 'PENDING'
     },
+    PEN: {
+      label: 'Chờ duyệt',
+      class: 'badge-soft-warning',
+      value: 'PEN'
+    },
     APPROVED: {
       label: 'Đã duyệt',
       class: 'badge-soft-success',
       value: 'APPROVED'
     },
+    AUT: {
+      label: 'Đã duyệt',
+      class: 'badge-soft-success',
+      value: 'AUT'
+    },
     REJECTED: {
       label: 'Từ chối',
       class: 'badge-soft-danger',
       value: 'REJECTED'
+    },
+    REJ: {
+      label: 'Từ chối',
+      class: 'badge-soft-danger',
+      value: 'REJ'
     },
     UNKNOWN: {
       label: 'Không xác định',
