@@ -488,31 +488,7 @@
       <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
     </div>
     <div class="modal-body px-4 py-3">
-      <!-- Current Role Info -->
-      <div class="alert alert-info mb-4">
-        <h6 class="alert-heading mb-2">
-          <i class="fas fa-info-circle me-2"></i>Thông tin vai trò hiện tại
-        </h6>
-        <div class="row g-2">
-          <div class="col-md-6">
-            <small class="text-muted">Mã vai trò:</small>
-            <div class="fw-bold">{{ selectedItem?.code }}</div>
-          </div>
-          <div class="col-md-6">
-            <small class="text-muted">Tên vai trò:</small>
-            <div class="fw-bold">{{ selectedItem?.name }}</div>
-          </div>
-          <div class="col-md-12">
-            <small class="text-muted">Mô tả:</small>
-            <div class="fw-bold">{{ selectedItem?.description || 'Không có mô tả' }}</div>
-          </div>
-        </div>
-      </div>
-
       <!-- Update Form -->
-      <h6 class="text-primary mb-3">
-        <i class="fas fa-edit me-2"></i>Thông tin cập nhật
-      </h6>
       <div class="row gy-3">
         <div class="col-md-6 position-relative">
           <label class="form-label">Tên vai trò <span class="text-danger">*</span></label>
