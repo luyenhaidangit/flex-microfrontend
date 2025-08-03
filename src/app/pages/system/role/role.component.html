@@ -634,38 +634,63 @@
 
 <!-- Modal xác nhận xóa -->
 <ng-template #deleteModal>
-  <div class="modal-header">
-    <h5 class="modal-title text-danger fw-semibold">
-      <i class="fas fa-trash-alt me-2"></i>Xác nhận xóa vai trò
-    </h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
-  </div>
-  <div class="modal-body px-4 py-3">
-    <div class="alert alert-warning">
-      <i class="fas fa-exclamation-triangle me-2"></i>
-      Bạn có chắc chắn muốn xóa vai trò này?
+  <form [formGroup]="deleteForm" (ngSubmit)="confirmDeleteRole()" class="needs-validation">
+    <div class="modal-header">
+      <h5 class="modal-title text-danger fw-semibold">
+        <i class="fas fa-trash-alt me-2"></i>Gửi yêu cầu xóa vai trò
+      </h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
     </div>
-    <div class="mt-3">
-      <div class="mb-2">
-        <span class="fw-bold text-muted">Mã vai trò:</span>
-        <span class="ps-2">{{ selectedItem?.code | safeField }}</span>
+    <div class="modal-body px-4 py-3">      
+      <!-- Role Information -->
+      <div class="card border-0 bg-light mb-3">
+        <div class="card-body">
+          <h6 class="card-title text-muted mb-3">
+            <i class="fas fa-info-circle me-2"></i>Thông tin vai trò sẽ xóa
+          </h6>
+          <div class="row g-2">
+            <div class="col-md-6">
+              <small class="text-muted">Mã vai trò:</small>
+              <div class="fw-bold">{{ selectedItem?.code }}</div>
+            </div>
+            <div class="col-md-6">
+              <small class="text-muted">Tên vai trò:</small>
+              <div class="fw-bold">{{ selectedItem?.name }}</div>
+            </div>
+            <div class="col-md-12">
+              <small class="text-muted">Mô tả:</small>
+              <div class="fw-bold">{{ selectedItem?.description || 'Không có mô tả' }}</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="mb-2">
-        <span class="fw-bold text-muted">Tên vai trò:</span>
-        <span class="ps-2">{{ selectedItem?.name | safeField }}</span>
-      </div>
-      <div class="mb-2">
-        <span class="fw-bold text-muted">Mô tả:</span>
-        <span class="ps-2">{{ selectedItem?.description | safeField:'Không có' }}</span>
+
+      <!-- Delete Reason Form -->
+      <div class="position-relative">
+        <label class="form-label">Lý do xóa</label>
+        <textarea 
+          class="form-control" 
+          formControlName="comment" 
+          rows="3" 
+          placeholder="Nhập lý do xóa vai trò (tối đa 500 ký tự)"
+          [ngClass]="{'is-invalid': deleteForm.controls.comment.touched && deleteForm.controls.comment.invalid}">
+        </textarea>
+        <div *ngIf="deleteForm.controls.comment.touched && deleteForm.controls.comment.invalid" class="invalid-tooltip">
+          <span *ngIf="deleteForm.controls.comment.errors?.required">Lý do xóa không được để trống</span>
+          <span *ngIf="deleteForm.controls.comment.errors?.maxlength">Lý do xóa không được vượt quá 500 ký tự</span>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="modal-footer border-top-0">
-    <button type="button" class="btn btn-danger" (click)="confirmDeleteRole()">
-      <i class="fas fa-trash-alt me-1"></i> Xác nhận xóa
-    </button>
-    <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Hủy</button>
-  </div>
+    <div class="modal-footer border-top-0">
+      <button type="button" class="btn btn-secondary me-2" (click)="modalRef?.hide()" [disabled]="isSubmittingDeleteRequest">
+        Hủy
+      </button>
+      <button type="submit" class="btn btn-danger">
+        <i class="fas fa-paper-plane me-1"></i>
+        Gửi yêu cầu xóa
+      </button>
+    </div>
+  </form>
 </ng-template>
 
 <!-- Modal xác nhận xóa nháp -->

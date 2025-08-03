@@ -24,6 +24,7 @@ export class RoleComponent implements OnInit {
   @ViewChild('detailModal') detailModalTemplateRef!: TemplateRef<any>;
   @ViewChild('createModal') createTemplateRef!: TemplateRef<any>;
   @ViewChild('editModal') editTemplateRef!: TemplateRef<any>;
+  @ViewChild('deleteModal') deleteTemplateRef!: TemplateRef<any>;
 
   pendingItems: Role[] = [];
 
@@ -38,12 +39,12 @@ export class RoleComponent implements OnInit {
   };
 
   roleForm!: FormGroup;
+  deleteForm!: FormGroup;
 
   @ViewChild('approveModal') approveTemplateRef!: TemplateRef<any>;
   @ViewChild('rejectModal') rejectTemplateRef!: TemplateRef<any>;
   @ViewChild('approveEditModal') approveEditTemplateRef!: TemplateRef<any>;
   @ViewChild('rejectEditModal') rejectEditTemplateRef!: TemplateRef<any>;
-  @ViewChild('deleteModal') deleteTemplateRef!: TemplateRef<any>;
   @ViewChild('approveDeleteModal') approveDeleteTemplateRef!: TemplateRef<any>;
   @ViewChild('rejectDeleteModal') rejectDeleteTemplateRef!: TemplateRef<any>;
   @ViewChild('deleteDraftModal') deleteDraftModal!: TemplateRef<any>;
@@ -93,6 +94,10 @@ export class RoleComponent implements OnInit {
       name: ['', [Validators.required, Validators.maxLength(100)]],
       description: ['', [Validators.maxLength(500)]],
       isActive: [true, [Validators.required]],
+      comment: ['', [Validators.maxLength(500)]]
+    });
+
+    this.deleteForm = this.fb.group({
       comment: ['', [Validators.maxLength(500)]]
     });
 
@@ -654,19 +659,40 @@ export class RoleComponent implements OnInit {
     this.closeModal();
   }
 
-  confirmDeleteRole(): void {
-    if (!this.selectedItem?.code) return;
-    this.roleService.deleteRole(this.selectedItem.code).subscribe({
-      next: () => {
-        this.toastService.success('Đã gửi yêu cầu xóa thành công!');
-        this.modalRef?.hide();
-        // Reload data dựa trên tab hiện tại
-        this.search();
-      },
-      error: () => {
-        this.toastService.error('Gửi yêu cầu xóa thất bại!');
-      }
+  // Open delete modal
+  openDeleteModal(item: Role): void {
+    this.selectedItem = item;
+    this.deleteForm.reset();
+    this.openModal(this.deleteTemplateRef, {
+      class: 'modal-lg',
+      backdrop: 'static',
+      keyboard: false
     });
+  }
+
+  confirmDeleteRole(): void {
+    this.deleteForm.markAllAsTouched();
+    if (this.deleteForm.invalid || !this.selectedItem?.code) return;
+
+    const formData = this.deleteForm.value;
+    
+    const deleteRequest: any = {
+      comment: formData.comment
+    };
+
+    this.roleService.createDeleteRoleRequest(this.selectedItem.code, deleteRequest)
+      .subscribe({
+        next: (response) => {
+          this.toastService.success('Yêu cầu xóa vai trò đã được gửi thành công!');
+          this.closeModal();
+          this.search(); // Reload data
+        },
+        error: (error) => {
+          console.error('Error creating delete role request:', error);
+          const errorMessage = error?.error?.message || 'Gửi yêu cầu xóa thất bại!';
+          this.toastService.error(errorMessage);
+        }
+      });
   }
 
   // Hàm xử lý input: upperCase và loại bỏ dấu cách, có thể tái sử dụng cho các input khác

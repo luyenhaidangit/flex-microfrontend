@@ -34,6 +34,11 @@ export class RoleService {
     return this.http.post<any>(`${this.apiUrl}/approved/${code}/update`, data);
   }
 
+  // Create delete role request
+  createDeleteRoleRequest(code: string, data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/approved/${code}/delete`, data);
+  }
+
   // Get all pending roles with pagination
   getPendingRoles(params: any): Observable<any> {
     return this.http.get<any>(this.apiUrl + '/pending', { params });
