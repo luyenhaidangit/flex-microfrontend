@@ -92,7 +92,8 @@ export class RoleComponent implements OnInit {
       code: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9]+')]],
       name: ['', [Validators.required, Validators.maxLength(100)]],
       description: ['', [Validators.maxLength(500)]],
-      isActive: [true, [Validators.required]]
+      isActive: [true, [Validators.required]],
+      comment: ['', [Validators.maxLength(500)]]
     });
 
     this.rejectForm = this.fb.group({
@@ -301,6 +302,7 @@ export class RoleComponent implements OnInit {
       name: formData.name,
       description: formData.description || undefined,
       isActive: formData.isActive,
+      comment: formData.comment,
       claims: []
     };
 

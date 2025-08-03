@@ -519,6 +519,10 @@
             <span *ngIf="roleForm.controls.description.errors?.maxlength">Mô tả không được vượt quá 500 ký tự</span>
           </div>
         </div>
+        <div class="col-md-12 position-relative">
+          <label class="form-label">Lý do cập nhật</label>
+          <textarea class="form-control" formControlName="comment" rows="3" placeholder="Nhập lý do cập nhật vai trò (tối đa 500 ký tự)"></textarea>
+        </div>
       </div>
 
       <!-- Claims Section (Optional) -->
