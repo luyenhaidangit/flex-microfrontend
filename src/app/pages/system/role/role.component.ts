@@ -75,9 +75,6 @@ export class RoleComponent implements OnInit {
 
   // Current user info
   currentUser: any = null;
-  
-  // Update role request state
-  isSubmittingUpdateRequest = false;
 
   constructor(
     private roleService: RoleService,
@@ -94,7 +91,8 @@ export class RoleComponent implements OnInit {
     this.roleForm = this.fb.group({
       code: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9]+')]],
       name: ['', [Validators.required, Validators.maxLength(100)]],
-      description: ['', [Validators.maxLength(500)]]
+      description: ['', [Validators.maxLength(500)]],
+      isActive: [true, [Validators.required]]
     });
 
     this.rejectForm = this.fb.group({
@@ -274,6 +272,51 @@ export class RoleComponent implements OnInit {
     this.roleForm.reset();
     this.rejectedReason = null;
     this.openModal(this.createTemplateRef, { class: 'modal-lg' });
+  }
+
+  // Open edit modal
+  openEditModal(item: Role): void {
+    this.selectedItem = item;
+    this.roleForm.patchValue({
+      code: item.code,
+      name: item.name,
+      description: item.description || '',
+      isActive: item.isActive === 'Y' || item.isActive === true
+    });
+    this.openModal(this.editTemplateRef, {
+      class: 'modal-lg',
+      backdrop: 'static',
+      keyboard: false
+    });
+  }
+
+  // Submit edit role form
+  submitEditRoleForm(): void {
+    this.roleForm.markAllAsTouched();
+    if (this.roleForm.invalid || !this.selectedItem) return;
+  
+    const formData = this.roleForm.value;
+    
+    const updateRequest = {
+      name: formData.name,
+      description: formData.description || undefined,
+      isActive: formData.isActive,
+      claims: []
+    };
+
+    this.roleService.createUpdateRoleRequest(this.selectedItem.code, updateRequest)
+      .subscribe({
+        next: (response) => {
+          this.toastService.success('Yêu cầu cập nhật vai trò đã được gửi thành công!');
+          this.closeModal();
+          this.search(); // Reload data
+        },
+        error: (error) => {
+          console.error('Error creating update role request:', error);
+          const errorMessage = error?.error?.message || 'Gửi yêu cầu cập nhật thất bại!';
+          this.toastService.error(errorMessage);
+        }
+      });
   }
 
   // Submit create role
@@ -607,50 +650,6 @@ export class RoleComponent implements OnInit {
       return;
     }
     this.closeModal();
-  }
-
-  openEditModal(item: Role): void {
-    this.selectedItem = item;
-    this.roleForm.patchValue({
-      code: item.code,
-      name: item.name,
-      description: item.description || ''
-    });
-    this.openModal(this.editTemplateRef, {
-      class: 'modal-lg',
-      backdrop: 'static',
-      keyboard: false
-    });
-  }
-
-  submitEditRoleForm(): void {
-    this.roleForm.markAllAsTouched();
-    if (this.roleForm.invalid || !this.selectedItem) return;
-    
-    this.isSubmittingUpdateRequest = true;
-    const formData = this.roleForm.value;
-    
-    const updateRequest = {
-      name: formData.name,
-      description: formData.description || undefined,
-      isActive: this.selectedItem.isActive === 'Y' || this.selectedItem.isActive === true,
-      claims: []
-    };
-
-    this.roleService.createUpdateRoleRequest(this.selectedItem.code, updateRequest)
-      .pipe(finalize(() => this.isSubmittingUpdateRequest = false))
-      .subscribe({
-        next: (response) => {
-          this.toastService.success('Yêu cầu cập nhật vai trò đã được gửi thành công!');
-          this.closeModal();
-          this.search(); // Reload data
-        },
-        error: (error) => {
-          console.error('Error creating update role request:', error);
-          const errorMessage = error?.error?.message || 'Gửi yêu cầu cập nhật thất bại!';
-          this.toastService.error(errorMessage);
-        }
-      });
   }
 
   confirmDeleteRole(): void {
