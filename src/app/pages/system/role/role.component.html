@@ -1,47 +1,44 @@
 <div class="container-fluid">
   <app-page-title title="Quản lý vai trò" [breadcrumbItems]="breadCrumbItems">
   </app-page-title>
-  <div class="role-header sticky-top bg-white p-3 mb-3" style="z-index: 10;">
-    <div class="d-flex flex-wrap align-items-center justify-content-between mb-2">
-      <div class="flex-grow-1"></div>
-      <div class="d-flex gap-2 ms-auto">
-        <button type="button" class="btn btn-success fw-bold shadow-sm" (click)="openCreateModal()" style="min-width: 120px;">
-          <i class="fas fa-plus me-1"></i> Thêm mới
-        </button>
-      </div>
-    </div>
-    <div class="row gx-3 gy-2 align-items-end">
-      <div class="col-md-4 mb-2 mb-md-0">
-        <div class="form-group">
-          <label class="form-label fw-bold text-muted" for="keywordInput">Từ khóa tìm kiếm</label>
-          <input id="keywordInput" class="form-control" type="text" placeholder="Nhập từ khóa..." [(ngModel)]="pagingState.keyword">
-        </div>
-      </div>
-      <div class="col-md-3 mb-2 mb-md-0">
-        <div class="form-group">
-          <label class="form-label fw-bold text-muted" for="statusSelect">Trạng thái</label>
-          <select id="statusSelect" class="form-select" [(ngModel)]="pagingState.isActive">
-            <option [ngValue]="null">Tất cả trạng thái</option>
-            <option [ngValue]="true">Hoạt động</option>
-            <option [ngValue]="false">Không hoạt động</option>
-          </select>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="form-group">
-          <label class="form-label d-block" style="visibility:hidden">Tìm kiếm</label>
-          <button class="btn btn-primary w-100" (click)="onSearch()">
-            <i class="bx bx-search-alt-2"></i> Tìm kiếm
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <div class="bg-white rounded shadow-sm p-3">
     <tabset class="nav-pills nav-tabs mb-3">
       <!-- Approved tab -->
       <tab heading="Đã duyệt" (selectTab)="switchTab('approved')">
+            <div class="row gx-3 mb-3 gy-2 align-items-end">
+              <div class="col-md-4 mb-2 mb-md-0">
+                <div class="form-group">
+                  <label class="form-label fw-bold text-muted" for="keywordInput">Từ khóa tìm kiếm</label>
+                  <input id="keywordInput" class="form-control" type="text" placeholder="Nhập từ khóa..."
+                    [(ngModel)]="pagingState.keyword">
+                </div>
+              </div>
+              <div class="col-md-3 mb-2 mb-md-0">
+                <div class="form-group">
+                  <label class="form-label fw-bold text-muted" for="statusSelect">Trạng thái</label>
+                  <select id="statusSelect" class="form-select" [(ngModel)]="pagingState.isActive">
+                    <option [ngValue]="null">Tất cả trạng thái</option>
+                    <option [ngValue]="true">Hoạt động</option>
+                    <option [ngValue]="false">Không hoạt động</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label class="form-label d-block" style="visibility:hidden">Tìm kiếm</label>
+                  <button class="btn btn-primary w-100" (click)="onSearch()">
+                    <i class="bx bx-search-alt-2"></i> Tìm kiếm
+                  </button>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <button type="button" class="btn btn-success fw-bold shadow-sm" (click)="openCreateModal()" style="min-width: 120px;">
+                  <i class="fas fa-plus me-1"></i> Thêm mới
+                </button>
+              </div>
+            </div>
+
         <!-- ============ TABLE ============ -->
         <div class="table-responsive">
           <!-- Skeleton -->
