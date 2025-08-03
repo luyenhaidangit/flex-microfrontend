@@ -98,8 +98,8 @@
                       </span>
                     </ng-container>
                     <ng-container *ngIf="!item.pendingAction">
-                      <span class="text-warning ms-2 pointer" tooltip="Chỉnh sửa" (click)="openEditModal(item)">
-                        <i class="fas fa-pen"></i>
+                      <span class="text-warning ms-2 pointer" tooltip="Chỉnh sửa" (click)="openUpdateRoleModal(item)">
+                        <i class="fas fa-edit"></i>
                       </span>
                       <span class="text-danger ms-2 pointer" tooltip="Xoá" (click)="openDeleteModal(item)">
                         <i class="fas fa-trash"></i>
@@ -545,6 +545,97 @@
           </button>
         </ng-template>
       </div>
+    </div>
+  </form>
+</ng-template>
+
+<!-- Update Role Request Modal -->
+<ng-template #updateRoleModal>
+  <form [formGroup]="updateRoleForm" class="needs-validation update-role-modal">
+    <div class="modal-header">
+      <h5 class="modal-title text-primary fw-semibold">
+        <i class="fas fa-edit me-2"></i>Tạo yêu cầu cập nhật vai trò
+      </h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+    </div>
+    <div class="modal-body px-4 py-3">
+      <!-- Current Role Info -->
+      <div class="alert alert-info mb-4">
+        <h6 class="alert-heading mb-2">
+          <i class="fas fa-info-circle me-2"></i>Thông tin vai trò hiện tại
+        </h6>
+        <div class="row g-2">
+          <div class="col-md-6">
+            <small class="text-muted">Mã vai trò:</small>
+            <div class="fw-bold">{{ selectedItem?.code }}</div>
+          </div>
+          <div class="col-md-6">
+            <small class="text-muted">Tên vai trò:</small>
+            <div class="fw-bold">{{ selectedItem?.name }}</div>
+          </div>
+          <div class="col-md-12">
+            <small class="text-muted">Mô tả:</small>
+            <div class="fw-bold">{{ selectedItem?.description || 'Không có mô tả' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Update Form -->
+      <h6 class="text-primary mb-3">
+        <i class="fas fa-edit me-2"></i>Thông tin cập nhật
+      </h6>
+      <div class="row gy-3">
+        <div class="col-md-6 position-relative">
+          <label class="form-label">Tên vai trò <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" formControlName="name" placeholder="Nhập tên vai trò mới"
+                 [ngClass]="{'is-invalid': updateRoleForm.controls.name.touched && updateRoleForm.controls.name.invalid}" />
+          <div *ngIf="updateRoleForm.controls.name.touched && updateRoleForm.controls.name.invalid" class="invalid-tooltip">
+            <span *ngIf="updateRoleForm.controls.name.errors?.required">Tên vai trò không được để trống</span>
+            <span *ngIf="updateRoleForm.controls.name.errors?.maxlength">Tên vai trò không được vượt quá 100 ký tự</span>
+          </div>
+        </div>
+        <div class="col-md-6 position-relative">
+          <label class="form-label">Trạng thái <span class="text-danger">*</span></label>
+          <select class="form-select" formControlName="isActive"
+                  [ngClass]="{'is-invalid': updateRoleForm.controls.isActive.touched && updateRoleForm.controls.isActive.invalid}">
+            <option [ngValue]="true">Hoạt động</option>
+            <option [ngValue]="false">Không hoạt động</option>
+          </select>
+          <div *ngIf="updateRoleForm.controls.isActive.touched && updateRoleForm.controls.isActive.invalid" class="invalid-tooltip">
+            <span *ngIf="updateRoleForm.controls.isActive.errors?.required">Trạng thái không được để trống</span>
+          </div>
+        </div>
+        <div class="col-md-12 position-relative">
+          <label class="form-label">Mô tả</label>
+          <textarea class="form-control" formControlName="description" rows="3" 
+                    placeholder="Nhập mô tả mới (tối đa 500 ký tự)"
+                    [ngClass]="{'is-invalid': updateRoleForm.controls.description.touched && updateRoleForm.controls.description.invalid}"></textarea>
+          <div *ngIf="updateRoleForm.controls.description.touched && updateRoleForm.controls.description.invalid" class="invalid-tooltip">
+            <span *ngIf="updateRoleForm.controls.description.errors?.maxlength">Mô tả không được vượt quá 500 ký tự</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Claims Section (Optional) -->
+      <div class="mt-4">
+        <h6 class="text-muted mb-3">
+          <i class="fas fa-shield-alt me-2"></i>Quyền hạn (tùy chọn)
+        </h6>
+        <div class="alert alert-warning">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          <strong>Lưu ý:</strong> Quyền hạn sẽ được cập nhật theo yêu cầu mới. Hiện tại chưa có giao diện quản lý quyền hạn.
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer border-top-0">
+      <button type="button" class="btn btn-secondary me-2" (click)="modalRef?.hide()" [disabled]="isSubmittingUpdateRequest">
+        Hủy
+      </button>
+      <button type="button" class="btn btn-primary" (click)="submitUpdateRoleRequest()" [disabled]="isSubmittingUpdateRequest">
+        <i class="fas fa-paper-plane me-1" *ngIf="!isSubmittingUpdateRequest"></i>
+        <span class="spinner-border spinner-border-sm me-1" *ngIf="isSubmittingUpdateRequest" role="status" aria-hidden="true"></span>
+        {{ isSubmittingUpdateRequest ? 'Đang gửi yêu cầu...' : 'Gửi yêu cầu cập nhật' }}
+      </button>
     </div>
   </form>
 </ng-template>

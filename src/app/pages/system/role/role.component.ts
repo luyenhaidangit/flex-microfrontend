@@ -24,6 +24,7 @@ export class RoleComponent implements OnInit {
   @ViewChild('detailModal') detailModalTemplateRef!: TemplateRef<any>;
   @ViewChild('createModal') createTemplateRef!: TemplateRef<any>;
   @ViewChild('editModal') editTemplateRef!: TemplateRef<any>;
+  @ViewChild('updateRoleModal') updateRoleTemplateRef!: TemplateRef<any>;
 
   pendingItems: Role[] = [];
 
@@ -72,6 +73,9 @@ export class RoleComponent implements OnInit {
   // Loading states for approve/reject actions
   isApproving = false;
   isRejecting = false;
+
+  // Current user info
+  currentUser: any = null;
 
   constructor(
     private roleService: RoleService,
@@ -727,5 +731,92 @@ export class RoleComponent implements OnInit {
 
   getRequestType(): string {
     return this.requestDetailData?.type;
+  }
+
+  // Update Role Request functionality
+  updateRoleForm!: FormGroup;
+  isSubmittingUpdateRequest = false;
+
+  openUpdateRoleModal(item: Role): void {
+    this.selectedItem = item;
+    this.initializeUpdateRoleForm(item);
+    this.openModal(this.updateRoleTemplateRef, {
+      class: 'modal-lg',
+      backdrop: 'static',
+      keyboard: false
+    });
+  }
+
+  private initializeUpdateRoleForm(item: Role): void {
+    this.updateRoleForm = this.fb.group({
+      name: [item.name, [Validators.required, Validators.maxLength(100)]],
+      description: [item.description || '', [Validators.maxLength(500)]],
+      isActive: [item.isActive === 'Y' || item.isActive === true, [Validators.required]],
+      claims: [[]]
+    });
+  }
+
+  submitUpdateRoleRequest(): void {
+    if (this.updateRoleForm.invalid || !this.selectedItem) {
+      this.markFormGroupTouched(this.updateRoleForm);
+      return;
+    }
+
+    this.isSubmittingUpdateRequest = true;
+    const formData = this.updateRoleForm.value;
+    
+    const updateRequest: any = {
+      name: formData.name,
+      description: formData.description || undefined,
+      isActive: formData.isActive,
+      claims: formData.claims || undefined
+    };
+
+    this.roleService.createUpdateRoleRequest(this.selectedItem.code, updateRequest)
+      .pipe(finalize(() => this.isSubmittingUpdateRequest = false))
+      .subscribe({
+        next: (response) => {
+          this.toastService.success('Yêu cầu cập nhật vai trò đã được gửi thành công!');
+          this.closeModal();
+          this.search(); // Reload data
+        },
+        error: (error) => {
+          console.error('Error creating update role request:', error);
+          const errorMessage = error?.error?.message || 'Gửi yêu cầu cập nhật thất bại!';
+          this.toastService.error(errorMessage);
+        }
+      });
+  }
+
+  private markFormGroupTouched(formGroup: FormGroup): void {
+    Object.keys(formGroup.controls).forEach(key => {
+      const control = formGroup.get(key);
+      control?.markAsTouched();
+      
+      if (control instanceof FormGroup) {
+        this.markFormGroupTouched(control);
+      }
+    });
+  }
+
+  // Missing methods referenced in template
+  saveDraftRole(): void {
+    // Implementation for saving draft role
+    this.toastService.info('Chức năng lưu nháp đang được phát triển');
+  }
+
+  openDeleteDraftModal(): void {
+    // Implementation for opening delete draft modal
+    this.openModal(this.deleteDraftModal, {
+      class: 'modal-sm',
+      backdrop: 'static',
+      keyboard: false
+    });
+  }
+
+  confirmDeleteDraft(): void {
+    // Implementation for confirming delete draft
+    this.toastService.info('Chức năng xóa nháp đang được phát triển');
+    this.closeModal();
   }
 }
