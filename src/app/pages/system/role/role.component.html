@@ -657,6 +657,12 @@
               <small class="text-muted">Tên vai trò:</small>
               <div class="fw-bold">{{ selectedItem?.name }}</div>
             </div>
+            <div class="col-md-6">
+              <small class="text-muted">Trạng thái:</small>
+              <div class="fw-bold">
+                <app-badge [value]="selectedItem?.isActive" type="status"></app-badge>
+              </div>
+            </div>
             <div class="col-md-12">
               <small class="text-muted">Mô tả:</small>
               <div class="fw-bold">{{ selectedItem?.description || 'Không có mô tả' }}</div>
