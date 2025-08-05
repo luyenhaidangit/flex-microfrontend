@@ -383,6 +383,37 @@ export class RoleComponent implements OnInit {
       });
   }
 
+  // Get pending items
+  getPendingItems(): void {
+    // Gọi API lấy vai trò chờ duyệt
+    this.isLoading = true;
+    const params = { ...this.searchParams };
+    this.roleService.getPendingRoles(params)
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: (res) => {
+          if (res?.isSuccess) {
+            const { items, ...page } = res.data;
+            this.pendingItems = items ?? [];
+            Object.assign(this.pagingState, {
+              pageIndex : page.pageIndex,
+              pageSize  : page.pageSize,
+              totalPages: page.totalPages,
+              totalItems: page.totalItems
+            });
+          } else {
+            this.pendingItems = [];
+            this.toastService.error('Không lấy được danh sách vai trò chờ duyệt!');
+          }
+        },
+        error: (err) => {
+          this.pendingItems = [];
+          this.toastService.error('Đã xảy ra lỗi khi lấy danh sách vai trò chờ duyệt!');
+          console.error('getPendingItems error:', err);
+        }
+      });
+  }
+
   openDetailModal1(template: TemplateRef<any>, item: any): void {
     const code = item?.code;
     if (!code) {
@@ -474,36 +505,6 @@ export class RoleComponent implements OnInit {
     this.activeTab = tab;
     this.pagingState.pageIndex = 1; // Reset về trang đầu tiên khi chuyển tab
     this.search();
-  }
-
-  getPendingItems(): void {
-    // Gọi API lấy vai trò chờ duyệt
-    this.isLoading = true;
-    const params = { ...this.searchParams };
-    this.roleService.getPendingRoles(params)
-      .pipe(finalize(() => this.isLoading = false))
-      .subscribe({
-        next: (res) => {
-          if (res?.isSuccess) {
-            const { items, ...page } = res.data;
-            this.pendingItems = items ?? [];
-            Object.assign(this.pagingState, {
-              pageIndex : page.pageIndex,
-              pageSize  : page.pageSize,
-              totalPages: page.totalPages,
-              totalItems: page.totalItems
-            });
-          } else {
-            this.pendingItems = [];
-            this.toastService.error('Không lấy được danh sách vai trò chờ duyệt!');
-          }
-        },
-        error: (err) => {
-          this.pendingItems = [];
-          this.toastService.error('Đã xảy ra lỗi khi lấy danh sách vai trò chờ duyệt!');
-          console.error('getPendingItems error:', err);
-        }
-      });
   }
 
   // Thay đổi các hàm tìm kiếm/phân trang để gọi đúng API theo tab
