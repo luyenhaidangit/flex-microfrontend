@@ -150,6 +150,40 @@
       </tab>
       <!-- Pending tab -->
       <tab heading="Chờ duyệt" (selectTab)="switchTab('pending')">
+        <!-- Search form for pending tab -->
+        <div class="row gx-3 mb-3 gy-2 align-items-end">
+          <div class="col-md-4 mb-2 mb-md-0">
+            <div class="form-group">
+              <label class="form-label fw-bold text-muted" for="keywordInputPending">Từ khóa tìm kiếm</label>
+              <input id="keywordInputPending" class="form-control" type="text" placeholder="Nhập từ khóa..."
+                [(ngModel)]="pagingState.keyword">
+            </div>
+          </div>
+          <div class="col-md-3 mb-2 mb-md-0">
+            <div class="form-group">
+              <label class="form-label fw-bold text-muted" for="statusSelectPending">Trạng thái</label>
+              <select id="statusSelectPending" class="form-select" [(ngModel)]="pagingState.isActive">
+                <option [ngValue]="null">Tất cả trạng thái</option>
+                <option [ngValue]="true">Hoạt động</option>
+                <option [ngValue]="false">Không hoạt động</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <label class="form-label d-block" style="visibility:hidden">Tìm kiếm</label>
+              <button class="btn btn-primary w-100" (click)="onSearch()">
+                <i class="bx bx-search-alt-2"></i> Tìm kiếm
+              </button>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <button type="button" class="btn btn-success fw-bold shadow-sm" (click)="openCreateModal()" style="min-width: 120px;">
+              <i class="fas fa-plus me-1"></i> Thêm mới
+            </button>
+          </div>
+        </div>
+
         <div class="table-responsive">
           <ng-container *ngIf="isLoading; else pendingTableContent">
             <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
