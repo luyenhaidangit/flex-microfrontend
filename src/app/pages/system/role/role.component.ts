@@ -478,8 +478,10 @@ export class RoleComponent implements OnInit {
 
   getPendingItems(): void {
     // Gọi API lấy vai trò chờ duyệt
+    this.isLoading = true;
     const params = { ...this.searchParams };
     this.roleService.getPendingRoles(params)
+      .pipe(finalize(() => this.isLoading = false))
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
@@ -493,10 +495,13 @@ export class RoleComponent implements OnInit {
             });
           } else {
             this.pendingItems = [];
+            this.toastService.error('Không lấy được danh sách vai trò chờ duyệt!');
           }
         },
-        error: () => {
+        error: (err) => {
           this.pendingItems = [];
+          this.toastService.error('Đã xảy ra lỗi khi lấy danh sách vai trò chờ duyệt!');
+          console.error('getPendingItems error:', err);
         }
       });
   }
