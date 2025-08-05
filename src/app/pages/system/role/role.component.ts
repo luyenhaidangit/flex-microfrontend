@@ -38,6 +38,7 @@ export class RoleComponent implements OnInit {
     totalItems: 0,
     keyword   : '',
     isActive  : null,
+    requestType: null,
     createdDate: null
   };
 
@@ -116,6 +117,15 @@ export class RoleComponent implements OnInit {
     if (keyword?.trim()) params.keyword = keyword.trim();
     if (isActive === true) params.isActive = 'Y';
     else if (isActive === false) params.isActive = 'N';
+    return params;
+  }
+
+  // Handle search for pending items (with requestType filter)
+  get pendingSearchParams(): RoleSearchParams {
+    const { pageIndex, pageSize, keyword, requestType } = this.pagingState;
+    const params: RoleSearchParams = { pageIndex, pageSize };
+    if (keyword?.trim()) params.keyword = keyword.trim();
+    if (requestType) params.requestType = requestType;
     return params;
   }
 
@@ -387,7 +397,7 @@ export class RoleComponent implements OnInit {
   getPendingItems(): void {
     // Gọi API lấy vai trò chờ duyệt
     this.isLoading = true;
-    const params = { ...this.searchParams };
+    const params = { ...this.pendingSearchParams };
     this.roleService.getPendingRoles(params)
       .pipe(finalize(() => this.isLoading = false))
       .subscribe({

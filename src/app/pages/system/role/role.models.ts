@@ -27,6 +27,7 @@ export interface RoleSearchParams {
   pageSize: number;
   keyword?: string;
   isActive?: 'Y' | 'N' | null;
+  requestType?: 'CREATE' | 'UPDATE' | 'DELETE' | null;
 }
 
 export interface PagingState {
@@ -36,6 +37,7 @@ export interface PagingState {
   totalItems: number;
   keyword?: string;
   isActive?: boolean | null;
+  requestType?: 'CREATE' | 'UPDATE' | 'DELETE' | null;
   createdDate?: Date | null;
 }
 

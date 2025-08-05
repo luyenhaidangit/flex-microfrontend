@@ -161,11 +161,12 @@
           </div>
           <div class="col-md-3 mb-2 mb-md-0">
             <div class="form-group">
-              <label class="form-label fw-bold text-muted" for="statusSelectPending">Trạng thái</label>
-              <select id="statusSelectPending" class="form-select" [(ngModel)]="pagingState.isActive">
-                <option [ngValue]="null">Tất cả trạng thái</option>
-                <option [ngValue]="true">Hoạt động</option>
-                <option [ngValue]="false">Không hoạt động</option>
+              <label class="form-label fw-bold text-muted" for="requestTypeSelectPending">Loại yêu cầu</label>
+              <select id="requestTypeSelectPending" class="form-select" [(ngModel)]="pagingState.requestType">
+                <option [ngValue]="null">Tất cả loại yêu cầu</option>
+                <option [ngValue]="'CREATE'">Tạo mới</option>
+                <option [ngValue]="'UPDATE'">Cập nhật</option>
+                <option [ngValue]="'DELETE'">Xóa</option>
               </select>
             </div>
           </div>
