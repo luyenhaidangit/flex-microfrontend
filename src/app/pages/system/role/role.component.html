@@ -196,7 +196,6 @@
                   <th>Loại yêu cầu</th>
                   <th>Người tạo</th>
                   <th>Ngày tạo</th>
-                  <th>Ngày duyệt</th>
                   <th>Thao tác</th>
                 </tr>
               </thead>
@@ -207,7 +206,6 @@
                   <td><app-skeleton width="200px" height="18px"></app-skeleton></td>
                   <td><app-skeleton width="90px" height="18px"></app-skeleton></td>
                   <td><app-skeleton width="120px" height="18px"></app-skeleton></td>
-                  <td><app-skeleton width="90px" height="18px"></app-skeleton></td>
                   <td><app-skeleton width="90px" height="18px"></app-skeleton></td>
                   <td><app-skeleton width="120px" height="18px"></app-skeleton></td>
                 </tr>
@@ -224,7 +222,6 @@
                   <th>Loại yêu cầu</th>
                   <th>Người tạo</th>
                   <th>Ngày tạo</th>
-                  <th>Ngày duyệt</th>
                   <th>Thao tác</th>
                 </tr>
               </thead>
@@ -238,12 +235,6 @@
                   </td>
                   <td>{{ item.requestedBy | safeField }}</td>
                   <td>{{ item.requestedDate | date: 'dd/MM/yyyy' }}</td>
-                  <td>
-                    <ng-container *ngIf="item.status === 'APPROVED'; else noApproveDate">
-                      {{ item.approveDate | date: 'dd/MM/yyyy HH:mm:ss' }}
-                    </ng-container>
-                    <ng-template #noApproveDate>—</ng-template>
-                  </td>
                   <td class="action-column">
                     <span class="text-info pointer" tooltip="Xem chi tiết" (click)="openRequestDetailModal(item)">
                       <i class="fas fa-eye"></i>
@@ -257,7 +248,7 @@
                   </td>
                 </tr>
                 <tr *ngIf="pendingItems.length === 0">
-                  <td colspan="8" class="text-center">Không có yêu cầu chờ duyệt</td>
+                  <td colspan="7" class="text-center">Không có yêu cầu chờ duyệt</td>
                 </tr>
               </tbody>
             </table>
