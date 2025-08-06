@@ -50,6 +50,11 @@ const DEFAULT_CONFIGS: Record<BadgeType, BadgeTypeConfig> = {
       class: 'badge-soft-success',
       value: 'AUT'
     },
+    UNA: {
+      label: 'Chưa duyệt',
+      class: 'badge-soft-warning',
+      value: 'UNA'
+    },
     REJECTED: {
       label: 'Từ chối',
       class: 'badge-soft-danger',
