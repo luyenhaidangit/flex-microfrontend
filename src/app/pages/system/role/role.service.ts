@@ -64,12 +64,12 @@ export class RoleService {
   }
 
   approveRole(requestId: string | number): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/requests/${requestId}/approve`, {});
+    return this.http.post<any>(`${this.apiUrl}/pending/${requestId}/approve`, {});
   }
 
   rejectRole(requestId: string | number, reason: string): Observable<any> {
     // Gửi reason đúng dạng object { reason: string } theo API mới
-    return this.http.post<any>(`${this.apiUrl}/requests/${requestId}/reject`, { reason });
+    return this.http.post<any>(`${this.apiUrl}/pending/${requestId}/reject`, { reason });
   }
 
   cancelDraftRequest(requestId: number): Observable<any> {
