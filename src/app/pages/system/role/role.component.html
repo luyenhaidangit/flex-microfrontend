@@ -486,6 +486,9 @@
           <label class="form-label">Mô tả</label>
           <textarea class="form-control" formControlName="description" rows="2" placeholder="Nhập mô tả"></textarea>
         </div>
+        <!-- Hidden fields for Create modal -->
+        <input type="hidden" formControlName="isActive" value="true">
+        <input type="hidden" formControlName="comment" value="">
       </div>
     </div>
     <div class="modal-footer border-top-0 d-flex justify-content-between">

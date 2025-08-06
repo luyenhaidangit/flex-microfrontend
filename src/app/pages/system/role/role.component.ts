@@ -286,6 +286,11 @@ export class RoleComponent implements OnInit {
   // Open create modal
   openCreateModal(): void {
     this.roleForm.reset();
+    // Set default values for Create modal
+    this.roleForm.patchValue({
+      isActive: true,
+      comment: ''
+    });
     this.rejectedReason = null;
     this.openModal(this.createTemplateRef, { class: 'modal-lg' });
   }
@@ -294,7 +299,7 @@ export class RoleComponent implements OnInit {
   onSubmitRole(): void {
     this.roleForm.markAllAsTouched();
     if (this.roleForm.invalid) return;
-    const payload = this.roleForm.value;
+    const payload = this.roleForm.value; 
     this.roleService.createRole(payload).subscribe({
       next: () => {
         this.toastService.success('Gửi duyệt thành công!');
@@ -304,6 +309,7 @@ export class RoleComponent implements OnInit {
         this.search();
       },
       error: (err) => {
+        console.error('Create role error:', err);
         const msg = err?.error?.message || 'Gửi duyệt thất bại!';
         this.toastService.error(msg);
       }
