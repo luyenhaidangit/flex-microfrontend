@@ -38,7 +38,7 @@ export class RoleComponent implements OnInit {
     totalItems: 0,
     keyword   : '',
     isActive  : null,
-    requestType: null,
+    type: null,
     createdDate: null
   };
 
@@ -122,10 +122,10 @@ export class RoleComponent implements OnInit {
 
   // Handle search for pending items (with requestType filter)
   get pendingSearchParams(): RoleSearchParams {
-    const { pageIndex, pageSize, keyword, requestType } = this.pagingState;
+    const { pageIndex, pageSize, keyword, type } = this.pagingState;
     const params: RoleSearchParams = { pageIndex, pageSize };
     if (keyword?.trim()) params.keyword = keyword.trim();
-    if (requestType) params.requestType = requestType;
+    if (type) params.type = type;
     return params;
   }
 
