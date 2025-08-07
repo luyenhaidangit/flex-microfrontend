@@ -1,10 +1,11 @@
 .mini-stats-wid {
   transition: all 0.3s ease;
   border: 1px solid #e9ecef;
+  border-radius: 8px;
   
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
   
   .card-body {
@@ -12,15 +13,68 @@
   }
   
   .mini-stat-icon {
-    width: 48px;
-    height: 48px;
+    width: 52px;
+    height: 52px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+      border-radius: 50%;
+    }
     
     .avatar-title {
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       color: white;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      line-height: 1;
+    }
+    
+    i {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      font-size: 1.6rem !important;
+      line-height: 1 !important;
+      font-style: normal !important;
+      font-weight: normal !important;
+      text-align: center !important;
+      vertical-align: middle !important;
+    }
+    
+    // Đảm bảo tất cả icon Boxicons có cùng style
+    .bx {
+      font-size: 1.6rem !important;
+      line-height: 1 !important;
+      font-style: normal !important;
+      font-weight: normal !important;
+      text-align: center !important;
+      vertical-align: middle !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 100% !important;
+      height: 100% !important;
     }
   }
   
@@ -28,17 +82,27 @@
     font-size: 0.875rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
+    color: #2c3e50;
   }
   
   p {
     font-size: 0.75rem;
     line-height: 1.4;
     margin-bottom: 0;
+    color: #6c757d;
   }
   
   .btn {
     font-size: 0.75rem;
     padding: 0.375rem 0.75rem;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
   }
 }
 
@@ -86,22 +150,72 @@
   }
 }
 
+// Global icon consistency
+.mini-stats-wid .mini-stat-icon .bx,
+.mini-stats-wid .mini-stat-icon i {
+  font-family: 'boxicons' !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
 // Responsive adjustments
 @media (max-width: 768px) {
   .col-xl-3 {
     margin-bottom: 1rem;
   }
   
-  .mini-stats-wid .card-body {
-    padding: 1rem;
-  }
-  
-  .mini-stat-icon {
-    width: 40px !important;
-    height: 40px !important;
+  .mini-stats-wid {
+    .card-body {
+      padding: 1rem;
+    }
     
-    .avatar-title {
-      font-size: 1.25rem !important;
+    .mini-stat-icon {
+      width: 44px !important;
+      height: 44px !important;
+      
+      .avatar-title {
+        font-size: 1.4rem !important;
+        line-height: 1 !important;
+      }
+      
+      i {
+        font-size: 1.4rem !important;
+        line-height: 1 !important;
+        font-style: normal !important;
+        font-weight: normal !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+      }
+      
+      .bx {
+        font-size: 1.4rem !important;
+        line-height: 1 !important;
+        font-style: normal !important;
+        font-weight: normal !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        height: 100% !important;
+      }
+    }
+    
+    h6 {
+      font-size: 0.8rem;
+    }
+    
+    p {
+      font-size: 0.7rem;
+    }
+    
+    .btn {
+      font-size: 0.7rem;
+      padding: 0.3rem 0.6rem;
     }
   }
 }
