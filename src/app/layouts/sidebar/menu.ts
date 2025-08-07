@@ -76,25 +76,19 @@ export const MENU: MenuItem[] = [
                 parentId: 13
             },
             {
-                id: 17,
-                label: 'MENUITEMS.SYSTEM.MANAGESYSTEM.SETTINGS',
-                link: '/system/settings',
-                parentId: 13
-            },
-            {
-                id: 15,
+                id: 18,
                 label: 'MENUITEMS.ECOMMERCE.LIST.PRODUCTDETAIL',
                 link: '/ecommerce/product-detail/1',
                 parentId: 13
             },
             {
-                id: 16,
+                id: 19,
                 label: 'MENUITEMS.ECOMMERCE.LIST.ORDERS',
                 link: '/ecommerce/orders',
                 parentId: 13
             },
             {
-                id: 17,
+                id: 20,
                 label: 'MENUITEMS.ECOMMERCE.LIST.CUSTOMERS',
                 link: '/ecommerce/customers',
                 parentId: 13
@@ -124,6 +118,12 @@ export const MENU: MenuItem[] = [
                 parentId: 13
             },
         ]
+    },
+    {
+        id: 17,
+        label: 'MENUITEMS.SYSTEM.MANAGESYSTEM.SETTINGS',
+        icon: 'bx-cog',
+        link: '/system/settings',
     },
     {
         id: 10,
