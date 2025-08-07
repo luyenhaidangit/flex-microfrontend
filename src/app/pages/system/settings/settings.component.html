@@ -1,0 +1,155 @@
+<div class="row">
+  <div class="col-12">
+    <div class="page-title-box d-flex align-items-center justify-content-between">
+      <h4 class="mb-0">Settings</h4>
+      <div class="page-title-right">
+        <ol class="breadcrumb m-0">
+          <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+          <li class="breadcrumb-item active">Settings</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        
+        <!-- Common Section -->
+        <div class="mb-4">
+          <h5 class="card-title mb-3">Common</h5>
+          <div class="row">
+            <div class="col-xl-3 col-md-6" *ngFor="let setting of getSettingsByCategory('common')">
+              <div class="card mini-stats-wid">
+                <div class="card-body">
+                  <div class="d-flex">
+                    <div class="flex-grow-1">
+                      <div class="d-flex align-items-center">
+                        <div class="avatar-sm rounded-circle bg-primary align-self-center me-3 mini-stat-icon">
+                          <span class="avatar-title">
+                            <i [class]="setting.icon"></i>
+                          </span>
+                        </div>
+                        <div class="flex-1">
+                          <h6 class="text-uppercase mb-1">{{ setting.title }}</h6>
+                          <p class="text-muted mb-0">{{ setting.description }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mt-3">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="navigateToSetting(setting.route)">
+                      Configure
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Localization Section -->
+        <div class="mb-4">
+          <h5 class="card-title mb-3">Localization</h5>
+          <div class="row">
+            <div class="col-xl-3 col-md-6" *ngFor="let setting of getSettingsByCategory('localization')">
+              <div class="card mini-stats-wid">
+                <div class="card-body">
+                  <div class="d-flex">
+                    <div class="flex-grow-1">
+                      <div class="d-flex align-items-center">
+                        <div class="avatar-sm rounded-circle bg-success align-self-center me-3 mini-stat-icon">
+                          <span class="avatar-title">
+                            <i [class]="setting.icon"></i>
+                          </span>
+                        </div>
+                        <div class="flex-1">
+                          <h6 class="text-uppercase mb-1">{{ setting.title }}</h6>
+                          <p class="text-muted mb-0">{{ setting.description }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mt-3">
+                    <button type="button" class="btn btn-success btn-sm" (click)="navigateToSetting(setting.route)">
+                      Configure
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Authentication Section -->
+        <div class="mb-4">
+          <h5 class="card-title mb-3">Authentication</h5>
+          <div class="row">
+            <div class="col-xl-3 col-md-6" *ngFor="let setting of getSettingsByCategory('authentication')">
+              <div class="card mini-stats-wid">
+                <div class="card-body">
+                  <div class="d-flex">
+                    <div class="flex-grow-1">
+                      <div class="d-flex align-items-center">
+                        <div class="avatar-sm rounded-circle bg-warning align-self-center me-3 mini-stat-icon">
+                          <span class="avatar-title">
+                            <i [class]="setting.icon"></i>
+                          </span>
+                        </div>
+                        <div class="flex-1">
+                          <h6 class="text-uppercase mb-1">{{ setting.title }}</h6>
+                          <p class="text-muted mb-0">{{ setting.description }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mt-3">
+                    <button type="button" class="btn btn-warning btn-sm" (click)="navigateToSetting(setting.route)">
+                      Configure
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ecommerce Section -->
+        <div class="mb-4">
+          <h5 class="card-title mb-3">Ecommerce</h5>
+          <div class="row">
+            <div class="col-xl-3 col-md-6" *ngFor="let setting of getSettingsByCategory('ecommerce')">
+              <div class="card mini-stats-wid">
+                <div class="card-body">
+                  <div class="d-flex">
+                    <div class="flex-grow-1">
+                      <div class="d-flex align-items-center">
+                        <div class="avatar-sm rounded-circle bg-info align-self-center me-3 mini-stat-icon">
+                          <span class="avatar-title">
+                            <i [class]="setting.icon"></i>
+                          </span>
+                        </div>
+                        <div class="flex-1">
+                          <h6 class="text-uppercase mb-1">{{ setting.title }}</h6>
+                          <p class="text-muted mb-0">{{ setting.description }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mt-3">
+                    <button type="button" class="btn btn-info btn-sm" (click)="navigateToSetting(setting.route)">
+                      Configure
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

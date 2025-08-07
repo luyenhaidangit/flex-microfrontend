@@ -76,6 +76,12 @@ export const MENU: MenuItem[] = [
                 parentId: 13
             },
             {
+                id: 17,
+                label: 'MENUITEMS.SYSTEM.MANAGESYSTEM.SETTINGS',
+                link: '/system/settings',
+                parentId: 13
+            },
+            {
                 id: 15,
                 label: 'MENUITEMS.ECOMMERCE.LIST.PRODUCTDETAIL',
                 link: '/ecommerce/product-detail/1',

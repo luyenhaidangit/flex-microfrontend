@@ -1,0 +1,287 @@
+<div class="row">
+  <div class="col-12">
+    <div class="page-title-box d-flex align-items-center justify-content-between">
+      <h4 class="mb-0">Authentication Settings</h4>
+      <div class="page-title-right">
+        <ol class="breadcrumb m-0">
+          <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+          <li class="breadcrumb-item"><a href="javascript: void(0);">Settings</a></li>
+          <li class="breadcrumb-item active">Authentication</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="isLoading">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body text-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading authentication settings...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="!isLoading">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title mb-4">Configure Authentication Mode</h5>
+        <p class="text-muted mb-4">This address will appear on your invoice and will be used to calculate your shipping price.</p>
+        
+        <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
+          
+          <!-- Authentication Mode Selection -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <h6 class="mb-3">Authentication Mode</h6>
+              <div class="row">
+                <div class="col-md-6" *ngFor="let mode of authModes">
+                  <div class="form-check form-check-inline mb-3">
+                    <input class="form-check-input" type="radio" 
+                           [id]="'authMode_' + mode.value"
+                           formControlName="authMode"
+                           [value]="mode.value">
+                    <label class="form-check-label" [for]="'authMode_' + mode.value">
+                      <strong>{{ mode.label }}</strong>
+                      <br>
+                      <small class="text-muted">{{ mode.description }}</small>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Selected Mode Description -->
+          <div class="row mb-4" *ngIf="getSelectedAuthMode()">
+            <div class="col-12">
+              <div class="alert alert-info">
+                <i class="bx bx-info-circle me-2"></i>
+                <strong>{{ getSelectedAuthMode()?.label }}</strong>: {{ getSelectedAuthMode()?.description }}
+              </div>
+            </div>
+          </div>
+
+          <!-- General Settings -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <h6 class="mb-3">General Settings</h6>
+            </div>
+            <div class="col-md-6">
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" formControlName="enableRegistration" id="enableRegistration">
+                <label class="form-check-label" for="enableRegistration">
+                  Enable User Registration
+                </label>
+              </div>
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" formControlName="requireEmailVerification" id="requireEmailVerification">
+                <label class="form-check-label" for="requireEmailVerification">
+                  Require Email Verification
+                </label>
+              </div>
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" formControlName="enableTwoFactor" id="enableTwoFactor">
+                <label class="form-check-label" for="enableTwoFactor">
+                  Enable Two-Factor Authentication
+                </label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="sessionTimeout" class="form-label">Session Timeout (minutes)</label>
+                <input type="number" class="form-control" id="sessionTimeout" 
+                       formControlName="sessionTimeout" min="5" max="480">
+                <div class="invalid-feedback" *ngIf="authForm.get('sessionTimeout')?.invalid && authForm.get('sessionTimeout')?.touched">
+                  Session timeout must be between 5 and 480 minutes
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="maxLoginAttempts" class="form-label">Max Login Attempts</label>
+                <input type="number" class="form-control" id="maxLoginAttempts" 
+                       formControlName="maxLoginAttempts" min="1" max="10">
+              </div>
+              <div class="mb-3">
+                <label for="lockoutDuration" class="form-label">Lockout Duration (minutes)</label>
+                <input type="number" class="form-control" id="lockoutDuration" 
+                       formControlName="lockoutDuration" min="1" max="60">
+              </div>
+            </div>
+          </div>
+
+          <!-- Database Settings -->
+          <div class="row mb-4" *ngIf="authForm.get('authMode')?.value === 'database'">
+            <div class="col-12">
+              <h6 class="mb-3">Database Configuration</h6>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="dbProvider" class="form-label">Database Provider</label>
+                <select class="form-select" id="dbProvider" formControlName="dbProvider">
+                  <option value="sqlserver">SQL Server</option>
+                  <option value="mysql">MySQL</option>
+                  <option value="postgresql">PostgreSQL</option>
+                  <option value="oracle">Oracle</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="dbConnectionString" class="form-label">Connection String</label>
+                <input type="text" class="form-control" id="dbConnectionString" 
+                       formControlName="dbConnectionString" placeholder="Server=localhost;Database=FlexDB;...">
+              </div>
+            </div>
+            <div class="col-12">
+              <button type="button" class="btn btn-outline-primary" (click)="testConnection()">
+                <i class="bx bx-test-tube me-1"></i> Test Connection
+              </button>
+            </div>
+          </div>
+
+          <!-- LDAP Settings -->
+          <div class="row mb-4" *ngIf="authForm.get('authMode')?.value === 'ldap'">
+            <div class="col-12">
+              <h6 class="mb-3">LDAP Configuration</h6>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="ldapServer" class="form-label">LDAP Server</label>
+                <input type="text" class="form-control" id="ldapServer" 
+                       formControlName="ldapServer" placeholder="ldap.company.com">
+              </div>
+              <div class="mb-3">
+                <label for="ldapPort" class="form-label">LDAP Port</label>
+                <input type="number" class="form-control" id="ldapPort" 
+                       formControlName="ldapPort" placeholder="389">
+              </div>
+              <div class="mb-3">
+                <label for="ldapBaseDN" class="form-label">Base DN</label>
+                <input type="text" class="form-control" id="ldapBaseDN" 
+                       formControlName="ldapBaseDN" placeholder="dc=company,dc=com">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="ldapBindDN" class="form-label">Bind DN</label>
+                <input type="text" class="form-control" id="ldapBindDN" 
+                       formControlName="ldapBindDN" placeholder="cn=admin,dc=company,dc=com">
+              </div>
+              <div class="mb-3">
+                <label for="ldapBindPassword" class="form-label">Bind Password</label>
+                <input type="password" class="form-control" id="ldapBindPassword" 
+                       formControlName="ldapBindPassword">
+              </div>
+            </div>
+            <div class="col-12">
+              <button type="button" class="btn btn-outline-primary" (click)="testConnection()">
+                <i class="bx bx-test-tube me-1"></i> Test LDAP Connection
+              </button>
+            </div>
+          </div>
+
+          <!-- OAuth Settings -->
+          <div class="row mb-4" *ngIf="authForm.get('authMode')?.value === 'oauth'">
+            <div class="col-12">
+              <h6 class="mb-3">OAuth 2.0 Providers</h6>
+            </div>
+            <div class="col-md-6" formGroupName="oauthProviders">
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" formControlName="google" id="oauthGoogle">
+                <label class="form-check-label" for="oauthGoogle">
+                  Google OAuth
+                </label>
+              </div>
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" formControlName="facebook" id="oauthFacebook">
+                <label class="form-check-label" for="oauthFacebook">
+                  Facebook OAuth
+                </label>
+              </div>
+            </div>
+            <div class="col-md-6" formGroupName="oauthProviders">
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" formControlName="github" id="oauthGithub">
+                <label class="form-check-label" for="oauthGithub">
+                  GitHub OAuth
+                </label>
+              </div>
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" formControlName="microsoft" id="oauthMicrosoft">
+                <label class="form-check-label" for="oauthMicrosoft">
+                  Microsoft OAuth
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Password Policy -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <h6 class="mb-3">Password Policy</h6>
+            </div>
+            <div class="col-md-6" formGroupName="passwordPolicy">
+              <div class="mb-3">
+                <label for="minLength" class="form-label">Minimum Length</label>
+                <input type="number" class="form-control" id="minLength" 
+                       formControlName="minLength" min="6" max="20">
+              </div>
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" formControlName="requireUppercase" id="requireUppercase">
+                <label class="form-check-label" for="requireUppercase">
+                  Require Uppercase Letters
+                </label>
+              </div>
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" formControlName="requireLowercase" id="requireLowercase">
+                <label class="form-check-label" for="requireLowercase">
+                  Require Lowercase Letters
+                </label>
+              </div>
+            </div>
+            <div class="col-md-6" formGroupName="passwordPolicy">
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" formControlName="requireNumbers" id="requireNumbers">
+                <label class="form-check-label" for="requireNumbers">
+                  Require Numbers
+                </label>
+              </div>
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" formControlName="requireSpecialChars" id="requireSpecialChars">
+                <label class="form-check-label" for="requireSpecialChars">
+                  Require Special Characters
+                </label>
+              </div>
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" formControlName="preventCommonPasswords" id="preventCommonPasswords">
+                <label class="form-check-label" for="preventCommonPasswords">
+                  Prevent Common Passwords
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="row">
+            <div class="col-12">
+              <div class="d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-secondary" (click)="loadSettings()">
+                  <i class="bx bx-refresh me-1"></i> Reset
+                </button>
+                <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+                  <i class="bx bx-save me-1"></i> Save Settings
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

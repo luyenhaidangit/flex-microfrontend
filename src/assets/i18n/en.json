@@ -1,0 +1,75 @@
+{
+  "MENUITEMS": {
+    "APP": {
+      "TEXT": "App",
+      "DASHBOARDS": "Dashboards",
+      "DASHBOARDS.DEFAULT": "Default"
+    },
+    "SYSTEM": {
+      "TEXT": "System",
+      "MANAGESYSTEM": {
+        "TEXT": "System Management",
+        "BRANCH": "Branch Management",
+        "DEPARTMENT": "Department Management",
+        "ROLE": "Role Management",
+        "SETTINGS": "System Settings"
+      }
+    },
+    "MENU": {
+      "TEXT": "System"
+    },
+    "DASHBOARDS": {
+      "TEXT": "Dashboards",
+      "BADGE": "04",
+      "LIST": {
+        "DEFAULT": "Default",
+        "SAAS": "Saas",
+        "CRYPTO": "Crypto",
+        "BLOG": "Blog",
+        "JOBS": "Jobs"
+      }
+    },
+    "LAYOUTS": {
+      "TEXT": "Layouts",
+      "LIST": {
+        "HORIZONTAL": "Horizontal",
+        "LIGHTSIDEBAR": "Light Sidebar",
+        "COMPACTSIDEBAR": "Compact Sidebar",
+        "ICONSIDEBAR": "Icons Sidebar",
+        "BOXED": "Boxed Layout",
+        "COLOREDSIDEBAR": "Colored Sidebar",
+        "VERTICAL": "Vertical",
+        "LIGHTTOPBAR": "Light Topbar",
+        "COLOREDHEADER": "Colored Header",
+        "SCROLLABLE": "Scrollable"
+      }
+    },
+    "APPS": {
+      "TEXT": "Apps"
+    },
+    "CALENDAR": {
+      "TEXT": "Calendar"
+    },
+    "CHAT": {
+      "TEXT": "Chat",
+      "BADGE": "New"
+    },
+    "FILEMANAGER": {
+      "TEXT": "File Manager",
+      "BADGE": "New"
+    },
+    "ECOMMERCE": {
+      "TEXT": "Ecommerce",
+      "LIST": {
+        "PRODUCTS": "Products",
+        "PRODUCTDETAIL": "Product Detail",
+        "ORDERS": "Orders",
+        "CUSTOMERS": "Customers",
+        "CART": "Cart",
+        "CHECKOUT": "Checkout",
+        "SHOPS": "Shops",
+        "ADDPRODUCT": "Add Product"
+      }
+    }
+  }
+}
