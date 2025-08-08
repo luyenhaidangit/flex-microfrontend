@@ -93,6 +93,8 @@ export class BranchComponent implements OnInit {
     this.branchForm = this.fb.group({
       code: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9]+')]],
       name: ['', [Validators.required, Validators.maxLength(100)]],
+      branchType: ['', [Validators.required]],
+      description: ['', [Validators.required, Validators.maxLength(500)]],
       address: ['', [Validators.maxLength(500)]],
       isActive: [true, [Validators.required]],
       comment: ['', [Validators.maxLength(500)]]
@@ -299,7 +301,16 @@ export class BranchComponent implements OnInit {
   onSubmitBranch(): void {
     this.branchForm.markAllAsTouched();
     if (this.branchForm.invalid) return;
-    const payload = this.branchForm.value; 
+    
+    const formData = this.branchForm.value;
+    const payload = {
+      code: formData.code,
+      name: formData.name,
+      description: formData.description,
+      branchType: formData.branchType,
+      isActive: formData.isActive
+    };
+    
     this.branchService.createBranch(payload).subscribe({
       next: () => {
         this.toastService.success('Gửi duyệt thành công!');
@@ -322,6 +333,8 @@ export class BranchComponent implements OnInit {
     this.branchForm.patchValue({
       code: item.code,
       name: item.name,
+      branchType: item.branchType || '',
+      description: item.description || '',
       address: item.address || '',
       isActive: item.isActive === 'Y' || item.isActive === true
     });
@@ -341,6 +354,8 @@ export class BranchComponent implements OnInit {
     
     const updateRequest = {
       name: formData.name,
+      description: formData.description,
+      branchType: formData.branchType,
       address: formData.address || undefined,
       isActive: formData.isActive,
       comment: formData.comment
@@ -770,6 +785,19 @@ export class BranchComponent implements OnInit {
 
   getRequestType(): string {
     return this.requestDetailData?.type;
+  }
+
+  getBranchTypeLabel(branchType: number): string {
+    switch (branchType) {
+      case 1:
+        return 'Chi nhánh chính';
+      case 2:
+        return 'Chi nhánh phụ';
+      case 3:
+        return 'Văn phòng đại diện';
+      default:
+        return 'Không xác định';
+    }
   }
 
   // Missing methods referenced in template

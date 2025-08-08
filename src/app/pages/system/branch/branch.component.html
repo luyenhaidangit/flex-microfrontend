@@ -48,7 +48,8 @@
                 <tr>
                   <th>Mã chi nhánh</th>
                   <th>Tên chi nhánh</th>
-                  <th>Địa chỉ</th>
+                  <th>Loại chi nhánh</th>
+                  <th>Mô tả</th>
                   <th>Trạng thái</th>
                   <th>Thao tác</th>
                 </tr>
@@ -57,6 +58,7 @@
                 <tr *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]">
                   <td><app-skeleton width="60px" height="18px"></app-skeleton></td>
                   <td><app-skeleton width="140px" height="18px"></app-skeleton></td>
+                  <td><app-skeleton width="100px" height="18px"></app-skeleton></td>
                   <td><app-skeleton width="200px" height="18px"></app-skeleton></td>
                   <td><app-skeleton width="80px" height="18px"></app-skeleton></td>
                   <td><app-skeleton width="120px" height="18px"></app-skeleton></td>
@@ -71,7 +73,8 @@
                 <tr>
                   <th>Mã chi nhánh</th>
                   <th>Tên chi nhánh</th>
-                  <th>Địa chỉ</th>
+                  <th>Loại chi nhánh</th>
+                  <th>Mô tả</th>
                   <th>Trạng thái</th>
                   <th>Thao tác</th>
                 </tr>
@@ -80,7 +83,8 @@
                 <tr *ngFor="let item of items;">
                   <td>{{ item.code | safeField }}</td>
                   <td>{{ item.name | safeField }}</td>
-                  <td>{{ item.address | safeField }}</td>
+                  <td>{{ getBranchTypeLabel(item.branchType) | safeField }}</td>
+                  <td>{{ item.description | safeField }}</td>
                   <td><app-badge [value]="item.isActive" type="status"></app-badge></td>
                   <td class="action-column">
                     <span class="text-info pointer" tooltip="Xem chi tiết" (click)="openDetailModal(item)">
@@ -105,7 +109,7 @@
                   </td>
                 </tr>
                 <tr *ngIf="items.length === 0">
-                  <td colspan="5" class="text-center">Không có dữ liệu</td>
+                  <td colspan="6" class="text-center">Không có dữ liệu</td>
                 </tr>
               </tbody>
             </table>
@@ -314,6 +318,14 @@
         <label class="form-label fw-bold text-muted">Tên chi nhánh</label>
         <div class="text-dark ps-1">{{ selectedItem?.name | safeField }}</div>
       </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold text-muted">Loại chi nhánh</label>
+        <div class="text-dark ps-1">{{ getBranchTypeLabel(selectedItem?.branchType) | safeField }}</div>
+      </div>
+      <div class="col-md-12">
+        <label class="form-label fw-bold text-muted">Mô tả</label>
+        <div class="text-dark ps-1">{{ selectedItem?.description | safeField }}</div>
+      </div>
       <div class="col-md-12">
         <label class="form-label fw-bold text-muted">Địa chỉ</label>
         <div class="text-dark ps-1">{{ selectedItem?.address | safeField }}</div>
@@ -360,12 +372,45 @@
             <span *ngIf="branchForm.controls.name.errors?.required">Tên chi nhánh không được để trống</span>
           </div>
         </div>
+        <div class="col-md-6 position-relative">
+          <label class="form-label">Loại chi nhánh <span class="text-danger">*</span></label>
+          <select class="form-select" formControlName="branchType"
+                  [ngClass]="{'is-invalid': branchForm.controls.branchType.touched && branchForm.controls.branchType.invalid}">
+            <option value="">Chọn loại chi nhánh</option>
+            <option [ngValue]="1">Chi nhánh chính</option>
+            <option [ngValue]="2">Chi nhánh phụ</option>
+            <option [ngValue]="3">Văn phòng đại diện</option>
+          </select>
+          <div *ngIf="branchForm.controls.branchType.touched && branchForm.controls.branchType.invalid" class="invalid-tooltip">
+            <span *ngIf="branchForm.controls.branchType.errors?.required">Loại chi nhánh không được để trống</span>
+          </div>
+        </div>
+        <div class="col-md-6 position-relative">
+          <label class="form-label">Trạng thái <span class="text-danger">*</span></label>
+          <select class="form-select" formControlName="isActive"
+                  [ngClass]="{'is-invalid': branchForm.controls.isActive.touched && branchForm.controls.isActive.invalid}">
+            <option [ngValue]="true">Hoạt động</option>
+            <option [ngValue]="false">Không hoạt động</option>
+          </select>
+          <div *ngIf="branchForm.controls.isActive.touched && branchForm.controls.isActive.invalid" class="invalid-tooltip">
+            <span *ngIf="branchForm.controls.isActive.errors?.required">Trạng thái không được để trống</span>
+          </div>
+        </div>
+        <div class="col-md-12 position-relative">
+          <label class="form-label">Mô tả <span class="text-danger">*</span></label>
+          <textarea class="form-control" formControlName="description" rows="3" 
+                    placeholder="Nhập mô tả chi nhánh"
+                    [ngClass]="{'is-invalid': branchForm.controls.description.touched && branchForm.controls.description.invalid}"></textarea>
+          <div *ngIf="branchForm.controls.description.touched && branchForm.controls.description.invalid" class="invalid-tooltip">
+            <span *ngIf="branchForm.controls.description.errors?.required">Mô tả không được để trống</span>
+            <span *ngIf="branchForm.controls.description.errors?.maxlength">Mô tả không được vượt quá 500 ký tự</span>
+          </div>
+        </div>
         <div class="col-md-12 position-relative">
           <label class="form-label">Địa chỉ</label>
           <textarea class="form-control" formControlName="address" rows="2" placeholder="Nhập địa chỉ"></textarea>
         </div>
         <!-- Hidden fields for Create modal -->
-        <input type="hidden" formControlName="isActive" value="true">
         <input type="hidden" formControlName="comment" value="">
       </div>
     </div>
@@ -403,6 +448,19 @@
           </div>
         </div>
         <div class="col-md-6 position-relative">
+          <label class="form-label">Loại chi nhánh <span class="text-danger">*</span></label>
+          <select class="form-select" formControlName="branchType"
+                  [ngClass]="{'is-invalid': branchForm.controls.branchType.touched && branchForm.controls.branchType.invalid}">
+            <option value="">Chọn loại chi nhánh</option>
+            <option [ngValue]="1">Chi nhánh chính</option>
+            <option [ngValue]="2">Chi nhánh phụ</option>
+            <option [ngValue]="3">Văn phòng đại diện</option>
+          </select>
+          <div *ngIf="branchForm.controls.branchType.touched && branchForm.controls.branchType.invalid" class="invalid-tooltip">
+            <span *ngIf="branchForm.controls.branchType.errors?.required">Loại chi nhánh không được để trống</span>
+          </div>
+        </div>
+        <div class="col-md-6 position-relative">
           <label class="form-label">Trạng thái <span class="text-danger">*</span></label>
           <select class="form-select" formControlName="isActive"
                   [ngClass]="{'is-invalid': branchForm.controls.isActive.touched && branchForm.controls.isActive.invalid}">
@@ -411,6 +469,16 @@
           </select>
           <div *ngIf="branchForm.controls.isActive.touched && branchForm.controls.isActive.invalid" class="invalid-tooltip">
             <span *ngIf="branchForm.controls.isActive.errors?.required">Trạng thái không được để trống</span>
+          </div>
+        </div>
+        <div class="col-md-12 position-relative">
+          <label class="form-label">Mô tả <span class="text-danger">*</span></label>
+          <textarea class="form-control" formControlName="description" rows="3" 
+                    placeholder="Nhập mô tả chi nhánh mới"
+                    [ngClass]="{'is-invalid': branchForm.controls.description.touched && branchForm.controls.description.invalid}"></textarea>
+          <div *ngIf="branchForm.controls.description.touched && branchForm.controls.description.invalid" class="invalid-tooltip">
+            <span *ngIf="branchForm.controls.description.errors?.required">Mô tả không được để trống</span>
+            <span *ngIf="branchForm.controls.description.errors?.maxlength">Mô tả không được vượt quá 500 ký tự</span>
           </div>
         </div>
         <div class="col-md-12 position-relative">
