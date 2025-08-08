@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class BranchService {
-  private apiUrl = '/api/branches';
+  private apiUrl = '/api/branch';
 
   constructor(private http: HttpClient) {}
 
