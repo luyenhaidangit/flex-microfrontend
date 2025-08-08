@@ -1,9 +1,11 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
-import { SystemService } from 'src/app/core/services/system.service';
+import { BranchService } from './branch.service';
 import { DEFAULT_PER_PAGE_OPTIONS } from 'src/app/core/constants/shared.constant';
 import { ToastService } from 'angular-toastify';
+import { Branch, PagingState, RequestDetailData, BranchSearchParams } from './branch.models';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-branch',
@@ -11,406 +13,783 @@ import { ToastService } from 'angular-toastify';
   styleUrls: ['./branch.component.scss']
 })
 export class BranchComponent implements OnInit {
+  
+  // Prepare default static data
+  DEFAULT_PER_PAGE_OPTIONS = DEFAULT_PER_PAGE_OPTIONS;
   breadCrumbItems = [
     { label: 'Quản trị hệ thống' },
     { label: 'Quản lý chi nhánh', active: true }
   ];
 
-  items: any[] = [];
-  selectedItem: any = null;
-  modalRef?: BsModalRef;
+  @ViewChild('detailModal') detailModalTemplateRef!: TemplateRef<any>;
+  @ViewChild('createModal') createTemplateRef!: TemplateRef<any>;
+  @ViewChild('editModal') editTemplateRef!: TemplateRef<any>;
+  @ViewChild('deleteModal') deleteTemplateRef!: TemplateRef<any>;
 
-  pagingState = {
+  branchForm!: FormGroup;
+  deleteForm!: FormGroup;
+
+  pendingItems: Branch[] = [];
+
+  pagingState: PagingState = {
     pageIndex : 1,
     pageSize  : 10,
     totalPages: 0,
     totalItems: 0,
-    keyword   : ''
+    keyword   : '',
+    isActive  : null,
+    type: null,
+    createdDate: null
   };
 
-  DEFAULT_PER_PAGE_OPTIONS = DEFAULT_PER_PAGE_OPTIONS;
-
-  branchForm!: FormGroup;
-  submitted = false;
-
-  @ViewChild('createModal') createTemplateRef!: TemplateRef<any>;
   @ViewChild('approveModal') approveTemplateRef!: TemplateRef<any>;
   @ViewChild('rejectModal') rejectTemplateRef!: TemplateRef<any>;
-  @ViewChild('editModal') editTemplateRef!: TemplateRef<any>;
   @ViewChild('approveEditModal') approveEditTemplateRef!: TemplateRef<any>;
   @ViewChild('rejectEditModal') rejectEditTemplateRef!: TemplateRef<any>;
-  @ViewChild('deleteModal') deleteTemplateRef!: TemplateRef<any>;
   @ViewChild('approveDeleteModal') approveDeleteTemplateRef!: TemplateRef<any>;
   @ViewChild('rejectDeleteModal') rejectDeleteTemplateRef!: TemplateRef<any>;
+  @ViewChild('deleteDraftModal') deleteDraftModal!: TemplateRef<any>;
+  @ViewChild('requestDetailModal') requestDetailTemplateRef!: TemplateRef<any>;
   rejectForm!: FormGroup;
-  submittedReject = false;
+
+  // Prepare component
+  isLoading = false;
+  modalRef?: BsModalRef | null = null;
+
+  // Prepare data for the component
+  items: Branch[] = [];
+  selectedItem: Branch | null = null;
+  changeHistory: any[] = [];
+
+  showSubmitConfirm = false;
+  rejectedReason: string | null = null;
+
+  // Tab navigation state
+  activeTab: 'approved' | 'pending' = 'approved';
+  pendingCount: number = 0;
+
+  // Enhanced detail modal properties
+  requestDetailData: RequestDetailData | null = null;
+  
+  // Loading states for approve/reject actions
+  isApproving = false;
+  isRejecting = false;
+
+  // Current user info
+  currentUser: any = null;
 
   constructor(
-    private systemService: SystemService,
+    private branchService: BranchService,
     private modalService: BsModalService,
     private fb: FormBuilder,
     private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
+    // Load data
     this.getItems();
+
+    // Initialize forms
     this.branchForm = this.fb.group({
       code: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9]+')]],
-      name: ['', [Validators.required]],
-      address: ['']
+      name: ['', [Validators.required, Validators.maxLength(100)]],
+      address: ['', [Validators.maxLength(500)]],
+      isActive: [true, [Validators.required]],
+      comment: ['', [Validators.maxLength(500)]]
+    });
+
+    this.deleteForm = this.fb.group({
+      comment: ['', [Validators.maxLength(500)]]
     });
 
     this.rejectForm = this.fb.group({
-      reason: ['', Validators.required]
-    });    
+      reason: ['', [Validators.required]]
+    });
+    
+    // Override toast icon size with JavaScript
+    this.overrideToastIconSize();
   }
 
-  get searchParams(): any {
-    const { pageIndex, pageSize, keyword } = this.pagingState;
-    return { pageIndex, pageSize, keyword };
+  // Handle search all items
+  get searchParams(): BranchSearchParams {
+    const { pageIndex, pageSize, keyword, isActive } = this.pagingState;
+    const params: BranchSearchParams = { pageIndex, pageSize };
+    if (keyword?.trim()) params.keyword = keyword.trim();
+    if (isActive === true) params.isActive = 'Y';
+    else if (isActive === false) params.isActive = 'N';
+    return params;
+  }
+
+  // Handle search for pending items (with requestType filter)
+  get pendingSearchParams(): BranchSearchParams {
+    const { pageIndex, pageSize, keyword, type } = this.pagingState;
+    const params: BranchSearchParams = { pageIndex, pageSize };
+    if (keyword?.trim()) params.keyword = keyword.trim();
+    if (type) params.type = type;
+    return params;
+  }
+
+  private updatePagingState(page: Partial<PagingState>) {
+    Object.assign(this.pagingState, {
+      pageIndex: page.pageIndex,
+      pageSize: page.pageSize,
+      totalPages: page.totalPages,
+      totalItems: page.totalItems
+    });
   }
 
   getItems(): void {
-    this.systemService.getBranchesPaging(this.searchParams)
-      .subscribe(res => {
-        if (res?.isSuccess) {
-          const { items, ...page } = res.data;
-          this.items = items ?? [];
-          Object.assign(this.pagingState, {
-            pageIndex : page.pageIndex,
-            pageSize  : page.pageSize,
-            totalPages: page.totalPages,
-            totalItems: page.totalItems
-          });
+    this.isLoading = true;
+    this.branchService.getApprovedBranches({ ...this.searchParams })
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: (res) => {
+          if (res?.isSuccess) {
+            const { items, ...page } = res.data;
+            this.items = items ?? [];
+            this.updatePagingState(page);
+          } else {
+            this.items = [];
+            this.toastService.error('Không lấy được danh sách chi nhánh!');
+          }
+        },
+        error: (err) => {
+          this.items = [];
+          this.toastService.error('Đã xảy ra lỗi khi lấy danh sách chi nhánh!');
+          console.error('getItems error:', err);
         }
       });
+  }
+
+  onSearch(): void {
+    if (this.activeTab === 'approved') {
+      this.getItems();
+    } else {
+      this.getPendingItems();
+    }
   }
 
   changePage(page: number): void {
     if (page < 1 || page > this.pagingState.totalPages || page === this.pagingState.pageIndex) return;
     this.pagingState.pageIndex = page;
-    this.getItems();
+    this.onSearch();
   }
 
   changePageSize(): void {
     this.pagingState.pageIndex = 1;
-    this.getItems();
+    this.onSearch();
   }
 
-  openDetailModal(template: TemplateRef<any>, item: any): void {
-    this.selectedItem = item;
-    this.modalRef = this.modalService.show(template, { class: 'modal-lg' });
+  // Handle view detail item
+  openDetailModal(item: any): void {
+    if (this.activeTab === 'approved') {
+      const code = item?.code;
+      if (!code) {
+        this.toastService.error('Không tìm thấy mã chi nhánh!');
+        return;
+      }
+      this.selectedItem = null;
+      this.branchService.getApprovedBranchByCode(code).subscribe({
+        next: (res) => {
+          this.selectedItem = res?.data || item;
+          
+          // Reset change history when opening modal
+          this.changeHistory = [];
+          
+          this.modalRef = this.modalService.show(this.detailModalTemplateRef, { 
+            class: 'modal-xl',
+            backdrop: 'static',
+            keyboard: false, 
+          });
+        },
+        error: () => {
+          this.toastService.error('Không thể lấy thông tin chi tiết chi nhánh!');
+          this.selectedItem = item;
+          this.modalRef = this.modalService.show(this.detailModalTemplateRef, { class: 'modal-lg' });
+        }
+      });
+    } else {
+      // pending tab: show request detail modal
+      const requestId = item?.requestId || item?.id;
+      if (!requestId) {
+        this.toastService.error('Không tìm thấy ID yêu cầu!');
+        return;
+      }
+      this.requestDetailData = null;
+      this.selectedItem = item;
+      this.isApproving = false;
+      this.isRejecting = false;
+      this.branchService.getBranchRequestDetail(requestId).subscribe({
+        next: (res) => {
+          if (res?.isSuccess) {
+            this.requestDetailData = res.data;
+            this.modalRef = this.modalService.show(this.requestDetailTemplateRef, {
+              class: 'modal-xl',
+              backdrop: 'static',
+              keyboard: false,
+              ignoreBackdropClick: true
+            });
+            this.modalRef.onHidden?.subscribe(() => {
+              this.resetLoadingStates();
+            });
+          } else {
+            this.toastService.error('Không thể lấy thông tin chi tiết yêu cầu!');
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching request detail:', err);
+          let errorMsg = 'Không thể lấy thông tin chi tiết yêu cầu!';
+          if (err?.error?.message) {
+            errorMsg = err.error.message;
+          } else if (err?.status === 404) {
+            errorMsg = 'Không tìm thấy yêu cầu!';
+          } else if (err?.status === 403) {
+            errorMsg = 'Bạn không có quyền xem chi tiết yêu cầu này!';
+          }
+          this.toastService.error(errorMsg);
+        }
+      });
+    }
   }
 
+  // Load change history when history tab is opened
+  loadChangeHistory(): void {
+    if (!this.selectedItem?.code) {
+      this.toastService.error('Không tìm thấy mã chi nhánh!');
+      return;
+    }
+
+    // Only load if not already loaded
+    if (this.changeHistory.length > 0) {
+      return;
+    }
+
+    this.branchService.getBranchChangeHistory(this.selectedItem.code)
+      .subscribe({
+        next: (res) => {
+          if (res?.isSuccess) {
+            // Use the API response directly without transformation
+            this.changeHistory = res.data || [];
+          } else {
+            this.changeHistory = [];
+            this.toastService.error('Không thể lấy lịch sử thay đổi!');
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching change history:', err);
+          this.changeHistory = [];
+          this.toastService.error('Không thể lấy lịch sử thay đổi!');
+        }
+      });
+  }
+
+  // Open create modal
   openCreateModal(): void {
-    this.submitted = false;
     this.branchForm.reset();
-    this.modalRef = this.modalService.show(this.createTemplateRef, { class: 'modal-lg' });
+    // Set default values for Create modal
+    this.branchForm.patchValue({
+      isActive: true,
+      comment: ''
+    });
+    this.rejectedReason = null;
+    this.openModal(this.createTemplateRef, { class: 'modal-lg' });
   }
 
-  openApproveModal(item: any): void {
-    this.selectedItem = item;
-    this.modalRef = this.modalService.show(this.approveTemplateRef, { class: 'modal-lg' });
-  }
-
-  submitBranchForm(): void {
-    this.submitted = true;
+  // Submit create branch
+  onSubmitBranch(): void {
+    this.branchForm.markAllAsTouched();
     if (this.branchForm.invalid) return;
-
-    const payload = this.branchForm.value;
-    this.systemService.createBranchRequest(payload).subscribe({
+    const payload = this.branchForm.value; 
+    this.branchService.createBranch(payload).subscribe({
       next: () => {
-        this.toastService.success('Tạo yêu cầu chi nhánh thành công!');
+        this.toastService.success('Gửi duyệt thành công!');
         this.modalRef?.hide();
         this.branchForm.reset();
-        this.submitted = false;
-        this.getItems();
+        // Reload data dựa trên tab hiện tại
+        this.search();
       },
       error: (err) => {
-        let errorMsg = 'Tạo yêu cầu thất bại!';
-        const apiMsg = err?.error?.message?.toLowerCase();
-
-        if (apiMsg?.includes('branch code already exists')) {
-          errorMsg = 'Mã chi nhánh đã tồn tại';
-        }
-
-        this.toastService.error(errorMsg);
-        console.error('Tạo chi nhánh thất bại', err);
+        console.error('Create branch error:', err);
+        const msg = err?.error?.message || 'Gửi duyệt thất bại!';
+        this.toastService.error(msg);
       }
     });
   }
 
-  approveBranch(): void {
-    const id = this.selectedItem?.requestId;
-    if (!id) return;
-
-    this.systemService.processBranchRequest({
-      id,
-      isApprove: true,
-      actionType: 'CREATE'
-    }).subscribe({
-      next: () => {
-        this.toastService.success('Phê duyệt yêu cầu thành công!');
-        this.modalRef?.hide();
-        this.getItems();
-      },
-      error: () => {
-        this.toastService.error('Phê duyệt thất bại!');
-      }
-    });
-  }
-
-  openRejectModal(item: any): void {
-    this.selectedItem = item;
-    this.submittedReject = false;
-    this.rejectForm.reset();
-    this.modalRef = this.modalService.show(this.rejectTemplateRef, { class: 'modal-md' });
-  }
-  
-  confirmRejectBranch(): void {
-    this.submittedReject = true;
-    if (this.rejectForm.invalid) return;
-
-    const id = this.selectedItem?.requestId;
-    if (!id) return;
-
-    this.systemService.processBranchRequest({
-      id,
-      isApprove: false,
-      actionType: 'CREATE',
-      comment: this.rejectForm.value.reason
-    }).subscribe({
-      next: () => {
-        this.toastService.success('Đã từ chối yêu cầu thành công!');
-        this.modalRef?.hide();
-        this.getItems();
-      },
-      error: () => {
-        this.toastService.error('Từ chối yêu cầu thất bại!');
-      }
-    });
-  }
-
-  openEditModal(item: any): void {
+  // Open edit modal
+  openEditModal(item: Branch): void {
     this.selectedItem = item;
     this.branchForm.patchValue({
       code: item.code,
       name: item.name,
-      address: item.address
+      address: item.address || '',
+      isActive: item.isActive === 'Y' || item.isActive === true
     });
-    this.modalRef = this.modalService.show(this.editTemplateRef, { class: 'modal-lg' });
+    this.openModal(this.editTemplateRef, {
+      class: 'modal-lg',
+      backdrop: 'static',
+      keyboard: false
+    });
   }
-  
+
+  // Submit edit branch form
   submitEditBranchForm(): void {
-    this.submitted = true;
+    this.branchForm.markAllAsTouched();
     if (this.branchForm.invalid || !this.selectedItem) return;
   
-    const payload = {
-      code: this.branchForm.value.code,
-      name: this.branchForm.value.name,
-      address: this.branchForm.value.address,
+    const formData = this.branchForm.value;
+    
+    const updateRequest = {
+      name: formData.name,
+      address: formData.address || undefined,
+      isActive: formData.isActive,
+      comment: formData.comment
     };
-  
-    this.systemService.updateBranchRequest(payload).subscribe({
-      next: () => {
-        this.toastService.success('Cập nhật chi nhánh thành công!');
-        this.modalRef?.hide();
-        this.getItems();
-      },
-      error: () => {
-        this.toastService.error('Cập nhật chi nhánh thất bại!');
-      }
-    });
-  }
 
-  openApproveEditModal(item: any): void {
-    this.systemService.getPendingUpdateRequest(item.code).subscribe({
-      next: (res) => {
-        if (res?.isSuccess) {
-          this.selectedItem = {
-            ...item,
-            currentData: {
-              code: item.code,
-              name: item.name,
-              address: item.address
-            },
-            pendingData: res.data,
-            requestId: res.data.requestId
-          };
-          this.modalRef = this.modalService.show(this.approveEditTemplateRef, { class: 'modal-lg' });
+    this.branchService.createUpdateBranchRequest(this.selectedItem.code, updateRequest)
+      .subscribe({
+        next: (response) => {
+          this.toastService.success('Yêu cầu cập nhật chi nhánh đã được gửi thành công!');
+          this.closeModal();
+          this.search(); // Reload data
+        },
+        error: (error) => {
+          console.error('Error creating update branch request:', error);
+          const errorMessage = error?.error?.message || 'Gửi yêu cầu cập nhật thất bại!';
+          this.toastService.error(errorMessage);
         }
-      },
-      error: () => {
-        this.toastService.error('Không thể lấy thông tin yêu cầu thay đổi!');
-      }
-    });
+      });
   }
 
-  openRejectEditModal(item: any): void {
-    this.systemService.getPendingUpdateRequest(item.code).subscribe({
-      next: (res) => {
-        if (res?.isSuccess) {
-          this.selectedItem = {
-            ...item,
-            currentData: {
-              code: item.code,
-              name: item.name,
-              address: item.address
-            },
-            pendingData: res.data,
-            requestId: res.data.requestId
-          };
-          this.submittedReject = false;
-          this.rejectForm.reset();
-          this.modalRef = this.modalService.show(this.rejectEditTemplateRef, { class: 'modal-lg' });
-        }
-      },
-      error: () => {
-        this.toastService.error('Không thể lấy thông tin yêu cầu thay đổi!');
-      }
-    });
-  }
-
-  approveEditBranch(): void {
-    const id = this.selectedItem?.requestId;
-    if (!id) return;
-
-    this.systemService.processBranchRequest({
-      id,
-      isApprove: true,
-      actionType: 'UPDATE'
-    }).subscribe({
-      next: () => {
-        this.toastService.success('Phê duyệt yêu cầu sửa thành công!');
-        this.modalRef?.hide();
-        this.getItems();
-      },
-      error: () => {
-        this.toastService.error('Phê duyệt yêu cầu sửa thất bại!');
-      }
-    });
-  }
-
-  confirmRejectEditBranch(): void {
-    this.submittedReject = true;
-    if (this.rejectForm.invalid) return;
-
-    const id = this.selectedItem?.requestId;
-    if (!id) return;
-
-    this.systemService.processBranchRequest({
-      id,
-      isApprove: false,
-      actionType: 'UPDATE',
-      comment: this.rejectForm.value.reason
-    }).subscribe({
-      next: () => {
-        this.toastService.success('Đã từ chối yêu cầu sửa thành công!');
-        this.modalRef?.hide();
-        this.getItems();
-      },
-      error: () => {
-        this.toastService.error('Từ chối yêu cầu sửa thất bại!');
-      }
-    });
-  }
-
-  openDeleteModal(item: any): void {
+  // Open delete modal
+  openDeleteModal(item: Branch): void {
     this.selectedItem = item;
-    this.modalRef = this.modalService.show(this.deleteTemplateRef, { class: 'modal-md' });
+    this.deleteForm.reset();
+    this.openModal(this.deleteTemplateRef, {
+      class: 'modal-lg',
+      backdrop: 'static',
+      keyboard: false
+    });
   }
 
+  // Confirm delete branch
   confirmDeleteBranch(): void {
-    if (!this.selectedItem?.code || !this.selectedItem?.name) return;
+    this.deleteForm.markAllAsTouched();
+    if (this.deleteForm.invalid || !this.selectedItem?.code) return;
 
-    const payload = {
-      code: this.selectedItem.code,
-      name: this.selectedItem.name,
-      address: this.selectedItem.address
+    const formData = this.deleteForm.value;
+    
+    const deleteRequest: any = {
+      comment: formData.comment
     };
 
-    this.systemService.deleteBranchRequest(payload).subscribe({
-      next: () => {
-        this.toastService.success('Đã gửi yêu cầu xóa thành công!');
-        this.modalRef?.hide();
-        this.getItems();
+    this.branchService.createDeleteBranchRequest(this.selectedItem.code, deleteRequest)
+      .subscribe({
+        next: (response) => {
+          this.toastService.success('Yêu cầu xóa chi nhánh đã được gửi thành công!');
+          this.closeModal();
+          this.search(); // Reload data
+        },
+        error: (error) => {
+          console.error('Error creating delete branch request:', error);
+          const errorMessage = error?.error?.message || 'Gửi yêu cầu xóa thất bại!';
+          this.toastService.error(errorMessage);
+        }
+      });
+  }
+
+  // Get pending items
+  getPendingItems(): void {
+    // Gọi API lấy chi nhánh chờ duyệt
+    this.isLoading = true;
+    const params = { ...this.pendingSearchParams };
+    this.branchService.getPendingBranches(params)
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: (res) => {
+          if (res?.isSuccess) {
+            const { items, ...page } = res.data;
+            this.pendingItems = items ?? [];
+            Object.assign(this.pagingState, {
+              pageIndex : page.pageIndex,
+              pageSize  : page.pageSize,
+              totalPages: page.totalPages,
+              totalItems: page.totalItems
+            });
+          } else {
+            this.pendingItems = [];
+            this.toastService.error('Không lấy được danh sách chi nhánh chờ duyệt!');
+          }
+        },
+        error: (err) => {
+          this.pendingItems = [];
+          this.toastService.error('Đã xảy ra lỗi khi lấy danh sách chi nhánh chờ duyệt!');
+          console.error('getPendingItems error:', err);
+        }
+      });
+  }
+
+  openRequestDetailModal(item: any): void {
+    const requestId = item?.requestId || item?.id;
+    if (!requestId) {
+      this.toastService.error('Không tìm thấy ID yêu cầu!');
+      return;
+    }
+
+    this.requestDetailData = null;
+    this.selectedItem = item;
+    
+    // Reset loading states
+    this.isApproving = false;
+    this.isRejecting = false;
+
+    this.branchService.getBranchRequestDetail(requestId).subscribe({
+      next: (res) => {
+        if (res?.isSuccess) {
+          this.requestDetailData = res.data;
+          this.modalRef = this.modalService.show(this.requestDetailTemplateRef, { 
+            class: 'modal-xl',
+            backdrop: 'static',
+            keyboard: false,
+            ignoreBackdropClick: true
+          });
+          
+          // Reset loading states when modal is hidden
+          this.modalRef.onHidden?.subscribe(() => {
+            this.resetLoadingStates();
+          });
+        } else {
+          this.toastService.error('Không thể lấy thông tin chi tiết yêu cầu!');
+        }
       },
-      error: () => {
-        this.toastService.error('Gửi yêu cầu xóa thất bại!');
+      error: (err) => {
+        console.error('Error fetching request detail:', err);
+        let errorMsg = 'Không thể lấy thông tin chi tiết yêu cầu!';
+        
+        // Handle specific error messages
+        if (err?.error?.message) {
+          errorMsg = err.error.message;
+        } else if (err?.status === 404) {
+          errorMsg = 'Không tìm thấy yêu cầu!';
+        } else if (err?.status === 403) {
+          errorMsg = 'Bạn không có quyền xem chi tiết yêu cầu này!';
+        }
+        
+        this.toastService.error(errorMsg);
       }
     });
   }
 
-  openApproveDeleteModal(item: any): void {
-    this.selectedItem = item;
-    this.modalRef = this.modalService.show(this.approveDeleteTemplateRef, { class: 'modal-md' });
+  private overrideToastIconSize(): void {
+    // Override toast icon size after a short delay to ensure DOM is ready
+    setTimeout(() => {
+      const iconContainers = document.querySelectorAll('.angular-toastify-icon-container');
+      iconContainers.forEach((container: any) => {
+        container.style.width = '12px';
+        container.style.height = '12px';
+        container.style.opacity = '1';
+        container.style.minWidth = '12px';
+        container.style.minHeight = '12px';
+        container.style.maxWidth = '12px';
+        container.style.maxHeight = '12px';
+      });
+    }, 100);
   }
 
-  approveDeleteBranch(): void {
-    const id = this.selectedItem?.requestId;
-    if (!id) return;
+  switchTab(tab: 'approved' | 'pending') {
+    // Luôn gọi lại API khi chuyển tab, kể cả khi tab không đổi
+    this.activeTab = tab;
+    this.pagingState.pageIndex = 1; // Reset về trang đầu tiên khi chuyển tab
+    this.search();
+  }
 
-    this.systemService.processBranchRequest({
-      id,
-      isApprove: true,
-      actionType: 'DELETE'
-    }).subscribe({
-      next: () => {
-        this.toastService.success('Phê duyệt yêu cầu xóa thành công!');
+  // Thay đổi các hàm tìm kiếm/phân trang để gọi đúng API theo tab
+  search(): void {
+    if (this.activeTab === 'pending') {
+      this.getPendingItems();
+    } else {
+      this.getItems();
+    }
+  }
+
+  // Method to reset all loading states
+  private resetLoadingStates(): void {
+    this.isApproving = false;
+    this.isRejecting = false;
+  }
+
+  // Method to close modal and reset states
+  closeModal(): void {
+    // If an action is in progress, show confirmation
+    if (this.isApproving || this.isRejecting) {
+      if (confirm('Có một thao tác đang được thực hiện. Bạn có chắc chắn muốn hủy?')) {
+        this.cancelAction();
         this.modalRef?.hide();
-        this.getItems();
+      }
+    } else {
+      this.modalRef?.hide();
+      this.resetLoadingStates();
+    }
+  }
+
+  /**
+   * Hàm mở modal dùng chung
+   * @param template TemplateRef<any> của modal
+   * @param options Các options cho modalService.show
+   */
+  openModal(template: TemplateRef<any>, options: any = {}): void {
+    this.modalRef = this.modalService.show(template, options);
+    this.modalRef.onHidden?.subscribe(() => {
+      this.modalRef = null;
+      this.resetLoadingStates();
+    });
+  }
+
+  openApproveModal(item: any): void {
+    this.selectedItem = item;
+    this.openModal(this.approveTemplateRef, {
+      class: 'modal-lg',
+      backdrop: 'static',
+      keyboard: false,
+      ignoreBackdropClick: true
+    });
+  }
+
+  approveBranch(): void {
+    // Prevent double submission
+    if (this.isApproving) return;
+    
+    // Lấy requestId từ requestDetailData hoặc selectedItem
+    const requestId = this.requestDetailData?.requestId || this.selectedItem?.requestId || this.selectedItem?.id;
+    if (!requestId) {
+      this.toastService.error('Không tìm thấy ID yêu cầu!');
+      return;
+    }
+
+    this.isApproving = true;
+    this.branchService.approveBranch(requestId).subscribe({
+      next: (res) => {
+        this.toastService.success('Phê duyệt yêu cầu thành công!');
+        this.modalRef?.hide();
+        // Reload data dựa trên tab hiện tại
+        this.search();
+        this.isApproving = false;
       },
-      error: () => {
-        this.toastService.error('Phê duyệt yêu cầu xóa thất bại!');
+      error: (err) => {
+        console.error('Approve branch error:', err);
+        let errorMsg = 'Phê duyệt thất bại!';
+        
+        // Handle specific error messages
+        if (err?.error?.message) {
+          errorMsg = err.error.message;
+        } else if (err?.status === 404) {
+          errorMsg = 'Không tìm thấy yêu cầu phê duyệt!';
+        } else if (err?.status === 403) {
+          errorMsg = 'Bạn không có quyền phê duyệt yêu cầu này!';
+        } else if (err?.status === 409) {
+          errorMsg = 'Yêu cầu đã được xử lý trước đó!';
+        }
+        
+        this.toastService.error(errorMsg);
+        this.isApproving = false;
       }
     });
   }
 
-  openRejectDeleteModal(item: any): void {
-    this.selectedItem = item;
-    this.submittedReject = false;
+  openRejectModal(item?: any): void {
+    if (item) {
+      this.selectedItem = item;
+    }
     this.rejectForm.reset();
-    this.modalRef = this.modalService.show(this.rejectDeleteTemplateRef, { class: 'modal-md' });
+
+    if (this.modalRef) {
+      const oldModalRef = this.modalRef;
+      oldModalRef.onHidden?.subscribe(() => {
+        this.modalRef = null;
+        this.openModal(this.rejectTemplateRef, {
+          class: 'modal-md',
+          backdrop: 'static',
+          keyboard: false,
+          ignoreBackdropClick: true
+        });
+      });
+      oldModalRef.hide();
+    } else {
+      this.openModal(this.rejectTemplateRef, {
+        class: 'modal-md',
+        backdrop: 'static',
+        keyboard: false,
+        ignoreBackdropClick: true
+      });
+    }
   }
 
-  confirmRejectDeleteBranch(): void {
-    this.submittedReject = true;
+  confirmRejectBranch(): void {
+    this.rejectForm.markAllAsTouched();
     if (this.rejectForm.invalid) return;
+    
+    // Validate reason length
+    const reason = this.rejectForm.value.reason?.trim();
+    
+    // Lấy requestId từ requestDetailData hoặc selectedItem
+    const requestId = this.requestDetailData?.requestId || this.selectedItem?.requestId || this.selectedItem?.id;
+    if (!requestId) {
+      this.toastService.error('Không tìm thấy ID yêu cầu!');
+      return;
+    }
 
-    const id = this.selectedItem?.requestId;
-    if (!id) return;
-
-    this.systemService.processBranchRequest({
-      id,
-      isApprove: false,
-      actionType: 'DELETE',
-      comment: this.rejectForm.value.reason
-    }).subscribe({
-      next: () => {
-        this.toastService.success('Đã từ chối yêu cầu xóa thành công!');
+    // Gửi request từ chối
+    this.branchService.rejectBranch(requestId, reason).subscribe({
+      next: (res) => {
+        this.toastService.success('Đã từ chối yêu cầu thành công!');
         this.modalRef?.hide();
-        this.getItems();
+        // Reload data dựa trên tab hiện tại
+        this.search();
       },
-      error: () => {
-        this.toastService.error('Từ chối yêu cầu xóa thất bại!');
+      error: (err) => {
+        console.error('Reject branch error:', err);
+        let errorMsg = 'Từ chối yêu cầu thất bại!';
+        
+        // Handle specific error messages
+        if (err?.error?.message) {
+          errorMsg = err.error.message;
+        } else if (err?.status === 404) {
+          errorMsg = 'Không tìm thấy yêu cầu để từ chối!';
+        } else if (err?.status === 403) {
+          errorMsg = 'Bạn không có quyền từ chối yêu cầu này!';
+        } else if (err?.status === 409) {
+          errorMsg = 'Yêu cầu đã được xử lý trước đó!';
+        } else if (err?.status === 400) {
+          errorMsg = 'Lý do từ chối không hợp lệ!';
+        } else if (err?.status === 500) {
+          errorMsg = 'Lỗi máy chủ, vui lòng thử lại sau!';
+        }
+        
+        this.toastService.error(errorMsg);
       }
     });
   }
 
-  getChangedFieldsCount(): number {
-    if (!this.selectedItem?.currentData || !this.selectedItem?.pendingData) return 0;
-    
-    let count = 0;
-    const { currentData, pendingData } = this.selectedItem;
-    
-    if (currentData.code !== pendingData.code) count++;
-    if (currentData.name !== pendingData.name) count++;
-    if (currentData.address !== pendingData.address) count++;
-    
-    return count;
+  // Method to handle action cancellation
+  cancelAction(): void {
+    if (this.isApproving || this.isRejecting) {
+      this.toastService.warn('Đã hủy thao tác đang thực hiện');
+    }
+    this.resetLoadingStates();
   }
 
-  get hasChanges(): boolean {
-    return this.getChangedFieldsCount() > 0;
+  // Method to handle modal backdrop click
+  onBackdropClick(): void {
+    if (this.isApproving || this.isRejecting) {
+      this.toastService.warn('Không thể đóng modal khi đang thực hiện thao tác');
+      return;
+    }
+    this.closeModal();
+  }
+
+  // Method to handle ESC key press
+  onEscKey(): void {
+    if (this.isApproving || this.isRejecting) {
+      this.toastService.warn('Không thể đóng modal khi đang thực hiện thao tác');
+      return;
+    }
+    this.closeModal();
+  }
+
+  // Hàm xử lý input: upperCase và loại bỏ dấu cách, có thể tái sử dụng cho các input khác
+  onInputUpperNoSpace(controlName: string, event: any) {
+    const value = event.target.value.toUpperCase().replace(/\s+/g, '');
+    this.branchForm.get(controlName)?.setValue(value, { emitEvent: false });
+  }
+
+  getRequestTypeLabel(requestType: string): string {
+    const type = (requestType || '').toUpperCase();
+    if (type === 'CREATE') return 'Tạo mới';
+    if (type === 'UPDATE') return 'Cập nhật';
+    if (type === 'DELETE') return 'Xoá';
+    return requestType;
+  }
+
+  // Helper methods for enhanced detail modal
+  getRequestTypeIcon(requestType: string): string {
+    const type = (requestType || '').toUpperCase();
+    switch (type) {
+      case 'CREATE': return 'fas fa-plus-circle';
+      case 'UPDATE': return 'fas fa-edit';
+      case 'DELETE': return 'fas fa-trash-alt';
+      default: return 'fas fa-question-circle';
+    }
+  }
+
+  getRequestTypeColor(requestType: string): string {
+    const type = (requestType || '').toUpperCase();
+    switch (type) {
+      case 'CREATE': return 'text-success';
+      case 'UPDATE': return 'text-warning';
+      case 'DELETE': return 'text-danger';
+      default: return 'text-muted';
+    }
+  }
+
+  getRequestTypeBadgeClass(requestType: string): string {
+    const type = (requestType || '').toUpperCase();
+    switch (type) {
+      case 'CREATE': return 'badge bg-success';
+      case 'UPDATE': return 'badge bg-warning';
+      case 'DELETE': return 'badge bg-danger';
+      default: return 'badge bg-secondary';
+    }
+  }
+
+  hasChanges(field: string): boolean {
+    if (!this.requestDetailData?.oldData || !this.requestDetailData?.newData) return false;
+    
+    return this.requestDetailData.oldData[field] !== this.requestDetailData.newData[field];
+  }
+
+  // Helper methods for the actual API response structure
+  getBranchCode(data: any): string {
+    return data?.branchCode || data?.code;
+  }
+
+  getBranchName(data: any): string {
+    return data?.branchName || data?.name;
+  }
+
+  getBranchAddress(data: any): string {
+    return data?.address;
+  }
+
+  getCreatedBy(): string {
+    return this.requestDetailData?.createdBy;
+  }
+
+  getCreatedDate(): string {
+    return this.requestDetailData?.createdDate;
+  }
+
+  getRequestType(): string {
+    return this.requestDetailData?.type;
+  }
+
+  // Missing methods referenced in template
+  saveDraftBranch(): void {
+    // Implementation for saving draft branch
+    this.toastService.info('Chức năng lưu nháp đang được phát triển');
+  }
+
+  openDeleteDraftModal(): void {
+    // Implementation for opening delete draft modal
+    this.openModal(this.deleteDraftModal, {
+      class: 'modal-sm',
+      backdrop: 'static',
+      keyboard: false
+    });
+  }
+
+  confirmDeleteDraft(): void {
+    // Implementation for confirming delete draft
+    this.toastService.info('Chức năng xóa nháp đang được phát triển');
+    this.closeModal();
   }
 }
