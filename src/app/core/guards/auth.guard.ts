@@ -18,31 +18,13 @@ export class AuthGuard {
   ) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-
     if (this.configService.authMode === AUTH_MODE.DB) {
-      const currentUser = this.authenticationService.getCurrentUser();
+      const token = this.authenticationService.getToken();
+      if (token) return of(true);
 
-      // Refresh user info if current user is null
-      if (!currentUser) {
-        return this.authenticationService.GetUserProfile().pipe(
-          map((response: any) => {
-            console.log(response)
-            if (response?.isSuccess) {
-              this.authenticationService.setCurrentUser(response?.data);
-              return true;
-            } else {
-              this.router.navigate(['/account/login'], { queryParams: { returnUrl: state.url } });
-              return false; 
-            }
-          }),
-          catchError(() => {
-            this.router.navigate(['/account/login'], { queryParams: { returnUrl: state.url } });
-            return of(false);
-          })
-        );
-      }
-
-      return of(true);
+      // No token → redirect to login
+      this.router.navigate(['/account/login'], { queryParams: { returnUrl: state.url } });
+      return of(false);
     }
 
     this.router.navigate(['/account/login'], { queryParams: { returnUrl: state.url } });

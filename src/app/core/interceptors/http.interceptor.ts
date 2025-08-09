@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpEvent, HttpHandler, HttpInterceptor as HttpSystemInterceptor, HttpRequest } from '@angular/common/http';
+import { HttpEvent, HttpHandler, HttpInterceptor as HttpSystemInterceptor, HttpRequest, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
@@ -30,23 +30,28 @@ export class HttpInterceptor implements HttpSystemInterceptor {
     }
 
     // Set token header
-    const authToken = this.authService.getAuthToken();
-    if (authToken?.accessToken) {
+    const bearerToken = this.authService.getToken();
+    if (bearerToken) {
       request = request.clone({
         setHeaders: {
-          Authorization: `Bearer ${authToken.accessToken}`,
+          Authorization: `Bearer ${bearerToken}`,
         }
       });
     }
     
     return next.handle(request).pipe(
-      catchError((error: any) => {
+      catchError((error: HttpErrorResponse) => {
         // Handle case errors
         if (error.status === HttpError.ConnectionRefused) {
           this.toastService.error('Không thể kết nối đến máy chủ!');
         }
 
-        return throwError(error);
+        // Auto logout on 401
+        if (error.status === 401) {
+          this.authService.logout();
+        }
+
+        return throwError(() => error);
       }),
       finalize(() => {
         this.loadingService.hide();
