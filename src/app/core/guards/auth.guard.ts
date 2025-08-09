@@ -7,7 +7,6 @@ import { catchError, map } from 'rxjs/operators';
 import { AuthenticationService } from '../services/auth.service';
 
 import { ConfigService } from '../services/config.service';
-import { AUTH_MODE } from '../constants/config-values.constant';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard {
@@ -18,15 +17,10 @@ export class AuthGuard {
   ) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    if (this.configService.authMode === AUTH_MODE.DB) {
-      const token = this.authenticationService.getToken();
-      if (token) return of(true);
+    const token = this.authenticationService.getToken();
+    if (token) return of(true);
 
-      // No token → redirect to login
-      this.router.navigate(['/account/login'], { queryParams: { returnUrl: state.url } });
-      return of(false);
-    }
-
+    // No token → redirect to login
     this.router.navigate(['/account/login'], { queryParams: { returnUrl: state.url } });
     return of(false);
   }

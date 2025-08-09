@@ -1,11 +1,8 @@
-import { lastValueFrom } from 'rxjs';
-import { ConfigService } from '../services/config.service';
 import { AuthenticationService } from '../services/auth.service';
 
-// Load config (auth mode) first, then validate token via /auth/me
-export function appInitializerFactory(configService: ConfigService, authService: AuthenticationService): () => Promise<void> {
+// FE không cần gọi auth mode lúc bootstrap; chỉ verify token /auth/me nếu có
+export function appInitializerFactory(authService: AuthenticationService): () => Promise<void> {
     return async () => {
-        await lastValueFrom(configService.loadAuthMode());
         await authService.initOnStartup();
     };
 }

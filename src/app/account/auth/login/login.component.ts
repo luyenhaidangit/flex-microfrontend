@@ -5,6 +5,7 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
 import { ToastService } from 'angular-toastify';
 
 import { AuthenticationService } from '../../../core/services/auth.service';
+import { ConfigService } from 'src/app/core/services/config.service';
 import { AUTH_MODE } from 'src/app/core/constants/config-values.constant';
 
 @Component({
@@ -35,6 +36,7 @@ export class LoginComponent implements OnInit {
     private router: Router, 
     private route: ActivatedRoute,
     private authenticationService: AuthenticationService,
+    private configService: ConfigService,
     private toastService: ToastService
   ) { }
 
@@ -47,6 +49,18 @@ export class LoginComponent implements OnInit {
 
     // Reset login status
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+
+    // Tải config auth mode chỉ khi vào trang login
+    this.configService.getAuthConfig().subscribe({
+      next: (response: any) => {
+        const mode = response?.data?.authMode || response?.authMode;
+        if (mode) this.authMode = mode;
+      },
+      error: () => {
+        // Mặc định DB nếu lỗi; BE đã cache nên ít khi lỗi
+        this.authMode = AUTH_MODE.DB;
+      }
+    });
   }
 
   // Convenience getter for easy access to form fields
