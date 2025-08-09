@@ -16,7 +16,7 @@ export class ConfigService {
     return this.http.get<any>(`${this.URL}`)
   }
 
-  // Get auth mode from backend
+  // Get auth mode 
   getAuthConfig(): Observable<any> {
     return this.http.get(`/api/config/get-auth-mode`);
   }
