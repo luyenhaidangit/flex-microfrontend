@@ -311,7 +311,7 @@ export class BranchComponent implements OnInit {
       name: formData.name,
       description: formData.description,
       branchType: Number(formData.branchType),
-      isActive: formData.isActive ? 'Y' : 'N',
+      isActive: !!formData.isActive,
       address: formData.address || undefined
     };
     
