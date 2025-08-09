@@ -93,7 +93,7 @@ export class BranchComponent implements OnInit {
     this.branchForm = this.fb.group({
       code: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9]+')]],
       name: ['', [Validators.required, Validators.maxLength(100)]],
-      branchType: ['', [Validators.required]],
+      branchType: [1, [Validators.required]],
       description: ['', [Validators.required, Validators.maxLength(500)]],
       address: ['', [Validators.maxLength(500)]],
       isActive: [true, [Validators.required]],
@@ -287,9 +287,12 @@ export class BranchComponent implements OnInit {
 
   // Open create modal
   openCreateModal(): void {
-    this.branchForm.reset();
-    // Set default values for Create modal
-    this.branchForm.patchValue({
+    this.branchForm.reset({
+      code: '',
+      name: '',
+      branchType: 1, // Mặc định: Chi nhánh chính
+      description: '',
+      address: '',
       isActive: true,
       comment: ''
     });
@@ -307,8 +310,9 @@ export class BranchComponent implements OnInit {
       code: formData.code,
       name: formData.name,
       description: formData.description,
-      branchType: formData.branchType,
-      isActive: formData.isActive
+      branchType: Number(formData.branchType),
+      isActive: formData.isActive ? 'Y' : 'N',
+      address: formData.address || undefined
     };
     
     this.branchService.createBranch(payload).subscribe({
@@ -333,7 +337,9 @@ export class BranchComponent implements OnInit {
     this.branchForm.patchValue({
       code: item.code,
       name: item.name,
-      branchType: item.branchType || '',
+      branchType: (item.branchType !== undefined && item.branchType !== null)
+        ? Number(item.branchType)
+        : '',
       description: item.description || '',
       address: item.address || '',
       isActive: item.isActive === 'Y' || item.isActive === true
@@ -355,7 +361,7 @@ export class BranchComponent implements OnInit {
     const updateRequest = {
       name: formData.name,
       description: formData.description,
-      branchType: formData.branchType,
+      branchType: Number(formData.branchType),
       address: formData.address || undefined,
       isActive: formData.isActive,
       comment: formData.comment
@@ -787,8 +793,9 @@ export class BranchComponent implements OnInit {
     return this.requestDetailData?.type;
   }
 
-  getBranchTypeLabel(branchType: number): string {
-    switch (branchType) {
+  getBranchTypeLabel(branchType: number | string | null | undefined): string {
+    const type = branchType === null || branchType === undefined ? undefined : Number(branchType as any);
+    switch (type) {
       case 1:
         return 'Chi nhánh chính';
       case 2:
