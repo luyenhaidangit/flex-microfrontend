@@ -95,7 +95,7 @@ export class BranchComponent implements OnInit {
       name: ['', [Validators.required, Validators.maxLength(100)]],
       branchType: [1, [Validators.required]],
       description: ['', [Validators.maxLength(500)]],
-      address: ['', [Validators.maxLength(500)]],
+
       isActive: [true, [Validators.required]],
       comment: ['', [Validators.maxLength(500)]]
     });
@@ -292,7 +292,7 @@ export class BranchComponent implements OnInit {
       name: '',
       branchType: 1, // Mặc định: Chi nhánh chính
       description: '',
-      address: '',
+
       isActive: true,
       comment: ''
     });
@@ -309,10 +309,9 @@ export class BranchComponent implements OnInit {
     const payload = {
       code: formData.code,
       name: formData.name,
-      description: formData.description,
+      description: formData.description || null,
       branchType: Number(formData.branchType),
-      isActive: !!formData.isActive,
-      address: formData.address || undefined
+      isActive: !!formData.isActive
     };
     
     this.branchService.createBranch(payload).subscribe({
@@ -341,7 +340,6 @@ export class BranchComponent implements OnInit {
         ? Number(item.branchType)
         : '',
       description: item.description || '',
-      address: item.address || '',
       isActive: item.isActive === 'Y' || item.isActive === true
     });
     this.openModal(this.editTemplateRef, {
@@ -360,9 +358,8 @@ export class BranchComponent implements OnInit {
     
     const updateRequest = {
       name: formData.name,
-      description: formData.description,
+      description: formData.description || null,
       branchType: Number(formData.branchType),
-      address: formData.address || undefined,
       isActive: formData.isActive,
       comment: formData.comment
     };
@@ -777,9 +774,7 @@ export class BranchComponent implements OnInit {
     return data?.branchName || data?.name;
   }
 
-  getBranchAddress(data: any): string {
-    return data?.address;
-  }
+
 
   getCreatedBy(): string {
     return this.requestDetailData?.createdBy;

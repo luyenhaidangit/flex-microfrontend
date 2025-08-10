@@ -4,7 +4,7 @@ export interface Branch {
   code: string;
   branchType: number; // Thêm trường BranchType theo C# entity
   description?: string; // Thêm trường Description theo C# entity
-  address?: string;
+
   isActive: 'Y' | 'N' | boolean;
   createdAt: string;
   lastUpdated?: string;
