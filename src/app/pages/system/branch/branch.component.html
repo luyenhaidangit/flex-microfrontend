@@ -396,12 +396,11 @@
           </div>
         </div>
         <div class="col-md-12 position-relative">
-          <label class="form-label">Mô tả <span class="text-danger">*</span></label>
+          <label class="form-label">Mô tả</label>
           <textarea class="form-control" formControlName="description" rows="3" 
                     placeholder="Nhập mô tả chi nhánh"
                     [ngClass]="{'is-invalid': branchForm.controls.description.touched && branchForm.controls.description.invalid}"></textarea>
           <div *ngIf="branchForm.controls.description.touched && branchForm.controls.description.invalid" class="invalid-tooltip">
-            <span *ngIf="branchForm.controls.description.errors?.required">Mô tả không được để trống</span>
             <span *ngIf="branchForm.controls.description.errors?.maxlength">Mô tả không được vượt quá 500 ký tự</span>
           </div>
         </div>
@@ -470,12 +469,11 @@
           </div>
         </div>
         <div class="col-md-12 position-relative">
-          <label class="form-label">Mô tả <span class="text-danger">*</span></label>
+          <label class="form-label">Mô tả</label>
           <textarea class="form-control" formControlName="description" rows="3" 
                     placeholder="Nhập mô tả chi nhánh mới"
                     [ngClass]="{'is-invalid': branchForm.controls.description.touched && branchForm.controls.description.invalid}"></textarea>
           <div *ngIf="branchForm.controls.description.touched && branchForm.controls.description.invalid" class="invalid-tooltip">
-            <span *ngIf="branchForm.controls.description.errors?.required">Mô tả không được để trống</span>
             <span *ngIf="branchForm.controls.description.errors?.maxlength">Mô tả không được vượt quá 500 ký tự</span>
           </div>
         </div>

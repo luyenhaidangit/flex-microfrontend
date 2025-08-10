@@ -94,7 +94,7 @@ export class BranchComponent implements OnInit {
       code: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9]+')]],
       name: ['', [Validators.required, Validators.maxLength(100)]],
       branchType: [1, [Validators.required]],
-      description: ['', [Validators.required, Validators.maxLength(500)]],
+      description: ['', [Validators.maxLength(500)]],
       address: ['', [Validators.maxLength(500)]],
       isActive: [true, [Validators.required]],
       comment: ['', [Validators.maxLength(500)]]
