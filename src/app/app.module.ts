@@ -26,8 +26,11 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpInterceptor } from './core/interceptors/http.interceptor';
 import { ToastrModule } from 'ngx-toastr';
 import { AngularToastifyModule } from 'angular-toastify';
-import { appInitializerFactory } from './core/initializers/app.initializers';
-import { AuthenticationService } from './core/services/auth.service';
+import { AppInitializerService } from './core/services/app-initializer.service';
+
+export function initFactory(initService: AppInitializerService) {
+  return () => initService.init();
+}
 
 export function createTranslateLoader(http: HttpClient): any {
   return new TranslateHttpLoader(http, environment.externalService.translateServiceUrl, '.json');
@@ -63,8 +66,8 @@ export function createTranslateLoader(http: HttpClient): any {
   ],
   bootstrap: [AppComponent],
   providers: [
+    { provide: APP_INITIALIZER, useFactory: initFactory, deps: [AppInitializerService], multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: HttpInterceptor, multi: true },
-    { provide: APP_INITIALIZER, useFactory: appInitializerFactory, deps: [AuthenticationService], multi: true}
   ],
 })
 export class AppModule { }
