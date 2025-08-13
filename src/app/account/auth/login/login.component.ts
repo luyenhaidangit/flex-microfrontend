@@ -51,14 +51,13 @@ export class LoginComponent implements OnInit {
     // Reset login status
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
 
-    // Tải config auth mode chỉ khi vào trang login
+    // Get auth mode from config
     this.configService.getAuthConfig().subscribe({
       next: (response: any) => {
         const mode = response?.data?.authMode || response?.authMode;
         if (mode) this.authMode = mode;
       },
       error: () => {
-        // Mặc định DB nếu lỗi; BE đã cache nên ít khi lỗi
         this.authMode = AUTH_MODE.DB;
       }
     });
@@ -86,7 +85,7 @@ export class LoginComponent implements OnInit {
           if(response?.isSuccess){
             const accessToken = response?.data?.accessToken;
 
-            this.authenticationService.setAuthToken({ accessToken },isRemember);
+            this.authenticationService.setAuthToken(accessToken,isRemember);
             this.toastService.success('Đăng nhập thành công!');
             this.router.navigate(['/dashboard']);
           }

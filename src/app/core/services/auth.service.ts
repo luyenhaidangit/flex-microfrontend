@@ -5,178 +5,173 @@ import { BehaviorSubject, Observable, firstValueFrom } from 'rxjs';
 import { LocalStorage } from '../enums/local-storage.enum';
 
 export interface MeProfile {
-    sub?: string;
-    username?: string;
-    roles?: string[];
-    permissions?: string[];
-    // Backward compatibility fields
-    id?: number | string;
-    email?: string;
-    firstName?: string;
-    lastName?: string;
+  sub?: string;
+  username?: string;
+  roles?: string[];
+  permissions?: string[];
+  id?: number | string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+}
+
+export interface LoginResponse {
+  isSuccess: boolean;
+  message?: string;
+  data?: { accessToken: string } | null;
 }
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
-    private currentUserSubject: BehaviorSubject<any>;
-    public currentUser$: Observable<any>;
+  private static readonly TOKEN_KEY = LocalStorage.AuthToken;
+  private static readonly LOGOUT_LEEWAY_MS = 30_000;
 
-    // New in-memory state for token + profile
-    private accessToken: string | null = null;
-    private logoutTimer: any;
-    private meSubject: BehaviorSubject<MeProfile | null> = new BehaviorSubject<MeProfile | null>(null);
+  private meSubject = new BehaviorSubject<MeProfile | null>(null);
+  private accessToken: string | null = null;
+  private logoutTimer: any;
 
-    constructor(private http: HttpClient, private router: Router) {
-        // Load user from localStorage/sessionStorage if available
-        const token = this.getAuthToken();
-        let user = null;
-        if (token && token.user) {
-            user = token.user;
-        } else {
-            try {
-                const userStr = localStorage.getItem('currentUser');
-                if (userStr) user = JSON.parse(userStr);
-            } catch {}
-        }
-        this.currentUserSubject = new BehaviorSubject<any>(user);
-        this.currentUser$ = this.currentUserSubject.asObservable();
+  constructor(private http: HttpClient, private router: Router) {
+    this.bootstrapFromStorage();
 
-        // Bootstrap token to in-memory + setup auto-logout
-        this.bootstrapFromStorage();
-
-        // Multi-tab sync: apply logout/login across tabs
-        window.addEventListener('storage', (e: StorageEvent) => {
-            if (e.key === LocalStorage.AuthToken && e.newValue === null) this.forceLogout(false);
-            if (e.key === LocalStorage.AuthToken && e.newValue) this.bootstrapFromStorage();
-        });
+    // Sync đa tab
+    if (typeof window !== 'undefined') {
+      window.addEventListener('storage', (e: StorageEvent) => {
+        if (e.key !== AuthenticationService.TOKEN_KEY) return;
+        if (e.newValue === null) this.forceLogout(false);
+        else this.bootstrapFromStorage();
+      });
     }
+  }
 
-    // Login
-    public login(userName: string, password: string, rememberMe: boolean) {
-        const body = {
-            userName: userName,
-            password: password,
-            rememberMe: rememberMe
-        };
-        return this.http.post('/api/auth/login', body);
+  // ===== Public API =====
+  login(userName: string, password: string, rememberMe: boolean): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>('/api/auth/login', { userName, password, rememberMe });
+  }
+
+  logout(): void {
+    this.clearTokenFromStorage();
+    this.clearTimersAndState();
+    this.router.navigate(['/account/login']);
+  }
+
+  /** Lấy token (cho Interceptor/Guard) */
+  getToken(): string | null {
+    if (this.accessToken) return this.accessToken;
+    return this.readRawToken();
+  }
+
+  /** Lắng nghe profile đã xác thực */
+  getProfile$(): Observable<MeProfile | null> {
+    return this.meSubject.asObservable();
+  }
+
+  getCurrentUser(): MeProfile | null {
+    return this.meSubject.value;
+  }
+
+  /** Gọi ở AppInitializer/AppComponent: xác thực token và nạp profile */
+  async initOnStartup(): Promise<void> {
+    const token = this.getToken();
+    if (!token) {
+      this.meSubject.next(null);
+      return;
     }
-
-    public logout() {
-        this.removeAuthToken();
-        this.currentUserSubject.next(null);
-        localStorage.removeItem('currentUser');
-        this.forceLogout(false);
+    try {
+      const res: any = await firstValueFrom(this.http.get('/api/auth/me'));
+      const profile: MeProfile | null = res?.data ?? res ?? null;
+      this.meSubject.next(profile);
+      this.scheduleAutoLogoutFromToken(token);
+    } catch {
+      this.logout();
     }
+  }
 
-    // Set AuthToken
-    public setAuthToken(authToken: any, rememberMe: boolean) {
-        const tokenString = JSON.stringify(authToken);
-        if (rememberMe) {
-            localStorage.setItem(LocalStorage.AuthToken, tokenString);
-        } else {
-            sessionStorage.setItem(LocalStorage.AuthToken, tokenString);
-        }
-        // Nếu authToken có user, cập nhật luôn user hiện tại
-        if (authToken && authToken.user) {
-            this.setCurrentUser(authToken.user);
-        }
-        // Re-bootstrap token state and auto-logout timer
-        this.bootstrapFromStorage();
+  /** Lưu token sau khi login (raw string, không bọc object) */
+  setAuthToken(accessToken: string, rememberMe: boolean): void {
+    if (rememberMe) {
+      localStorage.setItem(AuthenticationService.TOKEN_KEY, accessToken);
+      sessionStorage.removeItem(AuthenticationService.TOKEN_KEY);
+    } else {
+      sessionStorage.setItem(AuthenticationService.TOKEN_KEY, accessToken);
+      localStorage.removeItem(AuthenticationService.TOKEN_KEY);
     }
+    this.bootstrapFromStorage();
+  }
 
-    // Get AuthToken
-    public getAuthToken(): any {
-        const tokenString = localStorage.getItem(LocalStorage.AuthToken) || sessionStorage.getItem(LocalStorage.AuthToken);
-        if (tokenString) {
-            return JSON.parse(tokenString);
-        }
+  // ===== Internal =====
+  private bootstrapFromStorage(): void {
+    const token = this.readRawToken();
+    if (!token) { this.forceLogout(false); return; }
+
+    const payload = this.safeDecodeJwt(token);
+    const expMs = (payload?.exp ?? 0) * 1000;
+    const now = Date.now();
+    if (!payload?.exp || now >= expMs) { this.forceLogout(true); return; }
+
+    this.accessToken = token;
+    this.schedule(expMs - now);
+  }
+
+  private scheduleAutoLogoutFromToken(token: string): void {
+    const exp = this.safeDecodeJwt(token)?.exp;
+    if (!exp) return;
+    const expMs = exp * 1000;
+    const now = Date.now();
+    this.schedule(expMs - now);
+  }
+
+  private schedule(msUntilExp: number): void {
+    if (this.logoutTimer) clearTimeout(this.logoutTimer);
+    const fireIn = Math.max(0, msUntilExp - AuthenticationService.LOGOUT_LEEWAY_MS);
+    this.logoutTimer = setTimeout(() => this.forceLogout(true), fireIn);
+  }
+
+  private forceLogout(navigate = true): void {
+    this.clearTimersAndState();
+    this.clearTokenFromStorage();
+    if (navigate) this.router.navigate(['/account/login']);
+  }
+
+  private clearTimersAndState(): void {
+    this.accessToken = null;
+    this.meSubject.next(null);
+    if (this.logoutTimer) clearTimeout(this.logoutTimer);
+  }
+
+  private clearTokenFromStorage(): void {
+    localStorage.removeItem(AuthenticationService.TOKEN_KEY);
+    sessionStorage.removeItem(AuthenticationService.TOKEN_KEY);
+  }
+
+  /**
+   * Đọc token từ storage.
+   * - Ưu tiên raw string (mới)
+   * - Tương thích ngược JSON cũ: {"accessToken":"..."}
+   */
+  private readRawToken(): string | null {
+    const raw = localStorage.getItem(AuthenticationService.TOKEN_KEY)
+            ?? sessionStorage.getItem(AuthenticationService.TOKEN_KEY);
+    if (!raw) return null;
+
+    // Nếu là JSON cũ -> parse lấy accessToken; nếu là raw string -> trả thẳng.
+    if (raw.startsWith('{')) {
+      try {
+        const obj = JSON.parse(raw);
+        return obj?.accessToken ?? null;
+      } catch {
         return null;
+      }
     }
+    return raw;
+  }
 
-    // New: expose string token quickly for interceptors/guards
-    public getToken(): string | null {
-        if (this.accessToken) return this.accessToken;
-        const stored = this.getAuthToken();
-        return stored?.accessToken ?? null;
+  private safeDecodeJwt(token: string): any | null {
+    try {
+      const base64 = token.split('.')[1];
+      if (!base64) return null;
+      return JSON.parse(atob(base64));
+    } catch {
+      return null;
     }
-
-    // Delete AuthToken
-    private removeAuthToken() {
-        localStorage.removeItem('authToken');
-        sessionStorage.removeItem('authToken');
-    }
-
-    // Get Current User (sync)
-    public getCurrentUser(): any {
-        return this.currentUserSubject.value;
-    }
-
-    // Set Current User
-    public setCurrentUser(user: any): void {
-        this.currentUserSubject.next(user);
-        if (user) {
-            localStorage.setItem('currentUser', JSON.stringify(user));
-        } else {
-            localStorage.removeItem('currentUser');
-        }
-    }
-
-    // Get User Profile
-    public GetUserProfile() {
-        return this.http.get('/api/auth/me');
-    }
-
-    // === New APIs for startup validation ===
-    public getProfile$(): Observable<MeProfile | null> {
-        return this.meSubject.asObservable();
-    }
-
-    public async initOnStartup(): Promise<void> {
-        // Validate token with backend and load profile
-        const token = this.getToken();
-        if (!token) {
-            this.meSubject.next(null);
-            return;
-        }
-        try {
-            const response: any = await firstValueFrom(this.http.get('/api/auth/me'));
-            const profile: MeProfile | null = response?.data ?? response ?? null;
-            this.meSubject.next(profile);
-            if (profile) this.setCurrentUser(profile);
-        } catch {
-            // Token invalid/expired/revoked
-            this.logout();
-        }
-    }
-
-    // === Internal helpers ===
-    private bootstrapFromStorage(): void {
-        const stored = this.getAuthToken();
-        const token: string | null = stored?.accessToken ?? null;
-        if (!token) { this.forceLogout(false); return; }
-
-        const payload = this.decode(token);
-        const expMs = (payload?.exp ?? 0) * 1000;
-        const now = Date.now();
-
-        if (!payload || now >= expMs) { this.forceLogout(true); return; }
-
-        this.accessToken = token;
-
-        // Auto-logout ~30s before expiry
-        if (this.logoutTimer) clearTimeout(this.logoutTimer);
-        this.logoutTimer = setTimeout(() => this.forceLogout(true), Math.max(0, expMs - now - 30000));
-    }
-
-    private forceLogout(navigate = true): void {
-        this.accessToken = null;
-        this.meSubject.next(null);
-        if (this.logoutTimer) clearTimeout(this.logoutTimer);
-        if (navigate) this.router.navigate(['/account/login']);
-    }
-
-    private decode(token: string): any | null {
-        try { return JSON.parse(atob(token.split('.')[1])); } catch { return null; }
-    }
+  }
 }
-
