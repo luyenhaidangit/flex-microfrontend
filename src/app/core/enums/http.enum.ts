@@ -1,5 +1,6 @@
 export enum Header {
-    SkipLoading = 'X-Skip-Loading',
+  SkipLoading = 'X-Skip-Loading',
+  SkipAuth = 'X-Skip-Auth',
 }
 
 export enum HttpError {

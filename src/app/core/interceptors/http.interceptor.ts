@@ -1,52 +1,68 @@
 import { Injectable } from '@angular/core';
-import { HttpEvent, HttpHandler, HttpInterceptor as HttpSystemInterceptor, HttpRequest, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpEvent, HttpHandler, HttpInterceptor as HttpSystemInterceptor,
+  HttpRequest, HttpErrorResponse
+} from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-
 import { ToastService } from 'angular-toastify';
-
 import { Header, HttpError } from '../enums/http.enum';
 import { LoaderService } from '../services/loader.service';
 import { AuthenticationService } from '../services/auth.service';
 
 @Injectable()
 export class HttpInterceptor implements HttpSystemInterceptor {
-  constructor(private loadingService: LoaderService, private toastService: ToastService, private authService: AuthenticationService) {}
+  constructor(
+    private loadingService: LoaderService,
+    private toastService: ToastService,
+    private authService: AuthenticationService
+  ) {}
 
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Set default baseurl
-    if (!request.url.startsWith('http') && !request.url.startsWith('https')) {
-      request = request.clone({ url: `${environment.apiBaseUrl}${request.url}` });
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    let request = req;
+
+    // Normalize URL
+    if (!this.isAbsoluteUrl(request.url)) {
+      request = request.clone({ url: this.joinUrl(environment.apiBaseUrl, request.url) });
     }
 
-    // Loading when call request
-    if (!request.headers.has(Header.SkipLoading)) {
+    // Loading indicator
+    const skipLoading = request.headers.has(Header.SkipLoading);
+    if (!skipLoading) {
       this.loadingService.show();
     } else {
-      request = request.clone({
-        headers: request.headers.delete(Header.SkipLoading)
-      });
+      request = request.clone({ headers: request.headers.delete(Header.SkipLoading) });
     }
 
-    // Set token header
-    const bearerToken = this.authService.getToken();
-    if (bearerToken) {
-      request = request.clone({
-        setHeaders: {
-          Authorization: `Bearer ${bearerToken}`,
-        }
-      });
+    // Authorization Bearer
+    const skipAuth = request.headers.has(Header.SkipAuth);
+    if (skipAuth) {
+      request = request.clone({ headers: request.headers.delete(Header.SkipAuth) });
+    } else if (this.isSameApi(request.url)) {
+      const bearerToken = this.authService.getToken();
+      if (bearerToken) {
+        request = request.clone({
+          setHeaders: { Authorization: `Bearer ${bearerToken}` }
+        });
+      }
     }
-    
+
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
-        // Handle case errors
-        if (error.status === HttpError.ConnectionRefused) {
+        // Error handling
+        if (error.status === 0) {
+          // Network/CORS error
+          this.toastService.error('Không thể kết nối đến máy chủ (mạng/CORS)!');
+        } else if (error.status === HttpError.ConnectionRefused) {
           this.toastService.error('Không thể kết nối đến máy chủ!');
+        } else {
+          const msg = error?.error?.message || error?.message || 'Đã xảy ra lỗi!';
+          // Show error toast
+          this.toastService.error(msg);
         }
 
-        // Auto logout on 401
+        // Auto logout when 401
         if (error.status === 401) {
           this.authService.logout();
         }
@@ -54,8 +70,26 @@ export class HttpInterceptor implements HttpSystemInterceptor {
         return throwError(() => error);
       }),
       finalize(() => {
-        this.loadingService.hide();
+        if (!skipLoading) this.loadingService.hide();
       })
     );
+  }
+
+  // ==== Helpers ====
+  private isAbsoluteUrl(url: string): boolean {
+    return /^https?:\/\//i.test(url);
+  }
+
+  private isSameApi(url: string): boolean {
+    // Chỉ gắn token nếu URL bắt đầu bằng apiBaseUrl
+    const base = environment.apiBaseUrl.replace(/\/+$/, '');
+    return this.isAbsoluteUrl(url) && url.startsWith(base);
+  }
+
+  private joinUrl(base: string, path: string): string {
+    if (!base) return path;
+    const b = base.replace(/\/+$/, '');
+    const p = path.replace(/^\/+/, '');
+    return `${b}/${p}`;
   }
 }

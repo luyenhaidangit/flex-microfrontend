@@ -33,7 +33,7 @@ export class AuthenticationService {
   constructor(private http: HttpClient, private router: Router) {
     this.bootstrapFromStorage();
 
-    // Sync đa tab
+    // Sync multi-tab
     if (typeof window !== 'undefined') {
       window.addEventListener('storage', (e: StorageEvent) => {
         if (e.key !== AuthenticationService.TOKEN_KEY) return;
@@ -153,15 +153,6 @@ export class AuthenticationService {
             ?? sessionStorage.getItem(AuthenticationService.TOKEN_KEY);
     if (!raw) return null;
 
-    // Nếu là JSON cũ -> parse lấy accessToken; nếu là raw string -> trả thẳng.
-    if (raw.startsWith('{')) {
-      try {
-        const obj = JSON.parse(raw);
-        return obj?.accessToken ?? null;
-      } catch {
-        return null;
-      }
-    }
     return raw;
   }
 
