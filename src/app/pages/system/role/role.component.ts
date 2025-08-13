@@ -85,7 +85,6 @@ export class RoleComponent implements OnInit {
   selectedItem: Role | null = null;
   changeHistory: any[] = [];
 
-  showSubmitConfirm = false;
   rejectedReason: string | null = null;
 
   // Tab navigation state
@@ -742,12 +741,6 @@ export class RoleComponent implements OnInit {
     this.closeModal();
   }
 
-  // Hàm xử lý input: upperCase và loại bỏ dấu cách, có thể tái sử dụng cho các input khác
-  onInputUpperNoSpace(controlName: string, event: any) {
-    const value = event.target.value.toUpperCase().replace(/\s+/g, '');
-    this.roleForm.get(controlName)?.setValue(value, { emitEvent: false });
-  }
-
   getRequestTypeLabel(requestType: string): string {
     const type = (requestType || '').toUpperCase();
     if (type === 'CREATE') return 'Tạo mới';
@@ -755,8 +748,6 @@ export class RoleComponent implements OnInit {
     if (type === 'DELETE') return 'Xoá';
     return requestType;
   }
-
-  // Xóa các hàm openDeleteDraftModal, confirmDeleteDraft, và logic liên quan đến nháp nếu có
 
   // Helper methods for enhanced detail modal
   getRequestTypeIcon(requestType: string): string {
