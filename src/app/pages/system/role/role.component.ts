@@ -20,6 +20,30 @@ export class RoleComponent implements OnInit {
     { label: 'Quản trị hệ thống' },
     { label: 'Quản lý vai trò', active: true }
   ];
+  // Table config
+  skeletonRows = Array.from({ length: 8 });
+  tableConfig = {
+    approved: {
+      head: ['Mã vai trò', 'Tên vai trò', 'Mô tả', 'Trạng thái', 'Thao tác'],
+      skeletonCols: ['60px', '140px', '200px', '80px', '120px']
+    },
+    pending: {
+      head: ['Mã vai trò', 'Tên vai trò', 'Mô tả', 'Loại yêu cầu', 'Người tạo', 'Ngày tạo', 'Thao tác'],
+      skeletonCols: ['60px', '140px', '200px', '90px', '120px', '90px', '120px']
+    }
+  };
+
+  get headCols(): string[] {
+    return this.tableConfig[this.activeTab].head;
+  }
+
+  get skeletonCols(): string[] {
+    return this.tableConfig[this.activeTab].skeletonCols;
+  }
+
+  get colspan(): number {
+    return this.headCols.length;
+  }
 
   @ViewChild('detailModal') detailModalTemplateRef!: TemplateRef<any>;
   @ViewChild('createModal') createTemplateRef!: TemplateRef<any>;

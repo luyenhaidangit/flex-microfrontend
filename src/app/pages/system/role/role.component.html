@@ -1,297 +1,166 @@
 <div class="container-fluid">
-  <app-page-title title="Quản lý vai trò" [breadcrumbItems]="breadCrumbItems">
-  </app-page-title>
+  <app-page-title title="Quản lý vai trò" [breadcrumbItems]="breadCrumbItems"></app-page-title>
 
   <div class="bg-white rounded shadow-sm p-3">
+    <!-- Tabset -->
     <tabset class="nav-pills nav-tabs mb-3">
-      <!-- Approved tab -->
-      <tab heading="Đã duyệt" (selectTab)="switchTab('approved')">
-            <div class="row gx-3 mb-3 gy-2 align-items-end">
-              <div class="col-md-4 mb-2 mb-md-0">
-                <div class="form-group">
-                  <label class="form-label fw-bold text-muted" for="keywordInput">Từ khóa tìm kiếm</label>
-                  <input id="keywordInput" class="form-control" type="text" placeholder="Nhập từ khóa..."
-                    [(ngModel)]="pagingState.keyword">
-                </div>
-              </div>
-              <div class="col-md-3 mb-2 mb-md-0">
-                <div class="form-group">
-                  <label class="form-label fw-bold text-muted" for="statusSelect">Trạng thái</label>
-                  <select id="statusSelect" class="form-select" [(ngModel)]="pagingState.isActive">
-                    <option [ngValue]="null">Tất cả trạng thái</option>
-                    <option [ngValue]="true">Hoạt động</option>
-                    <option [ngValue]="false">Không hoạt động</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="form-group">
-                  <label class="form-label d-block" style="visibility:hidden">Tìm kiếm</label>
-                  <button class="btn btn-primary w-100" (click)="onSearch()">
-                    <i class="bx bx-search-alt-2"></i> Tìm kiếm
-                  </button>
-                </div>
-              </div>
-              <div class="col-md-2">
-                <button type="button" class="btn btn-success fw-bold shadow-sm" (click)="openCreateModal()" style="min-width: 120px;">
-                  <i class="fas fa-plus me-1"></i> Thêm mới
-                </button>
-              </div>
-            </div>
-
-        <!-- ============ TABLE ============ -->
-        <div class="table-responsive">
-          <!-- Skeleton -->
-          <ng-container *ngIf="isLoading; else tableContent">
-            <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
-              <thead>
-                <tr>
-                  <th>Mã vai trò</th>
-                  <th>Tên vai trò</th>
-                  <th>Mô tả</th>
-                  <th>Trạng thái</th>
-                  <th>Thao tác</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]">
-                  <td><app-skeleton width="60px" height="18px"></app-skeleton></td>
-                  <td><app-skeleton width="140px" height="18px"></app-skeleton></td>
-                  <td><app-skeleton width="200px" height="18px"></app-skeleton></td>
-                  <td><app-skeleton width="80px" height="18px"></app-skeleton></td>
-                  <td><app-skeleton width="120px" height="18px"></app-skeleton></td>
-                </tr>
-              </tbody>
-            </table>
-          </ng-container>
-          <!-- Content -->
-          <ng-template #tableContent>
-            <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
-              <thead>
-                <tr>
-                  <th>Mã vai trò</th>
-                  <th>Tên vai trò</th>
-                  <th>Mô tả</th>
-                  <th>Trạng thái</th>
-                  <th>Thao tác</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let item of items;">
-                  <td>{{ item.code | safeField }}</td>
-                  <td>{{ item.name | safeField }}</td>
-                  <td>{{ item.description | safeField }}</td>
-                  <td><app-badge [value]="item.isActive" type="status"></app-badge></td>
-                  <td class="action-column">
-                    <span class="text-info pointer" tooltip="Xem chi tiết" (click)="openDetailModal(item)">
-                      <i class="fas fa-eye"></i>
-                    </span>
-                    <ng-container *ngIf="item.pendingAction === 'CREATE'">
-                      <span class="text-success ms-2 pointer" tooltip="Phê duyệt yêu cầu" (click)="openApproveModal(item)">
-                        <i class="fas fa-check"></i>
-                      </span>
-                      <span class="text-danger ms-2 pointer" tooltip="Từ chối yêu cầu" (click)="openRejectModal(item)">
-                        <i class="fas fa-times"></i>
-                      </span>
-                    </ng-container>
-                    <ng-container *ngIf="!item.pendingAction">
-                      <span class="text-warning ms-2 pointer" tooltip="Chỉnh sửa" (click)="openEditModal(item)">
-                        <i class="fas fa-edit"></i>
-                      </span>
-                      <span class="text-danger ms-2 pointer" tooltip="Xoá" (click)="openDeleteModal(item)">
-                        <i class="fas fa-trash"></i>
-                      </span>
-                    </ng-container>
-                  </td>
-                </tr>
-                <tr *ngIf="items.length === 0">
-                  <td colspan="5" class="text-center">Không có dữ liệu</td>
-                </tr>
-              </tbody>
-            </table>
-          </ng-template>
-        </div>
-
-        <!-- Pagination -->
-        <div class="table-filter d-flex justify-content-between align-items-center mt-2">
-          <ul class="pagination mb-0">
-            <li class="page-item cursor-pointer" [class.disabled]="pagingState.pageIndex === 1">
-              <a class="page-link" (click)="changePage(pagingState.pageIndex - 1)">
-                <i class="mdi mdi-chevron-left"></i>
-              </a>
-            </li>
-
-            <li *ngFor="let _ of [].constructor(pagingState.totalPages); let idx = index"
-                class="page-item cursor-pointer"
-                [class.active]="pagingState.pageIndex === idx + 1">
-              <a class="page-link" (click)="changePage(idx + 1)">
-                {{ idx + 1 }}
-              </a>
-            </li>
-
-            <li class="page-item cursor-pointer" [class.disabled]="pagingState.pageIndex === pagingState.totalPages">
-              <a class="page-link" (click)="changePage(pagingState.pageIndex + 1)">
-                <i class="mdi mdi-chevron-right"></i>
-              </a>
-            </li>
-          </ul>
-
-          <!-- page size -->
-          <div class="per-page">
-            Hiển thị
-            <select class="mx-1 cursor-pointer" [(ngModel)]="pagingState.pageSize" (change)="changePageSize()">
-              <option *ngFor="let opt of DEFAULT_PER_PAGE_OPTIONS" [ngValue]="opt.value" class="cursor-pointer">
-                {{ opt.label }}
-              </option>
-            </select>
-            / {{ pagingState.totalItems }} tổng số bản ghi
-          </div>
-        </div>
-      </tab>
-      <!-- Pending tab -->
-      <tab heading="Chờ duyệt" (selectTab)="switchTab('pending')">
-        <!-- Search form for pending tab -->
-        <div class="row gx-3 mb-3 gy-2 align-items-end">
-          <div class="col-md-4 mb-2 mb-md-0">
-            <div class="form-group">
-              <label class="form-label fw-bold text-muted" for="keywordInputPending">Từ khóa tìm kiếm</label>
-              <input id="keywordInputPending" class="form-control" type="text" placeholder="Nhập từ khóa..."
-                [(ngModel)]="pagingState.keyword">
-            </div>
-          </div>
-          <div class="col-md-3 mb-2 mb-md-0">
-            <div class="form-group">
-              <label class="form-label fw-bold text-muted" for="requestTypeSelectPending">Loại yêu cầu</label>
-              <select id="requestTypeSelectPending" class="form-select" [(ngModel)]="pagingState.type">
-                <option [ngValue]="null">Tất cả loại yêu cầu</option>
-                <option [ngValue]="'CREATE'">Tạo mới</option>
-                <option [ngValue]="'UPDATE'">Cập nhật</option>
-                <option [ngValue]="'DELETE'">Xóa</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-md-2">
-            <div class="form-group">
-              <label class="form-label d-block" style="visibility:hidden">Tìm kiếm</label>
-              <button class="btn btn-primary w-100" (click)="onSearch()">
-                <i class="bx bx-search-alt-2"></i> Tìm kiếm
-              </button>
-            </div>
-          </div>
-          <div class="col-md-2">
-            <button type="button" class="btn btn-success fw-bold shadow-sm" (click)="openCreateModal()" style="min-width: 120px;">
-              <i class="fas fa-plus me-1"></i> Thêm mới
-            </button>
-          </div>
-        </div>
-
-        <div class="table-responsive">
-          <ng-container *ngIf="isLoading; else pendingTableContent">
-            <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
-              <thead>
-                <tr>
-                  <th>Mã vai trò</th>
-                  <th>Tên vai trò</th>
-                  <th>Mô tả</th>
-                  <th>Loại yêu cầu</th>
-                  <th>Người tạo</th>
-                  <th>Ngày tạo</th>
-                  <th>Thao tác</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]">
-                  <td><app-skeleton width="60px" height="18px"></app-skeleton></td>
-                  <td><app-skeleton width="140px" height="18px"></app-skeleton></td>
-                  <td><app-skeleton width="200px" height="18px"></app-skeleton></td>
-                  <td><app-skeleton width="90px" height="18px"></app-skeleton></td>
-                  <td><app-skeleton width="120px" height="18px"></app-skeleton></td>
-                  <td><app-skeleton width="90px" height="18px"></app-skeleton></td>
-                  <td><app-skeleton width="120px" height="18px"></app-skeleton></td>
-                </tr>
-              </tbody>
-            </table>
-          </ng-container>
-          <ng-template #pendingTableContent>
-            <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
-              <thead>
-                <tr>
-                  <th>Mã vai trò</th>
-                  <th>Tên vai trò</th>
-                  <th>Mô tả</th>
-                  <th>Loại yêu cầu</th>
-                  <th>Người tạo</th>
-                  <th>Ngày tạo</th>
-                  <th>Thao tác</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let item of pendingItems;">
-                  <td>{{ item.code | safeField }}</td>
-                  <td>{{ item.name | safeField }}</td>
-                  <td>{{ item.description | safeField }}</td>
-                  <td>
-                    <app-badge [value]="item.requestType" type="request"></app-badge>
-                  </td>
-                  <td>{{ item.requestedBy | safeField }}</td>
-                  <td>{{ item.requestedDate | date: 'dd/MM/yyyy' }}</td>
-                  <td class="action-column">
-                    <span class="text-info pointer" tooltip="Xem chi tiết" (click)="openRequestDetailModal(item)">
-                      <i class="fas fa-eye"></i>
-                    </span>
-                    <span class="text-success ms-2 pointer" tooltip="Phê duyệt yêu cầu" (click)="openApproveModal(item)">
-                      <i class="fas fa-check"></i>
-                    </span>
-                    <span class="text-danger ms-2 pointer" tooltip="Từ chối yêu cầu" (click)="openRejectModal(item)">
-                      <i class="fas fa-times"></i>
-                    </span>
-                  </td>
-                </tr>
-                <tr *ngIf="pendingItems.length === 0">
-                  <td colspan="7" class="text-center">Không có yêu cầu chờ duyệt</td>
-                </tr>
-              </tbody>
-            </table>
-          </ng-template>
-        </div>
-
-        <!-- ============ PAGINATION FOR PENDING TAB ============ -->
-        <div class="table-filter d-flex justify-content-between align-items-center mt-2">
-          <ul class="pagination mb-0">
-            <li class="page-item cursor-pointer" [class.disabled]="pagingState.pageIndex === 1">
-              <a class="page-link" (click)="changePage(pagingState.pageIndex - 1)">
-                <i class="mdi mdi-chevron-left"></i>
-              </a>
-            </li>
-
-            <li *ngFor="let _ of [].constructor(pagingState.totalPages); let idx = index"
-                class="page-item cursor-pointer"
-                [class.active]="pagingState.pageIndex === idx + 1">
-              <a class="page-link" (click)="changePage(idx + 1)">
-                {{ idx + 1 }}
-              </a>
-            </li>
-
-            <li class="page-item cursor-pointer" [class.disabled]="pagingState.pageIndex === pagingState.totalPages">
-              <a class="page-link" (click)="changePage(pagingState.pageIndex + 1)">
-                <i class="mdi mdi-chevron-right"></i>
-              </a>
-            </li>
-          </ul>
-
-          <!-- page size -->
-          <div class="per-page">
-            Hiển thị
-            <select class="mx-1 cursor-pointer" [(ngModel)]="pagingState.pageSize" (change)="changePageSize()">
-              <option *ngFor="let opt of DEFAULT_PER_PAGE_OPTIONS" [ngValue]="opt.value" class="cursor-pointer">
-                {{ opt.label }}
-              </option>
-            </select>
-            / {{ pagingState.totalItems }} tổng số bản ghi
-          </div>
-        </div>
-      </tab>
+      <tab heading="Đã duyệt" (selectTab)="switchTab('approved')"></tab>
+      <tab heading="Chờ duyệt" (selectTab)="switchTab('pending')"></tab>
     </tabset>
+
+    <!-- Search form -->
+    <div class="row gx-3 mb-3 gy-2 align-items-end">
+      <div class="col-md-4">
+        <label class="form-label fw-bold text-muted">Từ khóa</label>
+        <input class="form-control" type="text" placeholder="Nhập từ khóa..." [(ngModel)]="pagingState.keyword">
+      </div>
+    
+      <!-- Chỉ hiện ở tab đã duyệt -->
+      <div class="col-md-3" *ngIf="activeTab==='approved'">
+        <label class="form-label fw-bold text-muted">Trạng thái</label>
+        <select class="form-select" [(ngModel)]="pagingState.isActive">
+          <option [ngValue]="null">Tất cả</option>
+          <option [ngValue]="true">Hoạt động</option>
+          <option [ngValue]="false">Không hoạt động</option>
+        </select>
+      </div>
+    
+      <!-- Chỉ hiện ở tab chờ duyệt -->
+      <div class="col-md-3" *ngIf="activeTab==='pending'">
+        <label class="form-label fw-bold text-muted">Loại yêu cầu</label>
+        <select class="form-select" [(ngModel)]="pagingState.type">
+          <option [ngValue]="null">Tất cả</option>
+          <option [ngValue]="'CREATE'">Tạo mới</option>
+          <option [ngValue]="'UPDATE'">Cập nhật</option>
+          <option [ngValue]="'DELETE'">Xóa</option>
+        </select>
+      </div>
+    
+      <div class="col-md-2">
+        <label class="form-label d-block" style="visibility:hidden">Tìm</label>
+        <button class="btn btn-primary w-100" (click)="search()">
+          <i class="bx bx-search-alt-2"></i> Tìm kiếm
+        </button>
+      </div>
+    
+      <div class="col-md-3 text-md-end">
+        <button type="button" class="btn btn-success fw-bold" (click)="openCreateModal()">
+          <i class="fas fa-plus me-1"></i> Thêm mới
+        </button>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive">
+      <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
+        <thead>
+          <tr>
+            <th *ngFor="let h of headCols">{{ h }}</th>
+          </tr>
+        </thead>
+        
+        <tbody *ngIf="isLoading">
+          <tr *ngFor="let _ of skeletonRows">
+            <td *ngFor="let w of skeletonCols">
+              <app-skeleton [width]="w" height="18px"></app-skeleton>
+            </td>
+          </tr>
+        </tbody>
+
+        <!-- TBODY: DATA -->
+        <tbody *ngIf="!isLoading">
+          <!-- Approved rows -->
+          <ng-container *ngIf="activeTab === 'approved'; else pendingRows">
+            <tr *ngFor="let item of items; trackBy: trackByCode">
+              <td>{{ item.code | safeField }}</td>
+              <td>{{ item.name | safeField }}</td>
+              <td>{{ item.description | safeField }}</td>
+              <td><app-badge [value]="item.isActive" type="status"></app-badge></td>
+              <td class="action-column">
+                <button class="btn btn-link p-0 text-info" (click)="openDetailModal(item)" title="Xem">
+                  <i class="fas fa-eye"></i>
+                </button>
+        
+                <ng-container *ngIf="!item.pendingAction">
+                  <button class="btn btn-link p-0 ms-2 text-warning" (click)="openEditModal(item)" title="Sửa">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="btn btn-link p-0 ms-2 text-danger" (click)="openDeleteModal(item)" title="Xoá">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </ng-container>
+              </td>
+            </tr>
+        
+            <tr *ngIf="items.length === 0">
+              <td [attr.colspan]="colspan" class="text-center">Không có dữ liệu</td>
+            </tr>
+          </ng-container>
+        
+          <!-- Pending rows -->
+          <ng-template #pendingRows>
+            <tr *ngFor="let item of pendingItems; trackBy: trackById">
+              <td>{{ item.code | safeField }}</td>
+              <td>{{ item.name | safeField }}</td>
+              <td>{{ item.description | safeField }}</td>
+              <td><app-badge [value]="item.requestType" type="request"></app-badge></td>
+              <td>{{ item.requestedBy | safeField }}</td>
+              <td>{{ item.requestedDate | date:'dd/MM/yyyy' }}</td>
+              <td class="action-column">
+                <button class="btn btn-link p-0 text-info" (click)="openRequestDetailModal(item)" title="Chi tiết">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-link p-0 ms-2 text-success" (click)="openApproveModal(item)" title="Duyệt">
+                  <i class="fas fa-check"></i>
+                </button>
+                <button class="btn btn-link p-0 ms-2 text-danger" (click)="openRejectModal(item)" title="Từ chối">
+                  <i class="fas fa-times"></i>
+                </button>
+              </td>
+            </tr>
+        
+            <tr *ngIf="pendingItems.length === 0">
+              <td [attr.colspan]="colspan" class="text-center">Không có yêu cầu chờ duyệt</td>
+            </tr>
+          </ng-template>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="table-filter d-flex justify-content-between align-items-center mt-2">
+      <ul class="pagination mb-0">
+        <li class="page-item cursor-pointer" [class.disabled]="pagingState.pageIndex === 1">
+          <a class="page-link" (click)="changePage(pagingState.pageIndex - 1)">
+            <i class="mdi mdi-chevron-left"></i>
+          </a>
+        </li>
+    
+        <li *ngFor="let _ of [].constructor(pagingState.totalPages); let idx = index" class="page-item cursor-pointer"
+          [class.active]="pagingState.pageIndex === idx + 1">
+          <a class="page-link" (click)="changePage(idx + 1)">
+            {{ idx + 1 }}
+          </a>
+        </li>
+    
+        <li class="page-item cursor-pointer" [class.disabled]="pagingState.pageIndex === pagingState.totalPages">
+          <a class="page-link" (click)="changePage(pagingState.pageIndex + 1)">
+            <i class="mdi mdi-chevron-right"></i>
+          </a>
+        </li>
+      </ul>
+    
+      <!-- page size -->
+      <div class="per-page">
+        Hiển thị
+        <select class="mx-1 cursor-pointer" [(ngModel)]="pagingState.pageSize" (change)="changePageSize()">
+          <option *ngFor="let opt of DEFAULT_PER_PAGE_OPTIONS" [ngValue]="opt.value" class="cursor-pointer">
+            {{ opt.label }}
+          </option>
+        </select>
+        / {{ pagingState.totalItems }} tổng số bản ghi
+      </div>
+    </div>
   </div>
 </div>
 
