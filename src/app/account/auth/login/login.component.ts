@@ -25,6 +25,7 @@ export class LoginComponent implements OnInit {
   returnUrl: string;
   passwordFieldType: string = 'password';
 
+  AUTH_MODE = AUTH_MODE;
   authMode: string = AUTH_MODE.DB;
 
   // Set the currenr year

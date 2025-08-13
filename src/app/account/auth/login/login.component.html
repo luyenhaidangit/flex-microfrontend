@@ -31,40 +31,55 @@
 
                 <alert type="danger" *ngIf="error" [dismissible]="false">{{ error }}</alert>
 
-                <div class="mb-3">
-                  <label for="userName">Tên người dùng</label>
-                  <input type="text" formControlName="userName" class="form-control" id="userName" placeholder="Username"
-                    [ngClass]="{ 'is-invalid': submitted && f.userName?.errors }" />
-                  <div *ngIf="submitted && f.userName?.errors" class="invalid-feedback">
-                    <div *ngIf="f.userName?.errors?.required">Tên người dùng không được để trống!</div>
-                  </div>
-                </div>
-
-                <div class="mb-3">
-                  <label for="password">Mật khẩu</label>
-                  <div class="input-group auth-pass-inputgroup">
-                    <input [type]="passwordFieldType" class="form-control" formControlName="password" placeholder="Mật khẩu"
-                      [ngClass]="{ 'is-invalid': submitted && f.password?.errors }" aria-label="Password"
-                      aria-describedby="password-addon">
-
-                    <button *ngIf="f.password.value.length > 0" (click)="togglePasswordVisibility()" class="btn btn-light ms-0" type="button" id="password-addon" title="password-addon"><i
-                        class="mdi {{passwordFieldType === 'password' ? 'mdi-eye-outline' : 'mdi-eye-off'}}"></i></button>
-                    <div *ngIf="submitted && f.password?.errors" class="invalid-feedback">
-                      <span *ngIf="f.password?.errors?.required">Mật khẩu không được để trống!</span>
+                <ng-container *ngIf="authMode === AUTH_MODE.DB; else nonDbBlock">
+                  <div class="mb-3">
+                    <label for="userName">Tên người dùng</label>
+                    <input type="text" formControlName="userName" class="form-control" id="userName" placeholder="Username"
+                      [ngClass]="{ 'is-invalid': submitted && f.userName?.errors }" />
+                    <div *ngIf="submitted && f.userName?.errors" class="invalid-feedback">
+                      <div *ngIf="f.userName?.errors?.required">Tên người dùng không được để trống!</div>
                     </div>
                   </div>
-                </div>
 
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="remember-check" formControlName="rememberMe">
-                  <label class="form-check-label" for="remember-check">
-                      Lưu đăng nhập
-                  </label>
-              </div>
+                  <div class="mb-3">
+                    <label for="password">Mật khẩu</label>
+                    <div class="input-group auth-pass-inputgroup">
+                      <input [type]="passwordFieldType" class="form-control" formControlName="password" placeholder="Mật khẩu"
+                        [ngClass]="{ 'is-invalid': submitted && f.password?.errors }" aria-label="Password"
+                        aria-describedby="password-addon">
 
-                <div class="mt-3 d-grid">
-                  <button class="btn btn-primary" type="submit">Đăng nhập</button>
-                </div>
+                      <button *ngIf="f.password.value?.length > 0" (click)="togglePasswordVisibility()" class="btn btn-light ms-0" type="button" id="password-addon" title="password-addon"><i
+                          class="mdi {{passwordFieldType === 'password' ? 'mdi-eye-outline' : 'mdi-eye-off'}}"></i></button>
+                      <div *ngIf="submitted && f.password?.errors" class="invalid-feedback">
+                        <span *ngIf="f.password?.errors?.required">Mật khẩu không được để trống!</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="remember-check" formControlName="rememberMe">
+                    <label class="form-check-label" for="remember-check">
+                        Lưu đăng nhập
+                    </label>
+                  </div>
+
+                  <div class="mt-3 d-grid">
+                    <button class="btn btn-primary" type="submit">Đăng nhập</button>
+                  </div>
+                </ng-container>
+
+                <ng-template #nonDbBlock>
+                  <!-- UI cho SSO/OIDC/SAML, hoặc thông báo -->
+                  <div class="text-center py-4">
+                    <p class="text-muted">Chế độ đăng nhập không hỗ trợ tài khoản/mật khẩu</p>
+                    <!-- Có thể thêm nút SSO sau này:
+                    <div class="mt-3 d-grid">
+                      <button class="btn btn-primary" type="button" (click)="authenticationService.loginWithSso()">Đăng nhập SSO</button>
+                    </div>
+                    -->
+                  </div>
+                </ng-template>
+
               </form>
             </div>
 
