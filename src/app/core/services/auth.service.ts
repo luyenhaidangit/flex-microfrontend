@@ -27,6 +27,8 @@ export class AuthenticationService {
   private static readonly LOGOUT_LEEWAY_MS = 30_000;
 
   private meSubject = new BehaviorSubject<MeProfile | null>(null);
+  public readonly me$ = this.meSubject.asObservable();
+
   private accessToken: string | null = null;
   private logoutTimer: any;
 
@@ -37,8 +39,11 @@ export class AuthenticationService {
     if (typeof window !== 'undefined') {
       window.addEventListener('storage', (e: StorageEvent) => {
         if (e.key !== AuthenticationService.TOKEN_KEY) return;
-        if (e.newValue === null) this.forceLogout(false);
-        else this.bootstrapFromStorage();
+        if (e.newValue === null) {
+          this.forceLogout(false);
+        } else {
+          this.bootstrapFromStorage(true);
+        }
       });
     }
   }
@@ -60,33 +65,25 @@ export class AuthenticationService {
     return this.readRawToken();
   }
 
-  /** Lắng nghe profile đã xác thực */
+  /** Observable profile */
   getProfile$(): Observable<MeProfile | null> {
-    return this.meSubject.asObservable();
+    return this.me$;
   }
 
+  /** Snapshot profile */
   getCurrentUser(): MeProfile | null {
     return this.meSubject.value;
   }
 
-  /** Gọi ở AppInitializer/AppComponent: xác thực token và nạp profile */
+  // Verify token and load profile
   async initOnStartup(): Promise<void> {
     const token = this.getToken();
-    if (!token) {
-      this.meSubject.next(null);
-      return;
-    }
-    try {
-      const res: any = await firstValueFrom(this.http.get('/api/auth/me'));
-      const profile: MeProfile | null = res?.data ?? res ?? null;
-      this.meSubject.next(profile);
-      this.scheduleAutoLogoutFromToken(token);
-    } catch {
-      this.logout();
-    }
+    if (!token) { this.meSubject.next(null); return; }
+    this.scheduleAutoLogoutFromToken(token);
+    await this.refreshProfile();
   }
 
-  /** Lưu token sau khi login (raw string, không bọc object) */
+  // Save token after login
   setAuthToken(accessToken: string, rememberMe: boolean): void {
     if (rememberMe) {
       localStorage.setItem(AuthenticationService.TOKEN_KEY, accessToken);
@@ -96,10 +93,11 @@ export class AuthenticationService {
       localStorage.removeItem(AuthenticationService.TOKEN_KEY);
     }
     this.bootstrapFromStorage();
+    this.refreshProfile();
   }
 
   // ===== Internal =====
-  private bootstrapFromStorage(): void {
+  private bootstrapFromStorage(loadProfile = false): void {
     const token = this.readRawToken();
     if (!token) { this.forceLogout(false); return; }
 
@@ -110,6 +108,10 @@ export class AuthenticationService {
 
     this.accessToken = token;
     this.schedule(expMs - now);
+
+    if (loadProfile) {
+      void this.refreshProfile();
+    }
   }
 
   private scheduleAutoLogoutFromToken(token: string): void {
@@ -143,17 +145,22 @@ export class AuthenticationService {
     sessionStorage.removeItem(AuthenticationService.TOKEN_KEY);
   }
 
-  /**
-   * Đọc token từ storage.
-   * - Ưu tiên raw string (mới)
-   * - Tương thích ngược JSON cũ: {"accessToken":"..."}
-   */
-  private readRawToken(): string | null {
-    const raw = localStorage.getItem(AuthenticationService.TOKEN_KEY)
-            ?? sessionStorage.getItem(AuthenticationService.TOKEN_KEY);
-    if (!raw) return null;
+  // Load profile from /api/auth/me
+  private async refreshProfile(): Promise<void> {
+    const token = this.getToken();
+    if (!token) { this.meSubject.next(null); return; }
+    try {
+      const res: any = await firstValueFrom(this.http.get('/api/auth/me'));
+      const profile: MeProfile | null = res?.data ?? res ?? null;
+      this.meSubject.next(profile);
+    } catch {
+      this.logout();
+    }
+  }
 
-    return raw;
+  private readRawToken(): string | null {
+    return localStorage.getItem(AuthenticationService.TOKEN_KEY)
+        ?? sessionStorage.getItem(AuthenticationService.TOKEN_KEY);
   }
 
   private safeDecodeJwt(token: string): any | null {
