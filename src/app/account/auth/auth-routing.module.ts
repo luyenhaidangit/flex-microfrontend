@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { LoginComponent } from './login/login.component';
-import { Login2Component } from './login2/login2.component';
 
 import { SignupComponent } from './signup/signup.component';
 import { PasswordresetComponent } from './passwordreset/passwordreset.component';
@@ -31,10 +30,6 @@ const routes: Routes = [
     {
         path: 'recoverpwd-2',
         component: Recoverpwd2Component
-    },
-    {
-        path: 'login-2',
-        component: Login2Component
     },
     { path: '**', component: Page404Component },
 ];
