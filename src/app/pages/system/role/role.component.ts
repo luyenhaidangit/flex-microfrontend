@@ -584,7 +584,7 @@ export class RoleComponent implements OnInit, OnDestroy {
   openApproveModal(item: any): void {
     this.selectedItem = item;
     this.openModal(this.approveTemplateRef, {
-      class: 'modal-lg',
+      class: 'modal-xl',
       backdrop: 'static',
       keyboard: false,
       ignoreBackdropClick: true
