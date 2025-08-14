@@ -431,13 +431,12 @@
       </div>
     </div>
     <div class="modal-footer border-top-0">
-      <button type="button" class="btn btn-secondary me-2" (click)="modalRef?.hide()" [disabled]="isSubmittingUpdateRequest">
+      <button type="button" class="btn btn-secondary me-2" (click)="modalRef?.hide()">
         Hủy
       </button>
-      <button type="button" class="btn btn-primary" (click)="submitEditRoleForm()" [disabled]="isSubmittingUpdateRequest">
-        <i class="fas fa-paper-plane me-1" *ngIf="!isSubmittingUpdateRequest"></i>
-        <span class="spinner-border spinner-border-sm me-1" *ngIf="isSubmittingUpdateRequest" role="status" aria-hidden="true"></span>
-        {{ isSubmittingUpdateRequest ? 'Đang gửi yêu cầu...' : 'Gửi yêu cầu cập nhật' }}
+      <button type="button" class="btn btn-primary" (click)="submitEditRoleForm()">
+        <i class="fas fa-paper-plane me-1"></i>
+        Gửi yêu cầu cập nhật
       </button>
     </div>
   </form>
@@ -496,8 +495,7 @@
       </div>
     </div>
     <div class="modal-footer border-top-0">
-      <button type="button" class="btn btn-secondary me-2" (click)="modalRef?.hide()"
-        [disabled]="isSubmittingDeleteRequest">
+      <button type="button" class="btn btn-secondary me-2" (click)="modalRef?.hide()">
         Hủy
       </button>
       <button type="submit" class="btn btn-danger">
