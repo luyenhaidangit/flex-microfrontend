@@ -457,24 +457,7 @@ export class RoleComponent implements OnInit {
       });
   }
 
-  openDetailModal1(template: TemplateRef<any>, item: any): void {
-    const code = item?.code;
-    if (!code) {
-      this.toastService.error('Không tìm thấy mã vai trò!');
-      return;
-    }
-    this.roleService.getApprovedRoleByCode(code).subscribe({
-      next: (res) => {
-        this.selectedItem = res?.data || item;
-        this.modalRef = this.modalService.show(template, { class: 'modal-lg' });
-      },
-      error: () => {
-        this.toastService.error('Không thể lấy thông tin chi tiết vai trò!');
-        this.selectedItem = item;
-        this.modalRef = this.modalService.show(template, { class: 'modal-lg' });
-      }
-    });
-  }
+
 
   openRequestDetailModal(item: any): void {
     const requestId = item?.requestId || item?.id;
