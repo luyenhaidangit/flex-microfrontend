@@ -57,9 +57,13 @@ export class HttpInterceptor implements HttpSystemInterceptor {
         } else if (error.status === HttpError.ConnectionRefused) {
           this.toastService.error('Không thể kết nối đến máy chủ!');
         } else {
-          const msg = error?.error?.message || error?.message || 'Đã xảy ra lỗi!';
-          // Show error toast
-          this.toastService.error(msg);
+          // Skip toast for requests with SkipToastError header
+          const skipToast = request.headers.has(Header.SkipToastError);
+          if (!skipToast) {
+            const msg = error?.error?.message || error?.message || 'Đã xảy ra lỗi!';
+            // Show error toast
+            this.toastService.error(msg);
+          }
         }
 
         // Auto logout when 401

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Header } from 'src/app/core/enums/http.enum';
 
 @Injectable({ providedIn: 'root' })
 export class RoleService {
@@ -26,17 +27,20 @@ export class RoleService {
 
   // createRole and updateRole accept status, requestedBy, requestedDate, rejectReason for draft/save/submit/reject flows
   createRole(data: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/requests/create`, data);
+    const headers = new HttpHeaders().set(Header.SkipToastError, 'true');
+    return this.http.post<any>(`${this.apiUrl}/requests/create`, data, { headers });
   }
 
   // Create update role request
   createUpdateRoleRequest(code: string, data: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/approved/${code}/update`, data);
+    const headers = new HttpHeaders().set(Header.SkipToastError, 'true');
+    return this.http.post<any>(`${this.apiUrl}/approved/${code}/update`, data, { headers });
   }
 
   // Create delete role request
   createDeleteRoleRequest(code: string, data: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/approved/${code}/delete`, data);
+    const headers = new HttpHeaders().set(Header.SkipToastError, 'true');
+    return this.http.post<any>(`${this.apiUrl}/approved/${code}/delete`, data, { headers });
   }
 
   // Get all pending roles with pagination
@@ -64,12 +68,14 @@ export class RoleService {
   }
 
   approveRole(requestId: string | number): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/pending/${requestId}/approve`, {});
+    const headers = new HttpHeaders().set(Header.SkipToastError, 'true');
+    return this.http.post<any>(`${this.apiUrl}/pending/${requestId}/approve`, {}, { headers });
   }
 
   rejectRole(requestId: string | number, reason: string): Observable<any> {
     // Gửi reason đúng dạng object { reason: string } theo API mới
-    return this.http.post<any>(`${this.apiUrl}/pending/${requestId}/reject`, { reason });
+    const headers = new HttpHeaders().set(Header.SkipToastError, 'true');
+    return this.http.post<any>(`${this.apiUrl}/pending/${requestId}/reject`, { reason }, { headers });
   }
 
   cancelDraftRequest(requestId: number): Observable<any> {
