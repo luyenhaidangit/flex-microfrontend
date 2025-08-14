@@ -669,7 +669,7 @@
         </div>
       </div>
 
-             <!-- CREATE Request - Show new data only -->
+             <!-- CREATE Request - Show new data in table format -->
        <div *ngIf="getRequestType() === 'CREATE'" class="card border-0">
          <div class="card-header bg-success bg-opacity-10 border-0">
            <h6 class="mb-0 text-success">
@@ -677,25 +677,55 @@
            </h6>
          </div>
          <div class="card-body">
-           <div class="row g-3">
-                           <div class="col-md-6">
-                <label class="form-label fw-bold text-muted">Mã vai trò</label>
-                <div class="text-dark ps-2 py-2 bg-success bg-opacity-10 rounded min-height-40">
-                  {{ getRoleCode(requestDetailData.newData) | safeField }}
-                </div>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label fw-bold text-muted">Tên vai trò</label>
-                <div class="text-dark ps-2 py-2 bg-success bg-opacity-10 rounded min-height-40">
-                  {{ getRoleName(requestDetailData.newData) | safeField }}
-                </div>
-              </div>
-              <div class="col-md-12">
-                <label class="form-label fw-bold text-muted">Mô tả</label>
-               <div class="text-dark ps-2 py-2 bg-success bg-opacity-10 rounded min-height-40">
-                 {{ getRoleDescription(requestDetailData.newData) | safeField }}
-               </div>
-              </div>
+           <div class="table-responsive">
+             <table class="table table-bordered comparison-table">
+               <thead class="table-light">
+                 <tr>
+                   <th style="width: 50%">Trường dữ liệu</th>
+                   <th style="width: 50%">Giá trị mới</th>
+                 </tr>
+               </thead>
+               <tbody>
+                 <tr>
+                   <td class="fw-bold">Mã vai trò</td>
+                   <td class="bg-success bg-opacity-10">
+                     {{ getRoleCode(requestDetailData.newData) | safeField }}
+                   </td>
+                 </tr>
+                 <tr>
+                   <td class="fw-bold">Tên vai trò</td>
+                   <td class="bg-success bg-opacity-10">
+                     {{ getRoleName(requestDetailData.newData) | safeField }}
+                   </td>
+                 </tr>
+                 <tr>
+                   <td class="fw-bold">Mô tả</td>
+                   <td class="bg-success bg-opacity-10">
+                     {{ getRoleDescription(requestDetailData.newData) | safeField }}
+                   </td>
+                 </tr>
+                 <tr>
+                   <td class="fw-bold">Trạng thái</td>
+                   <td class="bg-success bg-opacity-10">
+                     <span *ngIf="requestDetailData.newData?.isActive; else inactiveStatus">
+                       <i class="fas fa-check-circle text-success me-1"></i>Hoạt động
+                     </span>
+                     <ng-template #inactiveStatus>
+                       <i class="fas fa-times-circle text-danger me-1"></i>Không hoạt động
+                     </ng-template>
+                   </td>
+                 </tr>
+                 <tr>
+                   <td class="fw-bold">Quyền hạn</td>
+                   <td class="bg-success bg-opacity-10">
+                     <span *ngIf="getPermissions(requestDetailData.newData).length > 0; else noPermissionsCreate">
+                       {{ getPermissions(requestDetailData.newData).length }} quyền hạn
+                     </span>
+                     <ng-template #noPermissionsCreate>Không có quyền hạn</ng-template>
+                   </td>
+                 </tr>
+               </tbody>
+             </table>
            </div>
          </div>
        </div>
@@ -763,28 +793,55 @@
              <i class="fas fa-exclamation-triangle me-2"></i>
              <strong>Cảnh báo:</strong> Vai trò này sẽ bị xóa vĩnh viễn sau khi được phê duyệt.
            </div>
-           <div class="row g-3">
-                           <div class="col-md-6">
-                <label class="form-label fw-bold text-muted">Mã vai trò</label>
-                <div class="text-dark ps-2 py-2 bg-danger bg-opacity-10 rounded min-height-40">
-                  {{ getRoleCode(requestDetailData.oldData) | safeField }}
-                </div>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label fw-bold text-muted">Tên vai trò</label>
-                <div class="text-dark ps-2 py-2 bg-danger bg-opacity-10 rounded min-height-40">
-                  {{ getRoleName(requestDetailData.oldData) | safeField }}
-                </div>
-              </div>
-              <div class="col-md-12">
-                <label class="form-label fw-bold text-muted">Quyền hạn</label>
-                <div class="text-dark ps-2 py-2 bg-danger bg-opacity-10 rounded min-height-40">
-                  <span *ngIf="getPermissions(requestDetailData.oldData).length > 0; else noPermissionsDelete">
-                    {{ getPermissions(requestDetailData.oldData).length }} quyền hạn
-                  </span>
-                  <ng-template #noPermissionsDelete>Không có quyền hạn</ng-template>
-                </div>
-              </div>
+           <div class="table-responsive">
+             <table class="table table-bordered comparison-table">
+               <thead class="table-light">
+                 <tr>
+                   <th style="width: 50%">Trường dữ liệu</th>
+                   <th style="width: 50%">Giá trị hiện tại</th>
+                 </tr>
+               </thead>
+               <tbody>
+                 <tr>
+                   <td class="fw-bold">Mã vai trò</td>
+                   <td class="bg-danger bg-opacity-10">
+                     {{ getRoleCode(requestDetailData.oldData) | safeField }}
+                   </td>
+                 </tr>
+                 <tr>
+                   <td class="fw-bold">Tên vai trò</td>
+                   <td class="bg-danger bg-opacity-10">
+                     {{ getRoleName(requestDetailData.oldData) | safeField }}
+                   </td>
+                 </tr>
+                 <tr>
+                   <td class="fw-bold">Mô tả</td>
+                   <td class="bg-danger bg-opacity-10">
+                     {{ getRoleDescription(requestDetailData.oldData) | safeField }}
+                   </td>
+                 </tr>
+                 <tr>
+                   <td class="fw-bold">Trạng thái</td>
+                   <td class="bg-danger bg-opacity-10">
+                     <span *ngIf="requestDetailData.oldData?.isActive; else inactiveStatusDelete">
+                       <i class="fas fa-check-circle text-success me-1"></i>Hoạt động
+                     </span>
+                     <ng-template #inactiveStatusDelete>
+                       <i class="fas fa-times-circle text-danger me-1"></i>Không hoạt động
+                     </ng-template>
+                   </td>
+                 </tr>
+                 <tr>
+                   <td class="fw-bold">Quyền hạn</td>
+                   <td class="bg-danger bg-opacity-10">
+                     <span *ngIf="getPermissions(requestDetailData.oldData).length > 0; else noPermissionsDelete">
+                       {{ getPermissions(requestDetailData.oldData).length }} quyền hạn
+                     </span>
+                     <ng-template #noPermissionsDelete>Không có quyền hạn</ng-template>
+                   </td>
+                 </tr>
+               </tbody>
+             </table>
            </div>
          </div>
        </div>
