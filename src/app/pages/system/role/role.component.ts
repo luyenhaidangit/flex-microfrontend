@@ -133,6 +133,10 @@ export class RoleComponent implements OnInit {
     this.overrideToastIconSize();
   }
 
+  // Track by function
+  trackByCode(_: number, item: Role) { return item.code; }
+  trackById(_: number, item: any)    { return item.requestId ?? item.id; }
+
   // Handle search alll items
   get searchParams(): RoleSearchParams {
     const { pageIndex, pageSize, keyword, isActive } = this.pagingState;
