@@ -22,7 +22,41 @@
     display: none;
 }
 
+// Remove outline for all elements button, input,...
+button,
+.btn,
+input,
+textarea,
+select,
+.form-control,
+.form-select,
+.nav-link,
+.dropdown-toggle,
+[role="button"] {
 
+    &:focus,
+    &:active,
+    &:focus-visible {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+}
+
+*:focus {
+    outline: none !important;
+}
+
+.btn:focus,
+.btn:active,
+input:focus,
+input:active,
+textarea:focus,
+textarea:active,
+select:focus,
+select:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
 
 // dropdown
 .dropdown-toggle {
