@@ -77,7 +77,9 @@ export class RoleComponent implements OnInit {
   rejectForm!: FormGroup;
 
   // Prepare component
-  isLoading = false;
+  isLoadingList = false;
+  isLoadingHistory = false;
+  isLoadingRequestDetail = false;
   modalRef?: BsModalRef | null = null;
 
   // Prepare data for the component
@@ -166,9 +168,9 @@ export class RoleComponent implements OnInit {
   }
 
   getItems(): void {
-    this.isLoading = true;
+    this.isLoadingList = true;
     this.roleService.getApprovedRoles({ ...this.searchParams })
-      .pipe(finalize(() => this.isLoading = false))
+      .pipe(finalize(() => this.isLoadingList = false))
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
@@ -242,11 +244,14 @@ export class RoleComponent implements OnInit {
         this.toastService.error('Không tìm thấy ID yêu cầu!');
         return;
       }
-      this.requestDetailData = null;
-      this.selectedItem = item;
-      this.isApproving = false;
-      this.isRejecting = false;
-      this.roleService.getRoleRequestDetail(requestId).subscribe({
+       this.requestDetailData = null;
+       this.selectedItem = item;
+       this.isApproving = false;
+       this.isRejecting = false;
+       this.isLoadingRequestDetail = true;
+       this.roleService.getRoleRequestDetail(requestId)
+         .pipe(finalize(() => this.isLoadingRequestDetail = false))
+         .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
             this.requestDetailData = res.data;
@@ -291,7 +296,9 @@ export class RoleComponent implements OnInit {
       return;
     }
 
+    this.isLoadingHistory = true;
     this.roleService.getRoleChangeHistory(this.selectedItem.code)
+      .pipe(finalize(() => this.isLoadingHistory = false))
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
@@ -429,10 +436,10 @@ export class RoleComponent implements OnInit {
   // Get pending items
   getPendingItems(): void {
     // Gọi API lấy vai trò chờ duyệt
-    this.isLoading = true;
+    this.isLoadingList = true;
     const params = { ...this.pendingSearchParams };
     this.roleService.getPendingRoles(params)
-      .pipe(finalize(() => this.isLoading = false))
+      .pipe(finalize(() => this.isLoadingList = false))
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
@@ -466,14 +473,17 @@ export class RoleComponent implements OnInit {
       return;
     }
 
-    this.requestDetailData = null;
-    this.selectedItem = item;
-    
-    // Reset loading states
-    this.isApproving = false;
-    this.isRejecting = false;
+     this.requestDetailData = null;
+     this.selectedItem = item;
+     
+     // Reset loading states
+     this.isApproving = false;
+     this.isRejecting = false;
 
-    this.roleService.getRoleRequestDetail(requestId).subscribe({
+     this.isLoadingRequestDetail = true;
+     this.roleService.getRoleRequestDetail(requestId)
+       .pipe(finalize(() => this.isLoadingRequestDetail = false))
+       .subscribe({
       next: (res) => {
         if (res?.isSuccess) {
           this.requestDetailData = res.data;
@@ -545,6 +555,8 @@ export class RoleComponent implements OnInit {
   private resetLoadingStates(): void {
     this.isApproving = false;
     this.isRejecting = false;
+    this.isLoadingHistory = false;
+    this.isLoadingRequestDetail = false;
   }
 
   // Method to close modal and reset states
