@@ -334,6 +334,7 @@ export class RoleComponent implements OnInit, OnDestroy {
       comment: ''
     });
     this.rejectedReason = null;
+    this.resetSearchParams(); // Reset search params khi mở modal tạo mới
     this.openModal(this.createTemplateRef, { class: 'modal-lg' });
   }
 
@@ -347,6 +348,7 @@ export class RoleComponent implements OnInit, OnDestroy {
         this.toastService.success('Gửi duyệt thành công!');
         this.modalRef?.hide();
         this.roleForm.reset();
+        this.resetSearchParams(); // Reset search params sau khi tạo thành công
         // Reload data dựa trên tab hiện tại
         this.search();
       },
@@ -367,6 +369,7 @@ export class RoleComponent implements OnInit, OnDestroy {
       description: item.description || '',
       isActive: item.isActive === 'Y' || item.isActive === true
     });
+    this.resetSearchParams(); // Reset search params khi mở modal sửa
     this.openModal(this.editTemplateRef, {
       class: 'modal-lg',
       backdrop: 'static',
@@ -395,6 +398,7 @@ export class RoleComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.toastService.success('Yêu cầu cập nhật vai trò đã được gửi thành công!');
           this.closeModal();
+          this.resetSearchParams(); // Reset search params sau khi sửa thành công
           this.search(); // Reload data
         },
         error: (error) => {
@@ -409,6 +413,7 @@ export class RoleComponent implements OnInit, OnDestroy {
   openDeleteModal(item: Role): void {
     this.selectedItem = item;
     this.deleteForm.reset();
+    this.resetSearchParams(); // Reset search params khi mở modal xóa
     this.openModal(this.deleteTemplateRef, {
       class: 'modal-lg',
       backdrop: 'static',
@@ -432,6 +437,7 @@ export class RoleComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.toastService.success('Yêu cầu xóa vai trò đã được gửi thành công!');
           this.closeModal();
+          this.resetSearchParams(); // Reset search params sau khi xóa thành công
           this.search(); // Reload data
         },
         error: (error) => {
@@ -534,7 +540,7 @@ export class RoleComponent implements OnInit, OnDestroy {
   switchTab(tab: 'approved' | 'pending') {
     // Luôn gọi lại API khi chuyển tab, kể cả khi tab không đổi
     this.activeTab = tab;
-    this.pagingState.pageIndex = 1; // Reset về trang đầu tiên khi chuyển tab
+    this.resetSearchParams(); // Reset search params khi chuyển tab
     this.search();
   }
 
@@ -607,6 +613,7 @@ export class RoleComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.toastService.success('Phê duyệt yêu cầu thành công!');
         this.modalRef?.hide();
+        this.resetSearchParams(); // Reset search params sau khi phê duyệt thành công
         // Reload data dựa trên tab hiện tại
         this.search();
         this.isApproving = false;
@@ -680,6 +687,7 @@ export class RoleComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.toastService.success('Đã từ chối yêu cầu thành công!');
         this.modalRef?.hide();
+        this.resetSearchParams(); // Reset search params sau khi từ chối thành công
         // Reload data dựa trên tab hiện tại
         this.search();
         // Không cần set isRejecting = false
@@ -838,5 +846,14 @@ export class RoleComponent implements OnInit, OnDestroy {
     // Implementation for confirming delete draft
     this.toastService.info('Chức năng xóa nháp đang được phát triển');
     this.closeModal();
+  }
+
+  // Method to reset search parameters
+  private resetSearchParams(): void {
+    this.pagingState.keyword = '';
+    this.pagingState.type = null;
+    this.pagingState.isActive = null;
+    this.pagingState.createdDate = null;
+    this.pagingState.pageIndex = 1;
   }
 }
