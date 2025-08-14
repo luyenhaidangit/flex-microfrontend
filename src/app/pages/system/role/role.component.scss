@@ -269,24 +269,36 @@ h2 {
   border-left: 4px solid #28a745;
 }
 
-// Thêm các selector cụ thể hơn để override
+/* Toast icon size override */
 :host ::ng-deep .angular-toastify-icon-container {
   width: 12px !important;
   height: 12px !important;
   opacity: 1 !important;
+  min-width: 12px !important;
+  min-height: 12px !important;
+  max-width: 12px !important;
+  max-height: 12px !important;
 }
 
 :host ::ng-deep .angular-toastify__toast .angular-toastify-icon-container {
   width: 12px !important;
   height: 12px !important;
   opacity: 1 !important;
+  min-width: 12px !important;
+  min-height: 12px !important;
+  max-width: 12px !important;
+  max-height: 12px !important;
 }
 
-// Nếu vẫn không work, thử với global styles
+/* Global override for toast icon container */
 ::ng-deep .angular-toastify-icon-container {
   width: 12px !important;
   height: 12px !important;
   opacity: 1 !important;
+  min-width: 12px !important;
+  min-height: 12px !important;
+  max-width: 12px !important;
+  max-height: 12px !important;
 }
 
 // Expandable row styles for change history table

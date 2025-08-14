@@ -135,8 +135,7 @@ export class RoleComponent implements OnInit, OnDestroy {
       reason: ['', [Validators.required]]
     });
     
-    // Override toast icon size with JavaScript
-    this.overrideToastIconSize();
+    // Toast icon size is now handled by CSS override
   }
 
   ngOnDestroy(): void {
@@ -529,21 +528,7 @@ export class RoleComponent implements OnInit, OnDestroy {
     });
   }
 
-  private overrideToastIconSize(): void {
-    // Override toast icon size after a short delay to ensure DOM is ready
-    setTimeout(() => {
-      const iconContainers = document.querySelectorAll('.angular-toastify-icon-container');
-      iconContainers.forEach((container: any) => {
-        container.style.width = '12px';
-        container.style.height = '12px';
-        container.style.opacity = '1';
-        container.style.minWidth = '12px';
-        container.style.minHeight = '12px';
-        container.style.maxWidth = '12px';
-        container.style.maxHeight = '12px';
-      });
-    }, 100);
-  }
+
 
   switchTab(tab: 'approved' | 'pending') {
     // Luôn gọi lại API khi chuyển tab, kể cả khi tab không đổi
