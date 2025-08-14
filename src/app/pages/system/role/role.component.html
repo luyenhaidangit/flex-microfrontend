@@ -489,7 +489,6 @@
           [ngClass]="{'is-invalid': deleteForm.controls.comment.touched && deleteForm.controls.comment.invalid}">
         </textarea>
         <div *ngIf="deleteForm.controls.comment.touched && deleteForm.controls.comment.invalid" class="invalid-tooltip">
-          <span *ngIf="deleteForm.controls.comment.errors?.required">Lý do xóa không được để trống</span>
           <span *ngIf="deleteForm.controls.comment.errors?.maxlength">Lý do xóa không được vượt quá 500 ký tự</span>
         </div>
       </div>
