@@ -382,6 +382,7 @@ export class RoleComponent implements OnInit, OnDestroy {
     const formData = this.roleForm.value;
     
     const updateRequest = {
+      code: this.selectedItem.code,
       name: formData.name,
       description: formData.description || undefined,
       isActive: formData.isActive,
