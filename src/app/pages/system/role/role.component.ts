@@ -1,18 +1,19 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { RoleService } from './role.service';
 import { DEFAULT_PER_PAGE_OPTIONS } from 'src/app/core/constants/shared.constant';
 import { ToastService } from 'angular-toastify';
 import { Role, PagingState, RequestDetailData, RoleSearchParams } from './role.models';
-import { finalize } from 'rxjs/operators';
+import { finalize, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 @Component({
   selector: 'app-role',
   templateUrl: './role.component.html',
   styleUrls: ['./role.component.scss']
 })
 
-export class RoleComponent implements OnInit {
+export class RoleComponent implements OnInit, OnDestroy {
   
   // Prepare default static data
   DEFAULT_PER_PAGE_OPTIONS = DEFAULT_PER_PAGE_OPTIONS;
@@ -103,6 +104,9 @@ export class RoleComponent implements OnInit {
   // Current user info
   currentUser: any = null;
 
+  // Destroy subject for unsubscribing
+  private destroy$ = new Subject<void>();
+
   constructor(
     private roleService: RoleService,
     private modalService: BsModalService,
@@ -133,6 +137,11 @@ export class RoleComponent implements OnInit {
     
     // Override toast icon size with JavaScript
     this.overrideToastIconSize();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   // Track by function
@@ -261,7 +270,7 @@ export class RoleComponent implements OnInit {
               keyboard: false,
               ignoreBackdropClick: true
             });
-            this.modalRef.onHidden?.subscribe(() => {
+            this.modalRef.onHidden?.pipe(takeUntil(this.destroy$)).subscribe(() => {
               this.resetLoadingStates();
             });
           } else {
@@ -495,7 +504,7 @@ export class RoleComponent implements OnInit {
           });
           
           // Reset loading states when modal is hidden
-          this.modalRef.onHidden?.subscribe(() => {
+          this.modalRef.onHidden?.pipe(takeUntil(this.destroy$)).subscribe(() => {
             this.resetLoadingStates();
           });
         } else {
@@ -580,7 +589,7 @@ export class RoleComponent implements OnInit {
    */
   openModal(template: TemplateRef<any>, options: any = {}): void {
     this.modalRef = this.modalService.show(template, options);
-    this.modalRef.onHidden?.subscribe(() => {
+    this.modalRef.onHidden?.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.modalRef = null;
       this.resetLoadingStates();
     });
@@ -645,7 +654,7 @@ export class RoleComponent implements OnInit {
 
     if (this.modalRef) {
       const oldModalRef = this.modalRef;
-      oldModalRef.onHidden?.subscribe(() => {
+      oldModalRef.onHidden?.pipe(takeUntil(this.destroy$)).subscribe(() => {
         this.modalRef = null;
         this.openModal(this.rejectTemplateRef, {
           class: 'modal-md',
