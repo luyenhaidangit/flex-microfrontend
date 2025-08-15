@@ -542,9 +542,9 @@
       </div>
     </div>
   </div>
-  <div class="modal-footer border-top-0">
-    <button type="button" class="btn btn-success" (click)="approveRole()">Xác nhận</button>
-    <button type="button" class="btn btn-outline-secondary" (click)="modalRef?.hide()">Hủy</button>
+  <div class="modal-footer border-top-0 d-flex justify-content-end">
+    <button type="button" class="btn btn-secondary me-2" (click)="modalRef?.hide()">Hủy</button>
+    <button type="button" class="btn btn-primary" (click)="approveRole()">Xác nhận</button>
   </div>
 </ng-template>
 
@@ -572,13 +572,13 @@
         </div>
       </div>
     </div>
-    <div class="modal-footer border-top-0">
-      <button type="submit" class="btn btn-danger" [disabled]="isRejecting">
+    <div class="modal-footer border-top-0 d-flex justify-content-end">
+      <button type="button" class="btn btn-secondary me-2" (click)="closeModal()" [disabled]="isRejecting">Hủy</button>
+      <button type="submit" class="btn btn-primary" [disabled]="isRejecting">
         <i class="fas fa-times me-1" *ngIf="!isRejecting"></i>
         <span class="spinner-border spinner-border-sm me-1" *ngIf="isRejecting" role="status" aria-hidden="true"></span>
         {{ isRejecting ? 'Đang từ chối...' : 'Xác nhận từ chối' }}
       </button>
-      <button type="button" class="btn btn-secondary" (click)="closeModal()" [disabled]="isRejecting">Hủy</button>
     </div>
   </form>
 </ng-template>
@@ -864,21 +864,19 @@
     </div>
   </div>
 
-  <div class="modal-footer border-top-0">
-    <div class="d-flex justify-content-between w-100">
-      <div>
-        <button type="button" class="btn btn-outline-secondary" (click)="closeModal()" [disabled]="isApproving || isRejecting">
-          <i class="fas fa-times me-1"></i> Đóng
-        </button>
-      </div>
-      <div class="btn-group-approve-reject">
-        <button type="button" class="btn btn-success me-2" (click)="approveRole()">
-            Duyệt
-        </button>
-        <button type="button" class="btn btn-danger" (click)="openRejectModal()">
-          <i class="fas fa-times me-1"></i> Từ chối
-        </button>
-      </div>
+  <div class="modal-footer border-top-0 d-flex justify-content-between">
+    <div>
+      <button type="button" class="btn btn-outline-secondary" (click)="closeModal()" [disabled]="isApproving || isRejecting">
+        <i class="fas fa-times me-1"></i> Đóng
+      </button>
+    </div>
+    <div>
+      <button type="button" class="btn btn-danger me-2" (click)="openRejectModal()">
+        <i class="fas fa-times me-1"></i> Từ chối
+      </button>
+      <button type="button" class="btn btn-primary" (click)="approveRole()">
+          Duyệt
+      </button>
     </div>
   </div>
 </ng-template>
