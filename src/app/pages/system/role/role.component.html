@@ -206,13 +206,13 @@
                   <ng-container *ngFor="let perm of group.children">
                     <div>
                       <label class="d-inline-flex align-items-center" style="font-weight: normal; color: #212529; margin-right: 1.5rem;">
-                        <input type="checkbox" class="form-check-input me-2" [checked]="perm.isChecked" [indeterminate]="perm.isIndeterminate" [disabled]="!perm.isAssignable" />
+                        <input type="checkbox" class="form-check-input me-2" [checked]="perm.isChecked" [indeterminate]="perm.isIndeterminate" disabled />
                         <span>{{ perm.name }}</span>
                       </label>
                       <div *ngIf="perm.children?.length" class="ms-4 mt-1">
                         <div *ngFor="let sub of perm.children" class="mb-1">
                           <label class="d-flex align-items-center" style="font-weight: normal; color: #212529;">
-                            <input type="checkbox" class="form-check-input me-2" [checked]="sub.isChecked" [indeterminate]="sub.isIndeterminate" [disabled]="!sub.isAssignable" />
+                            <input type="checkbox" class="form-check-input me-2" [checked]="sub.isChecked" [indeterminate]="sub.isIndeterminate" disabled />
                             <span>{{ sub.name }}</span>
                           </label>
                         </div>
