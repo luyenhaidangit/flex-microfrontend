@@ -20,6 +20,7 @@ export interface Role {
   approveDate?: string;
   pendingAction?: 'CREATE' | 'UPDATE' | 'DELETE';
   requestType?: 'CREATE' | 'UPDATE' | 'DELETE';
+  permissions?: string[]; // Thêm lại trường này để FE không lỗi
 }
 
 export interface RoleSearchParams {

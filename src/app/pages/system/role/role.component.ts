@@ -12,7 +12,6 @@ import { Subject } from 'rxjs';
   templateUrl: './role.component.html',
   styleUrls: ['./role.component.scss']
 })
-
 export class RoleComponent implements OnInit, OnDestroy {
   
   // Prepare default static data
