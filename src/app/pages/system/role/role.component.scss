@@ -490,3 +490,57 @@ h2 {
     background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
   }
 }
+
+.permission-groups {
+  margin-top: 8px;
+}
+.permission-group.card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  border: 1px solid #e0e0e0;
+}
+.permission-group .card-header {
+  background: #f5faff;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 1rem;
+}
+.permission-group .btn {
+  font-size: 0.85rem;
+  padding: 2px 10px;
+}
+.permission-group .badge {
+  font-size: 0.95em;
+  border-radius: 6px;
+  margin-left: 2px;
+}
+.permission-group .badge.bg-light {
+  background: #f8f9fa;
+  color: #333;
+}
+.permission-group .badge.bg-secondary {
+  background: #e3e6f0;
+  color: #495057;
+}
+.permission-group .form-check-input {
+  width: 1.1em;
+  height: 1.1em;
+}
+.permission-group .row.g-2 {
+  margin-left: 0;
+  margin-right: 0;
+}
+.permission-group .col-md-4, .permission-group .col-6 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+@media (max-width: 767.98px) {
+  .permission-group .col-md-4, .permission-group .col-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  .permission-group .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}

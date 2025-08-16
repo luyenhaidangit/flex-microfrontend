@@ -194,12 +194,41 @@
               <app-badge [value]="selectedItem?.isActive" type="status"></app-badge>
             </div>
           </div>
-          <div class="col-md-12" *ngIf="selectedItem?.permissions?.length">
+          <div class="col-md-12 mt-3">
             <label class="form-label fw-bold text-muted">Quyền hạn</label>
-            <div class="text-dark ps-1">
-              <ng-container *ngFor="let perm of selectedItem.permissions">
-                <span class="badge bg-secondary me-1">{{ perm }}</span>
-              </ng-container>
+            <div class="permission-groups">
+              <div *ngFor="let group of selectedItem?.permissionTree; let i = index" class="permission-group card mb-2">
+                <div class="card-header d-flex align-items-center justify-content-between py-2 px-3">
+                  <span class="fw-bold text-primary">{{ group.name }}</span>
+                  <div>
+                    <button type="button" class="btn btn-sm btn-outline-primary me-2" (click)="toggleGroupExpand(i)">
+                      <i class="fas" [ngClass]="isGroupExpanded(i) ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+                      {{ isGroupExpanded(i) ? 'Thu gọn' : 'Mở rộng' }}
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-success" (click)="checkAllPermissions(group)">
+                      <i class="fas fa-check-square me-1"></i>Chọn tất cả
+                    </button>
+                  </div>
+                </div>
+                <div class="card-body pt-2 pb-1 px-3" *ngIf="isGroupExpanded(i)">
+                  <div class="row g-2">
+                    <div class="col-md-4 col-6 mb-2" *ngFor="let perm of group.children">
+                      <label class="d-flex align-items-center">
+                        <input type="checkbox" class="form-check-input me-2" [checked]="perm.isChecked" [indeterminate]="perm.isIndeterminate" [disabled]="!perm.isAssignable" />
+                        <span class="badge bg-light text-dark px-2 py-1">{{ perm.name }}</span>
+                      </label>
+                      <div *ngIf="perm.children?.length" class="ms-4 mt-1">
+                        <div *ngFor="let sub of perm.children">
+                          <label class="d-flex align-items-center">
+                            <input type="checkbox" class="form-check-input me-2" [checked]="sub.isChecked" [indeterminate]="sub.isIndeterminate" [disabled]="!sub.isAssignable" />
+                            <span class="badge bg-secondary px-2 py-1">{{ sub.name }}</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div *ngIf="selectedItem?.status === 'REJECTED' && selectedItem?.rejectReason" class="alert alert-danger mt-3">
@@ -211,7 +240,7 @@
           </div>
         </div>
       </tab>
-                      <tab heading="Lịch sử thay đổi" (selectTab)="loadChangeHistory()">
+      <tab heading="Lịch sử thay đổi" (selectTab)="loadChangeHistory()">
                   <div class="mt-3">
                     <!-- Loading state -->
                     <div *ngIf="isLoadingHistory" class="text-center py-4">

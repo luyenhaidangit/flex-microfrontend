@@ -106,6 +106,29 @@ export class RoleComponent implements OnInit, OnDestroy {
   // Destroy subject for unsubscribing
   private destroy$ = new Subject<void>();
 
+  expandedGroups: { [key: number]: boolean } = {};
+
+  isGroupExpanded(index: number): boolean {
+    return this.expandedGroups[index] !== false;
+  }
+
+  toggleGroupExpand(index: number): void {
+    this.expandedGroups[index] = !this.isGroupExpanded(index);
+  }
+
+  checkAllPermissions(group: any): void {
+    if (group && group.children) {
+      group.children.forEach((perm: any) => {
+        if (perm.isAssignable) perm.isChecked = true;
+        if (perm.children) {
+          perm.children.forEach((sub: any) => {
+            if (sub.isAssignable) sub.isChecked = true;
+          });
+        }
+      });
+    }
+  }
+
   constructor(
     private roleService: RoleService,
     private modalService: BsModalService,
