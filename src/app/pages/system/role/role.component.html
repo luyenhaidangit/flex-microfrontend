@@ -371,6 +371,17 @@
             <span *ngIf="roleForm.controls.name.errors?.required">Tên vai trò không được để trống</span>
           </div>
         </div>
+        <div class="col-md-6 position-relative">
+          <label class="form-label">Trạng thái <span class="text-danger">*</span></label>
+          <select class="form-select" formControlName="isActive"
+                  [ngClass]="{'is-invalid': roleForm.controls.isActive.touched && roleForm.controls.isActive.invalid}">
+            <option [ngValue]="true">Hoạt động</option>
+            <option [ngValue]="false">Không hoạt động</option>
+          </select>
+          <div *ngIf="roleForm.controls.isActive.touched && roleForm.controls.isActive.invalid" class="invalid-tooltip">
+            <span *ngIf="roleForm.controls.isActive.errors?.required">Trạng thái không được để trống</span>
+          </div>
+        </div>
         <div class="col-md-12 position-relative">
           <label class="form-label">Mô tả</label>
           <textarea class="form-control" formControlName="description" rows="2" placeholder="Nhập mô tả"></textarea>
@@ -405,7 +416,6 @@
           </div>
         </div>
         <!-- Hidden fields for Create modal -->
-        <input type="hidden" formControlName="isActive" value="true">
         <input type="hidden" formControlName="comment" value="">
       </div>
     </div>
