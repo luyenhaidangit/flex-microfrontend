@@ -939,8 +939,57 @@ export class RoleComponent implements OnInit, OnDestroy {
     parent.isIndeterminate = !allChecked && anyChecked;
   }
 
+  // --- CRUD RULE HANDLER FOR PERMISSION TREE ---
+  private handleCrudRule(parentNode: PermissionNode, changedChild: PermissionNode, checked: boolean): void {
+    const children = parentNode.children;
+    const viewNode = children.find(c => c.code.endsWith('.VIEW'));
+    const createNode = children.find(c => c.code.endsWith('.CREATE'));
+    const updateNode = children.find(c => c.code.endsWith('.UPDATE'));
+    const deleteNode = children.find(c => c.code.endsWith('.DELETE'));
+    const approveNode = children.find(c => c.code.endsWith('.APPROVE'));
+
+    // Nếu thao tác với VIEW
+    if (changedChild.code.endsWith('.VIEW')) {
+      if (!checked) {
+        [createNode, updateNode, deleteNode, approveNode].forEach(node => {
+          if (node) node.isChecked = false;
+        });
+      }
+      return;
+    }
+
+    // Nếu thao tác với CREATE/UPDATE/DELETE
+    if (
+      changedChild.code.endsWith('.CREATE') ||
+      changedChild.code.endsWith('.UPDATE') ||
+      changedChild.code.endsWith('.DELETE')
+    ) {
+      if (checked) {
+        if (viewNode) viewNode.isChecked = true;
+        if (approveNode && approveNode.isChecked) approveNode.isChecked = false;
+      }
+      return;
+    }
+
+    // Nếu thao tác với APPROVE
+    if (changedChild.code.endsWith('.APPROVE')) {
+      if (checked) {
+        if (viewNode) viewNode.isChecked = true;
+        [createNode, updateNode, deleteNode].forEach(node => {
+          if (node) node.isChecked = false;
+        });
+      }
+      return;
+    }
+  }
+
   onNodeChange(node: PermissionNode, parent?: PermissionNode): void {
     this.toggleNode(node, node.isChecked);
+
+    // --- Xử lý rule CRUD cho tree permission khi thêm mới ---
+    if (parent && parent.children && parent['isCrudRule']) {
+      this.handleCrudRule(parent, node, node.isChecked);
+    }
 
     let p = parent;
     while (p) {
