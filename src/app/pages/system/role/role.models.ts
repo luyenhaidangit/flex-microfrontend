@@ -69,6 +69,7 @@ export interface PermissionNode {
   isAssignable: boolean;
   isChecked: boolean;
   isIndeterminate?: boolean;
+  isCrudRule?: number; // Thêm dòng này để hỗ trợ kiểm tra rule CRUD
   sortOrder: number;
   children: PermissionNode[];
 }

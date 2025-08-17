@@ -921,9 +921,36 @@ export class RoleComponent implements OnInit, OnDestroy {
   }
 
   toggleNode(node: PermissionNode, checked: boolean): void {
+    if (node.isCrudRule) {
+      node.children?.forEach(child => {
+        if (!checked) {
+          // Nếu bỏ chọn thì bỏ hết tất cả quyền con
+          if (child.isAssignable) child.isChecked = false;
+          child.isIndeterminate = false;
+        } else {
+          // Nếu chọn thì chỉ check VIEW, CREATE, UPDATE, DELETE
+          if (
+            child.code.endsWith('.VIEW') ||
+            child.code.endsWith('.CREATE') ||
+            child.code.endsWith('.UPDATE') ||
+            child.code.endsWith('.DELETE')
+          ) {
+            if (child.isAssignable) child.isChecked = true;
+            child.isIndeterminate = false;
+          } else if (child.code.endsWith('.APPROVE')) {
+            child.isChecked = false;
+            child.isIndeterminate = false;
+          }
+        }
+        if (child.children?.length) {
+          this.toggleNode(child, checked);
+        }
+      });
+      return;
+    }
+    // Mặc định: check tất cả con
     if (node.isAssignable) node.isChecked = checked;
     node.isIndeterminate = false;
-
     if (node.children?.length) {
       node.children.forEach(child => this.toggleNode(child, checked));
     }
