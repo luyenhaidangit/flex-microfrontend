@@ -890,18 +890,28 @@ export class RoleComponent implements OnInit, OnDestroy {
       next: (res) => {
         if (res?.isSuccess) {
           const data = res.data || {};
+          // Đảm bảo tất cả quyền hạn đều không được chọn mặc định
+          const uncheckAll = (nodes: any[]) => {
+            nodes.forEach(node => {
+              node.isChecked = false;
+              node.isIndeterminate = false;
+              if (node.children && node.children.length) {
+                uncheckAll(node.children);
+              }
+            });
+          };
           this.permissionTree = data.root || [];
+          uncheckAll(this.permissionTree);
           this.permissionSummary = {
             total: data.total || 0,
             assignable: data.assignable || 0,
-            checked: data.checked || 0
+            checked: 0 // luôn là 0 khi tạo mới
           };
         } else {
           this.toastService.error('Không tải được cây quyền!');
         }
       },
-      error: (err) => {
-        console.error('getTreePermissions error:', err);
+      error: () => {
         this.toastService.error('Không tải được cây quyền!');
       }
     });

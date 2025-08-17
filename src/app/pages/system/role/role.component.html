@@ -199,8 +199,12 @@
             <label class="form-label fw-bold text-muted">Quyền hạn</label>
             <div>
               <div *ngFor="let group of selectedItem?.permissionTree">
-                <div class="mb-2">
-                  <span class="fw-normal text-dark">{{ group.name }}</span>
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <span class="fw-bold text-dark">{{ group.name }}</span>
+                  <div>
+                    <button type="button" class="btn btn-sm btn-outline-primary" (click)="toggleNode(group, true)">Chọn tất cả</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary ms-2" (click)="toggleNode(group, false)">Bỏ chọn</button>
+                  </div>
                 </div>
                 <div class="d-flex flex-wrap mb-2" style="gap: 2rem;">
                   <ng-container *ngFor="let perm of group.children">
@@ -393,14 +397,12 @@
         
           <div>
             <div *ngFor="let group of permissionTree; let gi = index">
-              <div class="mb-2 d-flex align-items-center">
+              <div class="mb-2 d-flex align-items-center justify-content-between">
                 <span class="fw-normal text-dark me-3">{{ group.name }}</span>
-        
-                <!-- Chọn toàn nhóm -->
-                <button type="button" class="btn btn-sm btn-outline-primary" (click)="toggleNode(group, true)">Chọn tất
-                  cả</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary ms-2" (click)="toggleNode(group, false)">Bỏ
-                  chọn</button>
+                <div>
+                  <button type="button" class="btn btn-sm btn-outline-primary role-permission-group-btn" (click)="toggleNode(group, true)">Chọn tất cả</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary ms-2 role-permission-group-btn" (click)="toggleNode(group, false)">Bỏ chọn</button>
+                </div>
               </div>
         
               <div class="d-flex flex-wrap mb-2" style="gap: 2rem;">
