@@ -81,4 +81,11 @@ export class RoleService {
   cancelDraftRequest(requestId: number): Observable<any> {
     return this.http.post<any>(`/api/roles/requests/${requestId}/cancel`, {});
   }
+
+  getTreePermissions(code?: string): Observable<any> {
+    if (code) {
+      return this.http.get<any>(`${this.apiUrl}/tree-permissions`, { params: { code } });
+    }
+    return this.http.get<any>(`${this.apiUrl}/tree-permissions`);
+  }
 }

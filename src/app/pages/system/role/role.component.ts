@@ -4,7 +4,7 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { RoleService } from './role.service';
 import { DEFAULT_PER_PAGE_OPTIONS } from 'src/app/core/constants/shared.constant';
 import { ToastService } from 'angular-toastify';
-import { Role, PagingState, RequestDetailData, RoleSearchParams } from './role.models';
+import { Role, PagingState, RequestDetailData, RoleSearchParams, PermissionNode } from './role.models';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 @Component({
@@ -102,6 +102,9 @@ export class RoleComponent implements OnInit, OnDestroy {
 
   // Current user info
   currentUser: any = null;
+
+  permissionTree: PermissionNode[] = [];
+  permissionSummary = { total: 0, assignable: 0, checked: 0 };
 
   // Destroy subject for unsubscribing
   private destroy$ = new Subject<void>();
@@ -357,6 +360,7 @@ export class RoleComponent implements OnInit, OnDestroy {
     });
     this.rejectedReason = null;
     this.resetSearchParams(); // Reset search params khi mở modal tạo mới
+    this.loadPermissionTreeForCreate();
     this.openModal(this.createTemplateRef, { class: 'modal-lg' });
   }
 
@@ -877,5 +881,77 @@ export class RoleComponent implements OnInit, OnDestroy {
     this.pagingState.isActive = null;
     this.pagingState.createdDate = null;
     this.pagingState.pageIndex = 1;
+  }
+
+  private loadPermissionTreeForCreate(): void {
+  this.permissionTree = [];
+  this.roleService.getTreePermissions()
+    .subscribe({
+      next: (res) => {
+        if (res?.isSuccess) {
+          const data = res.data || {};
+          this.permissionTree = data.root || [];
+          this.permissionSummary = {
+            total: data.total || 0,
+            assignable: data.assignable || 0,
+            checked: data.checked || 0
+          };
+        } else {
+          this.toastService.error('Không tải được cây quyền!');
+        }
+      },
+      error: (err) => {
+        console.error('getTreePermissions error:', err);
+        this.toastService.error('Không tải được cây quyền!');
+      }
+    });
+  }
+
+  toggleNode(node: PermissionNode, checked: boolean): void {
+    if (node.isAssignable) node.isChecked = checked;
+    node.isIndeterminate = false;
+
+    if (node.children?.length) {
+      node.children.forEach(child => this.toggleNode(child, checked));
+    }
+  }
+
+  updateParentState(parent?: PermissionNode): void {
+    if (!parent || !parent.children?.length) return;
+
+    const allChecked = parent.children.every(c => (c.isAssignable ? c.isChecked : true) && !c.isIndeterminate);
+    const anyChecked = parent.children.some(c => (c.isAssignable && c.isChecked) || c.isIndeterminate);
+
+    if (parent.isAssignable) parent.isChecked = allChecked;
+    parent.isIndeterminate = !allChecked && anyChecked;
+  }
+
+  onNodeChange(node: PermissionNode, parent?: PermissionNode): void {
+    this.toggleNode(node, node.isChecked);
+
+    let p = parent;
+    while (p) {
+      this.updateParentState(p);
+      p = undefined as any;
+    }
+
+    this.permissionSummary.checked = this.countChecked(this.permissionTree);
+  }
+
+  private countChecked(nodes: PermissionNode[]): number {
+    let count = 0;
+    for (const n of nodes) {
+      if (n.isAssignable && n.isChecked) count++;
+      if (n.children?.length) count += this.countChecked(n.children);
+    }
+    return count;
+  }
+
+  private collectSelectedCodes(nodes: PermissionNode[], acc: string[] = []): string[] {
+    for (const n of nodes) {
+      if (n.isAssignable && n.isChecked) acc.push(n.code);
+      if (n.children?.length) this.collectSelectedCodes(n.children, acc);
+    }
+    return acc;
   }
 }

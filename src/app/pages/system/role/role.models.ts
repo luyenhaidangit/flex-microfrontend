@@ -60,4 +60,15 @@ export interface RequestDetailData {
   rejectReason?: string;
   rejectedBy?: string;
   rejectedDate?: string;
-} 
+}
+
+export interface PermissionNode {
+  id: number;
+  code: string;
+  name: string;
+  isAssignable: boolean;
+  isChecked: boolean;
+  isIndeterminate?: boolean;
+  sortOrder: number;
+  children: PermissionNode[];
+}
