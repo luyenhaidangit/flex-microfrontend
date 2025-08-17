@@ -201,7 +201,7 @@
               <div *ngFor="let group of selectedItem?.permissionTree">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                   <span class="fw-bold text-dark">{{ group.name }}</span>
-                  <div>
+                  <div *ngIf="!selectedItem">
                     <button type="button" class="btn btn-sm btn-outline-primary" (click)="toggleNode(group, true)">Chọn tất cả</button>
                     <button type="button" class="btn btn-sm btn-outline-secondary ms-2" (click)="toggleNode(group, false)">Bỏ chọn</button>
                   </div>
