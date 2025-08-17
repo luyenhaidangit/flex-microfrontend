@@ -368,7 +368,9 @@ export class RoleComponent implements OnInit, OnDestroy {
   onSubmitRole(): void {
     this.roleForm.markAllAsTouched();
     if (this.roleForm.invalid) return;
-    const payload = this.roleForm.value; 
+    const payload = this.roleForm.value;
+    // Lấy danh sách quyền đã chọn từ permissionTree
+    payload.claims = this.collectSelectedCodes(this.permissionTree);
     this.roleService.createRole(payload).subscribe({
       next: () => {
         this.toastService.success('Gửi duyệt thành công!');
@@ -409,14 +411,15 @@ export class RoleComponent implements OnInit, OnDestroy {
     if (this.roleForm.invalid || !this.selectedItem) return;
   
     const formData = this.roleForm.value;
-    
+    // Lấy danh sách quyền đã chọn từ permissionTree
+    const claims = this.collectSelectedCodes(this.permissionTree);
     const updateRequest = {
       code: this.selectedItem.code,
       name: formData.name,
       description: formData.description || undefined,
       isActive: formData.isActive,
       comment: formData.comment,
-      claims: []
+      claims: claims
     };
 
     this.roleService.createUpdateRoleRequest(this.selectedItem.code, updateRequest)
