@@ -398,7 +398,7 @@
           <div>
             <div *ngFor="let group of permissionTree; let gi = index">
               <div class="mb-2 d-flex align-items-center justify-content-between">
-                <span class="fw-normal text-dark me-3">{{ group.name }}</span>
+                <span class="fw-bold text-dark me-3">{{ group.name }}</span>
                 <div>
                   <button type="button" class="btn btn-sm btn-outline-primary role-permission-group-btn" (click)="toggleNode(group, true)">Chọn tất cả</button>
                   <button type="button" class="btn btn-sm btn-outline-secondary ms-2 role-permission-group-btn" (click)="toggleNode(group, false)">Bỏ chọn</button>
