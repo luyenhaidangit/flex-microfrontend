@@ -185,14 +185,14 @@
             <div class="text-dark ps-1">{{ selectedItem?.name | safeField }}</div>
           </div>
           <div class="col-md-6">
-            <label class="form-label fw-bold text-muted">Mô tả</label>
-            <div class="text-dark ps-1">{{ selectedItem?.description | safeField }}</div>
-          </div>
-          <div class="col-md-6">
             <label class="form-label fw-bold text-muted">Trạng thái</label>
             <div class="text-dark ps-1">
               <app-badge [value]="selectedItem?.isActive" type="status"></app-badge>
             </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-bold text-muted">Mô tả</label>
+            <div class="text-dark ps-1">{{ selectedItem?.description | safeField }}</div>
           </div>
           <div class="col-12"><hr class="my-2" style="border-top:1px solid #000" /></div>
           <div class="col-md-12">
