@@ -411,7 +411,7 @@ export class RoleComponent implements OnInit, OnDestroy {
         this.permissionTree = data.permissionTree || [];
         this.resetSearchParams();
         this.openModal(this.editTemplateRef, {
-          class: 'modal-lg',
+          class: 'modal-xl', // rộng như xem chi tiết
           backdrop: 'static',
           keyboard: false
         });
@@ -419,7 +419,7 @@ export class RoleComponent implements OnInit, OnDestroy {
       error: () => {
         this.toastService.error('Không thể lấy thông tin chi tiết vai trò!');
         this.selectedItem = item;
-        this.openModal(this.editTemplateRef, { class: 'modal-lg' });
+        this.openModal(this.editTemplateRef, { class: 'modal-xl' });
       }
     });
   }
@@ -460,13 +460,30 @@ export class RoleComponent implements OnInit, OnDestroy {
 
   // Open delete modal
   openDeleteModal(item: Role): void {
-    this.selectedItem = item;
+    const code = item?.code;
+    if (!code) {
+      this.toastService.error('Không tìm thấy mã vai trò!');
+      return;
+    }
+    this.selectedItem = null;
     this.deleteForm.reset();
     this.resetSearchParams(); // Reset search params khi mở modal xóa
-    this.openModal(this.deleteTemplateRef, {
-      class: 'modal-lg',
-      backdrop: 'static',
-      keyboard: false
+    // Gọi API lấy chi tiết vai trò để lấy permissionTree
+    this.roleService.getApprovedRoleByCode(code).subscribe({
+      next: (res) => {
+        const data = res?.data || item;
+        this.selectedItem = data;
+        this.openModal(this.deleteTemplateRef, {
+          class: 'modal-xl', // rộng như xem chi tiết
+          backdrop: 'static',
+          keyboard: false
+        });
+      },
+      error: () => {
+        this.toastService.error('Không thể lấy thông tin chi tiết vai trò!');
+        this.selectedItem = item;
+        this.openModal(this.deleteTemplateRef, { class: 'modal-xl' });
+      }
     });
   }
 
