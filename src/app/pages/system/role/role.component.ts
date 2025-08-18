@@ -390,18 +390,37 @@ export class RoleComponent implements OnInit, OnDestroy {
 
   // Open edit modal
   openEditModal(item: Role): void {
-    this.selectedItem = item;
-    this.roleForm.patchValue({
-      code: item.code,
-      name: item.name,
-      description: item.description || '',
-      isActive: item.isActive === 'Y' || item.isActive === true
-    });
-    this.resetSearchParams(); // Reset search params khi mở modal sửa
-    this.openModal(this.editTemplateRef, {
-      class: 'modal-lg',
-      backdrop: 'static',
-      keyboard: false
+    const code = item?.code;
+    if (!code) {
+      this.toastService.error('Không tìm thấy mã vai trò!');
+      return;
+    }
+    this.selectedItem = null;
+    // Gọi API lấy chi tiết vai trò (bao gồm permissionTree)
+    this.roleService.getApprovedRoleByCode(code).subscribe({
+      next: (res) => {
+        const data = res?.data || item;
+        this.selectedItem = data;
+        this.roleForm.patchValue({
+          code: data.code,
+          name: data.name,
+          description: data.description || '',
+          isActive: data.isActive === 'Y' || data.isActive === true
+        });
+        // Gán permissionTree để hiển thị checkbox quyền hạn
+        this.permissionTree = data.permissionTree || [];
+        this.resetSearchParams();
+        this.openModal(this.editTemplateRef, {
+          class: 'modal-lg',
+          backdrop: 'static',
+          keyboard: false
+        });
+      },
+      error: () => {
+        this.toastService.error('Không thể lấy thông tin chi tiết vai trò!');
+        this.selectedItem = item;
+        this.openModal(this.editTemplateRef, { class: 'modal-lg' });
+      }
     });
   }
 
@@ -413,13 +432,14 @@ export class RoleComponent implements OnInit, OnDestroy {
     const formData = this.roleForm.value;
     // Lấy danh sách quyền đã chọn từ permissionTree
     const claims = this.collectSelectedCodes(this.permissionTree);
+    console.log('Claims gửi lên:', claims); // Log claims để kiểm tra
     const updateRequest = {
       code: this.selectedItem.code,
       name: formData.name,
       description: formData.description || undefined,
       isActive: formData.isActive,
       comment: formData.comment,
-      claims: claims
+      claims: claims || []
     };
 
     this.roleService.createUpdateRoleRequest(this.selectedItem.code, updateRequest)
