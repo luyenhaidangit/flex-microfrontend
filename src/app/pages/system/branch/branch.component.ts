@@ -321,6 +321,7 @@ export class BranchComponent implements OnInit {
     this.branchForm.reset();
     this.branchForm.patchValue({
       isActive: true,
+      branchType: 1,
       comment: ''
     });
     this.rejectedReason = null;

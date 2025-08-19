@@ -2,11 +2,11 @@ export function getBranchTypeLabel(branchType: number | string | null | undefine
   const type = branchType === null || branchType === undefined ? undefined : Number(branchType as any);
   switch (type) {
     case 1:
-      return 'Chi nhánh chính';
+      return 'Hội sở chính';
     case 2:
-      return 'Chi nhánh phụ';
+      return 'Chi nhánh';
     case 3:
-      return 'Văn phòng đại diện';
+      return 'Văn phòng giao dịch';
     default:
       return 'Không xác định';
   }
