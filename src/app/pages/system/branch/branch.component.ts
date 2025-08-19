@@ -88,8 +88,8 @@ export class BranchComponent implements OnInit {
       skeletonCols: ['60px', '140px', '100px', '200px', '80px', '120px']
     },
     pending: {
-      head: ['Mã chi nhánh', 'Tên chi nhánh', 'Loại chi nhánh', 'Mô tả', 'Loại yêu cầu', 'Thao tác'],
-      skeletonCols: ['60px', '140px', '100px', '200px', '90px', '120px']
+      head: ['Mã chi nhánh', 'Tên chi nhánh', 'Mô tả', 'Loại yêu cầu', 'Người tạo', 'Ngày tạo', 'Thao tác'],
+      skeletonCols: ['60px', '140px', '200px', '90px', '120px', '90px', '120px']
     }
   };
 
