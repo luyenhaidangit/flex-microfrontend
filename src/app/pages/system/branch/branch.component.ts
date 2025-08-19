@@ -298,7 +298,9 @@ export class BranchComponent implements OnInit {
       return;
     }
 
+    this.isLoadingHistory = true;
     this.branchService.getBranchChangeHistory(this.selectedItem.code)
+      .pipe(finalize(() => this.isLoadingHistory = false))
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
