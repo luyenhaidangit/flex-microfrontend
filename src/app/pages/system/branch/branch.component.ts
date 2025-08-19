@@ -78,6 +78,31 @@ export class BranchComponent implements OnInit {
   // Current user info
   currentUser: any = null;
 
+  skeletonRows = Array.from({ length: 8 });
+  tableConfig = {
+    approved: {
+      head: ['Mã chi nhánh', 'Tên chi nhánh', 'Loại chi nhánh', 'Mô tả', 'Trạng thái', 'Thao tác'],
+      skeletonCols: ['60px', '140px', '100px', '200px', '80px', '120px']
+    },
+    pending: {
+      head: ['Mã chi nhánh', 'Tên chi nhánh', 'Loại chi nhánh', 'Mô tả', 'Loại yêu cầu', 'Thao tác'],
+      skeletonCols: ['60px', '140px', '100px', '200px', '90px', '120px']
+    }
+  };
+
+  get headCols(): string[] {
+    return this.tableConfig[this.activeTab].head;
+  }
+  get skeletonCols(): string[] {
+    return this.tableConfig[this.activeTab].skeletonCols;
+  }
+  get colspan(): number {
+    return this.headCols.length;
+  }
+
+  trackByCode(_: number, item: Branch) { return item.code; }
+  trackById(_: number, item: any)    { return item.requestId ?? item.id; }
+
   constructor(
     private branchService: BranchService,
     private modalService: BsModalService,
@@ -114,11 +139,9 @@ export class BranchComponent implements OnInit {
 
   // Handle search all items
   get searchParams(): BranchSearchParams {
-    const { pageIndex, pageSize, keyword, isActive } = this.pagingState;
+    const { pageIndex, pageSize, keyword } = this.pagingState;
     const params: BranchSearchParams = { pageIndex, pageSize };
     if (keyword?.trim()) params.keyword = keyword.trim();
-    if (isActive === true) params.isActive = 'Y';
-    else if (isActive === false) params.isActive = 'N';
     return params;
   }
 

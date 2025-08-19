@@ -8,22 +8,28 @@ h2 {
 .text-action-view {
   color: #3498db;
 }
+
 .text-action-edit {
   color: #f39c12;
 }
+
 .text-action-delete {
   color: #e74c3c;
 }
+
 .text-action-pending {
   color: #fd7e14;
 }
+
 .text-action-assign {
   color: #8e44ad;
 }
 
 .comparison-table {
   .table {
-    th, td {
+
+    th,
+    td {
       vertical-align: middle;
     }
   }
@@ -92,39 +98,41 @@ h2 {
   background-color: #fff3cd;
   color: #856404;
 }
+
 .badge-soft-success {
   background-color: #d4edda;
   color: #155724;
 }
+
 .badge-soft-danger {
   background-color: #f8d7da;
   color: #721c24;
 }
 
-.branch-header {
+.role-header {
   position: sticky;
   top: 0;
   z-index: 10;
   background: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
   padding-bottom: 12px;
 }
 
-.branch-header .form-control,
-.branch-header .form-select {
+.role-header .form-control,
+.role-header .form-select {
   min-height: 40px;
   border-radius: 6px;
 }
 
-.branch-header .btn-primary {
+.role-header .btn-primary {
   border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(85,110,230,0.08);
+  box-shadow: 0 2px 8px rgba(85, 110, 230, 0.08);
   font-weight: 600;
 }
 
-.branch-header .btn-primary:active,
-.branch-header .btn-primary:focus {
-  box-shadow: 0 0 0 2px rgba(85,110,230,0.15);
+.role-header .btn-primary:active,
+.role-header .btn-primary:focus {
+  box-shadow: 0 0 0 2px rgba(85, 110, 230, 0.15);
 }
 
 .action-icon {
@@ -135,7 +143,11 @@ h2 {
   border-radius: 4px;
   padding: 4px;
 }
-.action-icon:last-child { margin-right: 0; }
+
+.action-icon:last-child {
+  margin-right: 0;
+}
+
 .action-icon:hover {
   background: #f3f6fd;
   transform: scale(1.1);
@@ -154,10 +166,11 @@ h2 {
 }
 
 @media (max-width: 991.98px) {
-  .branch-header .row > div {
+  .role-header .row>div {
     margin-bottom: 10px;
   }
-  .branch-header .btn-primary {
+
+  .role-header .btn-primary {
     width: 100%;
     margin-top: 8px;
   }
@@ -176,17 +189,20 @@ h2 {
   display: flex;
   align-items: center;
   min-height: 64px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
   margin-bottom: 1rem;
+
   i {
     font-size: 1.7rem;
     margin-right: 1rem;
     opacity: 0.85;
   }
+
   .fw-bold {
     font-size: 1.1rem;
     margin-right: 0.5rem;
   }
+
   b {
     font-weight: 700;
   }
@@ -269,24 +285,36 @@ h2 {
   border-left: 4px solid #28a745;
 }
 
-// Thêm các selector cụ thể hơn để override
+/* Toast icon size override */
 :host ::ng-deep .angular-toastify-icon-container {
   width: 12px !important;
   height: 12px !important;
   opacity: 1 !important;
+  min-width: 12px !important;
+  min-height: 12px !important;
+  max-width: 12px !important;
+  max-height: 12px !important;
 }
 
 :host ::ng-deep .angular-toastify__toast .angular-toastify-icon-container {
   width: 12px !important;
   height: 12px !important;
   opacity: 1 !important;
+  min-width: 12px !important;
+  min-height: 12px !important;
+  max-width: 12px !important;
+  max-height: 12px !important;
 }
 
-// Nếu vẫn không work, thử với global styles
+/* Global override for toast icon container */
 ::ng-deep .angular-toastify-icon-container {
   width: 12px !important;
   height: 12px !important;
   opacity: 1 !important;
+  min-width: 12px !important;
+  min-height: 12px !important;
+  max-width: 12px !important;
+  max-height: 12px !important;
 }
 
 // Expandable row styles for change history table
@@ -306,41 +334,41 @@ h2 {
 
 .expanded-row {
   background-color: #f8f9fa;
-  
+
   td {
     border-top: none;
     padding: 0;
   }
-  
+
   .bg-light {
     background-color: #f8f9fa !important;
   }
-  
+
   .table-sm {
     font-size: 0.875rem;
-    
+
     th {
       font-weight: 600;
       color: #495057;
       border-bottom: 1px solid #dee2e6;
       padding: 0.5rem;
     }
-    
+
     td {
       padding: 0.5rem;
       vertical-align: middle;
     }
   }
-  
+
   .badge {
     font-size: 0.75rem;
     padding: 0.25em 0.5em;
   }
-  
+
   .bg-danger {
     background-color: #dc3545 !important;
   }
-  
+
   .bg-success {
     background-color: #28a745 !important;
   }
@@ -366,7 +394,7 @@ h2 {
     .table-responsive {
       font-size: 0.8rem;
     }
-    
+
     .table-sm th,
     .table-sm td {
       padding: 0.25rem;
@@ -381,13 +409,13 @@ h2 {
     border-radius: 4px;
     padding: 0.5rem;
     border-left: 3px solid #007bff;
-    
+
     small {
       font-size: 0.75rem;
       line-height: 1.4;
     }
   }
-  
+
   .changes-details {
     summary {
       font-size: 0.8rem;
@@ -397,15 +425,15 @@ h2 {
       padding: 0.25rem 0;
       transition: color 0.2s ease;
       list-style: none;
-      
+
       &:hover {
         color: #0056b3;
       }
-      
+
       &::-webkit-details-marker {
         display: none;
       }
-      
+
       &::-moz-list-bullet {
         display: none;
       }
@@ -418,20 +446,20 @@ h2 {
       font-family: 'Courier New', monospace;
       white-space: pre-wrap;
       word-wrap: break-word;
-      
+
       &::-webkit-scrollbar {
         width: 6px;
       }
-      
+
       &::-webkit-scrollbar-track {
         background: #f1f1f1;
         border-radius: 3px;
       }
-      
+
       &::-webkit-scrollbar-thumb {
         background: #c1c1c1;
         border-radius: 3px;
-        
+
         &:hover {
           background: #a8a8a8;
         }
@@ -445,17 +473,17 @@ h2 {
   .changes-display {
     .changes-summary {
       padding: 0.25rem;
-      
+
       small {
         font-size: 0.7rem;
       }
     }
-    
+
     .changes-details {
       summary {
         font-size: 0.75rem;
       }
-      
+
       pre {
         font-size: 0.7rem;
         max-height: 100px;
@@ -464,8 +492,11 @@ h2 {
   }
 }
 
+
+
 // Enhanced form validation styles
 .needs-validation {
+
   .form-control.is-invalid,
   .form-select.is-invalid {
     border-color: #dc3545;
@@ -475,4 +506,93 @@ h2 {
     background-position: right calc(0.375em + 0.1875rem) center;
     background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
   }
+}
+
+.permission-groups {
+  margin-top: 8px;
+}
+
+.permission-group.card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  border: 1px solid #e0e0e0;
+}
+
+.permission-group .card-header {
+  background: #f5faff;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 1rem;
+}
+
+.permission-group .btn {
+  font-size: 0.85rem;
+  padding: 2px 10px;
+}
+
+.permission-group .badge {
+  font-size: 0.95em;
+  border-radius: 6px;
+  margin-left: 2px;
+}
+
+.permission-group .badge.bg-light {
+  background: #f8f9fa;
+  color: #333;
+}
+
+.permission-group .badge.bg-secondary {
+  background: #e3e6f0;
+  color: #495057;
+}
+
+.permission-group .form-check-input {
+  width: 1.1em;
+  height: 1.1em;
+}
+
+.permission-group .row.g-2 {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.permission-group .col-md-4,
+.permission-group .col-6 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+@media (max-width: 767.98px) {
+
+  .permission-group .col-md-4,
+  .permission-group .col-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .permission-group .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}
+
+.role-permission-group-btn {
+  font-size: 11px !important;
+  padding: 2px 8px !important;
+  height: 22px !important;
+  line-height: 1 !important;
+}
+
+.role-permission-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 32px;
+  margin-bottom: 4px;
+}
+
+.role-permission-group-header .fw-normal {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0;
 }
