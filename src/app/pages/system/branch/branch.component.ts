@@ -145,9 +145,11 @@ export class BranchComponent implements OnInit {
 
   // Handle search all items
   get searchParams(): BranchSearchParams {
-    const { pageIndex, pageSize, keyword } = this.pagingState;
+    const { pageIndex, pageSize, keyword, isActive } = this.pagingState;
     const params: BranchSearchParams = { pageIndex, pageSize };
     if (keyword?.trim()) params.keyword = keyword.trim();
+    if (isActive === true) params.isActive = 'Y';
+    else if (isActive === false) params.isActive = 'N';
     return params;
   }
 
@@ -349,7 +351,7 @@ export class BranchComponent implements OnInit {
         this.modalRef?.hide();
         this.branchForm.reset();
         // Reload data dựa trên tab hiện tại
-        this.search();
+        this.onSearch();
       },
       error: (err) => {
         console.error('Create branch error:', err);
@@ -398,7 +400,7 @@ export class BranchComponent implements OnInit {
         next: (response) => {
           this.toastService.success('Yêu cầu cập nhật chi nhánh đã được gửi thành công!');
           this.closeModal();
-          this.search(); // Reload data
+          this.onSearch(); // Reload data
         },
         error: (error) => {
           console.error('Error creating update branch request:', error);
@@ -435,7 +437,7 @@ export class BranchComponent implements OnInit {
         next: (response) => {
           this.toastService.success('Yêu cầu xóa chi nhánh đã được gửi thành công!');
           this.closeModal();
-          this.search(); // Reload data
+          this.onSearch(); // Reload data
         },
         error: (error) => {
           console.error('Error creating delete branch request:', error);
@@ -547,18 +549,12 @@ export class BranchComponent implements OnInit {
     // Luôn gọi lại API khi chuyển tab, kể cả khi tab không đổi
     this.activeTab = tab;
     this.pagingState.pageIndex = 1; // Reset về trang đầu tiên khi chuyển tab
-    this.search();
+    this.onSearch();
   }
 
-  // Thay đổi các hàm tìm kiếm/phân trang để gọi đúng API theo tab
-  search(): void {
-    if (this.activeTab === 'pending') {
-      this.getPendingItems();
-    } else {
-      this.getItems();
-    }
-  }
-
+  // Thay đổi các nơi gọi search() thành onSearch()
+  // Trong onSubmitBranch, submitEditBranchForm, confirmDeleteBranch, approveBranch, confirmRejectBranch, v.v.
+  // Đổi this.search() thành this.onSearch()
   // Method to reset all loading states
   private resetLoadingStates(): void {
     this.isApproving = false;
@@ -619,7 +615,7 @@ export class BranchComponent implements OnInit {
         this.toastService.success('Phê duyệt yêu cầu thành công!');
         this.modalRef?.hide();
         // Reload data dựa trên tab hiện tại
-        this.search();
+        this.onSearch();
         this.isApproving = false;
       },
       error: (err) => {
@@ -691,7 +687,7 @@ export class BranchComponent implements OnInit {
         this.toastService.success('Đã từ chối yêu cầu thành công!');
         this.modalRef?.hide();
         // Reload data dựa trên tab hiện tại
-        this.search();
+        this.onSearch();
       },
       error: (err) => {
         console.error('Reject branch error:', err);
