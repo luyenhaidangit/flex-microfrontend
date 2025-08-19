@@ -1,4 +1,5 @@
 <!-- View -->
+<!-- View -->
 <div class="container-fluid">
   <app-page-title title="Quản lý chi nhánh" [breadcrumbItems]="breadCrumbItems"></app-page-title>
 
@@ -15,14 +16,35 @@
         <label class="form-label fw-bold text-muted">Từ khóa</label>
         <input class="form-control" type="text" placeholder="Nhập từ khóa..." [(ngModel)]="pagingState.keyword">
       </div>
-      <div class="col-md-3 d-none"></div>
-      <div class="col-md-3 d-none"></div>
+
+      <!-- Chỉ hiện ở tab đã duyệt -->
+      <div class="col-md-3" *ngIf="activeTab==='approved'">
+        <label class="form-label fw-bold text-muted">Trạng thái</label>
+        <select class="form-select" [(ngModel)]="pagingState.isActive">
+          <option [ngValue]="null">Tất cả</option>
+          <option [ngValue]="true">Hoạt động</option>
+          <option [ngValue]="false">Không hoạt động</option>
+        </select>
+      </div>
+
+      <!-- Chỉ hiện ở tab chờ duyệt -->
+      <div class="col-md-3" *ngIf="activeTab==='pending'">
+        <label class="form-label fw-bold text-muted">Loại yêu cầu</label>
+        <select class="form-select" [(ngModel)]="pagingState.type">
+          <option [ngValue]="null">Tất cả</option>
+          <option [ngValue]="'CREATE'">Tạo mới</option>
+          <option [ngValue]="'UPDATE'">Cập nhật</option>
+          <option [ngValue]="'DELETE'">Xóa</option>
+        </select>
+      </div>
+
       <div class="col-md-2">
         <label class="form-label d-block" style="visibility:hidden">Tìm</label>
         <button class="btn btn-primary w-100" (click)="search()">
           <i class="bx bx-search-alt-2"></i> Tìm kiếm
         </button>
       </div>
+
       <div class="col-md-3 text-md-end">
         <button type="button" class="btn btn-success fw-bold" (click)="openCreateModal()">
           <i class="fas fa-plus me-1"></i> Thêm mới
@@ -38,14 +60,17 @@
             <th *ngFor="let h of headCols">{{ h }}</th>
           </tr>
         </thead>
-        <tbody *ngIf="isLoading">
+
+        <tbody *ngIf="isLoadingList">
           <tr *ngFor="let _ of skeletonRows">
             <td *ngFor="let w of skeletonCols">
               <app-skeleton [width]="w" height="18px"></app-skeleton>
             </td>
           </tr>
         </tbody>
-        <tbody *ngIf="!isLoading">
+
+        <!-- TBODY: DATA -->
+        <tbody *ngIf="!isLoadingList">
           <!-- Approved rows -->
           <ng-container *ngIf="activeTab === 'approved'; else pendingRows">
             <tr *ngFor="let item of items; trackBy: trackByCode">
@@ -62,24 +87,27 @@
                   <button class="btn btn-link p-0 ms-2 text-warning" (click)="openEditModal(item)" title="Sửa">
                     <i class="fas fa-edit"></i>
                   </button>
-                  <button class="btn btn-link p-0 ms-2 text-danger" (click)="openDeleteModal(item)" title="Xóa">
+                  <button class="btn btn-link p-0 ms-2 text-danger" (click)="openDeleteModal(item)" title="Xoá">
                     <i class="fas fa-trash"></i>
                   </button>
                 </ng-container>
               </td>
             </tr>
+
             <tr *ngIf="items.length === 0">
               <td [attr.colspan]="colspan" class="text-center">Không có dữ liệu</td>
             </tr>
           </ng-container>
+
           <!-- Pending rows -->
           <ng-template #pendingRows>
             <tr *ngFor="let item of pendingItems; trackBy: trackById">
               <td>{{ item.code | safeField }}</td>
               <td>{{ item.name | safeField }}</td>
-              <td>{{ getBranchTypeLabel(item.branchType) | safeField }}</td>
               <td>{{ item.description | safeField }}</td>
               <td><app-badge [value]="item.requestType" type="request"></app-badge></td>
+              <td>{{ item.requestedBy | safeField }}</td>
+              <td>{{ item.requestedDate | date:'dd/MM/yyyy' }}</td>
               <td class="action-column">
                 <button class="btn btn-link p-0 text-info" (click)="openRequestDetailModal(item)" title="Chi tiết">
                   <i class="fas fa-eye"></i>
@@ -92,6 +120,7 @@
                 </button>
               </td>
             </tr>
+
             <tr *ngIf="pendingItems.length === 0">
               <td [attr.colspan]="colspan" class="text-center">Không có yêu cầu chờ duyệt</td>
             </tr>
@@ -108,18 +137,22 @@
             <i class="mdi mdi-chevron-left"></i>
           </a>
         </li>
+
         <li *ngFor="let _ of [].constructor(pagingState.totalPages); let idx = index" class="page-item cursor-pointer"
           [class.active]="pagingState.pageIndex === idx + 1">
           <a class="page-link" (click)="changePage(idx + 1)">
             {{ idx + 1 }}
           </a>
         </li>
+
         <li class="page-item cursor-pointer" [class.disabled]="pagingState.pageIndex === pagingState.totalPages">
           <a class="page-link" (click)="changePage(pagingState.pageIndex + 1)">
             <i class="mdi mdi-chevron-right"></i>
           </a>
         </li>
       </ul>
+
+      <!-- page size -->
       <div class="per-page">
         Hiển thị
         <select class="mx-1 cursor-pointer" [(ngModel)]="pagingState.pageSize" (change)="changePageSize()">
@@ -131,9 +164,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Modal: detail, create, edit, delete, approve, reject, requestDetail -->
-  <!-- ... (phần modal sẽ được chỉnh sửa tiếp theo cho đồng bộ chuẩn role) ... -->
 </div>
 
 <!-- Modal: Chi tiết -->

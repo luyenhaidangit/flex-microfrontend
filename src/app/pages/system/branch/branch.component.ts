@@ -6,6 +6,7 @@ import { DEFAULT_PER_PAGE_OPTIONS } from 'src/app/core/constants/shared.constant
 import { ToastService } from 'angular-toastify';
 import { Branch, PagingState, RequestDetailData, BranchSearchParams } from './branch.models';
 import { finalize } from 'rxjs/operators';
+import { getBranchTypeLabel } from './branch.helper';
 
 @Component({
   selector: 'app-branch',
@@ -53,7 +54,9 @@ export class BranchComponent implements OnInit {
   rejectForm!: FormGroup;
 
   // Prepare component
-  isLoading = false;
+  isLoadingList = false;
+  isLoadingHistory = false;
+  isLoadingRequestDetail = false;
   modalRef?: BsModalRef | null = null;
 
   // Prepare data for the component
@@ -99,6 +102,9 @@ export class BranchComponent implements OnInit {
   get colspan(): number {
     return this.headCols.length;
   }
+
+  // Helper methods
+  public getBranchTypeLabel = getBranchTypeLabel;
 
   trackByCode(_: number, item: Branch) { return item.code; }
   trackById(_: number, item: any)    { return item.requestId ?? item.id; }
@@ -164,9 +170,9 @@ export class BranchComponent implements OnInit {
   }
 
   getItems(): void {
-    this.isLoading = true;
+    this.isLoadingList = true;
     this.branchService.getApprovedBranches({ ...this.searchParams })
-      .pipe(finalize(() => this.isLoading = false))
+      .pipe(finalize(() => this.isLoadingList = false))
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
@@ -442,10 +448,10 @@ export class BranchComponent implements OnInit {
   // Get pending items
   getPendingItems(): void {
     // Gọi API lấy chi nhánh chờ duyệt
-    this.isLoading = true;
+    this.isLoadingList = true;
     const params = { ...this.pendingSearchParams };
     this.branchService.getPendingBranches(params)
-      .pipe(finalize(() => this.isLoading = false))
+      .pipe(finalize(() => this.isLoadingList = false))
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
@@ -809,20 +815,6 @@ export class BranchComponent implements OnInit {
 
   getRequestType(): string {
     return this.requestDetailData?.type;
-  }
-
-  getBranchTypeLabel(branchType: number | string | null | undefined): string {
-    const type = branchType === null || branchType === undefined ? undefined : Number(branchType as any);
-    switch (type) {
-      case 1:
-        return 'Chi nhánh chính';
-      case 2:
-        return 'Chi nhánh phụ';
-      case 3:
-        return 'Văn phòng đại diện';
-      default:
-        return 'Không xác định';
-    }
   }
 
   // Missing methods referenced in template
