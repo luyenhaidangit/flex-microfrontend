@@ -58,6 +58,7 @@ export class BranchComponent implements OnInit {
   isLoadingHistory = false;
   isLoadingRequestDetail = false;
   modalRef?: BsModalRef | null = null;
+  isSubmitting: boolean = false;
 
   // Prepare data for the component
   items: Branch[] = [];
@@ -332,30 +333,28 @@ export class BranchComponent implements OnInit {
   onSubmitBranch(): void {
     this.branchForm.markAllAsTouched();
     if (this.branchForm.invalid) return;
-    
-    const formData = this.branchForm.value;
+    this.isSubmitting = true;
+    const formValue = this.branchForm.value;
     const payload = {
-      code: formData.code,
-      name: formData.name,
-      description: formData.description || null,
-      branchType: Number(formData.branchType),
-      isActive: !!formData.isActive
+      code: formValue.code,
+      name: formValue.name,
+      description: formValue.description,
+      branchType: Number(formValue.branchType),
+      isActive: !!formValue.isActive
     };
-    
-    this.branchService.createBranch(payload).subscribe({
-      next: () => {
-        this.toastService.success('Gửi duyệt thành công!');
-        this.modalRef?.hide();
-        this.branchForm.reset();
-        // Reload data dựa trên tab hiện tại
-        this.onSearch();
-      },
-      error: (err) => {
-        console.error('Create branch error:', err);
-        const msg = err?.error?.message || 'Gửi duyệt thất bại!';
-        this.toastService.error(msg);
-      }
-    });
+    this.branchService.createBranch(payload)
+      .pipe(finalize(() => this.isSubmitting = false))
+      .subscribe({
+        next: () => {
+          this.toastService.success('Gửi duyệt thành công!');
+          this.branchForm.reset();
+          this.modalRef?.hide();
+          this.getItems();
+        },
+        error: (err) => {
+          this.handleError(err, 'Gửi duyệt thất bại!');
+        }
+      });
   }
 
   // Open edit modal
@@ -829,5 +828,11 @@ export class BranchComponent implements OnInit {
     // Implementation for confirming delete draft
     this.toastService.info('Chức năng xóa nháp đang được phát triển');
     this.closeModal();
+  }
+
+  handleError(err: any, defaultMsg = 'Đã xảy ra lỗi!') {
+    console.error('Branch error:', err);
+    const msg = err?.error?.message || defaultMsg;
+    this.toastService.error(msg);
   }
 }
