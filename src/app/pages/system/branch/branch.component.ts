@@ -318,17 +318,13 @@ export class BranchComponent implements OnInit {
 
   // Open create modal
   openCreateModal(): void {
-    this.branchForm.reset({
-      code: '',
-      name: '',
-      branchType: 1, // Mặc định: Chi nhánh chính
-      description: '',
-
+    this.branchForm.reset();
+    this.branchForm.patchValue({
       isActive: true,
       comment: ''
     });
     this.rejectedReason = null;
-    this.openModal(this.createTemplateRef, { class: 'modal-lg' });
+    this.openModal(this.createTemplateRef, { class: 'modal-xl' });
   }
 
   // Submit create branch

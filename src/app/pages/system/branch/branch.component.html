@@ -368,15 +368,8 @@
         </div>
         <div class="col-md-12 position-relative">
           <label class="form-label">Mô tả</label>
-          <textarea class="form-control" formControlName="description" rows="3" 
-                    placeholder="Nhập mô tả chi nhánh"
-                    [ngClass]="{'is-invalid': branchForm.controls.description.touched && branchForm.controls.description.errors?.maxlength}"></textarea>
-          <div *ngIf="branchForm.controls.description.touched && branchForm.controls.description.errors?.maxlength" class="invalid-tooltip">
-            <span *ngIf="branchForm.controls.description.errors?.maxlength">Mô tả không được vượt quá 500 ký tự</span>
-          </div>
+          <textarea class="form-control" formControlName="description" rows="2" placeholder="Nhập mô tả chi nhánh"></textarea>
         </div>
-
-        <!-- Hidden fields for Create modal -->
         <input type="hidden" formControlName="comment" value="">
       </div>
     </div>

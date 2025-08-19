@@ -361,7 +361,7 @@ export class RoleComponent implements OnInit, OnDestroy {
     this.rejectedReason = null;
     this.resetSearchParams(); // Reset search params khi mở modal tạo mới
     this.loadPermissionTreeForCreate();
-    this.openModal(this.createTemplateRef, { class: 'modal-lg' });
+    this.openModal(this.createTemplateRef, { class: 'modal-xl' });
   }
 
   // Submit create role
