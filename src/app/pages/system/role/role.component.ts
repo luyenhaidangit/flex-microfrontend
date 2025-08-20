@@ -716,7 +716,7 @@ export class RoleComponent implements OnInit, OnDestroy {
       oldModalRef.onHidden?.pipe(takeUntil(this.destroy$)).subscribe(() => {
         this.modalRef = null;
         this.openModal(this.rejectTemplateRef, {
-          class: 'modal-md',
+          class: 'modal-xl',
           backdrop: 'static',
           keyboard: false,
           ignoreBackdropClick: true
@@ -725,7 +725,7 @@ export class RoleComponent implements OnInit, OnDestroy {
       oldModalRef.hide();
     } else {
       this.openModal(this.rejectTemplateRef, {
-        class: 'modal-md',
+        class: 'modal-xl',
         backdrop: 'static',
         keyboard: false,
         ignoreBackdropClick: true
@@ -902,7 +902,7 @@ export class RoleComponent implements OnInit, OnDestroy {
   openDeleteDraftModal(): void {
     // Implementation for opening delete draft modal
     this.openModal(this.deleteDraftModal, {
-      class: 'modal-sm',
+      class: 'modal-xl',
       backdrop: 'static',
       keyboard: false
     });

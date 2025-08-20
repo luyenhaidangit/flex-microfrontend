@@ -592,7 +592,7 @@ export class BranchComponent implements OnInit {
   openApproveModal(item: any): void {
     this.selectedItem = item;
     this.openModal(this.approveTemplateRef, {
-      class: 'modal-lg',
+      class: 'modal-xl',
       backdrop: 'static',
       keyboard: false,
       ignoreBackdropClick: true
@@ -651,7 +651,7 @@ export class BranchComponent implements OnInit {
       oldModalRef.onHidden?.subscribe(() => {
         this.modalRef = null;
         this.openModal(this.rejectTemplateRef, {
-          class: 'modal-md',
+          class: 'modal-xl',
           backdrop: 'static',
           keyboard: false,
           ignoreBackdropClick: true
@@ -660,7 +660,7 @@ export class BranchComponent implements OnInit {
       oldModalRef.hide();
     } else {
       this.openModal(this.rejectTemplateRef, {
-        class: 'modal-md',
+        class: 'modal-xl',
         backdrop: 'static',
         keyboard: false,
         ignoreBackdropClick: true
@@ -823,7 +823,7 @@ export class BranchComponent implements OnInit {
   openDeleteDraftModal(): void {
     // Implementation for opening delete draft modal
     this.openModal(this.deleteDraftModal, {
-      class: 'modal-sm',
+      class: 'modal-xl',
       backdrop: 'static',
       keyboard: false
     });
