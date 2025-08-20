@@ -11,32 +11,32 @@ export class BranchService {
 
   // Get all approved branches with pagination
   getApprovedBranches(params: any): Observable<any> {
-    return this.http.get<any>(this.apiUrl, { params });
+    return this.http.get<any>(`${this.apiUrl}/approved`, { params });
   }
 
   // Get approved branch detail by code
   getApprovedBranchByCode(code: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${code}`);
+    return this.http.get<any>(`${this.apiUrl}/approved/${code}`);
   }
 
   // New method to fetch change history separately
   getBranchChangeHistory(branchCode: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${branchCode}/history`);
+    return this.http.get<any>(`${this.apiUrl}/approved/${branchCode}/history`);
   }
 
   // createBranch and updateBranch accept status, requestedBy, requestedDate, rejectReason for draft/save/submit/reject flows
   createBranch(data: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}`, data);
+    return this.http.post<any>(`${this.apiUrl}/requests/create`, data);
   }
 
   // Create update branch request
   createUpdateBranchRequest(code: string, data: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${code}`, data);
+    return this.http.post<any>(`${this.apiUrl}/approved/${code}/update`, data);
   }
 
   // Create delete branch request
   createDeleteBranchRequest(code: string, data: any): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${code}`, { body: data });
+    return this.http.post<any>(`${this.apiUrl}/approved/${code}/delete`, data);
   }
 
   // Get all pending branches with pagination
@@ -50,7 +50,7 @@ export class BranchService {
   }
 
   getAllBranches(): Observable<any[]> {
-    return this.http.get<any>(this.apiUrl, {
+    return this.http.get<any>(`${this.apiUrl}/approved`, {
       params: { pageIndex: 1, pageSize: 1000 }
     }).pipe(map(res => res?.data?.items ?? []));
   }

@@ -416,7 +416,7 @@ export class BranchComponent implements OnInit {
     this.selectedItem = item;
     this.deleteForm.reset();
     this.openModal(this.deleteTemplateRef, {
-      class: 'modal-lg',
+      class: 'modal-xl',
       backdrop: 'static',
       keyboard: false
     });
