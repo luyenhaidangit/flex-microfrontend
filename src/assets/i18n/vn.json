@@ -76,7 +76,6 @@
       "MANAGESYSTEM": {
         "TEXT": "Quản trị hệ thống",
         "BRANCH": "Quản lý chi nhánh",
-        "DEPARTMENT": "Quản lý phòng ban",
         "ROLE": "Quản lý vai trò",
         "SETTINGS": "Cài đặt hệ thống"
       }

@@ -64,12 +64,6 @@ export const MENU: MenuItem[] = [
                 parentId: 13
             },
             {
-                id: 15,
-                label: 'MENUITEMS.SYSTEM.MANAGESYSTEM.DEPARTMENT',
-                link: '/system/department',
-                parentId: 13
-            },
-            {
                 id: 16,
                 label: 'MENUITEMS.SYSTEM.MANAGESYSTEM.ROLE',
                 link: '/system/role',

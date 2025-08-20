@@ -8,10 +8,7 @@ import { Observable } from 'rxjs';
 export class SystemService {
   constructor(private http: HttpClient) { }
 
-  // Department
-  getDepartmentPaging(params: any): Observable<any> {
-    return this.http.get('/api/department/get-department-paging', { params });
-  }
+  // Department module was removed
 
   // Branch
   getBranchesPaging(req: any): Observable<any> {

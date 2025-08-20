@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { DepartmentComponent } from './department/department.component';
 import { BranchComponent } from './branch/branch.component';
 import { RoleComponent } from './role/role.component';
 
@@ -9,10 +8,6 @@ const routes: Routes = [
     {
         path: 'branch',
         component: BranchComponent
-    },
-    {
-        path: 'department',
-        component: DepartmentComponent
     },
     {
         path: 'role',

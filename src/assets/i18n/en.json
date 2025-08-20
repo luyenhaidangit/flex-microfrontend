@@ -10,7 +10,6 @@
       "MANAGESYSTEM": {
         "TEXT": "System Management",
         "BRANCH": "Branch Management",
-        "DEPARTMENT": "Department Management",
         "ROLE": "Role Management",
         "SETTINGS": "System Settings"
       }
