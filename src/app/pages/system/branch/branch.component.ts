@@ -75,6 +75,9 @@ export class BranchComponent implements OnInit {
   // Enhanced detail modal properties
   requestDetailData: RequestDetailData | null = null;
   
+  // Branch type options for selects
+  branchTypes: number[] = [1, 2, 3];
+  
   // Loading states for approve/reject actions
   isApproving = false;
   isRejecting = false;
@@ -372,7 +375,7 @@ export class BranchComponent implements OnInit {
       isActive: item.isActive === 'Y' || item.isActive === true
     });
     this.openModal(this.editTemplateRef, {
-      class: 'modal-lg',
+      class: 'modal-xl',
       backdrop: 'static',
       keyboard: false
     });

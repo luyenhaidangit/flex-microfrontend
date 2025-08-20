@@ -302,9 +302,7 @@
           <label class="form-label">Loại chi nhánh</label>
           <select class="form-select" formControlName="branchType"
                   [ngClass]="{'is-invalid': branchForm.controls.branchType.touched && branchForm.controls.branchType.invalid}">
-            <option [ngValue]="1">Chi nhánh chính</option>
-            <option [ngValue]="2">Chi nhánh phụ</option>
-            <option [ngValue]="3">Văn phòng đại diện</option>
+            <option *ngFor="let t of branchTypes" [ngValue]="t">{{ getBranchTypeLabel(t) }}</option>
           </select>
           <div *ngIf="branchForm.controls.branchType.touched && branchForm.controls.branchType.invalid" class="invalid-tooltip">
             <span *ngIf="branchForm.controls.branchType.errors?.required">Loại chi nhánh không được để trống</span>
@@ -365,9 +363,7 @@
           <label class="form-label">Loại chi nhánh</label>
           <select class="form-select" formControlName="branchType"
                   [ngClass]="{'is-invalid': branchForm.controls.branchType.touched && branchForm.controls.branchType.invalid}">
-            <option [ngValue]="1">Chi nhánh chính</option>
-            <option [ngValue]="2">Chi nhánh phụ</option>
-            <option [ngValue]="3">Văn phòng đại diện</option>
+            <option *ngFor="let t of branchTypes" [ngValue]="t">{{ getBranchTypeLabel(t) }}</option>
           </select>
           <div *ngIf="branchForm.controls.branchType.touched && branchForm.controls.branchType.invalid" class="invalid-tooltip">
             <span *ngIf="branchForm.controls.branchType.errors?.required">Loại chi nhánh không được để trống</span>
