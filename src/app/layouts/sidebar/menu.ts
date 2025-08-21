@@ -62,13 +62,6 @@ export const MENU: MenuItem[] = [
                 label: 'MENUITEMS.SYSTEM.MANAGESYSTEM.BRANCH',
                 link: '/system/branch',
             },
-        ]
-    },
-    {
-        id: 'user-permission-module',
-        label: 'Người dùng & phân quyền',
-        icon: 'bx-user-circle',
-        subItems: [
             {
                 id: 'user-permission-module.role',
                 label: 'MENUITEMS.SYSTEM.MANAGESYSTEM.ROLE',
