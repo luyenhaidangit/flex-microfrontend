@@ -8,7 +8,7 @@ export const MENU: MenuItem[] = [
     },
     {
         id: 2,
-        label: 'MENUITEMS.APP.DASHBOARDS',
+        label: 'MENUITEMS.APP.DASHBOARDS.TEXT',
         icon: 'bx bxs-home-circle',
         subItems: [
             {

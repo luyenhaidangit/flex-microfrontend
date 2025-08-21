@@ -68,8 +68,10 @@
   "MENUITEMS": {
     "APP": {
       "TEXT": "App",
-      "DASHBOARDS": "Trang điều khiển",
-      "DASHBOARDS.DEFAULT": "Trang chủ"
+      "DASHBOARDS": {
+        "TEXT": "Trang điều khiển",
+        "DEFAULT": "Trang chủ"
+      }
     },
     "SYSTEM": {
       "TEXT": "Hệ thống",
