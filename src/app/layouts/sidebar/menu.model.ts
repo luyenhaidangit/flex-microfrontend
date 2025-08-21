@@ -1,11 +1,11 @@
 export interface MenuItem {
-    id?: number;
+    id?: any;
     label?: string;
     icon?: string;
     link?: string;
     subItems?: any;
     isTitle?: boolean;
     badge?: any;
-    parentId?: number;
+    parentId?: any;
     isLayout?: boolean;
 }
