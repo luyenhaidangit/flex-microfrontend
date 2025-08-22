@@ -6,6 +6,7 @@ import { DEFAULT_PER_PAGE_OPTIONS } from 'src/app/core/constants/shared.constant
 import { SystemService } from 'src/app/core/services/system.service';
 import { UserService } from './user.service';
 import { PagingState, UserItem } from './user.models';
+import { USER_CONFIG, getUserStatusConfig, getTableColumns, getSkeletonConfig } from './user.config';
 
 @Component({
 	selector: 'app-users',
@@ -14,11 +15,8 @@ import { PagingState, UserItem } from './user.models';
 })
 export class UsersComponent implements OnInit, OnDestroy {
 
+	CONFIG = USER_CONFIG;
 	DEFAULT_PER_PAGE_OPTIONS = DEFAULT_PER_PAGE_OPTIONS;
-	breadCrumbItems = [
-		{ label: 'Quản trị hệ thống' },
-		{ label: 'Quản lý người sử dụng', active: true }
-	];
 
 	isLoadingList = false;
 	items: UserItem[] = [];
@@ -26,13 +24,17 @@ export class UsersComponent implements OnInit, OnDestroy {
 
 	pagingState: PagingState = {
 		pageIndex: 1,
-		pageSize: 10,
+		pageSize: USER_CONFIG.pagination.defaultPageSize,
 		totalPages: 0,
 		totalItems: 0,
 		keyword: '',
 		isLocked: null,
 		branchId: null
 	};
+
+	// Table configuration
+	tableColumns = getTableColumns();
+	skeletonConfig = getSkeletonConfig();
 
 	private destroyed$ = new Subject<void>();
 
@@ -76,12 +78,12 @@ export class UsersComponent implements OnInit, OnDestroy {
 					};
 				} else {
 					this.items = [];
-					this.toast.error('Không lấy được danh sách người dùng!');
+					this.toast.error(USER_CONFIG.messages.error.load);
 				}
 			},
 			error: (err) => {
 				this.items = [];
-				this.toast.error('Đã xảy ra lỗi khi lấy danh sách người dùng!');
+				this.toast.error(USER_CONFIG.messages.error.general);
 				console.error('getUsers error:', err);
 			}
 		});
@@ -110,7 +112,8 @@ export class UsersComponent implements OnInit, OnDestroy {
 			.subscribe({
 				next: (res) => {
 					if (res?.isSuccess) {
-						this.branches = (res.data?.items ?? []).map((b: any) => ({ id: b.id, name: b.name }));
+						const branchItems = (res.data?.items ?? []).map((b: any) => ({ id: b.id, name: b.name }));
+						this.branches = [...USER_CONFIG.search.branchOptions, ...branchItems];
 					}
 				},
 				error: () => {}
