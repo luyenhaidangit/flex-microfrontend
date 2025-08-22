@@ -19,12 +19,6 @@ export class UsersComponent implements OnInit, OnDestroy {
 	isLoadingList = false;
 	items: UserItem[] = [];
 	branches: { id: number; name: string }[] = [];
-
-	// Tab configuration
-	tabs = [
-		{ id: 'approved', label: 'Đã duyệt', icon: 'bx bx-check-circle' },
-		{ id: 'pending', label: 'Chờ duyệt', icon: 'bx bx-time' }
-	];
 	activeTabId = 'approved';
 
 	pagingState: PagingState = {

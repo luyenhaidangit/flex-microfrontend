@@ -12,6 +12,12 @@ export const USER_CONFIG = {
     ]
   },
 
+  // Tab configuration
+  tabs: [
+    { id: 'approved', label: 'Đã duyệt', icon: 'bx bx-check-circle' },
+    { id: 'pending', label: 'Chờ duyệt', icon: 'bx bx-time' }
+  ],
+
   // Pagination configuration
   pagination: {
     defaultPageSize: 10,
