@@ -5,7 +5,7 @@
 
 		<!-- Tabset -->
 		<app-tabs 
-			[tabs]="CONFIG.tabs" 
+			[tabs]="CONFIG.tabs.items" 
 			[activeId]="activeTabId" 
 			(activeIdChange)="onTabChange($event)"
 			(changed)="onTabChanged($event)">

@@ -15,11 +15,11 @@ import { USER_CONFIG, getUserStatusConfig, getTableColumns, getSkeletonConfig } 
 export class UsersComponent implements OnInit, OnDestroy {
 
 	CONFIG = USER_CONFIG;
+	activeTabId = this.CONFIG.tabs.default;
 
 	isLoadingList = false;
 	items: UserItem[] = [];
 	branches: { id: number; name: string }[] = [];
-	activeTabId = 'approved';
 
 	pagingState: PagingState = {
 		pageIndex: 1,
