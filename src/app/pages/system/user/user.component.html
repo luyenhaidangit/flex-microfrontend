@@ -11,32 +11,46 @@
 			(changed)="onTabChanged($event)">
 		</app-tabs>
 
-		<!-- Search form -->
+		<!-- Search -->
 		<div class="row gx-3 mb-3 gy-2 align-items-end">
 			<div class="col-md-4">
 				<label class="form-label fw-bold text-muted">Từ khóa</label>
 				<input class="form-control" type="text" placeholder="Nhập từ khóa..." [(ngModel)]="pagingState.keyword">
 			</div>
-			<div class="col-md-3">
-				<label class="form-label fw-bold text-muted">Chi nhánh</label>
-				<select class="form-select" [(ngModel)]="pagingState.branchId">
+		
+			<!-- Chỉ hiện ở tab đã duyệt -->
+			<!-- <div class="col-md-3" *ngIf="activeTab==='approved'">
+				<label class="form-label fw-bold text-muted">Trạng thái</label>
+				<select class="form-select" [(ngModel)]="pagingState.isActive">
 					<option [ngValue]="null">Tất cả</option>
-					<option *ngFor="let b of branches" [ngValue]="b.id">{{ b.name }}</option>
+					<option [ngValue]="true">Hoạt động</option>
+					<option [ngValue]="false">Không hoạt động</option>
 				</select>
-			</div>
-			<div class="col-md-3">
-				<label class="form-label fw-bold text-muted">Trạng thái khóa</label>
-				<select class="form-select" [(ngModel)]="pagingState.isLocked">
+			</div> -->
+		
+			<!-- Chỉ hiện ở tab chờ duyệt -->
+			<!-- <div class="col-md-3" *ngIf="activeTab==='pending'">
+				<label class="form-label fw-bold text-muted">Loại yêu cầu</label>
+				<select class="form-select" [(ngModel)]="pagingState.type">
 					<option [ngValue]="null">Tất cả</option>
-					<option [ngValue]="false">Đang mở</option>
-					<option [ngValue]="true">Đã khóa</option>
+					<option [ngValue]="'CREATE'">Tạo mới</option>
+					<option [ngValue]="'UPDATE'">Cập nhật</option>
+					<option [ngValue]="'DELETE'">Xóa</option>
 				</select>
-			</div>
-			<div class="col-md-2">
+			</div> -->
+		
+			<!-- <div class="col-md-2">
+				<label class="form-label d-block" style="visibility:hidden">Tìm</label>
 				<button class="btn btn-primary w-100" (click)="search()">
 					<i class="bx bx-search-alt-2"></i> Tìm kiếm
 				</button>
-			</div>
+			</div> -->
+		
+			<!-- <div class="col-md-3 text-md-end">
+				<button type="button" class="btn btn-success fw-bold" (click)="openCreateModal()">
+					<i class="fas fa-plus me-1"></i> Thêm mới
+				</button>
+			</div> -->
 		</div>
 
 		<div class="table-responsive">
