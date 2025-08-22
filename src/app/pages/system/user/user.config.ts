@@ -1,3 +1,5 @@
+import { DEFAULT_PER_PAGE_OPTIONS } from 'src/app/core/constants/shared.constant';
+
 export const USER_CONFIG = {
 
   // Breadcrumb configuration
@@ -8,6 +10,12 @@ export const USER_CONFIG = {
       { label: 'Quản trị hệ thống' },
       { label: 'Quản lý người sử dụng', active: true }
     ]
+  },
+
+  // Pagination configuration
+  pagination: {
+    defaultPageSize: 10,
+    pageSizeOptions: DEFAULT_PER_PAGE_OPTIONS
   },
 
   // Table configuration
@@ -47,12 +55,6 @@ export const USER_CONFIG = {
       { label: 'Hoạt động', value: false },
       { label: 'Đã khóa', value: true }
     ]
-  },
-
-  // Pagination configuration
-  pagination: {
-    defaultPageSize: 10,
-    pageSizeOptions: [10, 20, 50, 100]
   },
 
   // Form validation

@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ToastService } from 'angular-toastify';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { DEFAULT_PER_PAGE_OPTIONS } from 'src/app/core/constants/shared.constant';
 import { SystemService } from 'src/app/core/services/system.service';
 import { UserService } from './user.service';
 import { PagingState, UserItem } from './user.models';
@@ -16,7 +15,6 @@ import { USER_CONFIG, getUserStatusConfig, getTableColumns, getSkeletonConfig } 
 export class UsersComponent implements OnInit, OnDestroy {
 
 	CONFIG = USER_CONFIG;
-	DEFAULT_PER_PAGE_OPTIONS = DEFAULT_PER_PAGE_OPTIONS;
 
 	isLoadingList = false;
 	items: UserItem[] = [];

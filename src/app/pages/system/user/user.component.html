@@ -2,6 +2,14 @@
 	<app-page-title title="{{ CONFIG.breadcrumb.title }}" [breadcrumbItems]="CONFIG.breadcrumb.items"></app-page-title>
 
 	<div class="bg-white rounded shadow-sm p-3">
+
+		<!-- Tabset -->
+		<!-- <tabset class="nav-pills nav-tabs mb-3">
+			<tab heading="Đã duyệt" (selectTab)="switchTab('approved')"></tab>
+			<tab heading="Chờ duyệt" (selectTab)="switchTab('pending')"></tab>
+		</tabset> -->
+
+		<!-- Search form -->
 		<div class="row gx-3 mb-3 gy-2 align-items-end">
 			<div class="col-md-4">
 				<label class="form-label fw-bold text-muted">Từ khóa</label>
@@ -70,7 +78,7 @@
 			<div class="d-flex align-items-center gap-2">
 				<span class="text-muted small">Hiển thị</span>
 				<select class="form-select form-select-sm w-auto" [ngModel]="pagingState.pageSize" (ngModelChange)="onPageSizeChange($event)">
-					<option *ngFor="let p of DEFAULT_PER_PAGE_OPTIONS" [ngValue]="p">{{ p }}</option>
+					<option *ngFor="let p of CONFIG.pagination.pageSizeOptions" [ngValue]="p">{{ p }}</option>
 				</select>
 				<span class="text-muted small">bản ghi</span>
 			</div>
