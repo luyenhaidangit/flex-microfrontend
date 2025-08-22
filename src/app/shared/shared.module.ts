@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { UIModule } from './ui/ui.module';
 import { WidgetModule } from './widget/widget.module';
 import { UpperNoSpaceDirective } from './directives/upper-nospace.directive';
-import { BadgeComponent } from './components/badge/badge.component';
+import { BadgeComponent } from './ui/badge/badge.component';
 import { SafeFieldPipe } from './pipes/safe-field.pipe';
 import { PrettyJsonPipe } from './pipes/pretty-json.pipe';
 
@@ -29,5 +29,4 @@ import { PrettyJsonPipe } from './pipes/pretty-json.pipe';
   providers: [
   ]
 })
-
 export class SharedModule { }
