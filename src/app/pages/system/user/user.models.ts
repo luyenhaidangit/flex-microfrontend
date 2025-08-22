@@ -15,6 +15,7 @@ export interface UserSearchParams {
 	keyword?: string | null;
 	branchId?: number | null;
 	isLocked?: boolean | null;
+	status?: string; // Thêm status để phân biệt tab approved/pending
 }
 
 export interface PagingState {

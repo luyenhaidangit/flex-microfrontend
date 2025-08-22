@@ -1,18 +1,31 @@
-<tabset [class]="navClass">
-    <tab *ngFor="let t of tabs" [active]="t.id === activeId" [disabled]="t.disabled" (selectTab)="onSelect(t)">
-        <ng-template tabHeading>
-            <i *ngIf="t.icon" [class]="t.icon" class="me-1"></i>
-            {{ t.label }}
-            <span *ngIf="t.badge !== null && t.badge !== undefined" class="badge rounded-pill ms-2" [ngClass]="{
-              'bg-secondary': !t.badgeType || t.badgeType === 'default',
-              'bg-success': t.badgeType === 'success',
-              'bg-warning': t.badgeType === 'warning',
-              'bg-danger'  : t.badgeType === 'danger'
-            }">
-                {{ t.badge }}
-            </span>
-        </ng-template>
+<div class="tabs-container tab-transition">
+  <tabset [class]="navClass">
+    <tab *ngFor="let t of tabs" 
+         [active]="t.id === activeId" 
+         [disabled]="t.disabled" 
+         (selectTab)="onSelect(t)"
+         [class]="'tab-item' + (t.id === activeId ? ' active' : '')">
+      <ng-template tabHeading>
+        <div class="tab-heading">
+          <i *ngIf="t.icon" [class]="t.icon"></i>
+          <span class="tab-label">{{ t.label }}</span>
+          <span *ngIf="t.badge !== null && t.badge !== undefined" 
+                class="badge tab-badge" 
+                [ngClass]="{
+                  'tab-badge-secondary': !t.badgeType || t.badgeType === 'default',
+                  'tab-badge-success': t.badgeType === 'success',
+                  'tab-badge-warning': t.badgeType === 'warning',
+                  'tab-badge-danger': t.badgeType === 'danger',
+                  'tab-badge-info': t.badgeType === 'info'
+                }">
+            {{ t.badge }}
+          </span>
+        </div>
+      </ng-template>
     </tab>
-</tabset>
+  </tabset>
 
-<ng-content></ng-content>
+  <div class="tab-content-area">
+    <ng-content></ng-content>
+  </div>
+</div>

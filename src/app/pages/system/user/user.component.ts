@@ -20,6 +20,13 @@ export class UsersComponent implements OnInit, OnDestroy {
 	items: UserItem[] = [];
 	branches: { id: number; name: string }[] = [];
 
+	// Tab configuration
+	tabs = [
+		{ id: 'approved', label: 'Đã duyệt', icon: 'bx bx-check-circle' },
+		{ id: 'pending', label: 'Chờ duyệt', icon: 'bx bx-time' }
+	];
+	activeTabId = 'approved';
+
 	pagingState: PagingState = {
 		pageIndex: 1,
 		pageSize: USER_CONFIG.pagination.defaultPageSize,
@@ -47,6 +54,18 @@ export class UsersComponent implements OnInit, OnDestroy {
 		this.getItems();
 	}
 
+	// Tab handling methods
+	onTabChange(tabId: string): void {
+		this.activeTabId = tabId;
+		this.pagingState.pageIndex = 1;
+		this.getItems();
+	}
+
+	onTabChanged(tab: any): void {
+		console.log('Tab changed to:', tab);
+		// Có thể thêm logic xử lý khác ở đây nếu cần
+	}
+
 	ngOnDestroy(): void {
 		this.destroyed$.next();
 		this.destroyed$.complete();
@@ -60,6 +79,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 			keyword: this.pagingState.keyword || null,
 			branchId: this.pagingState.branchId,
 			isLocked: this.pagingState.isLocked,
+			status: this.activeTabId // Thêm status dựa trên tab active
 		})
 		.pipe(finalize(() => this.isLoadingList = false), takeUntil(this.destroyed$))
 		.subscribe({

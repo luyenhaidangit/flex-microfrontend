@@ -4,10 +4,12 @@
 	<div class="bg-white rounded shadow-sm p-3">
 
 		<!-- Tabset -->
-		<!-- <tabset class="nav-pills nav-tabs mb-3">
-			<tab heading="Đã duyệt" (selectTab)="switchTab('approved')"></tab>
-			<tab heading="Chờ duyệt" (selectTab)="switchTab('pending')"></tab>
-		</tabset> -->
+		<app-tabs 
+			[tabs]="tabs" 
+			[activeId]="activeTabId" 
+			(activeIdChange)="onTabChange($event)"
+			(changed)="onTabChanged($event)">
+		</app-tabs>
 
 		<!-- Search form -->
 		<div class="row gx-3 mb-3 gy-2 align-items-end">
