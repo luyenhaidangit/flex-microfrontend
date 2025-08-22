@@ -79,6 +79,7 @@
         "TEXT": "Quản trị hệ thống",
         "BRANCH": "Quản lý chi nhánh",
         "ROLE": "Quản lý vai trò",
+        "USERS": "Quản lý người sử dụng",
         "SETTINGS": "Cài đặt hệ thống"
       }
     },

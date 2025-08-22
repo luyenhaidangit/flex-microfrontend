@@ -11,6 +11,7 @@
         "TEXT": "System Management",
         "BRANCH": "Branch Management",
         "ROLE": "Role Management",
+        "USERS": "User Management",
         "SETTINGS": "System Settings"
       }
     },

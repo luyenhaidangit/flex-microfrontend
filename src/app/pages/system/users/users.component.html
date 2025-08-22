@@ -1,0 +1,88 @@
+<div class="container-fluid">
+	<app-page-title title="Quản lý người sử dụng" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+	<div class="bg-white rounded shadow-sm p-3">
+		<div class="row gx-3 mb-3 gy-2 align-items-end">
+			<div class="col-md-4">
+				<label class="form-label fw-bold text-muted">Từ khóa</label>
+				<input class="form-control" type="text" placeholder="Nhập từ khóa..." [(ngModel)]="pagingState.keyword">
+			</div>
+			<div class="col-md-3">
+				<label class="form-label fw-bold text-muted">Chi nhánh</label>
+				<select class="form-select" [(ngModel)]="pagingState.branchId">
+					<option [ngValue]="null">Tất cả</option>
+					<option *ngFor="let b of branches" [ngValue]="b.id">{{ b.name }}</option>
+				</select>
+			</div>
+			<div class="col-md-3">
+				<label class="form-label fw-bold text-muted">Trạng thái khóa</label>
+				<select class="form-select" [(ngModel)]="pagingState.isLocked">
+					<option [ngValue]="null">Tất cả</option>
+					<option [ngValue]="false">Đang mở</option>
+					<option [ngValue]="true">Đã khóa</option>
+				</select>
+			</div>
+			<div class="col-md-2">
+				<button class="btn btn-primary w-100" (click)="search()">
+					<i class="bx bx-search-alt-2"></i> Tìm kiếm
+				</button>
+			</div>
+		</div>
+
+		<div class="table-responsive">
+			<table class="table align-middle table-nowrap dt-responsive nowrap w-100">
+				<thead>
+					<tr>
+						<th>Tài khoản</th>
+						<th>Họ tên</th>
+						<th>Email</th>
+						<th>Chi nhánh</th>
+						<th>Trạng thái</th>
+					</tr>
+				</thead>
+				<tbody *ngIf="isLoadingList">
+					<tr *ngFor="let _ of [1,2,3,4,5,6,7,8]">
+						<td colspan="5"><app-skeleton height="18px"></app-skeleton></td>
+					</tr>
+				</tbody>
+				<tbody *ngIf="!isLoadingList && items.length">
+					<tr *ngFor="let u of items">
+						<td class="fw-bold">{{ u.userName }}</td>
+						<td>{{ u.fullName || '-' }}</td>
+						<td>{{ u.email || '-' }}</td>
+						<td>{{ u.branchName || '-' }}</td>
+						<td>
+							<span class="badge" [ngClass]="u.isLocked ? 'bg-danger' : 'bg-success'">
+								{{ u.isLocked ? 'Đã khóa' : 'Đang mở' }}
+							</span>
+						</td>
+					</tr>
+				</tbody>
+				<tbody *ngIf="!isLoadingList && !items.length">
+					<tr>
+						<td colspan="5" class="text-center text-muted">Không có dữ liệu</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="d-flex align-items-center justify-content-between mt-2">
+			<div class="d-flex align-items-center gap-2">
+				<span class="text-muted small">Hiển thị</span>
+				<select class="form-select form-select-sm w-auto" [ngModel]="pagingState.pageSize" (ngModelChange)="onPageSizeChange($event)">
+					<option *ngFor="let p of DEFAULT_PER_PAGE_OPTIONS" [ngValue]="p">{{ p }}</option>
+				</select>
+				<span class="text-muted small">bản ghi</span>
+			</div>
+			<pagination
+				[totalItems]="pagingState.totalItems"
+				[itemsPerPage]="pagingState.pageSize"
+				[maxSize]="5"
+				[(ngModel)]="pagingState.pageIndex"
+				(pageChanged)="onPageChange($event.page)">
+			</pagination>
+		</div>
+	</div>
+</div>
+
+

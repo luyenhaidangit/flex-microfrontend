@@ -67,6 +67,11 @@ export const MENU: MenuItem[] = [
                 label: 'MENUITEMS.SYSTEM.MANAGESYSTEM.ROLE',
                 link: '/system/role',
             },
+            {
+                id: 'user-permission-module.users',
+                label: 'MENUITEMS.SYSTEM.MANAGESYSTEM.USERS',
+                link: '/system/users',
+            },
         ]
     },
     // {

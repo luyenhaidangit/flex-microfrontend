@@ -20,9 +20,10 @@ import { BranchComponent } from './branch/branch.component';
 
 import { RoleComponent } from './role/role.component';
 import { SharedModule } from '../../shared/shared.module';
+import { UsersComponent } from './users/users.component';
 
 @NgModule({
-  declarations: [BranchComponent, RoleComponent],
+  declarations: [BranchComponent, RoleComponent, UsersComponent],
   imports: [
     CommonModule,
     SystemRoutingModule,
