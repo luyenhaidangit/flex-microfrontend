@@ -3,11 +3,13 @@
   <app-page-title title="Quản lý vai trò" [breadcrumbItems]="breadCrumbItems"></app-page-title>
 
   <div class="bg-white rounded shadow-sm p-3">
-    <!-- Tabset -->
-    <tabset class="nav-pills nav-tabs mb-3">
-      <tab heading="Đã duyệt" (selectTab)="switchTab('approved')"></tab>
-      <tab heading="Chờ duyệt" (selectTab)="switchTab('pending')"></tab>
-    </tabset>
+    <!-- Custom Tabset -->
+    <app-custom-tabset
+      [config]="tabsetConfig"
+      [activeTabId]="activeTab"
+      (tabChange)="onTabChange($event)"
+      (tabClick)="onTabClick($event)">
+    </app-custom-tabset>
 
     <!-- Search form -->
     <div class="row gx-3 mb-3 gy-2 align-items-end">
