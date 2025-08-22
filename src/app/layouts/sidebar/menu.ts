@@ -70,7 +70,7 @@ export const MENU: MenuItem[] = [
             {
                 id: 'user-permission-module.users',
                 label: 'MENUITEMS.SYSTEM.MANAGESYSTEM.USERS',
-                link: '/system/users',
+                link: '/system/user',
             },
         ]
     },

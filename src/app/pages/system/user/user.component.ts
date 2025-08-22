@@ -9,8 +9,8 @@ import { PagingState, UserItem } from './user.models';
 
 @Component({
 	selector: 'app-users',
-	templateUrl: './users.component.html',
-	styleUrls: ['./users.component.scss']
+	templateUrl: './user.component.html',
+	styleUrls: ['./user.component.scss']
 })
 export class UsersComponent implements OnInit, OnDestroy {
 
