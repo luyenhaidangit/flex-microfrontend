@@ -7,8 +7,6 @@ import { UpperNoSpaceDirective } from './directives/upper-nospace.directive';
 import { BadgeComponent } from './components/badge/badge.component';
 import { SafeFieldPipe } from './pipes/safe-field.pipe';
 import { PrettyJsonPipe } from './pipes/pretty-json.pipe';
-import { CustomTabsetComponent } from './components/custom-tabset/custom-tabset.component';
-import { TabConfigService } from './services/tab-config.service';
 
 @NgModule({
   declarations: [
@@ -16,7 +14,6 @@ import { TabConfigService } from './services/tab-config.service';
     BadgeComponent,
     SafeFieldPipe,
     PrettyJsonPipe,
-    CustomTabsetComponent,
   ],
   imports: [
     CommonModule,
@@ -28,10 +25,8 @@ import { TabConfigService } from './services/tab-config.service';
     BadgeComponent,
     SafeFieldPipe,
     PrettyJsonPipe,
-    CustomTabsetComponent,
   ],
   providers: [
-    TabConfigService
   ]
 })
 

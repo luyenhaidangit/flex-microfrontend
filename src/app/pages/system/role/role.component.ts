@@ -7,9 +7,6 @@ import { ToastService } from 'angular-toastify';
 import { Role, PagingState, RequestDetailData, RoleSearchParams, PermissionNode } from './role.models';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { TabConfigService } from 'src/app/shared/services/tab-config.service';
-import { TabsetConfig } from 'src/app/shared/components/custom-tabset/custom-tabset.component';
-
 @Component({
   selector: 'app-role',
   templateUrl: './role.component.html',
@@ -23,10 +20,6 @@ export class RoleComponent implements OnInit, OnDestroy {
     { label: 'Quản trị hệ thống' },
     { label: 'Quản lý vai trò', active: true }
   ];
-
-  // Tab configuration
-  tabsetConfig!: TabsetConfig;
-
   // Table config
   skeletonRows = Array.from({ length: 8 });
   tableConfig = {
@@ -140,22 +133,18 @@ export class RoleComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    private formBuilder: FormBuilder,
     private roleService: RoleService,
     private modalService: BsModalService,
-    private toastService: ToastService,
-    private tabConfigService: TabConfigService
-  ) { }
+    private fb: FormBuilder,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
-    // Initialize tabset configuration
-    this.initializeTabsetConfig();
-    
     // Load data
     this.getItems();
 
     // Initialize forms
-    this.roleForm = this.formBuilder.group({
+    this.roleForm = this.fb.group({
       code: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9]+')]],
       name: ['', [Validators.required, Validators.maxLength(100)]],
       description: ['', [Validators.maxLength(500)]],
@@ -163,49 +152,15 @@ export class RoleComponent implements OnInit, OnDestroy {
       comment: ['', [Validators.maxLength(500)]]
     });
 
-    this.deleteForm = this.formBuilder.group({
+    this.deleteForm = this.fb.group({
       comment: ['', [Validators.maxLength(500)]]
     });
 
-    this.rejectForm = this.formBuilder.group({
+    this.rejectForm = this.fb.group({
       reason: ['', [Validators.required]]
     });
     
     // Toast icon size is now handled by CSS override
-  }
-
-  /**
-   * Khởi tạo cấu hình tabset
-   */
-  private initializeTabsetConfig(): void {
-    this.tabsetConfig = this.tabConfigService.createApprovalTabset(
-      this.items.length, // approved count
-      this.pendingCount, // pending count
-      {
-        tabsetClass: 'nav-pills nav-tabs mb-3',
-        showCount: true,
-        pills: true
-      }
-    );
-  }
-
-  /**
-   * Cập nhật số lượng cho tab
-   */
-  private updateTabCounts(): void {
-    if (this.tabsetConfig) {
-      this.tabsetConfig = this.tabConfigService.updateTabCount(
-        this.tabsetConfig,
-        'approved',
-        this.items.length
-      );
-      
-      this.tabsetConfig = this.tabConfigService.updateTabCount(
-        this.tabsetConfig,
-        'pending',
-        this.pendingCount
-      );
-    }
   }
 
   ngOnDestroy(): void {
@@ -255,7 +210,6 @@ export class RoleComponent implements OnInit, OnDestroy {
             const { items, ...page } = res.data;
             this.items = items ?? [];
             this.updatePagingState(page);
-            this.updateTabCounts(); // Update tab counts after getting approved items
           } else {
             this.items = [];
             this.toastService.error('Không lấy được danh sách vai trò!');
@@ -578,8 +532,6 @@ export class RoleComponent implements OnInit, OnDestroy {
               totalPages: page.totalPages,
               totalItems: page.totalItems
             });
-            this.pendingCount = this.pendingItems.length; // Update pending count
-            this.updateTabCounts(); // Update tab counts after getting pending items
           } else {
             this.pendingItems = [];
             this.toastService.error('Không lấy được danh sách vai trò chờ duyệt!');
@@ -656,23 +608,6 @@ export class RoleComponent implements OnInit, OnDestroy {
     this.activeTab = tab;
     this.resetSearchParams(); // Reset search params khi chuyển tab
     this.search();
-  }
-
-  /**
-   * Xử lý khi tab thay đổi từ custom tabset component
-   */
-  onTabChange(tabId: string): void {
-    if (tabId === 'approved' || tabId === 'pending') {
-      this.switchTab(tabId as 'approved' | 'pending');
-    }
-  }
-
-  /**
-   * Xử lý khi tab được click từ custom tabset component
-   */
-  onTabClick(tab: any): void {
-    // Có thể thêm logic xử lý khi tab được click
-    console.log('Tab clicked:', tab);
   }
 
   // Thay đổi các hàm tìm kiếm/phân trang để gọi đúng API theo tab
