@@ -15,36 +15,35 @@
 		<div class="row gx-3 mb-3 gy-2 align-items-end">
 			<div class="col-md-4">
 				<label class="form-label fw-bold text-muted">Từ khóa</label>
-				<!-- <input class="form-control" type="text" placeholder="Nhập từ khóa..." [(ngModel)]="state.keyword"> -->
+				<input class="form-control" type="text" placeholder="Nhập từ khóa..." [(ngModel)]="state.filter.keyword">
 			</div>
 		
-			<!-- Chỉ hiện ở tab đã duyệt -->
-			<!-- <div class="col-md-3" *ngIf="activeTab==='approved'">
+			<!-- Display only in approved tab -->
+			<div class="col-md-3" *ngIf="activeTabId === 'approved'">
 				<label class="form-label fw-bold text-muted">Trạng thái</label>
-				<select class="form-select" [(ngModel)]="pagingState.isActive">
+				<select class="form-select" [(ngModel)]="state.filter.isLocked">
 					<option [ngValue]="null">Tất cả</option>
 					<option [ngValue]="true">Hoạt động</option>
 					<option [ngValue]="false">Không hoạt động</option>
 				</select>
-			</div> -->
+			</div>
 		
-			<!-- Chỉ hiện ở tab chờ duyệt -->
-			<!-- <div class="col-md-3" *ngIf="activeTab==='pending'">
+			<!-- Display only in pending tab -->
+			<div class="col-md-3" *ngIf="activeTabId === 'pending'">
 				<label class="form-label fw-bold text-muted">Loại yêu cầu</label>
-				<select class="form-select" [(ngModel)]="pagingState.type">
+				<select class="form-select" [(ngModel)]="state.filter.type">
 					<option [ngValue]="null">Tất cả</option>
 					<option [ngValue]="'CREATE'">Tạo mới</option>
 					<option [ngValue]="'UPDATE'">Cập nhật</option>
 					<option [ngValue]="'DELETE'">Xóa</option>
 				</select>
-			</div> -->
+			</div>
 		
-			<!-- <div class="col-md-2">
-				<label class="form-label d-block" style="visibility:hidden">Tìm</label>
+			<div class="col-md-2">
 				<button class="btn btn-primary w-100" (click)="search()">
 					<i class="bx bx-search-alt-2"></i> Tìm kiếm
 				</button>
-			</div> -->
+			</div>
 		
 			<!-- <div class="col-md-3 text-md-end">
 				<button type="button" class="btn btn-success fw-bold" (click)="openCreateModal()">

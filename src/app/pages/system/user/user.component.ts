@@ -113,17 +113,17 @@ export class UsersComponent implements OnInit, OnDestroy {
 	}
 
 	private loadBranches(): void {
-		this.systemService.getBranchesPaging({ pageIndex: 1, pageSize: 1000 })
-			.pipe(takeUntil(this.destroyed$))
-			.subscribe({
-				next: (res) => {
-					if (res?.isSuccess) {
-						const branchItems = (res.data?.items ?? []).map((b: any) => ({ id: b.id, name: b.name }));
-						this.branches = [...USER_CONFIG.search.branchOptions, ...branchItems];
-					}
-				},
-				error: () => {}
-			});
+		// this.systemService.getBranchesPaging({ pageIndex: 1, pageSize: 1000 })
+		// 	.pipe(takeUntil(this.destroyed$))
+		// 	.subscribe({
+		// 		next: (res) => {
+		// 			if (res?.isSuccess) {
+		// 				const branchItems = (res.data?.items ?? []).map((b: any) => ({ id: b.id, name: b.name }));
+		// 				this.branches = [...USER_CONFIG.search.branchOptions, ...branchItems];
+		// 			}
+		// 		},
+		// 		error: () => {}
+		// 	});
 	}
 }
 
