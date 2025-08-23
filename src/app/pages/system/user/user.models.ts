@@ -9,6 +9,13 @@ export interface UserItem {
 	createdAt?: string;
 }
 
+export interface UserFilter {
+	keyword: string;
+	branchId: number | null;
+	isLocked: boolean | null;
+	status?: string; // Thêm status để phân biệt tab approved/pending
+}
+
 export interface UserSearchParams {
 	pageIndex: number;
 	pageSize: number;
@@ -27,5 +34,4 @@ export interface PagingState {
 	isLocked: boolean | null;
 	branchId: number | null;
 }
-
 

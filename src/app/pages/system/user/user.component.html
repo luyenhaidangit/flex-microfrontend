@@ -15,7 +15,7 @@
 		<div class="row gx-3 mb-3 gy-2 align-items-end">
 			<div class="col-md-4">
 				<label class="form-label fw-bold text-muted">Từ khóa</label>
-				<input class="form-control" type="text" placeholder="Nhập từ khóa..." [(ngModel)]="pagingState.keyword">
+				<!-- <input class="form-control" type="text" placeholder="Nhập từ khóa..." [(ngModel)]="state.keyword"> -->
 			</div>
 		
 			<!-- Chỉ hiện ở tab đã duyệt -->
@@ -93,18 +93,18 @@
 		<div class="d-flex align-items-center justify-content-between mt-2">
 			<div class="d-flex align-items-center gap-2">
 				<span class="text-muted small">Hiển thị</span>
-				<select class="form-select form-select-sm w-auto" [ngModel]="pagingState.pageSize" (ngModelChange)="onPageSizeChange($event)">
+				<!-- <select class="form-select form-select-sm w-auto" [ngModel]="state.pageSize" (ngModelChange)="onPageSizeChange($event)">
 					<option *ngFor="let p of CONFIG.pagination.pageSizeOptions" [ngValue]="p">{{ p }}</option>
-				</select>
+				</select> -->
 				<span class="text-muted small">bản ghi</span>
 			</div>
-			<pagination
-				[totalItems]="pagingState.totalItems"
-				[itemsPerPage]="pagingState.pageSize"
+			<!-- <pagination
+				[totalItems]="state.totalItems"
+				[itemsPerPage]="state.pageSize"
 				[maxSize]="5"
-				[(ngModel)]="pagingState.pageIndex"
+				[(ngModel)]="state.pageIndex"
 				(pageChanged)="onPageChange($event.page)">
-			</pagination>
+			</pagination> -->
 		</div>
 	</div>
 </div>
