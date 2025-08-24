@@ -8,22 +8,30 @@ import { PagingState, UserItem } from './user.models';
 import { USER_CONFIG, getUserStatusConfig, getTableColumns, getSkeletonConfig } from './user.config';
 import { Query, ListState, PageMeta  } from 'src/app/core/features/query';
 import { UserFilter } from './user.models';
+import { EntityListComponent } from 'src/app/core/components/base/entity-list.component';
 
 @Component({
 	selector: 'app-users',
 	templateUrl: './user.component.html',
 	styleUrls: ['./user.component.scss']
 })
-export class UsersComponent implements OnInit, OnDestroy {
+
+export class UsersComponent extends EntityListComponent<UserFilter> implements OnInit, OnDestroy {
 
 	CONFIG = USER_CONFIG;
 	activeTabId = this.CONFIG.tabs.default;
+
+	// Triggers
+	private reload$ = new Subject<void>();
 
 	isLoadingList = false;
 	items: UserItem[] = [];
 	branches: { id: number; name: string }[] = [];
 
-	state: ListState<UserFilter> = Query.init({ keyword: '', branchId: null, isLocked: null }, { index: 1, size: 10 });
+	state: ListState<UserFilter> = Query.init(
+	  { keyword: '', branchId: null, isLocked: null },
+      { index: 1, size: 10 }
+	);
 
 	// Table configuration
 	tableColumns = getTableColumns();
@@ -35,11 +43,17 @@ export class UsersComponent implements OnInit, OnDestroy {
 		private userService: UserService,
 		private systemService: SystemService,
 		private toast: ToastService,
-	) {}
+	) {
+		super({ keyword: '', branchId: null, isLocked: null, type: null });
+	}
 
     ngOnInit(): void {
-		this.loadBranches();
 		this.getItems();
+	}
+
+	search(): void {
+		this.resetToFirstPage();
+		// this.getItems();
 	}
 
 	// Tab handling methods
@@ -95,11 +109,6 @@ export class UsersComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	search(): void {
-		// this.pagingState.pageIndex = 1;
-		// this.getItems();
-	}
-
 	onPageChange(page: number): void {
 		// if (page === this.pagingState.pageIndex) return;
 		// this.pagingState.pageIndex = page;
@@ -112,19 +121,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 		// this.getItems();
 	}
 
-	private loadBranches(): void {
-		// this.systemService.getBranchesPaging({ pageIndex: 1, pageSize: 1000 })
-		// 	.pipe(takeUntil(this.destroyed$))
-		// 	.subscribe({
-		// 		next: (res) => {
-		// 			if (res?.isSuccess) {
-		// 				const branchItems = (res.data?.items ?? []).map((b: any) => ({ id: b.id, name: b.name }));
-		// 				this.branches = [...USER_CONFIG.search.branchOptions, ...branchItems];
-		// 			}
-		// 		},
-		// 		error: () => {}
-		// 	});
-	}
+	// ---------------- Internals ----------------
 }
 
 

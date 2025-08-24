@@ -13,9 +13,9 @@ export interface UserFilter {
 	keyword: string;
 	branchId: number | null;
 	isLocked: boolean | null;
-	status?: string; // Thêm status để phân biệt tab approved/pending
+	status?: string;
+	type?: 'CREATE' | 'UPDATE' | 'DELETE' | null;
 }
-
 export interface UserSearchParams {
 	pageIndex: number;
 	pageSize: number;
