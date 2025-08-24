@@ -21,7 +21,7 @@
 			<!-- Display only in approved tab -->
 			<div class="col-md-2" *ngIf="activeTabId === 'approved'">
 				<label class="form-label fw-bold text-muted">Trạng thái</label>
-				<select class="form-select" [(ngModel)]="state.filter.isLocked">
+				<select class="form-select" [(ngModel)]="state.filter.isActive">
 					<option [ngValue]="null">Tất cả</option>
 					<option [ngValue]="false">Hoạt động</option>
 					<option [ngValue]="true">Đã khóa</option>
@@ -85,8 +85,8 @@
 						<td>{{ u.email || '-' }}</td>
 						<td>{{ u.branchName || '-' }}</td>
 						<td>
-							<span class="badge" [ngClass]="u.isLocked ? 'bg-danger' : 'bg-success'">
-								{{ u.isLocked ? 'Đã khóa' : 'Đang mở' }}
+							<span class="badge" [ngClass]="u.isActive ? 'bg-danger' : 'bg-success'">
+								{{ u.isActive ? 'Hoạt động' : 'Không hoạt động' }}
 							</span>
 						</td>
 					</tr>

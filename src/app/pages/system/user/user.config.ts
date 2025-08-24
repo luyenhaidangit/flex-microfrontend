@@ -35,7 +35,7 @@ export const USER_CONFIG = {
         { key: 'fullName', label: 'Họ và tên', width: '150px' },
         { key: 'email', label: 'Email', width: '200px' },
         { key: 'branchName', label: 'Chi nhánh', width: '140px' },
-        { key: 'isLocked', label: 'Trạng thái', width: '100px' },
+        { key: 'isActive', label: 'Trạng thái', width: '100px' },
         { key: 'createdAt', label: 'Ngày tạo', width: '120px' },
         { key: 'actions', label: 'Thao tác', width: '120px' }
       ]
@@ -114,8 +114,8 @@ export const USER_CONFIG = {
 };
 
 // Helper functions
-export const getUserStatusConfig = (isLocked: boolean) => {
-  return USER_CONFIG.status.locked[isLocked.toString() as keyof typeof USER_CONFIG.status.locked];
+export const getUserStatusConfig = (isActive: boolean) => {
+  return USER_CONFIG.status.locked[isActive.toString() as keyof typeof USER_CONFIG.status.locked];
 };
 
 export const getTableColumns = () => {

@@ -5,14 +5,14 @@ export interface UserItem {
 	fullName?: string;
 	branchId?: number;
 	branchName?: string;
-	isLocked?: boolean;
+	isActive?: boolean;
 	createdAt?: string;
 }
 
 export interface UserFilter {
 	keyword: string;
 	branchId: number | null;
-	isLocked: boolean | null;
+	isActive: boolean | null;
 	status?: string;
 	type?: 'CREATE' | 'UPDATE' | 'DELETE' | null;
 }
@@ -21,7 +21,7 @@ export interface UserSearchParams {
 	pageSize: number;
 	keyword?: string | null;
 	branchId?: number | null;
-	isLocked?: boolean | null;
+	isActive?: boolean | null;
 	status?: string; // Thêm status để phân biệt tab approved/pending
 }
 
@@ -31,7 +31,7 @@ export interface PagingState {
 	totalPages: number;
 	totalItems: number;
 	keyword: string;
-	isLocked: boolean | null;
+	isActive: boolean | null;
 	branchId: number | null;
 }
 

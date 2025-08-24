@@ -39,7 +39,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		private systemService: SystemService,
 		private toast: ToastService,
 	) {
-		super({ keyword: '', branchId: null, isLocked: null, type: null });
+		super({ keyword: '', branchId: null, isActive: null, type: null });
 	}
 
     ngOnInit(): void {
@@ -102,7 +102,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 			pageSize: this.state.paging.size,
 			keyword: this.state.filter.keyword,
 			branchId: this.state.filter.branchId,
-			isLocked: this.state.filter.isLocked,
+			isActive: this.state.filter.isActive,
 			status: this.activeTabId
 		})
 		.pipe(finalize(() => this.isLoadingList = false), takeUntil(this.destroyed$))
@@ -117,13 +117,10 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 					this.updatePagingState(pageMeta);
 				} else {
 					this.items = [];
-					this.toast.error(USER_CONFIG.messages.error.load);
 				}
 			},
 			error: (err) => {
 				this.items = [];
-				this.toast.error(USER_CONFIG.messages.error.general);
-				console.error('getUsers error:', err);
 			}
 		});
 	}
