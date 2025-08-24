@@ -53,13 +53,19 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 			status: this.activeTabId
 		};
 		
-		// Sử dụng utility function từ base class để clean params
 		return this.cleanParams(params);
 	}
 
     ngOnInit(): void {
-		this.getItems();
-		this.loadBranches();
+		this.loadBranches()
+			.then(() => {
+				this.getItems();
+			})
+			.catch((err) => {
+				console.error('Không thể load branches, vẫn load users:', err);
+				// Vẫn load users ngay cả khi branches fail
+				this.getItems();
+			});
 	}
 
 	onsearch(): void {
@@ -73,24 +79,28 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	getPendingItems(): void {
 	}
 
-	// Load danh sách chi nhánh cho filter dropdown
-	loadBranches(): void {
-		this.systemService.getBranchesForFilter()
-			.pipe(takeUntil(this.destroyed$))
-			.subscribe({
-				next: (res) => {
-					if (res?.isSuccess) {
-						this.branches = res.data || [];
-					} else {
+	// Load branches for filter dropdown
+	loadBranches(): Promise<void> {
+		return new Promise((resolve, reject) => {
+			this.systemService.getBranchesForFilter()
+				.pipe(takeUntil(this.destroyed$))
+				.subscribe({
+					next: (res) => {
+						if (res?.isSuccess) {
+							this.branches = res.data || [];
+						} else {
+							this.branches = [];
+							console.warn('Không thể load danh sách chi nhánh');
+						}
+						resolve();
+					},
+					error: (err) => {
 						this.branches = [];
-						console.warn('Không thể load danh sách chi nhánh');
+						console.error('Lỗi khi load danh sách chi nhánh:', err);
+						reject(err);
 					}
-				},
-				error: (err) => {
-					this.branches = [];
-					console.error('Lỗi khi load danh sách chi nhánh:', err);
-				}
-			});
+				});
+		});
 	}
 
 	// Tab handling methods
