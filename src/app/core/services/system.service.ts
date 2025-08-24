@@ -15,6 +15,11 @@ export class SystemService {
     return this.http.get<any>('/api/branch/get-branches-paging', { params: req as any });
   }
 
+  // Lấy danh sách chi nhánh cho filter dropdown
+  getBranchesForFilter(): Observable<any> {
+    return this.http.get<any>('/api/branch/filter');
+  }
+
   // Thay thế các API riêng lẻ bằng một method chung
   processBranchRequest(payload: {
     id: number, 

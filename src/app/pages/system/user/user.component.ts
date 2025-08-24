@@ -44,6 +44,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 
     ngOnInit(): void {
 		this.getItems();
+		this.loadBranches();
 	}
 
 	onsearch(): void {
@@ -55,6 +56,26 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 
 	getPendingItems(): void {
+	}
+
+	// Load danh sách chi nhánh cho filter dropdown
+	loadBranches(): void {
+		this.systemService.getBranchesForFilter()
+			.pipe(takeUntil(this.destroyed$))
+			.subscribe({
+				next: (res) => {
+					if (res?.isSuccess) {
+						this.branches = res.data || [];
+					} else {
+						this.branches = [];
+						console.warn('Không thể load danh sách chi nhánh');
+					}
+				},
+				error: (err) => {
+					this.branches = [];
+					console.error('Lỗi khi load danh sách chi nhánh:', err);
+				}
+			});
 	}
 
 	// Tab handling methods
@@ -80,8 +101,8 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 			pageIndex: this.state.paging.index,
 			pageSize: this.state.paging.size,
 			keyword: this.state.filter.keyword,
-			// branchId: this.state.filter.branchId,
-			// isLocked: this.state.filter.isLocked,
+			branchId: this.state.filter.branchId,
+			isLocked: this.state.filter.isLocked,
 			status: this.activeTabId
 		})
 		.pipe(finalize(() => this.isLoadingList = false), takeUntil(this.destroyed$))
