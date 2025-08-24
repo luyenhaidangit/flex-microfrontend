@@ -1,4 +1,4 @@
-import { Query, ListState } from 'src/app/core/features/query';
+import { Query, ListState, PageMeta } from 'src/app/core/features/query';
 
 export abstract class EntityListComponent<TFilter> {
   state: ListState<TFilter>;
@@ -22,5 +22,35 @@ export abstract class EntityListComponent<TFilter> {
     this.state.paging.size = size;
     this.resetToFirstPage();
     searchFn();
+  }
+
+  protected updatePagingState(pageMeta: Partial<PageMeta>): void {
+    if (pageMeta.totalItems !== undefined || pageMeta.totalPages !== undefined) {
+      // Cập nhật metadata phân trang vào state
+      this.state.paging = {
+        ...this.state.paging,
+        totalItems: pageMeta.totalItems,
+        totalPages: pageMeta.totalPages
+      };
+    }
+  }
+
+  // Method helper để lấy thông tin phân trang từ response
+  protected extractPagingFromResponse<T>(response: any): { items: T[], pageMeta: Partial<PageMeta> } {
+    const { items, totalItems, totalPages, ...rest } = response;
+    return {
+      items: items || [],
+      pageMeta: { totalItems, totalPages }
+    };
+  }
+
+  // Method helper để lấy thông tin phân trang hiện tại
+  getPagingInfo(): { currentPage: number; pageSize: number; totalItems?: number; totalPages?: number } {
+    return {
+      currentPage: this.state.paging.index,
+      pageSize: this.state.paging.size,
+      totalItems: this.state.paging.totalItems,
+      totalPages: this.state.paging.totalPages
+    };
   }
 }

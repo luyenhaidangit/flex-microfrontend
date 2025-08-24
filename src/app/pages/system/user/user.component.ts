@@ -4,9 +4,9 @@ import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { SystemService } from 'src/app/core/services/system.service';
 import { UserService } from './user.service';
-import { PagingState, UserItem } from './user.models';
+import { UserItem } from './user.models';
 import { USER_CONFIG, getUserStatusConfig, getTableColumns, getSkeletonConfig } from './user.config';
-import { Query, ListState, PageMeta  } from 'src/app/core/features/query';
+import { ListState, PageMeta  } from 'src/app/core/features/query';
 import { UserFilter } from './user.models';
 import { EntityListComponent } from 'src/app/core/components/base/entity-list.component';
 
@@ -28,11 +28,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	items: UserItem[] = [];
 	branches: { id: number; name: string }[] = [];
 
-	state: ListState<UserFilter> = Query.init(
-	  { keyword: '', branchId: null, isLocked: null },
-      { index: 1, size: 10 }
-	);
-
 	// Table configuration
 	tableColumns = getTableColumns();
 	skeletonConfig = getSkeletonConfig();
@@ -51,15 +46,21 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		this.getItems();
 	}
 
-	search(): void {
-		this.resetToFirstPage();
-		// this.getItems();
+	onsearch(): void {
+		if (this.activeTabId === 'approved') {
+			this.getItems();
+		} else {
+			this.getPendingItems();
+		}
+	}
+
+	getPendingItems(): void {
 	}
 
 	// Tab handling methods
 	onTabChange(tabId: string): void {
 		this.activeTabId = tabId;
-		this.state.paging.index = 1;
+		this.resetToFirstPage(); // Sử dụng method từ base class
 		this.getItems();
 	}
 
@@ -78,24 +79,21 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		this.userService.getUsers({
 			pageIndex: this.state.paging.index,
 			pageSize: this.state.paging.size,
-			// keyword: this.pagingState.keyword || null,
-			// branchId: this.pagingState.branchId,
-			// isLocked: this.pagingState.isLocked,
-			// status: this.activeTabId // Thêm status dựa trên tab active
+			keyword: this.state.filter.keyword,
+			// branchId: this.state.filter.branchId,
+			// isLocked: this.state.filter.isLocked,
+			status: this.activeTabId
 		})
 		.pipe(finalize(() => this.isLoadingList = false), takeUntil(this.destroyed$))
 		.subscribe({
 			next: (res) => {
 				if (res?.isSuccess) {
-					const { items, totalItems, totalPages, pageIndex, pageSize } = res.data ?? {};
-					this.items = items ?? [];
-					// this.pagingState = {
-					// 	...this.pagingState,
-					// 	pageIndex: pageIndex ?? this.pagingState.pageIndex,
-					// 	pageSize: pageSize ?? this.pagingState.pageSize,
-					// 	totalItems: totalItems ?? 0,
-					// 	totalPages: totalPages ?? 0,
-					// };
+					// Sử dụng method từ base class
+					const { items, pageMeta } = this.extractPagingFromResponse<UserItem>(res.data);
+					this.items = items as UserItem[];
+					
+					// Cập nhật trạng thái phân trang
+					this.updatePagingState(pageMeta);
 				} else {
 					this.items = [];
 					this.toast.error(USER_CONFIG.messages.error.load);
@@ -109,16 +107,12 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		});
 	}
 
-	onPageChange(page: number): void {
-		// if (page === this.pagingState.pageIndex) return;
-		// this.pagingState.pageIndex = page;
-		// this.getItems();
+	handlePageChange(page: number): void {
+		this.onPageChange(page, () => this.getItems());
 	}
 
-	onPageSizeChange(size: number): void {
-		// this.pagingState.pageSize = size;
-		// this.pagingState.pageIndex = 1;
-		// this.getItems();
+	handlePageSizeChange(size: number): void {
+		this.onPageSizeChange(size, () => this.getItems());
 	}
 
 	// ---------------- Internals ----------------
