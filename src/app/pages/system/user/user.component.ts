@@ -62,8 +62,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 				this.getItems();
 			})
 			.catch((err) => {
-				console.error('Không thể load branches, vẫn load users:', err);
-				// Vẫn load users ngay cả khi branches fail
 				this.getItems();
 			});
 	}
