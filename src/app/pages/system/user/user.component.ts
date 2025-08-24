@@ -44,28 +44,17 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 
 	// Get search params
 	get searchParams(): any {
-		const params: any = {
+		const params = {
 			pageIndex: this.state.paging.index,
-			pageSize: this.state.paging.size
+			pageSize: this.state.paging.size,
+			keyword: this.state.filter.keyword,
+			branchId: this.state.filter.branchId,
+			isActive: this.state.filter.isActive,
+			status: this.activeTabId
 		};
 		
-		if (this.state.filter.keyword?.trim()) {
-			params.keyword = this.state.filter.keyword.trim();
-		}
-		
-		if (this.state.filter.branchId !== null && this.state.filter.branchId !== undefined) {
-			params.branchId = this.state.filter.branchId;
-		}
-		
-		if (this.state.filter.isActive !== null && this.state.filter.isActive !== undefined) {
-			params.isActive = this.state.filter.isActive;
-		}
-		
-		if (this.activeTabId) {
-			params.status = this.activeTabId;
-		}
-		
-		return params;
+		// Sử dụng utility function từ base class để clean params
+		return this.cleanParams(params);
 	}
 
     ngOnInit(): void {

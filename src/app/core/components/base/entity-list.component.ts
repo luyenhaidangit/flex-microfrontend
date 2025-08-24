@@ -7,6 +7,24 @@ export abstract class EntityListComponent<TFilter> {
     this.state = Query.init(initFilter, { index: 1, size: 10 });
   }
 
+  /**
+   * Utility function để loại bỏ các giá trị null, undefined, empty string
+   * @param params Object chứa các tham số cần clean
+   * @returns Object đã được clean, chỉ giữ lại các giá trị hợp lệ
+   */
+  protected cleanParams<T extends Record<string, any>>(params: T): Partial<T> {
+    const cleaned: Partial<T> = {};
+    
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        if (typeof value === 'string' && value.trim() === '') return;
+        cleaned[key as keyof T] = value;
+      }
+    });
+    
+    return cleaned;
+  }
+
   resetToFirstPage(): void {
     this.state.paging.index = 1;
   }
