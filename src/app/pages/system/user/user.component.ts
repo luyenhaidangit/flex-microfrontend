@@ -42,6 +42,32 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		super({ keyword: '', branchId: null, isActive: null, type: null });
 	}
 
+	// Get search params
+	get searchParams(): any {
+		const params: any = {
+			pageIndex: this.state.paging.index,
+			pageSize: this.state.paging.size
+		};
+		
+		if (this.state.filter.keyword?.trim()) {
+			params.keyword = this.state.filter.keyword.trim();
+		}
+		
+		if (this.state.filter.branchId !== null && this.state.filter.branchId !== undefined) {
+			params.branchId = this.state.filter.branchId;
+		}
+		
+		if (this.state.filter.isActive !== null && this.state.filter.isActive !== undefined) {
+			params.isActive = this.state.filter.isActive;
+		}
+		
+		if (this.activeTabId) {
+			params.status = this.activeTabId;
+		}
+		
+		return params;
+	}
+
     ngOnInit(): void {
 		this.getItems();
 		this.loadBranches();
@@ -97,14 +123,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 
 	getItems(): void {
 		this.isLoadingList = true;
-		this.userService.getUsers({
-			pageIndex: this.state.paging.index,
-			pageSize: this.state.paging.size,
-			keyword: this.state.filter.keyword,
-			branchId: this.state.filter.branchId,
-			isActive: this.state.filter.isActive,
-			status: this.activeTabId
-		})
+		this.userService.getUsers(this.searchParams)
 		.pipe(finalize(() => this.isLoadingList = false), takeUntil(this.destroyed$))
 		.subscribe({
 			next: (res) => {
