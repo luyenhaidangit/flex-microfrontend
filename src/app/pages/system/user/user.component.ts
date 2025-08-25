@@ -34,14 +34,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 
 	private destroyed$ = new Subject<void>();
 
-	constructor(
-		private userService: UserService,
-		private systemService: SystemService,
-		private toast: ToastService,
-	) {
-		super({ keyword: '', branchId: null, isActive: null, type: null });
-	}
-
 	// Get search params
 	get searchParams(): any {
 		const params = {
@@ -54,6 +46,14 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		};
 		
 		return this.cleanParams(params);
+	}
+
+	constructor(
+		private userService: UserService,
+		private systemService: SystemService,
+		private toast: ToastService,
+	) {
+		super({ keyword: '', branchId: null, isActive: null, type: null });
 	}
 
     ngOnInit(): void {
