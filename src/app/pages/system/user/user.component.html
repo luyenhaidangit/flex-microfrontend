@@ -65,12 +65,10 @@
 					</tr>
 				</thead>
 				<tbody *ngIf="loading">
-					<tr *ngFor="let _ of [1,2,3,4,5,6,7,8]">
-						<td><app-skeleton width="120px" height="18px"></app-skeleton></td>
-						<td><app-skeleton width="150px" height="18px"></app-skeleton></td>
-						<td><app-skeleton width="200px" height="18px"></app-skeleton></td>
-						<td><app-skeleton width="100px" height="18px"></app-skeleton></td>
-						<td><app-skeleton width="80px" height="18px"></app-skeleton></td>
+					<tr *ngFor="let _ of [].constructor(CONFIG.table.skeleton.rows)">
+						<td *ngFor="let w of CONFIG.table.skeleton.columns">
+							<app-skeleton [width]="w" height="18px"></app-skeleton>
+						</td>
 					</tr>
 				</tbody>
 				<tbody *ngIf="!loading && items.length">
