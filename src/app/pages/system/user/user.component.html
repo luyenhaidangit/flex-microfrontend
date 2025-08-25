@@ -73,12 +73,16 @@
 						<th>Trạng thái</th>
 					</tr>
 				</thead>
-				<tbody *ngIf="isLoadingList">
+				<tbody *ngIf="loading">
 					<tr *ngFor="let _ of [1,2,3,4,5,6,7,8]">
-						<td colspan="5"><app-skeleton height="18px"></app-skeleton></td>
+						<td><app-skeleton width="120px" height="18px"></app-skeleton></td>
+						<td><app-skeleton width="150px" height="18px"></app-skeleton></td>
+						<td><app-skeleton width="200px" height="18px"></app-skeleton></td>
+						<td><app-skeleton width="100px" height="18px"></app-skeleton></td>
+						<td><app-skeleton width="80px" height="18px"></app-skeleton></td>
 					</tr>
 				</tbody>
-				<tbody *ngIf="!isLoadingList && items.length">
+				<tbody *ngIf="!loading && items.length">
 					<tr *ngFor="let u of items">
 						<td class="fw-bold">{{ u.userName }}</td>
 						<td>{{ u.fullName || '-' }}</td>
@@ -91,7 +95,7 @@
 						</td>
 					</tr>
 				</tbody>
-				<tbody *ngIf="!isLoadingList && !items.length">
+				<tbody *ngIf="!loading && !items.length">
 					<tr>
 						<td colspan="5" class="text-center text-muted">Không có dữ liệu</td>
 					</tr>

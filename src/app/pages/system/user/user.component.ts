@@ -20,16 +20,15 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	CONFIG = USER_CONFIG;
 	activeTabId = this.CONFIG.tabs.default;
 
-	isLoadingList = false;
+	// Loading state
+	loading = false;
+
 	items: UserItem[] = [];
 	branches: { id: number; name: string }[] = [];
 
 	// Table configuration
 	tableColumns = getTableColumns();
 	skeletonConfig = getSkeletonConfig();
-
-	// Loading state
-	loading = false;
 
 	// Destroy subject for cleanup
 	private destroy$ = new Subject<void>();
@@ -54,12 +53,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		private toast: ToastService,
 	) {
 		super({ keyword: '', branchId: null, isActive: null, type: null });
-		console.log('🏗️ Constructor được gọi');
-		console.log('🔧 Services injected:', { 
-			userService: !!this.userService, 
-			systemService: !!this.systemService,
-			toast: !!this.toast 
-		});
 	}
 
     ngOnInit(): void {
@@ -133,10 +126,10 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 
 	getItems(): void {
-		this.isLoadingList = true;
+		this.loading = true;
 		this.userService.getUsers(this.searchParams)
 		.pipe(
-			finalize(() => this.isLoadingList = false),
+			finalize(() => this.loading = false),
 			takeUntil(this.destroy$)
 		)
 		.subscribe({
