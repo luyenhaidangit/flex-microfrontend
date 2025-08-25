@@ -20,15 +20,6 @@
 		
 			<!-- Display only in approved tab -->
 			<div class="col-md-2" *ngIf="activeTabId === 'approved'">
-				<label class="form-label fw-bold text-muted">Trạng thái</label>
-				<select class="form-select" [(ngModel)]="state.filter.isActive">
-					<option [ngValue]="null">Tất cả</option>
-					<option [ngValue]="false">Hoạt động</option>
-					<option [ngValue]="true">Đã khóa</option>
-				</select>
-			</div>
-
-			<div class="col-md-2" *ngIf="activeTabId === 'approved'">
 				<label class="form-label fw-bold text-muted">Chi nhánh</label>
 				<select class="form-select" [(ngModel)]="state.filter.branchId">
 					<option [ngValue]="null">Tất cả</option>

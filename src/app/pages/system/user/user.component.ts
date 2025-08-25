@@ -40,7 +40,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 			pageSize: this.state.paging.size,
 			keyword: this.state.filter.keyword,
 			branchId: this.state.filter.branchId,
-			isActive: this.state.filter.isActive,
 			status: this.activeTabId
 		};
 		
@@ -52,7 +51,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		private systemService: SystemService,
 		private toast: ToastService,
 	) {
-		super({ keyword: '', branchId: null, isActive: null, type: null });
+		super({ keyword: '', branchId: null, type: null });
 	}
 
     ngOnInit(): void {
