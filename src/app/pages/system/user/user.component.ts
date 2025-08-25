@@ -5,7 +5,7 @@ import { finalize, takeUntil } from 'rxjs/operators';
 import { SystemService } from 'src/app/core/services/system.service';
 import { UserService } from './user.service';
 import { UserItem } from './user.models';
-import { USER_CONFIG, getTableColumns, getSkeletonConfig } from './user.config';
+import { USER_CONFIG } from './user.config';
 import { UserFilter } from './user.models';
 import { EntityListComponent } from 'src/app/core/components/base/entity-list.component';
 
@@ -25,10 +25,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 
 	items: UserItem[] = [];
 	branches: { id: number; name: string }[] = [];
-
-	// Table configuration
-	tableColumns = getTableColumns();
-	skeletonConfig = getSkeletonConfig();
 
 	// Destroy subject for cleanup
 	private destroy$ = new Subject<void>();
@@ -152,5 +148,21 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		this.state.filter.branchId = null;
 		this.state.filter.type = null;
 		this.resetToFirstPage();
+	}
+
+	openCreateModal(): void {
+		console.log('openCreateModal');
+	}
+
+	openDetailModal(user: UserItem): void {
+		console.log('openDetailModal', user);
+	}
+
+	openEditModal(user: UserItem): void {
+		console.log('openEditModal', user);
+	}
+
+	openDeleteModal(user: UserItem): void {
+		console.log('openDeleteModal', user);
 	}
 }

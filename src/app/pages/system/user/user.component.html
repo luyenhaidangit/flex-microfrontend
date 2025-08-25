@@ -45,27 +45,23 @@
 				</button>
 			</div>
 		
-			<!-- <div class="col-md-3 text-md-end">
+			<div class="col-md-4 text-md-end">
 				<button type="button" class="btn btn-success fw-bold" (click)="openCreateModal()">
 					<i class="fas fa-plus me-1"></i> Thêm mới
 				</button>
-			</div> -->
+			</div>
 		</div>
 
 		<div class="table-responsive">
 			<table class="table align-middle table-nowrap dt-responsive nowrap w-100">
 				<thead>
 					<tr>
-						<th>Tài khoản</th>
-						<th>Họ tên</th>
-						<th>Email</th>
-						<th>Chi nhánh</th>
-						<th>Trạng thái</th>
+						<th *ngFor="let col of CONFIG.table.columns.approved">{{ col.label }}</th>
 					</tr>
 				</thead>
 				<tbody *ngIf="loading">
-					<tr *ngFor="let _ of [].constructor(CONFIG.table.skeleton.rows)">
-						<td *ngFor="let w of CONFIG.table.skeleton.columns">
+					<tr *ngFor="let _ of [].constructor(CONFIG.table.skeleton.approved.rows)">
+						<td *ngFor="let w of CONFIG.table.skeleton.approved.columns">
 							<app-skeleton [width]="w" height="18px"></app-skeleton>
 						</td>
 					</tr>
@@ -81,11 +77,22 @@
 								{{ u.isActive ? 'Hoạt động' : 'Không hoạt động' }}
 							</span>
 						</td>
+						<td class="action-column">
+							<button class="btn btn-link p-0 text-info" (click)="openDetailModal(u)" title="Xem">
+								<i class="fas fa-eye"></i>
+							</button>
+							<button class="btn btn-link p-0 ms-2 text-warning" (click)="openEditModal(u)" title="Sửa">
+								<i class="fas fa-edit"></i>
+							</button>
+							<button class="btn btn-link p-0 ms-2 text-danger" (click)="openDeleteModal(u)" title="Xoá">
+								<i class="fas fa-trash"></i>
+							</button>
+						</td>
 					</tr>
 				</tbody>
 				<tbody *ngIf="!loading && !items.length">
 					<tr>
-						<td colspan="5" class="text-center text-muted">Không có dữ liệu</td>
+						<td [attr.colspan]="tableColumns.length" class="text-center text-muted">Không có dữ liệu</td>
 					</tr>
 				</tbody>
 			</table>

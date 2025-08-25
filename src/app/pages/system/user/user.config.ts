@@ -30,19 +30,20 @@ export const USER_CONFIG = {
   // Table configuration
   table: {
     columns: {
-      default: [
-        { key: 'userName', label: 'Tên đăng nhập', width: '120px' },
-        { key: 'fullName', label: 'Họ và tên', width: '150px' },
+      approved: [
+        { key: 'userName', label: 'Tài khoản', width: '120px' },
+        { key: 'fullName', label: 'Họ tên', width: '150px' },
         { key: 'email', label: 'Email', width: '200px' },
         { key: 'branchName', label: 'Chi nhánh', width: '140px' },
         { key: 'isActive', label: 'Trạng thái', width: '100px' },
-        { key: 'createdAt', label: 'Ngày tạo', width: '120px' },
         { key: 'actions', label: 'Thao tác', width: '120px' }
       ]
     },
     skeleton: {
-      rows: 8,
-      columns: ['120px', '150px', '200px', '140px', '100px', '120px', '120px']
+      approved: {
+        rows: 8,
+        columns: ['120px', '150px', '200px', '140px', '100px', '120px']
+      }
     }
   },
 
@@ -116,15 +117,4 @@ export const USER_CONFIG = {
 // Helper functions
 export const getUserStatusConfig = (isActive: boolean) => {
   return USER_CONFIG.status.locked[isActive.toString() as keyof typeof USER_CONFIG.status.locked];
-};
-
-export const getTableColumns = () => {
-  return USER_CONFIG.table.columns.default;
-};
-
-export const getSkeletonConfig = () => {
-  return {
-    rows: USER_CONFIG.table.skeleton.rows,
-    columns: USER_CONFIG.table.skeleton.columns
-  };
 };
