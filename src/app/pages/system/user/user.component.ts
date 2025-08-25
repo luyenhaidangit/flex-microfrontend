@@ -155,7 +155,8 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 
 	handlePageSizeChange(size: number): void {
-		this.onPageSizeChange(size, () => this.getItems());
+		this.resetToFirstPage();
+		this.onsearch();
 	}
 
 	// ---------------- Internals ----------------

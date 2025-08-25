@@ -92,21 +92,39 @@
 			</table>
 		</div>
 
-		<div class="d-flex align-items-center justify-content-between mt-2">
-			<div class="d-flex align-items-center gap-2">
-				<span class="text-muted small">Hiển thị</span>
-				<!-- <select class="form-select form-select-sm w-auto" [ngModel]="state.pageSize" (ngModelChange)="onPageSizeChange($event)">
-					<option *ngFor="let p of CONFIG.pagination.pageSizeOptions" [ngValue]="p">{{ p }}</option>
-				</select> -->
-				<span class="text-muted small">bản ghi</span>
+		<!-- Pagination -->
+		<div class="table-filter d-flex justify-content-between align-items-center mt-2">
+			<ul class="pagination mb-0">
+				<li class="page-item cursor-pointer" [class.disabled]="state.paging.index === 1">
+					<a class="page-link" (click)="handlePageChange(state.paging.index - 1)">
+						<i class="mdi mdi-chevron-left"></i>
+					</a>
+				</li>
+			
+				<li *ngFor="let _ of [].constructor(state.paging.totalPages); let idx = index" class="page-item cursor-pointer"
+					[class.active]="state.paging.index === idx + 1">
+					<a class="page-link" (click)="handlePageChange(idx + 1)">
+						{{ idx + 1 }}
+					</a>
+				</li>
+			
+				<li class="page-item cursor-pointer" [class.disabled]="state.paging.index === state.paging.totalPages">
+					<a class="page-link" (click)="handlePageChange(state.paging.index + 1)">
+						<i class="mdi mdi-chevron-right"></i>
+					</a>
+				</li>
+			</ul>
+		
+			<!-- page size -->
+			<div class="per-page">
+				Hiển thị
+				<select class="mx-1 cursor-pointer" [(ngModel)]="state.paging.size" (change)="handlePageSizeChange($event.target.value)">
+					<option *ngFor="let opt of CONFIG.pagination.pageSizeOptions" [ngValue]="opt.value" class="cursor-pointer">
+						{{ opt.label }}
+					</option>
+				</select>
+				/ {{ state.paging.totalItems }} tổng số bản ghi
 			</div>
-			<!-- <pagination
-				[totalItems]="state.totalItems"
-				[itemsPerPage]="state.pageSize"
-				[maxSize]="5"
-				[(ngModel)]="state.pageIndex"
-				(pageChanged)="onPageChange($event.page)">
-			</pagination> -->
 		</div>
 	</div>
 </div>
