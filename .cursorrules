@@ -100,4 +100,25 @@ If needed, you can further use the `web_scraper.py` file to scrape the web page 
 - Use 'gpt-4o' as the model name for OpenAI's GPT-4 with vision capabilities
 - When searching for recent news, use the current year (2025) instead of previous years, or simply use the "recent" keyword to get the latest information
 
+## UI Standardization Rules
+
+### Table Display Standards
+Khi làm việc với các màn hình hiển thị dữ liệu dạng bảng (tương tự user, role, etc.), cần tuân thủ các chuẩn sau:
+
+1. **SafeField Pipe**: Luôn sử dụng `safeField` pipe thay vì `|| '-'` để xử lý giá trị null/undefined
+   - ✅ `{{ item.fieldName | safeField }}`
+   - ❌ `{{ item.fieldName || '-' }}`
+
+2. **Badge Component**: Sử dụng `app-badge` component thay vì span với class badge
+   - ✅ `<app-badge [value]="item.status" type="status"></app-badge>`
+   - ❌ `<span class="badge bg-success">{{ item.status }}</span>`
+
+3. **Colspan Reference**: Sử dụng `CONFIG.table.columns.approved.length` cho colspan
+   - ✅ `[attr.colspan]="CONFIG.table.columns.approved.length"`
+   - ❌ `[attr.colspan]="tableColumns.length"`
+
+4. **Consistent Structure**: Các màn hình tương tự nên có cấu trúc HTML giống nhau để dễ maintain
+
+**Reference**: `role.component.html` là template chuẩn để tham khảo khi chuẩn hóa các màn hình khác.
+
 # Scratchpad

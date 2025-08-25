@@ -68,14 +68,12 @@
 				</tbody>
 				<tbody *ngIf="!loading && items.length">
 					<tr *ngFor="let u of items">
-						<td class="fw-bold">{{ u.userName }}</td>
-						<td>{{ u.fullName || '-' }}</td>
-						<td>{{ u.email || '-' }}</td>
-						<td>{{ u.branchName || '-' }}</td>
+						<td class="fw-bold">{{ u.userName | safeField }}</td>
+						<td>{{ u.fullName | safeField }}</td>
+						<td>{{ u.email | safeField }}</td>
+						<td>{{ u.branchName | safeField }}</td>
 						<td>
-							<span class="badge" [ngClass]="u.isActive ? 'bg-danger' : 'bg-success'">
-								{{ u.isActive ? 'Hoạt động' : 'Không hoạt động' }}
-							</span>
+							<app-badge [value]="u.isActive" type="status"></app-badge>
 						</td>
 						<td class="action-column">
 							<button class="btn btn-link p-0 text-info" (click)="openDetailModal(u)" title="Xem">
@@ -92,7 +90,7 @@
 				</tbody>
 				<tbody *ngIf="!loading && !items.length">
 					<tr>
-						<td [attr.colspan]="tableColumns.length" class="text-center text-muted">Không có dữ liệu</td>
+						<td [attr.colspan]="CONFIG.table.columns.approved.length" class="text-center text-muted">Không có dữ liệu</td>
 					</tr>
 				</tbody>
 			</table>
