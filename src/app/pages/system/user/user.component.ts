@@ -1,12 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ToastService } from 'angular-toastify';
+import { forkJoin, Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
 import { SystemService } from 'src/app/core/services/system.service';
 import { UserService } from './user.service';
 import { UserItem } from './user.models';
-import { USER_CONFIG, getUserStatusConfig, getTableColumns, getSkeletonConfig } from './user.config';
-import { ListState, PageMeta  } from 'src/app/core/features/query';
+import { USER_CONFIG, getTableColumns, getSkeletonConfig } from './user.config';
 import { UserFilter } from './user.models';
 import { EntityListComponent } from 'src/app/core/components/base/entity-list.component';
 
@@ -21,9 +20,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	CONFIG = USER_CONFIG;
 	activeTabId = this.CONFIG.tabs.default;
 
-	// Triggers
-	private reload$ = new Subject<void>();
-
 	isLoadingList = false;
 	items: UserItem[] = [];
 	branches: { id: number; name: string }[] = [];
@@ -32,7 +28,11 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	tableColumns = getTableColumns();
 	skeletonConfig = getSkeletonConfig();
 
-	private destroyed$ = new Subject<void>();
+	// Loading state
+	loading = false;
+
+	// Destroy subject for cleanup
+	private destroy$ = new Subject<void>();
 
 	// Get search params
 	get searchParams(): any {
@@ -54,16 +54,59 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		private toast: ToastService,
 	) {
 		super({ keyword: '', branchId: null, isActive: null, type: null });
+		console.log('🏗️ Constructor được gọi');
+		console.log('🔧 Services injected:', { 
+			userService: !!this.userService, 
+			systemService: !!this.systemService,
+			toast: !!this.toast 
+		});
 	}
 
     ngOnInit(): void {
-		this.loadBranches()
-			.then(() => {
-				this.getItems();
+		this.loading = true;
+		
+		const branchesCall = this.systemService.getBranchesForFilter();
+		const usersCall = this.userService.getUsers(this.cleanParams(this.searchParams));
+		
+		// Load branches and users in parallel
+		forkJoin({
+			branches: branchesCall,
+			users: usersCall
+		}).pipe(
+			takeUntil(this.destroy$),
+			finalize(() => {
+				this.loading = false;
 			})
-			.catch((err) => {
-				this.getItems();
-			});
+		).subscribe({
+			next: ({ branches, users }) => {
+				
+				// Handle branches
+				if (branches?.isSuccess) {
+					this.branches = branches.data || [];
+				} else {
+					this.branches = [];
+				}
+				
+				// Handle users
+				if (users?.isSuccess) {
+					const { items, pageMeta } = this.extractPagingFromResponse<UserItem>(users.data);
+					this.items = items as UserItem[];
+					this.updatePagingState(pageMeta);
+				} else {
+					this.items = [];
+				}
+			},
+			error: (err) => {
+				this.branches = [];
+				this.items = [];
+			}
+		});
+	}
+
+	ngOnDestroy(): void {
+		console.log('🗑️ Component destroy - cleanup subscriptions');
+		this.destroy$.next();
+		this.destroy$.complete();
 	}
 
 	onsearch(): void {
@@ -75,30 +118,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 
 	getPendingItems(): void {
-	}
-
-	// Load branches for filter dropdown
-	loadBranches(): Promise<void> {
-		return new Promise((resolve, reject) => {
-			this.systemService.getBranchesForFilter()
-				.pipe(takeUntil(this.destroyed$))
-				.subscribe({
-					next: (res) => {
-						if (res?.isSuccess) {
-							this.branches = res.data || [];
-						} else {
-							this.branches = [];
-							console.warn('Không thể load danh sách chi nhánh');
-						}
-						resolve();
-					},
-					error: (err) => {
-						this.branches = [];
-						console.error('Lỗi khi load danh sách chi nhánh:', err);
-						reject(err);
-					}
-				});
-		});
 	}
 
 	// Tab handling methods
@@ -113,17 +132,15 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		// Có thể thêm logic xử lý khác ở đây nếu cần
 	}
 
-	ngOnDestroy(): void {
-		this.destroyed$.next();
-		this.destroyed$.complete();
-	}
-
 	getItems(): void {
 		this.isLoadingList = true;
 		this.userService.getUsers(this.searchParams)
-		.pipe(finalize(() => this.isLoadingList = false), takeUntil(this.destroyed$))
+		.pipe(
+			finalize(() => this.isLoadingList = false),
+			takeUntil(this.destroy$)
+		)
 		.subscribe({
-			next: (res) => {
+			next: (res: any) => {
 				if (res?.isSuccess) {
 					// Sử dụng method từ base class
 					const { items, pageMeta } = this.extractPagingFromResponse<UserItem>(res.data);
