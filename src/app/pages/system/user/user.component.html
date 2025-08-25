@@ -13,13 +13,13 @@
 
 		<!-- Search -->
 		<div class="row gx-3 mb-3 gy-2 align-items-end">
-			<div class="col-md-2">
+			<div class="col-md-3">
 				<label class="form-label fw-bold text-muted">Từ khóa</label>
 				<input class="form-control" type="text" placeholder="Nhập từ khóa..." [(ngModel)]="state.filter.keyword">
 			</div>
 		
 			<!-- Display only in approved tab -->
-			<div class="col-md-2" *ngIf="activeTabId === 'approved'">
+			<div class="col-md-3" *ngIf="activeTabId === 'approved'">
 				<label class="form-label fw-bold text-muted">Chi nhánh</label>
 				<select class="form-select" [(ngModel)]="state.filter.branchId">
 					<option [ngValue]="null">Tất cả</option>
