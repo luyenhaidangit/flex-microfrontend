@@ -3,10 +3,6 @@ import { Query, ListState, PageMeta } from 'src/app/core/features/query';
 export abstract class EntityListComponent<TFilter> {
   state: ListState<TFilter>;
 
-  protected constructor(initFilter: TFilter) {
-    this.state = Query.init(initFilter, { index: 1, size: 10 });
-  }
-
   /**
    * Utility function để loại bỏ các giá trị null, undefined, empty string
    * @param params Object chứa các tham số cần clean
@@ -25,26 +21,32 @@ export abstract class EntityListComponent<TFilter> {
     return cleaned;
   }
 
+  // Hande action paging
+  // ---------- Required method ----------
+  protected constructor(initFilter: TFilter) {
+    this.state = Query.init(initFilter, { index: 1, size: 10 });
+  }
+
+  protected abstract onSearch(): void;
+
+  // ---------- Internal method ----------
   resetToFirstPage(): void {
     this.state.paging.index = 1;
   }
 
-  onPageChange(page: number, searchFn: () => void): void {
-    if (page === this.state.paging.index) return;
+  onPageChange(page: number): void {
+    if (page < 1 || page > this.state.paging.totalPages || page === this.state.paging.index) return;
     this.state.paging.index = page;
-    searchFn();
+    this.onSearch();
   }
 
-  onPageSizeChange(size: number, searchFn: () => void): void {
-    if (size === this.state.paging.size) return;
-    this.state.paging.size = size;
+  onPageSizeChange(): void {
     this.resetToFirstPage();
-    searchFn();
+    this.onSearch();
   }
 
-  protected updatePagingState(pageMeta: Partial<PageMeta>): void {
+  updatePagingState(pageMeta: Partial<PageMeta>): void {
     if (pageMeta.totalItems !== undefined || pageMeta.totalPages !== undefined) {
-      // Cập nhật metadata phân trang vào state
       this.state.paging = {
         ...this.state.paging,
         totalItems: pageMeta.totalItems,
@@ -52,6 +54,8 @@ export abstract class EntityListComponent<TFilter> {
       };
     }
   }
+
+  // ---------- Internal method ----------
 
   // Method helper để lấy thông tin phân trang từ response
   protected extractPagingFromResponse<T>(response: any): { items: T[], pageMeta: Partial<PageMeta> } {

@@ -101,12 +101,38 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		this.destroy$.complete();
 	}
 
-	onsearch(): void {
+	// Implement method abstract base
+	protected onSearch(): void {
 		if (this.activeTabId === 'approved') {
 			this.getItems();
 		} else {
 			this.getPendingItems();
 		}
+	}
+
+	getItems(): void {
+		console.log('getItems', this.searchParams);
+
+		this.loading = true;
+		this.userService.getUsers(this.searchParams)
+		.pipe(
+			finalize(() => this.loading = false),
+			takeUntil(this.destroy$)
+		)
+		.subscribe({
+			next: (res: any) => {
+				if (res?.isSuccess) {
+					const { items, pageMeta } = this.extractPagingFromResponse<UserItem>(res.data);
+					this.items = items as UserItem[];
+					this.updatePagingState(pageMeta);
+				} else {
+					this.items = [];
+				}
+			},
+			error: (err) => {
+				this.items = [];
+			}
+		});
 	}
 
 	getPendingItems(): void {
@@ -123,43 +149,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		console.log('Tab changed to:', tab);
 		// Có thể thêm logic xử lý khác ở đây nếu cần
 	}
-
-	getItems(): void {
-		this.loading = true;
-		this.userService.getUsers(this.searchParams)
-		.pipe(
-			finalize(() => this.loading = false),
-			takeUntil(this.destroy$)
-		)
-		.subscribe({
-			next: (res: any) => {
-				if (res?.isSuccess) {
-					// Sử dụng method từ base class
-					const { items, pageMeta } = this.extractPagingFromResponse<UserItem>(res.data);
-					this.items = items as UserItem[];
-					
-					// Cập nhật trạng thái phân trang
-					this.updatePagingState(pageMeta);
-				} else {
-					this.items = [];
-				}
-			},
-			error: (err) => {
-				this.items = [];
-			}
-		});
-	}
-
-	handlePageChange(page: number): void {
-		this.onPageChange(page, () => this.getItems());
-	}
-
-	handlePageSizeChange(size: number): void {
-		this.resetToFirstPage();
-		this.onsearch();
-	}
-
-	// ---------------- Internals ----------------
 }
 
 
