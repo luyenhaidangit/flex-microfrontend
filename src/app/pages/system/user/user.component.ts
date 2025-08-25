@@ -102,7 +102,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 
 	// Implement method abstract base
-	protected onSearch(): void {
+	public onSearch(): void {
 		if (this.activeTabId === 'approved') {
 			this.getItems();
 		} else {
@@ -136,19 +136,21 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 
 	getPendingItems(): void {
+		// TODO: Implement get pending items logic
+		console.log('getPendingItems - Tab pending not implemented yet');
+		this.items = []; // Tạm thời để trống
 	}
 
-	// Tab handling methods
 	onTabChange(tabId: string): void {
 		this.activeTabId = tabId;
-		this.resetToFirstPage(); // Sử dụng method từ base class
-		this.getItems();
+		this.resetSearchParams();
+		this.onSearch();
 	}
 
-	onTabChanged(tab: any): void {
-		console.log('Tab changed to:', tab);
-		// Có thể thêm logic xử lý khác ở đây nếu cần
+	private resetSearchParams(): void {
+		this.state.filter.keyword = '';
+		this.state.filter.branchId = null;
+		this.state.filter.type = null;
+		this.resetToFirstPage();
 	}
 }
-
-
