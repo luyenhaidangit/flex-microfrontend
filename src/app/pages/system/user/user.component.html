@@ -52,7 +52,7 @@
 			</div>
 		</div>
 
-		<div class="table-responsive">
+		<div class="table-responsive table-header-primary">
 			<table class="table align-middle table-nowrap dt-responsive nowrap w-100">
 				<thead>
 					<tr>
@@ -68,7 +68,7 @@
 				</tbody>
 				<tbody *ngIf="!loading && items.length">
 					<tr *ngFor="let u of items">
-						<td class="fw-bold">{{ u.userName | safeField }}</td>
+						<td>{{ u.userName | safeField }}</td>
 						<td>{{ u.fullName | safeField }}</td>
 						<td>{{ u.email | safeField }}</td>
 						<td>{{ u.branchName | safeField }}</td>
