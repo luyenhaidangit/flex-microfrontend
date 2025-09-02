@@ -79,7 +79,7 @@ export class LoginComponent implements OnInit {
     if (this.authMode === AUTH_MODE.DB) {
       var isRemember = this.f.rememberMe.value;
 
-      this.authenticationService.login(this.f.userName.value, this.f.password.value,isRemember)
+      this.authenticationService.login(this.f.userName.value, this.f.password.value, isRemember)
         .subscribe(
         (response: any) => {
           if(response?.isSuccess){
@@ -89,11 +89,9 @@ export class LoginComponent implements OnInit {
             this.toastService.success('Đăng nhập thành công!');
             this.router.navigate(['/dashboard']);
           }
-        },
-        (failure: any) => {
-          this.toastService.error(failure?.error?.message);
         }
-    )};
+      );
+    }
   }
 
   // UI
