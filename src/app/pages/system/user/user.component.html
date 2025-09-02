@@ -56,37 +56,64 @@
 			<table class="table align-middle table-nowrap dt-responsive nowrap w-100">
 				<thead>
 					<tr>
-						<th *ngFor="let col of CONFIG.table.columns.approved">{{ col.label }}</th>
+						<th *ngFor="let col of getTableColumns()">{{ col.label }}</th>
 					</tr>
 				</thead>
 				<tbody *ngIf="loading">
-					<tr *ngFor="let _ of [].constructor(CONFIG.table.skeleton.approved.rows)">
-						<td *ngFor="let w of CONFIG.table.skeleton.approved.columns">
+					<tr *ngFor="let _ of [].constructor(getSkeletonRows())">
+						<td *ngFor="let w of getSkeletonColumns()">
 							<app-skeleton [width]="w" height="18px"></app-skeleton>
 						</td>
 					</tr>
 				</tbody>
 				<tbody *ngIf="!loading && items.length">
-					<tr *ngFor="let u of items">
-						<td>{{ u.userName | safeField }}</td>
-						<td>{{ u.fullName | safeField }}</td>
-						<td>{{ u.email | safeField }}</td>
-						<td>{{ u.branchName | safeField }}</td>
-						<td>
-							<app-badge [value]="u.isActive" type="status"></app-badge>
-						</td>
-						<td class="action-column">
-							<button class="btn btn-link p-0 text-info" (click)="openDetailModal(u)" title="Xem">
-								<i class="fas fa-eye"></i>
-							</button>
-							<button class="btn btn-link p-0 ms-2 text-warning" (click)="openEditModal(u)" title="Sửa">
-								<i class="fas fa-edit"></i>
-							</button>
-							<button class="btn btn-link p-0 ms-2 text-danger" (click)="openDeleteModal(u)" title="Xoá">
-								<i class="fas fa-trash"></i>
-							</button>
-						</td>
-					</tr>
+					<!-- Approved tab content -->
+					<ng-container *ngIf="activeTabId === 'approved'">
+						<tr *ngFor="let u of items">
+							<td>{{ u.userName | safeField }}</td>
+							<td>{{ u.fullName | safeField }}</td>
+							<td>{{ u.email | safeField }}</td>
+							<td>{{ u.branchName | safeField }}</td>
+							<td>
+								<app-badge [value]="u.isActive" type="status"></app-badge>
+							</td>
+							<td class="action-column">
+								<button class="btn btn-link p-0 text-info" (click)="openDetailModal(u)" title="Xem">
+									<i class="fas fa-eye"></i>
+								</button>
+								<button class="btn btn-link p-0 ms-2 text-warning" (click)="openEditModal(u)" title="Sửa">
+									<i class="fas fa-edit"></i>
+								</button>
+								<button class="btn btn-link p-0 ms-2 text-danger" (click)="openDeleteModal(u)" title="Xoá">
+									<i class="fas fa-trash"></i>
+								</button>
+							</td>
+						</tr>
+					</ng-container>
+					<!-- Pending tab content -->
+					<ng-container *ngIf="activeTabId === 'pending'">
+						<tr *ngFor="let u of items">
+							<td>{{ u.userName | safeField }}</td>
+							<td>{{ u.fullName | safeField }}</td>
+							<td>{{ u.email | safeField }}</td>
+							<td>
+								<app-badge [value]="getActionConfig(u.action)" type="action"></app-badge>
+							</td>
+							<td>{{ u.requestedDate | date:'dd/MM/yyyy HH:mm' }}</td>
+							<td>{{ u.makerName | safeField }}</td>
+							<td class="action-column">
+								<button class="btn btn-link p-0 text-info" (click)="openPendingDetailModal(u)" title="Xem chi tiết">
+									<i class="fas fa-eye"></i>
+								</button>
+								<button class="btn btn-link p-0 ms-2 text-success" (click)="openApproveModal(u)" title="Duyệt">
+									<i class="fas fa-check"></i>
+								</button>
+								<button class="btn btn-link p-0 ms-2 text-danger" (click)="openRejectModal(u)" title="Từ chối">
+									<i class="fas fa-times"></i>
+								</button>
+							</td>
+						</tr>
+					</ng-container>
 				</tbody>
 				<tbody *ngIf="!loading && !items.length">
 					<tr>

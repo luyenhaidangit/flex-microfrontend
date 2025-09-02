@@ -37,12 +37,25 @@ export const USER_CONFIG = {
         { key: 'branchName', label: 'Chi nhánh', width: '140px' },
         { key: 'isActive', label: 'Trạng thái', width: '100px' },
         { key: 'actions', label: 'Thao tác', width: '120px' }
+      ],
+      pending: [
+        { key: 'userName', label: 'Tài khoản', width: '120px' },
+        { key: 'fullName', label: 'Họ tên', width: '150px' },
+        { key: 'email', label: 'Email', width: '200px' },
+        { key: 'action', label: 'Hành động', width: '100px' },
+        { key: 'requestedDate', label: 'Ngày yêu cầu', width: '150px' },
+        { key: 'makerName', label: 'Người tạo', width: '150px' },
+        { key: 'actions', label: 'Thao tác', width: '150px' }
       ]
     },
     skeleton: {
       approved: {
         rows: 8,
         columns: ['120px', '150px', '200px', '140px', '100px', '120px']
+      },
+      pending: {
+        rows: 8,
+        columns: ['120px', '150px', '200px', '100px', '150px', '150px', '150px']
       }
     }
   },
@@ -53,6 +66,13 @@ export const USER_CONFIG = {
       true: { text: 'Đã khóa', class: 'bg-danger', icon: 'lock' },
       false: { text: 'Hoạt động', class: 'bg-success', icon: 'unlock' }
     }
+  },
+
+  // Action configuration for pending requests
+  action: {
+    CREATE: { text: 'Tạo mới', class: 'bg-primary', icon: 'plus' },
+    UPDATE: { text: 'Cập nhật', class: 'bg-warning', icon: 'edit' },
+    DELETE: { text: 'Xóa', class: 'bg-danger', icon: 'trash' }
   },
 
   // Search options

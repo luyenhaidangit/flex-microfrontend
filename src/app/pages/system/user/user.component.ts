@@ -132,9 +132,28 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 
 	getPendingItems(): void {
-		// TODO: Implement get pending items logic
-		console.log('getPendingItems - Tab pending not implemented yet');
-		this.items = []; // Tạm thời để trống
+		console.log('getPendingItems', this.searchParams);
+
+		this.loading = true;
+		this.userService.getPendingUserRequests(this.searchParams)
+		.pipe(
+			finalize(() => this.loading = false),
+			takeUntil(this.destroy$)
+		)
+		.subscribe({
+			next: (res: any) => {
+				if (res?.isSuccess) {
+					const { items, pageMeta } = this.extractPagingFromResponse<any>(res.data);
+					this.items = items;
+					this.updatePagingState(pageMeta);
+				} else {
+					this.items = [];
+				}
+			},
+			error: (err) => {
+				this.items = [];
+			}
+		});
 	}
 
 	onTabChange(tabId: string): void {
@@ -164,5 +183,35 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 
 	openDeleteModal(user: UserItem): void {
 		console.log('openDeleteModal', user);
+	}
+
+	// Helper methods for table display
+	getTableColumns(): any[] {
+		return this.CONFIG.table.columns[this.activeTabId as keyof typeof this.CONFIG.table.columns] || [];
+	}
+
+	getSkeletonRows(): number {
+		return this.CONFIG.table.skeleton[this.activeTabId as keyof typeof this.CONFIG.table.skeleton]?.rows || 8;
+	}
+
+	getSkeletonColumns(): string[] {
+		return this.CONFIG.table.skeleton[this.activeTabId as keyof typeof this.CONFIG.table.skeleton]?.columns || [];
+	}
+
+	getActionConfig(action: string): any {
+		return this.CONFIG.action[action as keyof typeof this.CONFIG.action] || { text: action, class: 'bg-secondary', icon: 'question' };
+	}
+
+	// Pending request methods
+	openPendingDetailModal(request: any): void {
+		console.log('openPendingDetailModal', request);
+	}
+
+	openApproveModal(request: any): void {
+		console.log('openApproveModal', request);
+	}
+
+	openRejectModal(request: any): void {
+		console.log('openRejectModal', request);
 	}
 }
