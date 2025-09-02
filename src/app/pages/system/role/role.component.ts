@@ -214,11 +214,6 @@ export class RoleComponent implements OnInit, OnDestroy {
             this.items = [];
             this.toastService.error('Không lấy được danh sách vai trò!');
           }
-        },
-        error: (err) => {
-          this.items = [];
-          this.toastService.error('Đã xảy ra lỗi khi lấy danh sách vai trò!');
-          console.error('getItems error:', err);
         }
       });
   }
@@ -263,11 +258,6 @@ export class RoleComponent implements OnInit, OnDestroy {
             backdrop: 'static',
             keyboard: false, 
           });
-        },
-        error: () => {
-          this.toastService.error('Không thể lấy thông tin chi tiết vai trò!');
-          this.selectedItem = item;
-          this.modalRef = this.modalService.show(this.detailModalTemplateRef, { class: 'modal-lg' });
         }
       });
     } else {
@@ -300,18 +290,6 @@ export class RoleComponent implements OnInit, OnDestroy {
           } else {
             this.toastService.error('Không thể lấy thông tin chi tiết yêu cầu!');
           }
-        },
-        error: (err) => {
-          console.error('Error fetching request detail:', err);
-          let errorMsg = 'Không thể lấy thông tin chi tiết yêu cầu!';
-          if (err?.error?.message) {
-            errorMsg = err.error.message;
-          } else if (err?.status === 404) {
-            errorMsg = 'Không tìm thấy yêu cầu!';
-          } else if (err?.status === 403) {
-            errorMsg = 'Bạn không có quyền xem chi tiết yêu cầu này!';
-          }
-          this.toastService.error(errorMsg);
         }
       });
     }
@@ -341,11 +319,6 @@ export class RoleComponent implements OnInit, OnDestroy {
             this.changeHistory = [];
             this.toastService.error('Không thể lấy lịch sử thay đổi!');
           }
-        },
-        error: (err) => {
-          console.error('Error fetching change history:', err);
-          this.changeHistory = [];
-          this.toastService.error('Không thể lấy lịch sử thay đổi!');
         }
       });
   }
@@ -379,11 +352,6 @@ export class RoleComponent implements OnInit, OnDestroy {
         this.resetSearchParams(); // Reset search params sau khi tạo thành công
         // Reload data dựa trên tab hiện tại
         this.search();
-      },
-      error: (err) => {
-        console.error('Create role error:', err);
-        const msg = err?.error?.message || 'Gửi duyệt thất bại!';
-        this.toastService.error(msg);
       }
     });
   }
@@ -415,11 +383,6 @@ export class RoleComponent implements OnInit, OnDestroy {
           backdrop: 'static',
           keyboard: false
         });
-      },
-      error: () => {
-        this.toastService.error('Không thể lấy thông tin chi tiết vai trò!');
-        this.selectedItem = item;
-        this.openModal(this.editTemplateRef, { class: 'modal-xl' });
       }
     });
   }
@@ -449,11 +412,6 @@ export class RoleComponent implements OnInit, OnDestroy {
           this.closeModal();
           this.resetSearchParams(); // Reset search params sau khi sửa thành công
           this.search(); // Reload data
-        },
-        error: (error) => {
-          console.error('Error creating update role request:', error);
-          const errorMessage = error?.error?.message || 'Gửi yêu cầu cập nhật thất bại!';
-          this.toastService.error(errorMessage);
         }
       });
   }
@@ -478,11 +436,6 @@ export class RoleComponent implements OnInit, OnDestroy {
           backdrop: 'static',
           keyboard: false
         });
-      },
-      error: () => {
-        this.toastService.error('Không thể lấy thông tin chi tiết vai trò!');
-        this.selectedItem = item;
-        this.openModal(this.deleteTemplateRef, { class: 'modal-xl' });
       }
     });
   }
@@ -505,11 +458,6 @@ export class RoleComponent implements OnInit, OnDestroy {
           this.closeModal();
           this.resetSearchParams(); // Reset search params sau khi xóa thành công
           this.search(); // Reload data
-        },
-        error: (error) => {
-          console.error('Error creating delete role request:', error);
-          const errorMessage = error?.error?.message || 'Gửi yêu cầu xóa thất bại!';
-          this.toastService.error(errorMessage);
         }
       });
   }
@@ -536,11 +484,6 @@ export class RoleComponent implements OnInit, OnDestroy {
             this.pendingItems = [];
             this.toastService.error('Không lấy được danh sách vai trò chờ duyệt!');
           }
-        },
-        error: (err) => {
-          this.pendingItems = [];
-          this.toastService.error('Đã xảy ra lỗi khi lấy danh sách vai trò chờ duyệt!');
-          console.error('getPendingItems error:', err);
         }
       });
   }
@@ -582,21 +525,6 @@ export class RoleComponent implements OnInit, OnDestroy {
         } else {
           this.toastService.error('Không thể lấy thông tin chi tiết yêu cầu!');
         }
-      },
-      error: (err) => {
-        console.error('Error fetching request detail:', err);
-        let errorMsg = 'Không thể lấy thông tin chi tiết yêu cầu!';
-        
-        // Handle specific error messages
-        if (err?.error?.message) {
-          errorMsg = err.error.message;
-        } else if (err?.status === 404) {
-          errorMsg = 'Không tìm thấy yêu cầu!';
-        } else if (err?.status === 403) {
-          errorMsg = 'Bạn không có quyền xem chi tiết yêu cầu này!';
-        }
-        
-        this.toastService.error(errorMsg);
       }
     });
   }
@@ -683,24 +611,6 @@ export class RoleComponent implements OnInit, OnDestroy {
         // Reload data dựa trên tab hiện tại
         this.search();
         this.isApproving = false;
-      },
-      error: (err) => {
-        console.error('Approve role error:', err);
-        let errorMsg = 'Phê duyệt thất bại!';
-        
-        // Handle specific error messages
-        if (err?.error?.message) {
-          errorMsg = err.error.message;
-        } else if (err?.status === 404) {
-          errorMsg = 'Không tìm thấy yêu cầu phê duyệt!';
-        } else if (err?.status === 403) {
-          errorMsg = 'Bạn không có quyền phê duyệt yêu cầu này!';
-        } else if (err?.status === 409) {
-          errorMsg = 'Yêu cầu đã được xử lý trước đó!';
-        }
-        
-        this.toastService.error(errorMsg);
-        this.isApproving = false;
       }
     });
   }
@@ -756,28 +666,6 @@ export class RoleComponent implements OnInit, OnDestroy {
         this.resetSearchParams(); // Reset search params sau khi từ chối thành công
         // Reload data dựa trên tab hiện tại
         this.search();
-        // Không cần set isRejecting = false
-      },
-      error: (err) => {
-        console.error('Reject role error:', err);
-        let errorMsg = 'Từ chối yêu cầu thất bại!';
-        
-        // Handle specific error messages
-        if (err?.error?.message) {
-          errorMsg = err.error.message;
-        } else if (err?.status === 404) {
-          errorMsg = 'Không tìm thấy yêu cầu để từ chối!';
-        } else if (err?.status === 403) {
-          errorMsg = 'Bạn không có quyền từ chối yêu cầu này!';
-        } else if (err?.status === 409) {
-          errorMsg = 'Yêu cầu đã được xử lý trước đó!';
-        } else if (err?.status === 400) {
-          errorMsg = 'Lý do từ chối không hợp lệ!';
-        } else if (err?.status === 500) {
-          errorMsg = 'Lỗi máy chủ, vui lòng thử lại sau!';
-        }
-        
-        this.toastService.error(errorMsg);
         // Không cần set isRejecting = false
       }
     });
@@ -950,9 +838,6 @@ export class RoleComponent implements OnInit, OnDestroy {
         } else {
           this.toastService.error('Không tải được cây quyền!');
         }
-      },
-      error: () => {
-        this.toastService.error('Không tải được cây quyền!');
       }
     });
   }

@@ -187,13 +187,7 @@ export class BranchComponent implements OnInit {
             this.updatePagingState(page);
           } else {
             this.items = [];
-            this.toastService.error('Không lấy được danh sách chi nhánh!');
           }
-        },
-        error: (err) => {
-          this.items = [];
-          this.toastService.error('Đã xảy ra lỗi khi lấy danh sách chi nhánh!');
-          console.error('getItems error:', err);
         }
       });
   }
@@ -238,11 +232,6 @@ export class BranchComponent implements OnInit {
             backdrop: 'static',
             keyboard: false, 
           });
-        },
-        error: () => {
-          this.toastService.error('Không thể lấy thông tin chi tiết chi nhánh!');
-          this.selectedItem = item;
-          this.modalRef = this.modalService.show(this.detailModalTemplateRef, { class: 'modal-lg' });
         }
       });
     } else {
@@ -272,18 +261,6 @@ export class BranchComponent implements OnInit {
           } else {
             this.toastService.error('Không thể lấy thông tin chi tiết yêu cầu!');
           }
-        },
-        error: (err) => {
-          console.error('Error fetching request detail:', err);
-          let errorMsg = 'Không thể lấy thông tin chi tiết yêu cầu!';
-          if (err?.error?.message) {
-            errorMsg = err.error.message;
-          } else if (err?.status === 404) {
-            errorMsg = 'Không tìm thấy yêu cầu!';
-          } else if (err?.status === 403) {
-            errorMsg = 'Bạn không có quyền xem chi tiết yêu cầu này!';
-          }
-          this.toastService.error(errorMsg);
         }
       });
     }
@@ -313,11 +290,6 @@ export class BranchComponent implements OnInit {
             this.changeHistory = [];
             this.toastService.error('Không thể lấy lịch sử thay đổi!');
           }
-        },
-        error: (err) => {
-          console.error('Error fetching change history:', err);
-          this.changeHistory = [];
-          this.toastService.error('Không thể lấy lịch sử thay đổi!');
         }
       });
   }
@@ -402,11 +374,6 @@ export class BranchComponent implements OnInit {
           this.toastService.success('Yêu cầu cập nhật chi nhánh đã được gửi thành công!');
           this.closeModal();
           this.onSearch(); // Reload data
-        },
-        error: (error) => {
-          console.error('Error creating update branch request:', error);
-          const errorMessage = error?.error?.message || 'Gửi yêu cầu cập nhật thất bại!';
-          this.toastService.error(errorMessage);
         }
       });
   }
@@ -439,11 +406,6 @@ export class BranchComponent implements OnInit {
           this.toastService.success('Yêu cầu xóa chi nhánh đã được gửi thành công!');
           this.closeModal();
           this.onSearch(); // Reload data
-        },
-        error: (error) => {
-          console.error('Error creating delete branch request:', error);
-          const errorMessage = error?.error?.message || 'Gửi yêu cầu xóa thất bại!';
-          this.toastService.error(errorMessage);
         }
       });
   }
@@ -470,11 +432,6 @@ export class BranchComponent implements OnInit {
             this.pendingItems = [];
             this.toastService.error('Không lấy được danh sách chi nhánh chờ duyệt!');
           }
-        },
-        error: (err) => {
-          this.pendingItems = [];
-          this.toastService.error('Đã xảy ra lỗi khi lấy danh sách chi nhánh chờ duyệt!');
-          console.error('getPendingItems error:', err);
         }
       });
   }
@@ -511,21 +468,6 @@ export class BranchComponent implements OnInit {
         } else {
           this.toastService.error('Không thể lấy thông tin chi tiết yêu cầu!');
         }
-      },
-      error: (err) => {
-        console.error('Error fetching request detail:', err);
-        let errorMsg = 'Không thể lấy thông tin chi tiết yêu cầu!';
-        
-        // Handle specific error messages
-        if (err?.error?.message) {
-          errorMsg = err.error.message;
-        } else if (err?.status === 404) {
-          errorMsg = 'Không tìm thấy yêu cầu!';
-        } else if (err?.status === 403) {
-          errorMsg = 'Bạn không có quyền xem chi tiết yêu cầu này!';
-        }
-        
-        this.toastService.error(errorMsg);
       }
     });
   }
@@ -618,24 +560,6 @@ export class BranchComponent implements OnInit {
         // Reload data dựa trên tab hiện tại
         this.onSearch();
         this.isApproving = false;
-      },
-      error: (err) => {
-        console.error('Approve branch error:', err);
-        let errorMsg = 'Phê duyệt thất bại!';
-        
-        // Handle specific error messages
-        if (err?.error?.message) {
-          errorMsg = err.error.message;
-        } else if (err?.status === 404) {
-          errorMsg = 'Không tìm thấy yêu cầu phê duyệt!';
-        } else if (err?.status === 403) {
-          errorMsg = 'Bạn không có quyền phê duyệt yêu cầu này!';
-        } else if (err?.status === 409) {
-          errorMsg = 'Yêu cầu đã được xử lý trước đó!';
-        }
-        
-        this.toastService.error(errorMsg);
-        this.isApproving = false;
       }
     });
   }
@@ -689,27 +613,6 @@ export class BranchComponent implements OnInit {
         this.modalRef?.hide();
         // Reload data dựa trên tab hiện tại
         this.onSearch();
-      },
-      error: (err) => {
-        console.error('Reject branch error:', err);
-        let errorMsg = 'Từ chối yêu cầu thất bại!';
-        
-        // Handle specific error messages
-        if (err?.error?.message) {
-          errorMsg = err.error.message;
-        } else if (err?.status === 404) {
-          errorMsg = 'Không tìm thấy yêu cầu để từ chối!';
-        } else if (err?.status === 403) {
-          errorMsg = 'Bạn không có quyền từ chối yêu cầu này!';
-        } else if (err?.status === 409) {
-          errorMsg = 'Yêu cầu đã được xử lý trước đó!';
-        } else if (err?.status === 400) {
-          errorMsg = 'Lý do từ chối không hợp lệ!';
-        } else if (err?.status === 500) {
-          errorMsg = 'Lỗi máy chủ, vui lòng thử lại sau!';
-        }
-        
-        this.toastService.error(errorMsg);
       }
     });
   }
