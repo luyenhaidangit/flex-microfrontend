@@ -185,23 +185,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		console.log('openDeleteModal', user);
 	}
 
-	// Helper methods for table display
-	getTableColumns(): any[] {
-		return this.CONFIG.table.columns[this.activeTabId as keyof typeof this.CONFIG.table.columns] || [];
-	}
-
-	getSkeletonRows(): number {
-		return this.CONFIG.table.skeleton[this.activeTabId as keyof typeof this.CONFIG.table.skeleton]?.rows || 8;
-	}
-
-	getSkeletonColumns(): string[] {
-		return this.CONFIG.table.skeleton[this.activeTabId as keyof typeof this.CONFIG.table.skeleton]?.columns || [];
-	}
-
-	getActionConfig(action: string): any {
-		return this.CONFIG.action[action as keyof typeof this.CONFIG.action] || { text: action, class: 'bg-secondary', icon: 'question' };
-	}
-
 	// Pending request methods
 	openPendingDetailModal(request: any): void {
 		console.log('openPendingDetailModal', request);

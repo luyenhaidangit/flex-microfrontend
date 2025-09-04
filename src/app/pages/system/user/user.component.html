@@ -56,12 +56,12 @@
 			<table class="table align-middle table-nowrap dt-responsive nowrap w-100">
 				<thead>
 					<tr>
-						<th *ngFor="let col of getTableColumns()">{{ col.label }}</th>
+						<th *ngFor="let col of CONFIG.table.columns[activeTabId]">{{ col.label }}</th>
 					</tr>
 				</thead>
 				<tbody *ngIf="loading">
-					<tr *ngFor="let _ of [].constructor(getSkeletonRows())">
-						<td *ngFor="let w of getSkeletonColumns()">
+					<tr *ngFor="let _ of [].constructor(CONFIG.table.skeleton[activeTabId]?.rows || 8)">
+						<td *ngFor="let w of CONFIG.table.skeleton[activeTabId]?.columns || []">
 							<app-skeleton [width]="w" height="18px"></app-skeleton>
 						</td>
 					</tr>
@@ -97,7 +97,7 @@
 							<td>{{ u.fullName | safeField }}</td>
 							<td>{{ u.email | safeField }}</td>
 							<td>
-								<app-badge [value]="getActionConfig(u.action)" type="action"></app-badge>
+								<app-badge [value]="item.requestType" type="request"></app-badge>
 							</td>
 							<td>{{ u.requestedDate | date:'dd/MM/yyyy HH:mm' }}</td>
 							<td>{{ u.makerName | safeField }}</td>
@@ -117,7 +117,7 @@
 				</tbody>
 				<tbody *ngIf="!loading && !items.length">
 					<tr>
-						<td [attr.colspan]="CONFIG.table.columns.approved.length" class="text-center text-muted">Không có dữ liệu</td>
+						<td [attr.colspan]="CONFIG.table.columns[activeTabId]?.length || 0" class="text-center text-muted">Không có dữ liệu</td>
 					</tr>
 				</tbody>
 			</table>
