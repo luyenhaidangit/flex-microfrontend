@@ -25,24 +25,19 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	// Modal properties
 	@ViewChild('detailModal') detailModalTemplateRef!: TemplateRef<any>;
 	modalRef?: BsModalRef | null = null;
-	selectedItem: UserItem | null = null;
 	changeHistory: any[] = [];
 	isLoadingHistory = false;
 
-	// Destroy subject for cleanup
-	private destroy$ = new Subject<void>();
 
-	// Get search params
-	get searchParams(): any {
-		const params = {
+	// Override getSearchParams to include branchId
+	protected getSearchParams(): any {
+		return {
 			pageIndex: this.state.paging.index,
 			pageSize: this.state.paging.size,
 			keyword: this.state.filter.keyword,
 			branchId: this.state.filter.branchId,
 			status: this.activeTabId
 		};
-		
-		return this.cleanParams(params);
 	}
 
 	constructor(
@@ -58,7 +53,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		this.loadingTable = true;
 		
 		const branchesCall = this.systemService.getBranchesForFilter();
-		const usersCall = this.userService.getUsers(this.cleanParams(this.searchParams));
+		const usersCall = this.userService.getUsers(this.getCleanSearchParams());
 		
 		// Load branches and users in parallel
 		forkJoin({
@@ -96,8 +91,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 
 	ngOnDestroy(): void {
-		this.destroy$.next();
-		this.destroy$.complete();
+		this.cleanup();
 		// Close modal if open
 		if (this.modalRef) {
 			this.modalRef.hide();
@@ -107,56 +101,10 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	// Implement method abstract base
 	public onSearch(): void {
 		if (this.activeTabId === 'approved') {
-			this.getItems();
+			this.loadData<UserItem>(this.userService.getUsers(this.getCleanSearchParams()));
 		} else {
-			this.getPendingItems();
+			this.loadData<any>(this.userService.getPendingUserRequests(this.getCleanSearchParams()));
 		}
-	}
-
-	getItems(): void {
-		this.loadingTable = true;
-		this.userService.getUsers(this.searchParams)
-		.pipe(
-			finalize(() => this.loadingTable = false),
-			takeUntil(this.destroy$)
-		)
-		.subscribe({
-			next: (res: any) => {
-				if (res?.isSuccess) {
-					const { items, pageMeta } = this.extractPagingFromResponse<UserItem>(res.data);
-					this.items = items as UserItem[];
-					this.updatePagingState(pageMeta);
-				} else {
-					this.items = [];
-				}
-			},
-			error: (err) => {
-				this.items = [];
-			}
-		});
-	}
-
-	getPendingItems(): void {
-		this.loadingTable = true;
-		this.userService.getPendingUserRequests(this.searchParams)
-		.pipe(
-			finalize(() => this.loadingTable = false),
-			takeUntil(this.destroy$)
-		)
-		.subscribe({
-			next: (res: any) => {
-				if (res?.isSuccess) {
-					const { items, pageMeta } = this.extractPagingFromResponse<any>(res.data);
-					this.items = items;
-					this.updatePagingState(pageMeta);
-				} else {
-					this.items = [];
-				}
-			},
-			error: (err) => {
-				this.items = [];
-			}
-		});
 	}
 
 	protected resetSearchParams(): void {

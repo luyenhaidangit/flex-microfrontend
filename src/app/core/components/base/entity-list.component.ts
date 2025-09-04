@@ -1,5 +1,8 @@
 import { Query, ListState, PageMeta } from 'src/app/core/features/query';
 import { ENTITY_LIST_CONFIG } from './entity-list.config';
+import { Observable } from 'rxjs';
+import { finalize, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 export abstract class EntityListComponent<TFilter> {
   protected readonly config = ENTITY_LIST_CONFIG;
@@ -8,11 +11,15 @@ export abstract class EntityListComponent<TFilter> {
   activeTabId: string = this.config.tabs.default;
   loadingTable = false;
   items: any[] = [];
+  selectedItem: any;
   state: ListState<TFilter>;
   
   // Default configuration
   tabsConfig: any = this.config.tabs;
   paginationConfig: any = this.config.pagination;
+
+  // Destroy subject for cleanup
+  protected destroy$ = new Subject<void>();
 
   /**
    * Utility function để loại bỏ các giá trị null, undefined, empty string
@@ -39,6 +46,54 @@ export abstract class EntityListComponent<TFilter> {
   }
 
   protected abstract onSearch(): void;
+
+  // ---------- Generic data loading methods ----------
+  
+  /**
+   * Generic method to load data with standard pattern
+   * @param apiCall Observable API call
+   * @param itemType Type of items (for type safety)
+   */
+  protected loadData<T>(apiCall: Observable<any>, itemType?: new() => T): void {
+    this.loadingTable = true;
+    apiCall.pipe(
+      finalize(() => this.loadingTable = false),
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (res: any) => {
+        if (res?.isSuccess) {
+          const { items, pageMeta } = this.extractPagingFromResponse<T>(res.data);
+          this.items = items as any[];
+          this.updatePagingState(pageMeta);
+        } else {
+          this.items = [];
+        }
+      },
+      error: (err) => {
+        this.items = [];
+      }
+    });
+  }
+
+  /**
+   * Get search parameters for API calls
+   * Override this method in child classes to customize search params
+   */
+  protected getSearchParams(): any {
+    return {
+      pageIndex: this.state.paging.index,
+      pageSize: this.state.paging.size,
+      status: this.activeTabId,
+      ...this.state.filter
+    };
+  }
+
+  /**
+   * Clean and return search parameters
+   */
+  protected getCleanSearchParams(): any {
+    return this.cleanParams(this.getSearchParams());
+  }
 
   // ---------- Internal method ----------
   resetToFirstPage(): void {
@@ -97,4 +152,14 @@ export abstract class EntityListComponent<TFilter> {
 
   protected resetSearchParams(): void {
 	}
+
+  // ---------- Lifecycle methods ----------
+  
+  /**
+   * Cleanup method - call this in ngOnDestroy of child components
+   */
+  protected cleanup(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }
