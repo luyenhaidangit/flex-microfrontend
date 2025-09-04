@@ -77,15 +77,30 @@ export abstract class EntityListComponent<TFilter> {
 
   /**
    * Get search parameters for API calls
-   * Override this method in child classes to customize search params
+   * Base implementation includes common pagination and status params
+   * Child classes can override to add custom params or modify behavior
    */
   protected getSearchParams(): any {
-    return {
+    const baseParams = {
       pageIndex: this.state.paging.index,
       pageSize: this.state.paging.size,
-      status: this.activeTabId,
-      ...this.state.filter
+      status: this.activeTabId
     };
+
+    // Merge with filter properties and additional params
+    return {
+      ...baseParams,
+      ...this.state.filter,
+      ...this.getAdditionalSearchParams()
+    };
+  }
+
+  /**
+   * Get additional search parameters that child classes can override
+   * This allows child classes to add custom params without overriding the entire method
+   */
+  protected getAdditionalSearchParams(): any {
+    return {};
   }
 
   /**

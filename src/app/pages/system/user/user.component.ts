@@ -28,18 +28,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	changeHistory: any[] = [];
 	isLoadingHistory = false;
 
-
-	// Override getSearchParams to include branchId
-	protected getSearchParams(): any {
-		return {
-			pageIndex: this.state.paging.index,
-			pageSize: this.state.paging.size,
-			keyword: this.state.filter.keyword,
-			branchId: this.state.filter.branchId,
-			status: this.activeTabId
-		};
-	}
-
 	constructor(
 		private userService: UserService,
 		private systemService: SystemService,
