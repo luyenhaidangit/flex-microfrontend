@@ -13,6 +13,13 @@ export class UserService {
 	}
 
 	/**
+	 * Get user detail by ID
+	 */
+	getUserById(id: number): Observable<any> {
+		return this.http.get<any>(`${this.apiUrl}/${id}`);
+	}
+
+	/**
 	 * Get pending user requests with pagination
 	 */
 	getPendingUserRequests(params: any): Observable<any> {
@@ -40,6 +47,13 @@ export class UserService {
 	rejectPendingUserRequest(requestId: number, reason?: string): Observable<any> {
 		const body = reason ? { reason } : {};
 		return this.http.post<any>(`${this.apiUrl}/requests/pending/${requestId}/reject`, body);
+	}
+
+	/**
+	 * Get user change history
+	 */
+	getUserChangeHistory(userId: number): Observable<any> {
+		return this.http.get<any>(`${this.apiUrl}/${userId}/history`);
 	}
 }
 

@@ -1,7 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { ToastService } from 'angular-toastify';
 import { forkJoin, Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { SystemService } from 'src/app/core/services/system.service';
 import { UserService } from './user.service';
 import { UserItem } from './user.models';
@@ -26,6 +27,13 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	items: UserItem[] = [];
 	branches: { id: number; name: string }[] = [];
 
+	// Modal properties
+	@ViewChild('detailModal') detailModalTemplateRef!: TemplateRef<any>;
+	modalRef?: BsModalRef | null = null;
+	selectedItem: UserItem | null = null;
+	changeHistory: any[] = [];
+	isLoadingHistory = false;
+
 	// Destroy subject for cleanup
 	private destroy$ = new Subject<void>();
 
@@ -46,6 +54,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		private userService: UserService,
 		private systemService: SystemService,
 		private toast: ToastService,
+		private modalService: BsModalService,
 	) {
 		super({ keyword: '', branchId: null, type: null });
 	}
@@ -94,6 +103,10 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
+		// Close modal if open
+		if (this.modalRef) {
+			this.modalRef.hide();
+		}
 	}
 
 	// Implement method abstract base
@@ -162,7 +175,26 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 
 	openDetailModal(user: UserItem): void {
-		console.log('openDetailModal', user);
+		// For now, use the user data directly from the list
+		// In the future, you can call API to get more detailed information
+		this.selectedItem = user;
+		// Reset change history when opening modal
+		this.changeHistory = [];
+		
+		this.modalRef = this.modalService.show(this.detailModalTemplateRef, { 
+			class: 'modal-xl',
+			backdrop: 'static',
+			keyboard: false, 
+		});
+		
+		// Optional: Call API to get more detailed user information
+		// this.userService.getUserById(user.id).subscribe({
+		// 	next: (res) => {
+		// 		if (res?.isSuccess) {
+		// 			this.selectedItem = res.data;
+		// 		}
+		// 	}
+		// });
 	}
 
 	openEditModal(user: UserItem): void {
@@ -184,5 +216,45 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 
 	openRejectModal(request: any): void {
 		console.log('openRejectModal', request);
+	}
+
+	// Modal methods
+	closeModal(): void {
+		if (this.modalRef) {
+			this.modalRef.hide();
+			this.modalRef = null;
+			this.selectedItem = null;
+		}
+	}
+
+	// Load change history when history tab is opened
+	loadChangeHistory(): void {
+		if (!this.selectedItem?.id) {
+			this.toast.error('Không tìm thấy ID người dùng!');
+			return;
+		}
+
+		// Only load if not already loaded
+		if (this.changeHistory.length > 0) {
+			return;
+		}
+
+		this.isLoadingHistory = true;
+		this.userService.getUserChangeHistory(this.selectedItem.id)
+			.pipe(finalize(() => this.isLoadingHistory = false))
+			.subscribe({
+				next: (res) => {
+					if (res?.isSuccess) {
+						this.changeHistory = res.data || [];
+					} else {
+						this.changeHistory = [];
+						this.toast.error('Không thể lấy lịch sử thay đổi!');
+					}
+				},
+				error: (err) => {
+					this.changeHistory = [];
+					this.toast.error('Không thể lấy lịch sử thay đổi!');
+				}
+			});
 	}
 }
