@@ -170,11 +170,9 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 
 	openDetailModal(user: UserItem): void {
-		// For now, use the user data directly from the list
-		// In the future, you can call API to get more detailed information
-		this.selectedItem = user;
 		// Reset change history when opening modal
 		this.changeHistory = [];
+		this.selectedItem = null;
 		
 		this.modalRef = this.modalService.show(this.detailModalTemplateRef, { 
 			class: 'modal-xl',
@@ -182,14 +180,19 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 			keyboard: false, 
 		});
 		
-		// Optional: Call API to get more detailed user information
-		// this.userService.getUserById(user.id).subscribe({
-		// 	next: (res) => {
-		// 		if (res?.isSuccess) {
-		// 			this.selectedItem = res.data;
-		// 		}
-		// 	}
-		// });
+		// Call API to get detailed user information
+		this.userService.getUserByUsername(user.userName).subscribe({
+			next: (res) => {
+				if (res?.isSuccess) {
+					this.selectedItem = res.data;
+				} else {
+					this.closeModal();
+				}
+			},
+			error: (err) => {
+				this.closeModal();
+			}
+		});
 	}
 
 	openEditModal(user: UserItem): void {
