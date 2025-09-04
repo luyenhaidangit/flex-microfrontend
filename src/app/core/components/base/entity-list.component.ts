@@ -1,9 +1,16 @@
 import { Query, ListState, PageMeta } from 'src/app/core/features/query';
+import { ENTITY_LIST_CONFIG } from './entity-list.config';
 
 export abstract class EntityListComponent<TFilter> {
-  state: ListState<TFilter>;
+  protected readonly config = ENTITY_LIST_CONFIG;
 
-  activeTabId: string = 'approved';
+  // Properties
+  activeTabId: string = this.config.tabs.default;
+  state: ListState<TFilter>;
+  
+  // Default configuration
+  tabsConfig: any = this.config.tabs;
+  paginationConfig: any = this.config.pagination;
 
   /**
    * Utility function để loại bỏ các giá trị null, undefined, empty string

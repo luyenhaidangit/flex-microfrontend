@@ -19,7 +19,6 @@ import { EntityListComponent } from 'src/app/core/components/base/entity-list.co
 export class UsersComponent extends EntityListComponent<UserFilter> implements OnInit, OnDestroy {
 
 	CONFIG = USER_CONFIG;
-	activeTabId = this.CONFIG.tabs.default;
 
 	// Loading state
 	loading = false;

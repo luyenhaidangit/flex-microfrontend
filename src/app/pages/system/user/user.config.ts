@@ -12,21 +12,6 @@ export const USER_CONFIG = {
     ]
   },
 
-  // Tab configuration
-  tabs: {
-    default: 'approved',
-    items: [
-      { id: 'approved', label: 'Đã duyệt', icon: 'bx bx-check-circle' },
-      { id: 'pending', label: 'Chờ duyệt', icon: 'bx bx-time' }
-    ]
-  },
-
-  // Pagination configuration
-  pagination: {
-    defaultPageSize: 10,
-    pageSizeOptions: DEFAULT_PER_PAGE_OPTIONS
-  },
-
   // Table configuration
   table: {
     columns: {
@@ -58,21 +43,6 @@ export const USER_CONFIG = {
         columns: ['120px', '150px', '200px', '100px', '150px', '150px', '150px']
       }
     }
-  },
-
-  // Status configuration
-  status: {
-    locked: {
-      true: { text: 'Đã khóa', class: 'bg-danger', icon: 'lock' },
-      false: { text: 'Hoạt động', class: 'bg-success', icon: 'unlock' }
-    }
-  },
-
-  // Action configuration for pending requests
-  action: {
-    CREATE: { text: 'Tạo mới', class: 'bg-primary', icon: 'plus' },
-    UPDATE: { text: 'Cập nhật', class: 'bg-warning', icon: 'edit' },
-    DELETE: { text: 'Xóa', class: 'bg-danger', icon: 'trash' }
   },
 
   // Search options
@@ -132,9 +102,4 @@ export const USER_CONFIG = {
     users: '/api/users',
     branches: '/api/branches'
   }
-};
-
-// Helper functions
-export const getUserStatusConfig = (isActive: boolean) => {
-  return USER_CONFIG.status.locked[isActive.toString() as keyof typeof USER_CONFIG.status.locked];
 };

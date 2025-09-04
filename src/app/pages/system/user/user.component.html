@@ -5,7 +5,7 @@
 
 		<!-- Tabset -->
 		<app-tabs 
-			[tabs]="CONFIG.tabs.items" 
+			[tabs]="tabsConfig.items" 
 			[activeId]="activeTabId" 
 			(activeIdChange)="onTabChange($event)">
 		</app-tabs>
@@ -150,7 +150,7 @@
 			<div class="per-page">
 				Hiển thị
 				<select class="mx-1 cursor-pointer" [(ngModel)]="state.paging.size" (change)="onPageSizeChange()">
-					<option *ngFor="let opt of CONFIG.pagination.pageSizeOptions" [ngValue]="opt.value" class="cursor-pointer">
+					<option *ngFor="let opt of paginationConfig.pageSizeOptions" [ngValue]="opt.value" class="cursor-pointer">
 						{{ opt.label  }}
 					</option>
 				</select>
