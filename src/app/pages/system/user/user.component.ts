@@ -20,7 +20,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 
 	CONFIG = USER_CONFIG;
 
-	items: UserItem[] = [];
 	branches: { id: number; name: string }[] = [];
 
 	// Modal properties
