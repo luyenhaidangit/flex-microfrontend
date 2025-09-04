@@ -92,7 +92,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 
 	ngOnDestroy(): void {
-		console.log('🗑️ Component destroy - cleanup subscriptions');
 		this.destroy$.next();
 		this.destroy$.complete();
 	}
@@ -107,8 +106,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 
 	getItems(): void {
-		console.log('getItems', this.searchParams);
-
 		this.loading = true;
 		this.userService.getUsers(this.searchParams)
 		.pipe(
@@ -132,8 +129,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 
 	getPendingItems(): void {
-		console.log('getPendingItems', this.searchParams);
-
 		this.loading = true;
 		this.userService.getPendingUserRequests(this.searchParams)
 		.pipe(
