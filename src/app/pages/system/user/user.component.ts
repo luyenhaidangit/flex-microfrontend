@@ -50,7 +50,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		super({ keyword: '', branchId: null, type: null });
 	}
 
-    ngOnInit(): void {
+    ngOnInit(): void {		
 		this.loading = true;
 		
 		const branchesCall = this.systemService.getBranchesForFilter();
@@ -151,17 +151,10 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		});
 	}
 
-	onTabChange(tabId: string): void {
-		this.activeTabId = tabId;
-		this.resetSearchParams();
-		this.onSearch();
-	}
-
-	private resetSearchParams(): void {
+	protected resetSearchParams(): void {
 		this.state.filter.keyword = '';
 		this.state.filter.branchId = null;
 		this.state.filter.type = null;
-		this.resetToFirstPage();
 	}
 
 	openCreateModal(): void {

@@ -3,6 +3,8 @@ import { Query, ListState, PageMeta } from 'src/app/core/features/query';
 export abstract class EntityListComponent<TFilter> {
   state: ListState<TFilter>;
 
+  activeTabId: string = 'approved';
+
   /**
    * Utility function để loại bỏ các giá trị null, undefined, empty string
    * @param params Object chứa các tham số cần clean
@@ -75,4 +77,15 @@ export abstract class EntityListComponent<TFilter> {
       totalPages: this.state.paging.totalPages
     };
   }
+
+  // Tab change
+  onTabChange(tabId: string): void {
+		this.activeTabId = tabId;
+		this.resetSearchParams();
+    this.resetToFirstPage();
+		this.onSearch();
+	}
+
+  protected resetSearchParams(): void {
+	}
 }
