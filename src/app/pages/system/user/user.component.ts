@@ -107,11 +107,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		}
 	}
 
-	protected resetSearchParams(): void {
-		this.state.filter.keyword = '';
-		this.state.filter.branchId = null;
-		this.state.filter.type = null;
-	}
 
 	openCreateModal(): void {
 		console.log('openCreateModal');

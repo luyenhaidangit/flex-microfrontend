@@ -151,7 +151,22 @@ export abstract class EntityListComponent<TFilter> {
 	}
 
   protected resetSearchParams(): void {
-	}
+    // Reset all filter properties to their default values
+    if (this.state?.filter) {
+      Object.keys(this.state.filter).forEach(key => {
+        const value = this.state.filter[key];
+        if (typeof value === 'string') {
+          this.state.filter[key] = '';
+        } else if (typeof value === 'number') {
+          this.state.filter[key] = null;
+        } else if (typeof value === 'boolean') {
+          this.state.filter[key] = false;
+        } else {
+          this.state.filter[key] = null;
+        }
+      });
+    }
+  }
 
   // ---------- Lifecycle methods ----------
   
