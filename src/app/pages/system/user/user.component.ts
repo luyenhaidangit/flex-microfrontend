@@ -20,9 +20,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 
 	CONFIG = USER_CONFIG;
 
-	// Loading state
-	loading = false;
-
 	items: UserItem[] = [];
 	branches: { id: number; name: string }[] = [];
 
@@ -59,7 +56,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 
     ngOnInit(): void {		
-		this.loading = true;
+		this.loadingTable = true;
 		
 		const branchesCall = this.systemService.getBranchesForFilter();
 		const usersCall = this.userService.getUsers(this.cleanParams(this.searchParams));
@@ -71,7 +68,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		}).pipe(
 			takeUntil(this.destroy$),
 			finalize(() => {
-				this.loading = false;
+				this.loadingTable = false;
 			})
 		).subscribe({
 			next: ({ branches, users }) => {
@@ -118,10 +115,10 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 
 	getItems(): void {
-		this.loading = true;
+		this.loadingTable = true;
 		this.userService.getUsers(this.searchParams)
 		.pipe(
-			finalize(() => this.loading = false),
+			finalize(() => this.loadingTable = false),
 			takeUntil(this.destroy$)
 		)
 		.subscribe({
@@ -141,10 +138,10 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 
 	getPendingItems(): void {
-		this.loading = true;
+		this.loadingTable = true;
 		this.userService.getPendingUserRequests(this.searchParams)
 		.pipe(
-			finalize(() => this.loading = false),
+			finalize(() => this.loadingTable = false),
 			takeUntil(this.destroy$)
 		)
 		.subscribe({

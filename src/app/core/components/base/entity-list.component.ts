@@ -6,6 +6,7 @@ export abstract class EntityListComponent<TFilter> {
 
   // Properties
   activeTabId: string = this.config.tabs.default;
+  loadingTable = false;
   state: ListState<TFilter>;
   
   // Default configuration

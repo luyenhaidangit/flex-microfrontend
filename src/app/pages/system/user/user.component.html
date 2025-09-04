@@ -59,14 +59,14 @@
 						<th *ngFor="let col of CONFIG.table.columns[activeTabId]">{{ col.label }}</th>
 					</tr>
 				</thead>
-				<tbody *ngIf="loading">
+				<tbody *ngIf="loadingTable">
 					<tr *ngFor="let _ of [].constructor(CONFIG.table.skeleton[activeTabId]?.rows || 8)">
 						<td *ngFor="let w of CONFIG.table.skeleton[activeTabId]?.columns || []">
 							<app-skeleton [width]="w" height="18px"></app-skeleton>
 						</td>
 					</tr>
 				</tbody>
-				<tbody *ngIf="!loading && items.length">
+				<tbody *ngIf="!loadingTable && items.length">
 					<!-- Approved tab content -->
 					<ng-container *ngIf="activeTabId === 'approved'">
 						<tr *ngFor="let u of items">
@@ -115,7 +115,7 @@
 						</tr>
 					</ng-container>
 				</tbody>
-				<tbody *ngIf="!loading && !items.length">
+				<tbody *ngIf="!loadingTable && !items.length">
 					<tr>
 						<td [attr.colspan]="CONFIG.table.columns[activeTabId]?.length || 0" class="text-center text-muted">Không có dữ liệu</td>
 					</tr>

@@ -1,5 +1,3 @@
-import { DEFAULT_PER_PAGE_OPTIONS } from 'src/app/core/constants/shared.constant';
-
 export const USER_CONFIG = {
 
   // Breadcrumb configuration
