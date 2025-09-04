@@ -171,9 +171,19 @@
 		<button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
 	</div>
 	<div class="modal-body px-4 py-3">
-		<tabset>
-			<tab heading="Thông tin">
-				<div class="row gy-2 mt-3">
+		<!-- Loading state for user detail -->
+		<div *ngIf="isLoadingUserDetail" class="text-center py-4">
+			<div class="spinner-border text-primary" role="status">
+				<span class="visually-hidden">Đang tải...</span>
+			</div>
+			<p class="mt-2 text-muted">Đang tải thông tin chi tiết người dùng...</p>
+		</div>
+
+		<!-- User detail content -->
+		<div *ngIf="!isLoadingUserDetail">
+			<tabset>
+				<tab heading="Thông tin">
+					<div class="row gy-2 mt-3">
 					<div class="col-md-6">
 						<label class="form-label fw-bold text-muted">Tên đăng nhập</label>
 						<div class="text-dark ps-1">{{ selectedItem?.userName | safeField }}</div>
@@ -307,6 +317,7 @@
 				</div>
 			</tab>
 		</tabset>
+		</div>
 	</div>
 	<div class="modal-footer border-top-0">
 		<button type="button" class="btn btn-outline-secondary" (click)="modalRef?.hide()">Đóng</button>

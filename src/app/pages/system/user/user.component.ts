@@ -27,6 +27,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	modalRef?: BsModalRef | null = null;
 	changeHistory: any[] = [];
 	isLoadingHistory = false;
+	isLoadingUserDetail = false;
 
 	constructor(
 		private userService: UserService,
@@ -80,9 +81,10 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 
 	ngOnDestroy(): void {
 		this.cleanup();
-		// Close modal if open
+		// Close modal if open and reset loading states
 		if (this.modalRef) {
 			this.modalRef.hide();
+			this.resetLoadingStates();
 		}
 	}
 
@@ -104,7 +106,9 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		// Reset change history when opening modal
 		this.changeHistory = [];
 		this.selectedItem = null;
+		this.isLoadingUserDetail = true;
 		
+		// Show modal immediately with loading state
 		this.modalRef = this.modalService.show(this.detailModalTemplateRef, { 
 			class: 'modal-xl',
 			backdrop: 'static',
@@ -112,18 +116,22 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		});
 		
 		// Call API to get detailed user information
-		this.userService.getUserByUsername(user.userName).subscribe({
-			next: (res) => {
-				if (res?.isSuccess) {
-					this.selectedItem = res.data;
-				} else {
+		this.userService.getUserByUsername(user.userName)
+			.pipe(finalize(() => this.isLoadingUserDetail = false))
+			.subscribe({
+				next: (res) => {
+					if (res?.isSuccess) {
+						this.selectedItem = res.data;
+					} else {
+						this.toast.error('Không thể lấy thông tin chi tiết người dùng!');
+						this.closeModal();
+					}
+				},
+				error: (err) => {
+					this.toast.error('Không thể lấy thông tin chi tiết người dùng!');
 					this.closeModal();
 				}
-			},
-			error: (err) => {
-				this.closeModal();
-			}
-		});
+			});
 	}
 
 	openEditModal(user: UserItem): void {
@@ -153,7 +161,14 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 			this.modalRef.hide();
 			this.modalRef = null;
 			this.selectedItem = null;
+			this.resetLoadingStates();
 		}
+	}
+
+	// Method to reset all loading states
+	private resetLoadingStates(): void {
+		this.isLoadingUserDetail = false;
+		this.isLoadingHistory = false;
 	}
 
 	// Load change history when history tab is opened
