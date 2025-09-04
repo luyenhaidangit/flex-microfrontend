@@ -1,3 +1,9 @@
+export interface UserFilter {
+	keyword: string;
+	branchId: number;
+	status?: string;
+	type?: 'CREATE' | 'UPDATE' | 'DELETE' | null;
+}
 export interface UserItem {
 	id: number;
 	userName: string;
@@ -7,13 +13,6 @@ export interface UserItem {
 	branchName?: string;
 	isActive?: boolean;
 	createdAt?: string;
-}
-
-export interface UserFilter {
-	keyword: string;
-	branchId: number | null;
-	status?: string;
-	type?: 'CREATE' | 'UPDATE' | 'DELETE' | null;
 }
 export interface UserSearchParams {
 	pageIndex: number;
