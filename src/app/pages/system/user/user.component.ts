@@ -9,7 +9,7 @@ import { UserItem } from './user.models';
 import { USER_CONFIG } from './user.config';
 import { UserFilter } from './user.models';
 import { EntityListComponent } from 'src/app/core/components/base/entity-list.component';
-import { PaginationState } from 'src/app/shared/components/pagination/pagination/pagination.component';
+import { PaginationState } from 'src/app/core/components/pagination/pagination/pagination.component';
 
 @Component({
 	selector: 'app-users',
