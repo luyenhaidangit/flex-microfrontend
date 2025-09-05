@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { ToastService } from 'angular-toastify';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -10,7 +10,7 @@ import { UserItem } from '../user.models';
 	templateUrl: './user-detail-modal.component.html',
 	styleUrls: ['./user-detail-modal.component.scss']
 })
-export class UserDetailModalComponent implements OnInit, OnDestroy {
+export class UserDetailModalComponent implements OnInit, OnDestroy, OnChanges {
 	@Input() isVisible = false;
 	@Input() user: UserItem | null = null;
 	@Output() close = new EventEmitter<void>();
@@ -28,7 +28,16 @@ export class UserDetailModalComponent implements OnInit, OnDestroy {
 	) {}
 
 	ngOnInit(): void {
-		if (this.user) {
+	}
+
+	ngOnChanges(changes: SimpleChanges): void {		
+		// Check if user input changed and modal is visible
+		if (changes['user'] && this.isVisible && this.user) {
+			this.loadUserDetail();
+		}
+		
+		// Check if modal visibility changed
+		if (changes['isVisible'] && this.isVisible && this.user) {
 			this.loadUserDetail();
 		}
 	}

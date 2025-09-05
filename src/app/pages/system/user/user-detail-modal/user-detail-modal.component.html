@@ -45,10 +45,6 @@
 									<app-badge [value]="selectedItem?.isActive" type="status"></app-badge>
 								</div>
 							</div>
-							<div class="col-md-6">
-								<label class="form-label fw-bold text-muted">Ngày tạo</label>
-								<div class="text-dark ps-1">{{ selectedItem?.createdAt | date:'dd/MM/yyyy HH:mm' | safeField }}</div>
-							</div>
 						</div>
 					</tab>
 					<tab heading="Lịch sử thay đổi" (selectTab)="loadChangeHistory()">

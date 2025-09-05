@@ -97,7 +97,7 @@
 							<td>{{ u.fullName | safeField }}</td>
 							<td>{{ u.email | safeField }}</td>
 							<td>
-								<app-badge [value]="item.requestType" type="request"></app-badge>
+								<app-badge [value]="u.requestType" type="request"></app-badge>
 							</td>
 							<td>{{ u.requestedDate | date:'dd/MM/yyyy HH:mm' }}</td>
 							<td>{{ u.makerName | safeField }}</td>
@@ -137,6 +137,6 @@
 <!-- User Detail Modal Component -->
 <app-user-detail-modal 
 	[isVisible]="showDetailModal"
-	[user]="selectedUserForDetail"
+	[user]="selectedItem"
 	(close)="onDetailModalClose()">
 </app-user-detail-modal>

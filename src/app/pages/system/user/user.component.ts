@@ -23,7 +23,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 
 	// Modal properties
 	showDetailModal = false;
-	selectedUserForDetail: UserItem | null = null;
 
 	constructor(
 		private userService: UserService,
@@ -78,7 +77,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		this.cleanup();
 		// Close modal if open
 		this.showDetailModal = false;
-		this.selectedUserForDetail = null;
+		this.selectedItem = null;
 	}
 
 	// Implement method abstract base
@@ -96,8 +95,10 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 
 	openDetailModal(user: UserItem): void {
-		this.selectedUserForDetail = user;
+		console.log('Opening detail modal for user:', user);
+		this.selectedItem = user;
 		this.showDetailModal = true;
+		console.log('Modal state:', { showDetailModal: this.showDetailModal, selectedItem: this.selectedItem });
 	}
 
 	openEditModal(user: UserItem): void {
@@ -124,6 +125,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	// Modal methods
 	onDetailModalClose(): void {
 		this.showDetailModal = false;
-		this.selectedUserForDetail = null;
+		this.selectedItem = null;
 	}
 }
