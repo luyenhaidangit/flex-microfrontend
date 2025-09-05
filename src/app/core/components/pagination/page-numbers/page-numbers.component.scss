@@ -10,7 +10,7 @@
 
     .page-link {
       display: block;
-      padding: 8px 12px;
+      padding: 6px 10px;
       color: #007bff;
       text-decoration: none;
       background-color: #fff;
@@ -19,6 +19,7 @@
       transition: all 0.15s ease-in-out;
       cursor: pointer;
       user-select: none;
+      font-size: 12px;
 
       &:hover {
         color: #0056b3;
@@ -61,8 +62,8 @@
       margin: 0 1px;
 
       .page-link {
-        padding: 6px 8px;
-        font-size: 14px;
+        padding: 4px 6px;
+        font-size: 11px;
       }
     }
   }

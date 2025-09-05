@@ -1,7 +1,7 @@
 .table-filter {
-  padding: 16px 0;
+  padding: 12px 0;
   border-top: 1px solid #e9ecef;
-  margin-top: 16px;
+  margin-top: 12px;
 
   // Responsive design
   @media (max-width: 768px) {
@@ -19,7 +19,7 @@
   }
 
   @media (max-width: 576px) {
-    padding: 12px 0;
-    margin-top: 12px;
+    padding: 8px 0;
+    margin-top: 8px;
   }
 }
