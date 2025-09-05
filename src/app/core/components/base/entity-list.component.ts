@@ -3,6 +3,7 @@ import { ENTITY_LIST_CONFIG } from './entity-list.config';
 import { Observable } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { PaginationState } from '../pagination/pagination/pagination.component';
 
 export abstract class EntityListComponent<TFilter> {
   protected readonly config = ENTITY_LIST_CONFIG;
@@ -121,7 +122,10 @@ export abstract class EntityListComponent<TFilter> {
     this.onSearch();
   }
 
-  onPageSizeChange(): void {
+  onPageSizeChange(pageSize?: number): void {
+    if (pageSize !== undefined) {
+      this.state.paging.size = pageSize;
+    }
     this.resetToFirstPage();
     this.onSearch();
   }
@@ -154,6 +158,16 @@ export abstract class EntityListComponent<TFilter> {
       pageSize: this.state.paging.size,
       totalItems: this.state.paging.totalItems,
       totalPages: this.state.paging.totalPages
+    };
+  }
+
+  // Method để lấy pagination state cho pagination component mới
+  getPaginationState(): PaginationState {
+    return {
+      index: this.state.paging.index,
+      size: this.state.paging.size,
+      totalItems: this.state.paging.totalItems || 0,
+      totalPages: this.state.paging.totalPages || 1
     };
   }
 
