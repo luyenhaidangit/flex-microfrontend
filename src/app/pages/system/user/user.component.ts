@@ -1,8 +1,7 @@
-import { Component, OnInit, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ToastService } from 'angular-toastify';
 import { forkJoin, Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
-import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { SystemService } from 'src/app/core/services/system.service';
 import { UserService } from './user.service';
 import { UserItem } from './user.models';
@@ -23,17 +22,13 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	branches: { id: number; name: string }[] = [];
 
 	// Modal properties
-	@ViewChild('detailModal') detailModalTemplateRef!: TemplateRef<any>;
-	modalRef?: BsModalRef | null = null;
-	changeHistory: any[] = [];
-	isLoadingHistory = false;
-	isLoadingUserDetail = false;
+	showDetailModal = false;
+	selectedUserForDetail: UserItem | null = null;
 
 	constructor(
 		private userService: UserService,
 		private systemService: SystemService,
 		private toast: ToastService,
-		private modalService: BsModalService,
 	) {
 		super({ keyword: '', branchId: null, type: null });
 	}
@@ -81,11 +76,9 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 
 	ngOnDestroy(): void {
 		this.cleanup();
-		// Close modal if open and reset loading states
-		if (this.modalRef) {
-			this.modalRef.hide();
-			this.resetLoadingStates();
-		}
+		// Close modal if open
+		this.showDetailModal = false;
+		this.selectedUserForDetail = null;
 	}
 
 	// Implement method abstract base
@@ -103,35 +96,8 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 
 	openDetailModal(user: UserItem): void {
-		// Reset change history when opening modal
-		this.changeHistory = [];
-		this.selectedItem = null;
-		this.isLoadingUserDetail = true;
-		
-		// Show modal immediately with loading state
-		this.modalRef = this.modalService.show(this.detailModalTemplateRef, { 
-			class: 'modal-xl',
-			backdrop: 'static',
-			keyboard: false, 
-		});
-		
-		// Call API to get detailed user information
-		this.userService.getUserByUsername(user.userName)
-			.pipe(finalize(() => this.isLoadingUserDetail = false))
-			.subscribe({
-				next: (res) => {
-					if (res?.isSuccess) {
-						this.selectedItem = res.data;
-					} else {
-						this.toast.error('Không thể lấy thông tin chi tiết người dùng!');
-						this.closeModal();
-					}
-				},
-				error: (err) => {
-					this.toast.error('Không thể lấy thông tin chi tiết người dùng!');
-					this.closeModal();
-				}
-			});
+		this.selectedUserForDetail = user;
+		this.showDetailModal = true;
 	}
 
 	openEditModal(user: UserItem): void {
@@ -156,50 +122,8 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 
 	// Modal methods
-	closeModal(): void {
-		if (this.modalRef) {
-			this.modalRef.hide();
-			this.modalRef = null;
-			this.selectedItem = null;
-			this.resetLoadingStates();
-		}
-	}
-
-	// Method to reset all loading states
-	private resetLoadingStates(): void {
-		this.isLoadingUserDetail = false;
-		this.isLoadingHistory = false;
-	}
-
-
-	// Load change history when history tab is opened
-	loadChangeHistory(): void {
-		if (!this.selectedItem?.id) {
-			this.toast.error('Không tìm thấy ID người dùng!');
-			return;
-		}
-
-		// Only load if not already loaded
-		if (this.changeHistory.length > 0) {
-			return;
-		}
-
-		this.isLoadingHistory = true;
-		this.userService.getUserChangeHistory(this.selectedItem.id)
-			.pipe(finalize(() => this.isLoadingHistory = false))
-			.subscribe({
-				next: (res) => {
-					if (res?.isSuccess) {
-						this.changeHistory = res.data || [];
-					} else {
-						this.changeHistory = [];
-						this.toast.error('Không thể lấy lịch sử thay đổi!');
-					}
-				},
-				error: (err) => {
-					this.changeHistory = [];
-					this.toast.error('Không thể lấy lịch sử thay đổi!');
-				}
-			});
+	onDetailModalClose(): void {
+		this.showDetailModal = false;
+		this.selectedUserForDetail = null;
 	}
 }
