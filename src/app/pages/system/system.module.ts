@@ -21,6 +21,7 @@ import { BranchComponent } from './branch/branch.component';
 import { RoleComponent } from './role/role.component';
 import { SharedModule } from '../../shared/shared.module';
 import { UsersComponent } from './user/user.component';
+import { PaginationModule as CustomPaginationModule } from '../../shared/components/pagination/pagination.module';
 
 @NgModule({
   declarations: [BranchComponent, RoleComponent, UsersComponent],
@@ -37,7 +38,8 @@ import { UsersComponent } from './user/user.component';
     PaginationModule.forRoot(),
     ReactiveFormsModule,
     SharedModule,
-    TabsModule.forRoot()
+    TabsModule.forRoot(),
+    CustomPaginationModule
   ]
 })
 

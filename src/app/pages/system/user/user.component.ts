@@ -9,6 +9,7 @@ import { UserItem } from './user.models';
 import { USER_CONFIG } from './user.config';
 import { UserFilter } from './user.models';
 import { EntityListComponent } from 'src/app/core/components/base/entity-list.component';
+import { PaginationState } from 'src/app/shared/components/pagination/pagination/pagination.component';
 
 @Component({
 	selector: 'app-users',
@@ -169,6 +170,25 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	private resetLoadingStates(): void {
 		this.isLoadingUserDetail = false;
 		this.isLoadingHistory = false;
+	}
+
+	// Method to get pagination state for the new pagination component
+	getPaginationState(): PaginationState {
+		return {
+			index: this.state.paging.index,
+			size: this.state.paging.size,
+			totalItems: this.state.paging.totalItems || 0,
+			totalPages: this.state.paging.totalPages || 1
+		};
+	}
+
+	// Override onPageSizeChange to handle parameter from new pagination component
+	onPageSizeChange(pageSize?: number): void {
+		if (pageSize !== undefined) {
+			this.state.paging.size = pageSize;
+		}
+		this.resetToFirstPage();
+		this.onSearch();
 	}
 
 	// Load change history when history tab is opened
