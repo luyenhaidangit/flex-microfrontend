@@ -98,7 +98,7 @@ export class UserDetailModalComponent implements OnInit, OnDestroy, OnChanges {
 		}
 
 		this.isLoadingHistory = true;
-		this.userService.getUserChangeHistory(this.selectedItem.id)
+		this.userService.getUserChangeHistory(this.selectedItem.userName)
 			.pipe(
 				takeUntil(this.destroy$),
 				finalize(() => this.isLoadingHistory = false)
