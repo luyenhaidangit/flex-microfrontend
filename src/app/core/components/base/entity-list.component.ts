@@ -19,6 +19,12 @@ export abstract class EntityListComponent<TFilter> {
   tabsConfig: any = this.config.tabs;
   paginationConfig: any = this.config.pagination;
 
+  // Modal state management
+  showDetailModal = false;
+  showEditModal = false;
+  showDeleteModal = false;
+  showCreateModal = false;
+
   // Destroy subject for cleanup
   protected destroy$ = new Subject<void>();
 
@@ -197,6 +203,87 @@ export abstract class EntityListComponent<TFilter> {
     }
   }
 
+  // ---------- Modal management methods ----------
+  
+  /**
+   * Generic method to open detail modal
+   * Child classes can override to add custom logic
+   */
+  protected openDetailModal(item: any): void {
+    this.selectedItem = item;
+    this.showDetailModal = true;
+  }
+
+  /**
+   * Generic method to open edit modal
+   * Child classes can override to add custom logic
+   */
+  protected openEditModal(item: any): void {
+    this.selectedItem = item;
+    this.showEditModal = true;
+  }
+
+  /**
+   * Generic method to open delete modal
+   * Child classes can override to add custom logic
+   */
+  protected openDeleteModal(item: any): void {
+    this.selectedItem = item;
+    this.showDeleteModal = true;
+  }
+
+  /**
+   * Generic method to open create modal
+   * Child classes can override to add custom logic
+   */
+  protected openCreateModal(): void {
+    this.selectedItem = null;
+    this.showCreateModal = true;
+  }
+
+  /**
+   * Generic method to close all modals
+   */
+  protected closeAllModals(): void {
+    this.showDetailModal = false;
+    this.showEditModal = false;
+    this.showDeleteModal = false;
+    this.showCreateModal = false;
+    this.selectedItem = null;
+  }
+
+  /**
+   * Generic method to close detail modal
+   */
+  protected onDetailModalClose(): void {
+    this.showDetailModal = false;
+    this.selectedItem = null;
+  }
+
+  /**
+   * Generic method to close edit modal
+   */
+  protected onEditModalClose(): void {
+    this.showEditModal = false;
+    this.selectedItem = null;
+  }
+
+  /**
+   * Generic method to close delete modal
+   */
+  protected onDeleteModalClose(): void {
+    this.showDeleteModal = false;
+    this.selectedItem = null;
+  }
+
+  /**
+   * Generic method to close create modal
+   */
+  protected onCreateModalClose(): void {
+    this.showCreateModal = false;
+    this.selectedItem = null;
+  }
+
   // ---------- Lifecycle methods ----------
   
   /**
@@ -205,5 +292,7 @@ export abstract class EntityListComponent<TFilter> {
   protected cleanup(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    // Close all modals on cleanup
+    this.closeAllModals();
   }
 }

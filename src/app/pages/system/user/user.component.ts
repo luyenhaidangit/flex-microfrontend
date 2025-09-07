@@ -21,9 +21,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 
 	branches: { id: number; name: string }[] = [];
 
-	// Modal properties
-	showDetailModal = false;
-
 	constructor(
 		private userService: UserService,
 		private systemService: SystemService,
@@ -75,9 +72,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 
 	ngOnDestroy(): void {
 		this.cleanup();
-		// Close modal if open
-		this.showDetailModal = false;
-		this.selectedItem = null;
 	}
 
 	// Implement method abstract base
@@ -92,21 +86,23 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 
 	openCreateModal(): void {
 		console.log('openCreateModal');
+		super.openCreateModal();
 	}
 
 	openDetailModal(user: UserItem): void {
 		console.log('Opening detail modal for user:', user);
-		this.selectedItem = user;
-		this.showDetailModal = true;
+		super.openDetailModal(user);
 		console.log('Modal state:', { showDetailModal: this.showDetailModal, selectedItem: this.selectedItem });
 	}
 
 	openEditModal(user: UserItem): void {
 		console.log('openEditModal', user);
+		super.openEditModal(user);
 	}
 
 	openDeleteModal(user: UserItem): void {
 		console.log('openDeleteModal', user);
+		super.openDeleteModal(user);
 	}
 
 	// Pending request methods
@@ -124,7 +120,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 
 	// Modal methods
 	onDetailModalClose(): void {
-		this.showDetailModal = false;
-		this.selectedItem = null;
+		super.onDetailModalClose();
 	}
 }
