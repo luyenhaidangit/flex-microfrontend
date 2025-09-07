@@ -87,8 +87,8 @@ export class UserDetailModalComponent implements OnInit, OnDestroy, OnChanges {
 
 	// Load change history when history tab is opened
 	loadChangeHistory(): void {
-		if (!this.selectedItem?.id) {
-			this.toast.error('Không tìm thấy ID người dùng!');
+		if (!this.selectedItem?.userName) {
+			this.toast.error('Không tìm thấy username người dùng!');
 			return;
 		}
 
