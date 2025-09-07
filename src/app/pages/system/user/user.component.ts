@@ -89,12 +89,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		super.openCreateModal();
 	}
 
-	openDetailModal(user: UserItem): void {
-		console.log('Opening detail modal for user:', user);
-		super.openDetailModal(user);
-		console.log('Modal state:', { showDetailModal: this.showDetailModal, selectedItem: this.selectedItem });
-	}
-
 	openEditModal(user: UserItem): void {
 		console.log('openEditModal', user);
 		super.openEditModal(user);
