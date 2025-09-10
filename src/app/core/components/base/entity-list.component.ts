@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { PaginationState } from '../pagination/pagination/pagination.component';
+import { REQUEST_TYPE_OPTIONS } from 'src/app/core/constants/request-types.constant';
 
 export abstract class EntityListComponent<TFilter> {
   protected readonly config = ENTITY_LIST_CONFIG;
@@ -18,6 +19,9 @@ export abstract class EntityListComponent<TFilter> {
   // Default configuration
   tabsConfig: any = this.config.tabs;
   paginationConfig: any = this.config.pagination;
+  
+  // Request type options for pending requests
+  requestTypeOptions = REQUEST_TYPE_OPTIONS;
 
   // Modal state management
   showDetailModal = false;

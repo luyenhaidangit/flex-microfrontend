@@ -32,10 +32,9 @@
 			<div class="col-md-3" *ngIf="activeTabId === 'pending'">
 				<label class="form-label fw-bold text-muted">Loại yêu cầu</label>
 				<select class="form-select" [(ngModel)]="state.filter.type">
-					<option [ngValue]="null">Tất cả</option>
-					<option [ngValue]="'CREATE'">Tạo mới</option>
-					<option [ngValue]="'UPDATE'">Cập nhật</option>
-					<option [ngValue]="'DELETE'">Xóa</option>
+					<option *ngFor="let option of requestTypeOptions" [ngValue]="option.value">
+						{{ option.label }}
+					</option>
 				</select>
 			</div>
 		
