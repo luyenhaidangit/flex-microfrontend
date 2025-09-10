@@ -394,28 +394,6 @@ h2 {
     }
   }
   
-              .changes-details {
-              summary {
-                font-size: 0.8rem;
-                color: #007bff;
-                font-weight: 500;
-                cursor: pointer;
-                padding: 0.25rem 0;
-                transition: color 0.2s ease;
-                list-style: none;
-                
-                &:hover {
-                  color: #0056b3;
-                }
-                
-                &::-webkit-details-marker {
-                  display: none;
-                }
-                
-                &::-moz-list-bullet {
-                  display: none;
-                }
-              }
     
     pre {
       background-color: #f8f9fa;
@@ -444,7 +422,6 @@ h2 {
       }
     }
   }
-}
 
 // Responsive adjustments for changes display
 @media (max-width: 768px) {
@@ -454,17 +431,6 @@ h2 {
       
       small {
         font-size: 0.7rem;
-      }
-    }
-    
-    .changes-details {
-      summary {
-        font-size: 0.75rem;
-      }
-      
-      pre {
-        font-size: 0.7rem;
-        max-height: 100px;
       }
     }
   }
