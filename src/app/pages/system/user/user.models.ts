@@ -31,3 +31,9 @@ export interface PagingState {
 	branchId: number | null;
 }
 
+export interface BranchItem {
+	id: number;
+	name: string;
+	code?: string;
+}
+

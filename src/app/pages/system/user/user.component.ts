@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { ToastService } from 'angular-toastify';
 import { forkJoin, Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
@@ -8,6 +8,7 @@ import { UserItem } from './user.models';
 import { USER_CONFIG } from './user.config';
 import { UserFilter } from './user.models';
 import { EntityListComponent } from 'src/app/core/components/base/entity-list.component';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 
 @Component({
 	selector: 'app-users',
@@ -20,11 +21,15 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	CONFIG = USER_CONFIG;
 
 	branches: { id: number; name: string }[] = [];
+	
+	@ViewChild('createUserModal') createUserModalTemplateRef!: TemplateRef<any>;
+	modalRef?: BsModalRef | null = null;
 
 	constructor(
 		private userService: UserService,
 		private systemService: SystemService,
 		private toast: ToastService,
+		private modalService: BsModalService
 	) {
 		super({ keyword: '', branchId: null, type: null });
 	}
@@ -86,7 +91,11 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 
 	openCreateModal(): void {
 		console.log('openCreateModal');
-		super.openCreateModal();
+		this.modalRef = this.modalService.show(this.createUserModalTemplateRef, {
+			class: 'modal-lg',
+			backdrop: 'static',
+			keyboard: false
+		});
 	}
 
 	openEditModal(user: UserItem): void {
@@ -115,5 +124,15 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	// Modal methods
 	onDetailModalClose(): void {
 		super.onDetailModalClose();
+	}
+
+	onCreateModalClose(): void {
+		this.modalRef?.hide();
+	}
+
+	onUserCreated(): void {
+		this.modalRef?.hide();
+		// Reload data after user is created
+		this.onSearch();
 	}
 }

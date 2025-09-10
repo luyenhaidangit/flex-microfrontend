@@ -50,8 +50,15 @@ export class UserService {
 	/**
 	* Create a new user request
 	*/
-	createUserRequest(dto: any): Observable<any> {
+	createUser(dto: any): Observable<any> {
 		return this.http.post<any>(`${this.apiUrl}/request/create`, dto);
+	}
+	
+	/**
+	* Create a new user request (alias for createUser)
+	*/
+	createUserRequest(dto: any): Observable<any> {
+		return this.createUser(dto);
 	}
 	
 	/**

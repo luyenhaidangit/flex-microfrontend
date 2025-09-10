@@ -139,3 +139,11 @@
 	[user]="selectedItem"
 	(close)="onDetailModalClose()">
 </app-user-detail-modal>
+
+<!-- Create User Modal Template -->
+<ng-template #createUserModal>
+	<app-create-user-modal 
+		(close)="onCreateModalClose()"
+		(created)="onUserCreated()">
+	</app-create-user-modal>
+</ng-template>

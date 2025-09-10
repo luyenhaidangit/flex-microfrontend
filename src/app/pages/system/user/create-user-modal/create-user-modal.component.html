@@ -1,0 +1,126 @@
+<!-- Create User Modal -->
+<div class="modal-header">
+  <h5 class="modal-title text-success fw-semibold">
+    <i class="fas fa-plus-circle me-2"></i>Thêm mới người dùng
+  </h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+</div>
+
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="needs-validation">
+  <div class="modal-body px-4 py-3">
+    <div class="row gy-3">
+      <!-- Tên đăng nhập -->
+      <div class="col-md-6 position-relative">
+        <label class="form-label">Tên đăng nhập <span class="text-danger">*</span></label>
+        <input 
+          type="text" 
+          class="form-control" 
+          formControlName="userName" 
+          placeholder="Nhập tên đăng nhập"
+          [ngClass]="{'is-invalid': isFieldInvalid('userName')}"
+          appUpperNoSpace />
+        <div *ngIf="isFieldInvalid('userName')" class="invalid-tooltip">
+          {{ getFieldError('userName') }}
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="col-md-6 position-relative">
+        <label class="form-label">Email <span class="text-danger">*</span></label>
+        <input 
+          type="email" 
+          class="form-control" 
+          formControlName="email" 
+          placeholder="Nhập email"
+          [ngClass]="{'is-invalid': isFieldInvalid('email')}" />
+        <div *ngIf="isFieldInvalid('email')" class="invalid-tooltip">
+          {{ getFieldError('email') }}
+        </div>
+      </div>
+
+      <!-- Họ và tên -->
+      <div class="col-md-6 position-relative">
+        <label class="form-label">Họ và tên <span class="text-danger">*</span></label>
+        <input 
+          type="text" 
+          class="form-control" 
+          formControlName="fullName" 
+          placeholder="Nhập họ và tên"
+          [ngClass]="{'is-invalid': isFieldInvalid('fullName')}" />
+        <div *ngIf="isFieldInvalid('fullName')" class="invalid-tooltip">
+          {{ getFieldError('fullName') }}
+        </div>
+      </div>
+
+      <!-- Chi nhánh -->
+      <div class="col-md-6 position-relative">
+        <label class="form-label">Chi nhánh <span class="text-danger">*</span></label>
+        <select 
+          class="form-select" 
+          formControlName="branchId"
+          [ngClass]="{'is-invalid': isFieldInvalid('branchId')}"
+          [disabled]="isLoading">
+          <option [ngValue]="null">Chọn chi nhánh</option>
+          <option *ngFor="let branch of branches" [ngValue]="branch.id">
+            {{ branch.name }}
+          </option>
+        </select>
+        <div *ngIf="isLoading" class="position-absolute top-50 end-0 translate-middle-y me-3">
+          <div class="spinner-border spinner-border-sm text-primary" role="status">
+            <span class="visually-hidden">Đang tải...</span>
+          </div>
+        </div>
+        <div *ngIf="isFieldInvalid('branchId')" class="invalid-tooltip">
+          {{ getFieldError('branchId') }}
+        </div>
+      </div>
+
+      <!-- Trạng thái -->
+      <div class="col-md-6 position-relative">
+        <label class="form-label">Trạng thái <span class="text-danger">*</span></label>
+        <select 
+          class="form-select" 
+          formControlName="isActive"
+          [ngClass]="{'is-invalid': isFieldInvalid('isActive')}">
+          <option [ngValue]="true">Hoạt động</option>
+          <option [ngValue]="false">Không hoạt động</option>
+        </select>
+        <div *ngIf="isFieldInvalid('isActive')" class="invalid-tooltip">
+          {{ getFieldError('isActive') }}
+        </div>
+      </div>
+
+      <!-- Ghi chú -->
+      <div class="col-md-12 position-relative">
+        <label class="form-label">Ghi chú</label>
+        <textarea 
+          class="form-control" 
+          formControlName="comment" 
+          rows="3" 
+          placeholder="Nhập ghi chú (tối đa 500 ký tự)"
+          [ngClass]="{'is-invalid': isFieldInvalid('comment')}"></textarea>
+        <div *ngIf="isFieldInvalid('comment')" class="invalid-tooltip">
+          {{ getFieldError('comment') }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer border-top-0 d-flex justify-content-between">
+    <div>
+      <button type="button" class="btn btn-secondary me-2" (click)="onCancel()" [disabled]="isSubmitting">
+        Hủy
+      </button>
+    </div>
+    <div>
+      <button 
+        type="submit" 
+        class="btn btn-primary" 
+        [disabled]="isSubmitting || userForm.invalid">
+        <i class="fas fa-paper-plane me-1" *ngIf="!isSubmitting"></i>
+        <span class="spinner-border spinner-border-sm me-1" *ngIf="isSubmitting" role="status" aria-hidden="true"></span>
+        {{ isSubmitting ? 'Đang gửi...' : 'Gửi duyệt' }}
+      </button>
+    </div>
+  </div>
+</form>
