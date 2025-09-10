@@ -121,4 +121,17 @@ Khi làm việc với các màn hình hiển thị dữ liệu dạng bảng (t�
 
 **Reference**: `role.component.html` là template chuẩn để tham khảo khi chuẩn hóa các màn hình khác.
 
+### CSS Organization Standards
+Khi CSS được dùng chung trong codebase:
+
+1. **Shared CSS Location**: Đặt CSS dùng chung trong phần `// Core process approval style EntityListComponent` của `_custom.scss`
+   - ✅ Đặt trong section có comment rõ ràng về mục đích
+   - ❌ Đặt ở cuối file hoặc không có comment
+
+2. **Component-specific CSS**: CSS chỉ dùng trong một component thì giữ trong file `.component.scss` của component đó
+
+3. **CSS Naming**: Sử dụng tên class có ý nghĩa và dễ hiểu
+   - ✅ `.changes-details`, `.table-header-primary`
+   - ❌ `.style1`, `.custom-class`
+
 # Scratchpad
