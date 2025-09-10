@@ -506,23 +506,6 @@ textarea:hover {
     color: gray;
 }
 
-// Core process approval style
-// Table
-.table td,
-.table th {
-    vertical-align: middle;
-}
-
-.table-header-primary {
-    .table thead th {
-        background: #EAF4FF !important;
-        color: rgba(13, 71, 161, 0.5) !important;
-        font-weight: 700;
-        padding-top: 12px;
-        padding-bottom: 12px;
-    }
-}
-
 // Detail modal
 .changes-details {
   summary {

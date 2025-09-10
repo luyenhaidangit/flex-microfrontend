@@ -92,7 +92,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	openCreateModal(): void {
 		console.log('openCreateModal');
 		this.modalRef = this.modalService.show(this.createUserModalTemplateRef, {
-			class: 'modal-lg',
+			class: 'modal-xl',
 			backdrop: 'static',
 			keyboard: false
 		});
