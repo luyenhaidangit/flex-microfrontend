@@ -505,28 +505,3 @@ textarea:hover {
 .null {
     color: gray;
 }
-
-// Detail modal
-.changes-details {
-  summary {
-    font-size: 0.8rem;
-    color: #007bff;
-    font-weight: 500;
-    cursor: pointer;
-    padding: 0.25rem 0;
-    transition: color 0.2s ease;
-    list-style: none;
-    
-    &:hover {
-      color: #0056b3;
-    }
-    
-    &::-webkit-details-marker {
-      display: none;
-    }
-    
-    &::-moz-list-bullet {
-      display: none;
-    }
-  }
-}
