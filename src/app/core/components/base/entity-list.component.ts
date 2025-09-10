@@ -19,9 +19,7 @@ export abstract class EntityListComponent<TFilter> {
   // Default configuration
   tabsConfig: any = this.config.tabs;
   paginationConfig: any = this.config.pagination;
-  
-  // Request type options for pending requests
-  requestTypeOptions = REQUEST_TYPE_OPTIONS;
+  filterConfig: any = this.config.filter;
 
   // Modal state management
   showDetailModal = false;

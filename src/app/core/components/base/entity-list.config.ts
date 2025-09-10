@@ -1,4 +1,5 @@
 import { DEFAULT_PER_PAGE_OPTIONS } from 'src/app/core/constants/shared.constant';
+import { REQUEST_TYPE_OPTIONS } from 'src/app/core/constants/request-types.constant';
 
 export const ENTITY_LIST_CONFIG = {
 
@@ -15,6 +16,10 @@ export const ENTITY_LIST_CONFIG = {
   pagination: {
     defaultPageSize: 10,
     pageSizeOptions: DEFAULT_PER_PAGE_OPTIONS
+  },
+
+  // Filter configuration
+  filter: {
+    requestTypeOptions: REQUEST_TYPE_OPTIONS
   }
-  
 };
