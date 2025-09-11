@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-export type BadgeType = 'status' | 'request' | 'pending' | 'custom' | 'action';
+export type BadgeType = 'status' | 'pending' | 'custom' | 'action';
 
 export interface BadgeConfig {
   label: string;
@@ -91,28 +91,6 @@ const DEFAULT_CONFIGS: Record<BadgeType, BadgeTypeConfig> = {
       label: 'Không xác định',
       class: 'badge-soft-light',
       value: null
-    }
-  },
-  request: {
-    CREATE: {
-      label: 'Tạo mới',
-      class: 'badge-soft-success',
-      value: 'CREATE'
-    },
-    UPDATE: {
-      label: 'Cập nhật',
-      class: 'badge-soft-warning',
-      value: 'UPDATE'
-    },
-    DELETE: {
-      label: 'Xoá',
-      class: 'badge-soft-danger',
-      value: 'DELETE'
-    },
-    UNKNOWN: {
-      label: 'Không xác định',
-      class: 'badge-soft-light',
-      value: 'UNKNOWN'
     }
   },
   pending: {

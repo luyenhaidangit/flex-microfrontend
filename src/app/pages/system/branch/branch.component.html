@@ -104,7 +104,7 @@
               <td>{{ item.code | safeField }}</td>
               <td>{{ item.name | safeField }}</td>
               <td>{{ item.description | safeField }}</td>
-              <td><app-badge [value]="item.requestType" type="request"></app-badge></td>
+              <td><app-badge [value]="item.requestType" type="action"></app-badge></td>
               <td>{{ item.createdBy | safeField }}</td>
               <td>{{ item.createdDate | date:'dd/MM/yyyy' }}</td>
               <td class="action-column">
@@ -501,7 +501,7 @@
           <div class="col-6">
             <small class="text-muted">Loại yêu cầu:</small>
             <div class="fw-bold">
-              <app-badge [value]="selectedItem?.requestType" type="request"></app-badge>
+              <app-badge [value]="selectedItem?.requestType" type="action"></app-badge>
             </div>
           </div>
         </div>
