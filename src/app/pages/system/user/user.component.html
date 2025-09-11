@@ -99,7 +99,7 @@
 								<app-badge [value]="u.action" type="action"></app-badge>
 							</td>
 							<td>{{ u.requestedDate | date:'dd/MM/yyyy HH:mm' }}</td>
-							<td>{{ u.makerName | safeField }}</td>
+							<td>{{ u.requestedBy | safeField }}</td>
 							<td class="action-column">
 								<button class="btn btn-link p-0 text-info" (click)="openPendingDetailModal(u)" title="Xem chi tiết">
 									<i class="fas fa-eye"></i>
