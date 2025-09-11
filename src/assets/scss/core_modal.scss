@@ -150,12 +150,6 @@ h2 {
     transform: scale(1.1);
 }
 
-
-
-.table tbody tr:hover {
-    background: #f6f8ff;
-}
-
 @media (max-width: 991.98px) {
     .role-header .row>div {
         margin-bottom: 10px;
@@ -169,41 +163,6 @@ h2 {
 
 :host ::ng-deep .tab-content {
     margin-top: 1rem;
-}
-
-.summary-block {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 1.25rem 1.5rem;
-    font-size: 1.1rem;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    min-height: 64px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-    margin-bottom: 1rem;
-
-    i {
-        font-size: 1.7rem;
-        margin-right: 1rem;
-        opacity: 0.85;
-    }
-
-    .fw-bold {
-        font-size: 1.1rem;
-        margin-right: 0.5rem;
-    }
-
-    b {
-        font-weight: 700;
-    }
-}
-
-// Minimum height for form fields
-.min-height-40 {
-    min-height: 40px;
-    display: flex;
-    align-items: center;
 }
 
 // Loading and disabled states
@@ -363,20 +322,6 @@ h2 {
     .bg-success {
         background-color: #28a745 !important;
     }
-}
-
-// Animation for expand/collapse
-.fas.fa-chevron-right,
-.fas.fa-chevron-down {
-    transition: transform 0.2s ease;
-}
-
-.fas.fa-chevron-down {
-    transform: rotate(0deg);
-}
-
-.fas.fa-chevron-right {
-    transform: rotate(0deg);
 }
 
 // Responsive adjustments for expandable rows
