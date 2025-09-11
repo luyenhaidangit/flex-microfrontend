@@ -96,7 +96,7 @@
 							<td>{{ u.fullName | safeField }}</td>
 							<td>{{ u.email | safeField }}</td>
 							<td>
-								<app-badge [value]="u.requestType" type="request"></app-badge>
+								<app-badge [value]="u.action" type="action"></app-badge>
 							</td>
 							<td>{{ u.requestedDate | date:'dd/MM/yyyy HH:mm' }}</td>
 							<td>{{ u.makerName | safeField }}</td>
