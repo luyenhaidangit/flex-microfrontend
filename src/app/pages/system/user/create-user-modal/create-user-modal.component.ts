@@ -106,7 +106,6 @@ export class CreateUserModalComponent implements OnInit {
         },
         error: (err) => {
           this.isSubmitting = false;
-          this.toastService.error('Lỗi khi tạo user!');
         }
       });
   }
