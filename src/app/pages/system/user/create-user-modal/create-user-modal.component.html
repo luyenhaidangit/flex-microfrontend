@@ -90,19 +90,6 @@
         </div>
       </div>
 
-      <!-- Ghi chú -->
-      <div class="col-md-12 position-relative">
-        <label class="form-label">Ghi chú</label>
-        <textarea 
-          class="form-control" 
-          formControlName="comment" 
-          rows="3" 
-          placeholder="Nhập ghi chú (tối đa 500 ký tự)"
-          [ngClass]="{'is-invalid': isFieldInvalid('comment')}"></textarea>
-        <div *ngIf="isFieldInvalid('comment')" class="invalid-tooltip">
-          {{ getFieldError('comment') }}
-        </div>
-      </div>
     </div>
   </div>
 

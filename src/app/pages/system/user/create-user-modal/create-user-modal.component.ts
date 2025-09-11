@@ -12,7 +12,6 @@ export interface CreateUserRequest {
   fullName: string;
   branchId: number;
   isActive: boolean;
-  comment?: string;
 }
 
 @Component({
@@ -48,8 +47,7 @@ export class CreateUserModalComponent implements OnInit {
       email: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
       fullName: ['', [Validators.required, Validators.maxLength(100)]],
       branchId: [null, [Validators.required]],
-      isActive: [true, [Validators.required]],
-      comment: ['', [Validators.maxLength(500)]]
+      isActive: [true, [Validators.required]]
     });
   }
 
@@ -89,8 +87,7 @@ export class CreateUserModalComponent implements OnInit {
       email: formData.email.trim(),
       fullName: formData.fullName.trim(),
       branchId: formData.branchId,
-      isActive: formData.isActive,
-      comment: formData.comment?.trim() || ''
+      isActive: formData.isActive
     };
 
     this.userService.createUser(createRequest)
@@ -152,8 +149,7 @@ export class CreateUserModalComponent implements OnInit {
       email: 'Email',
       fullName: 'Họ và tên',
       branchId: 'Chi nhánh',
-      isActive: 'Trạng thái',
-      comment: 'Ghi chú'
+      isActive: 'Trạng thái'
     };
     return labels[fieldName] || fieldName;
   }
