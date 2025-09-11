@@ -10,13 +10,15 @@ import { ToastService } from 'angular-toastify';
 import { Header, HttpError } from '../enums/http.enum';
 import { LoaderService } from '../services/loader.service';
 import { AuthenticationService } from '../services/auth.service';
+import { ErrorMessageService } from '../services/error-message.service';
 
 @Injectable()
 export class HttpInterceptor implements HttpSystemInterceptor {
   constructor(
     private loadingService: LoaderService,
     private toastService: ToastService,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private errorMessageService: ErrorMessageService
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -60,9 +62,14 @@ export class HttpInterceptor implements HttpSystemInterceptor {
           // Skip toast for requests with SkipToastError header
           const skipToast = request.headers.has(Header.SkipToastError);
           if (!skipToast) {
-            const msg = error?.error?.message || error?.message || 'Đã xảy ra lỗi!';
-            // Show error toast
-            this.toastService.error(msg);
+            // Nếu có errorCode, sử dụng translation, nếu không thì dùng message như cũ
+            if (error?.error?.errorCode) {
+              const errorMessage = this.errorMessageService.getErrorMessage(error);
+              this.toastService.error(errorMessage);
+            } else {
+              const msg = error?.error?.message || error?.message || 'Đã xảy ra lỗi!';
+              this.toastService.error(msg);
+            }
           }
         }
 

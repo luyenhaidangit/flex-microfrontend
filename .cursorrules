@@ -99,6 +99,7 @@ If needed, you can further use the `web_scraper.py` file to scrape the web page 
 - When using seaborn styles in matplotlib, use 'seaborn-v0_8' instead of 'seaborn' as the style name due to recent seaborn version changes
 - Use 'gpt-4o' as the model name for OpenAI's GPT-4 with vision capabilities
 - When searching for recent news, use the current year (2025) instead of previous years, or simply use the "recent" keyword to get the latest information
+- **Error Handling with i18n**: Khi xử lý lỗi API, ưu tiên sử dụng errorCode từ response để hiển thị thông báo đã được dịch từ file đa ngôn ngữ thay vì chỉ hiển thị message. Tạo ErrorMessageService để centralize việc xử lý error messages với fallback logic: errorCode -> message -> status code default.
 
 ## UI Standardization Rules
 

@@ -65,6 +65,17 @@
       "LOGOUT": "Logout"
     }
   },
+  "ERRORS": {
+    "USER_REQUEST_EXISTS": "Yêu cầu người dùng đã tồn tại",
+    "VALIDATION_FAILED": "Dữ liệu không hợp lệ",
+    "UNAUTHORIZED": "Không có quyền truy cập",
+    "FORBIDDEN": "Bị cấm truy cập",
+    "NOT_FOUND": "Không tìm thấy dữ liệu",
+    "INTERNAL_SERVER_ERROR": "Lỗi máy chủ nội bộ",
+    "NETWORK_ERROR": "Lỗi kết nối mạng",
+    "CONNECTION_REFUSED": "Không thể kết nối đến máy chủ",
+    "UNKNOWN_ERROR": "Đã xảy ra lỗi không xác định"
+  },
   "MENUITEMS": {
     "APP": {
       "TEXT": "App",
