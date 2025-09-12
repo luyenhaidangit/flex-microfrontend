@@ -1,0 +1,24 @@
+// Core SCSS - Reusable utility classes
+
+// Disabled field styling
+.disabled-field {
+  background-color: #f8f9fa !important;
+  color: #6c757d !important;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+// Readonly field styling
+.readonly-field {
+  background-color: #f8f9fa !important;
+  color: #6c757d !important;
+  cursor: default;
+}
+
+// Non-editable field styling (for username, ID fields that cannot be changed)
+.non-editable-field {
+  background-color: #f8f9fa !important;
+  color: #6c757d !important;
+  cursor: not-allowed;
+  user-select: none;
+}
