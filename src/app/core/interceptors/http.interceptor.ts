@@ -11,6 +11,7 @@ import { Header, HttpError } from '../enums/http.enum';
 import { LoaderService } from '../services/loader.service';
 import { AuthenticationService } from '../services/auth.service';
 import { ErrorMessageService } from '../services/error-message.service';
+import { ModalService } from '../services/modal.service';
 
 @Injectable()
 export class HttpInterceptor implements HttpSystemInterceptor {
@@ -18,7 +19,8 @@ export class HttpInterceptor implements HttpSystemInterceptor {
     private loadingService: LoaderService,
     private toastService: ToastService,
     private authService: AuthenticationService,
-    private errorMessageService: ErrorMessageService
+    private errorMessageService: ErrorMessageService,
+    private modalService: ModalService
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -75,6 +77,7 @@ export class HttpInterceptor implements HttpSystemInterceptor {
 
         // Auto logout when 401
         if (error.status === 401) {
+          this.modalService.closeAllModals();
           this.authService.logout();
         }
 
@@ -102,5 +105,9 @@ export class HttpInterceptor implements HttpSystemInterceptor {
     const b = base.replace(/\/+$/, '');
     const p = path.replace(/^\/+/, '');
     return `${b}/${p}`;
+  }
+
+  private closeAllModals() {
+    this.modalService.closeAllModals();
   }
 }
