@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import {
   HttpEvent, HttpHandler, HttpInterceptor as HttpSystemInterceptor,
   HttpRequest, HttpErrorResponse
@@ -20,7 +20,7 @@ export class HttpInterceptor implements HttpSystemInterceptor {
     private toastService: ToastService,
     private authService: AuthenticationService,
     private errorMessageService: ErrorMessageService,
-    private modalService: ModalService
+    private injector: Injector
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -77,7 +77,9 @@ export class HttpInterceptor implements HttpSystemInterceptor {
 
         // Auto logout when 401
         if (error.status === 401) {
-          this.modalService.closeAllModals();
+          // Lazy inject ModalService to avoid circular dependency
+          const modalService = this.injector.get(ModalService);
+          modalService.closeAllModals();
           this.authService.logout();
         }
 
@@ -105,9 +107,5 @@ export class HttpInterceptor implements HttpSystemInterceptor {
     const b = base.replace(/\/+$/, '');
     const p = path.replace(/^\/+/, '');
     return `${b}/${p}`;
-  }
-
-  private closeAllModals() {
-    this.modalService.closeAllModals();
   }
 }
