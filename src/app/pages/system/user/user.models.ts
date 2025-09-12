@@ -37,3 +37,11 @@ export interface BranchItem {
 	code?: string;
 }
 
+export interface UpdateUserRequest {
+	userName: string;
+	email: string;
+	fullName: string;
+	branchId: number;
+	isActive: boolean;
+}
+

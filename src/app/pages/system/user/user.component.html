@@ -147,3 +147,12 @@
 		(created)="onUserCreated()">
 	</app-create-user-modal>
 </ng-template>
+
+<!-- Edit User Modal Template -->
+<ng-template #editUserModal>
+	<app-edit-user-modal 
+		[user]="selectedItem"
+		(close)="onEditModalClose()"
+		(updated)="onUserUpdated()">
+	</app-edit-user-modal>
+</ng-template>

@@ -23,10 +23,11 @@ import { SharedModule } from '../../shared/shared.module';
 import { UsersComponent } from './user/user.component';
 import { UserDetailModalComponent } from './user/user-detail-modal/user-detail-modal.component';
 import { CreateUserModalComponent } from './user/create-user-modal/create-user-modal.component';
+import { EditUserModalComponent } from './user/edit-user-modal/edit-user-modal.component';
 import { PaginationModule as CustomPaginationModule } from '../../core/components/pagination/pagination.module';
 
 @NgModule({
-  declarations: [BranchComponent, RoleComponent, UsersComponent, UserDetailModalComponent, CreateUserModalComponent],
+  declarations: [BranchComponent, RoleComponent, UsersComponent, UserDetailModalComponent, CreateUserModalComponent, EditUserModalComponent],
   imports: [
     CommonModule,
     SystemRoutingModule,
