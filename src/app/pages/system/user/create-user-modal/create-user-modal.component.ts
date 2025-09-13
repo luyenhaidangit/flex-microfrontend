@@ -20,11 +20,11 @@ export interface CreateUserRequest {
   styleUrls: ['./create-user-modal.component.scss']
 })
 export class CreateUserModalComponent implements OnInit {
+  @Input() branches: BranchItem[] = [];
   @Output() close = new EventEmitter<void>();
   @Output() created = new EventEmitter<void>();
 
   userForm!: FormGroup;
-  branches: BranchItem[] = [];
   isLoading = false;
   isSubmitting = false;
 
@@ -38,7 +38,10 @@ export class CreateUserModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
-    this.loadBranches();
+    // Nếu đã có branches từ parent, không cần gọi API
+    if (this.branches.length === 0) {
+      this.loadBranches();
+    }
   }
 
   private initializeForm(): void {
@@ -52,6 +55,11 @@ export class CreateUserModalComponent implements OnInit {
   }
 
   private loadBranches(): void {
+    // Chỉ gọi API nếu chưa có branches từ parent
+    if (this.branches.length > 0) {
+      return;
+    }
+    
     this.isLoading = true;
     this.systemService.getBranchesForFilter()
       .pipe(

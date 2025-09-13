@@ -143,6 +143,7 @@
 <!-- Create User Modal Template -->
 <ng-template #createUserModal>
 	<app-create-user-modal 
+		[branches]="branches"
 		(close)="onCreateModalClose()"
 		(created)="onUserCreated()">
 	</app-create-user-modal>
