@@ -44,20 +44,6 @@
       </div>
     </div>
 
-    <!-- Delete Reason Form -->
-    <div class="position-relative">
-      <label class="form-label">Lý do xóa</label>
-      <textarea 
-        class="form-control" 
-        formControlName="comment" 
-        rows="3"
-        placeholder="Nhập lý do xóa người dùng (tối đa 500 ký tự)"
-        [ngClass]="{'is-invalid': commentControl?.touched && commentControl?.invalid}">
-      </textarea>
-      <div *ngIf="commentControl?.touched && commentControl?.invalid" class="invalid-tooltip">
-        <span *ngIf="commentControl?.errors?.['maxlength']">Lý do xóa không được vượt quá 500 ký tự</span>
-      </div>
-    </div>
   </div>
   <div class="modal-footer border-top-0">
     <button type="button" class="btn btn-secondary me-2" (click)="onClose()">

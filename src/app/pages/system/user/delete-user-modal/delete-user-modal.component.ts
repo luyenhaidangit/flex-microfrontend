@@ -6,9 +6,6 @@ import { finalize } from 'rxjs/operators';
 import { UserService } from '../user.service';
 import { UserItem } from '../user.models';
 
-export interface DeleteUserRequest {
-  comment: string;
-}
 
 @Component({
   selector: 'app-delete-user-modal',
@@ -37,7 +34,7 @@ export class DeleteUserModalComponent implements OnInit {
 
   private initializeForm(): void {
     this.deleteForm = this.fb.group({
-      comment: ['', [Validators.maxLength(500)]]
+      // Không cần trường comment nữa
     });
   }
 
@@ -47,19 +44,13 @@ export class DeleteUserModalComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.deleteForm.markAllAsTouched();
-    if (this.deleteForm.invalid || !this.user?.userName) {
+    if (!this.user?.userName) {
       return;
     }
 
     this.isSubmitting = true;
-    const formData = this.deleteForm.value;
-    
-    const deleteRequest: DeleteUserRequest = {
-      comment: formData.comment || ''
-    };
 
-    this.userService.createDeleteUserRequest(this.user.userName, deleteRequest)
+    this.userService.createDeleteUserRequest(this.user.userName)
       .pipe(
         finalize(() => {
           this.isSubmitting = false;
@@ -78,11 +69,7 @@ export class DeleteUserModalComponent implements OnInit {
       });
   }
 
-  get commentControl() {
-    return this.deleteForm.get('comment');
-  }
-
   get isFormValid(): boolean {
-    return this.deleteForm.valid && !this.isSubmitting;
+    return !this.isSubmitting;
   }
 }

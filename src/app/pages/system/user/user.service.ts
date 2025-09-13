@@ -76,10 +76,10 @@ export class UserService {
 	}
 	
 	/**
-	* Create delete user request with comment
+	* Create delete user request
 	*/
-	createDeleteUserRequest(username: string, data: any): Observable<any> {
-		return this.http.post<any>(`${this.apiUrl}/approved/${username}/delete`, data);
+	createDeleteUserRequest(username: string): Observable<any> {
+		return this.http.post<any>(`${this.apiUrl}/request/delete/${username}`, {});
 	}
 	
 	/**

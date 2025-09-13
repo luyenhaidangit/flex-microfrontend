@@ -128,7 +128,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		console.log('openDeleteModal', user);
 		this.selectedItem = user;
 		this.deleteModalRef = this.modalService.show(this.deleteUserModalTemplateRef, {
-			class: 'modal-lg',
+			class: 'modal-xl',
 			backdrop: 'static',
 			keyboard: false
 		});
