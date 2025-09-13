@@ -1,0 +1,89 @@
+<!-- Modal phê duyệt yêu cầu người dùng -->
+<div class="modal-header">
+  <h5 class="modal-title text-success fw-semibold">
+    <i class="fas fa-check-circle me-2"></i> Xác nhận duyệt yêu cầu
+  </h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+</div>
+<div class="modal-body px-4 py-3">
+  <div class="card border-0 bg-light">
+    <div class="card-body">
+      <h6 class="card-title text-muted mb-3">
+        <i class="fas fa-info-circle me-2"></i>Thông tin yêu cầu
+      </h6>
+      <div class="row g-2">
+        <div class="col-6">
+          <small class="text-muted">ID yêu cầu:</small>
+          <div class="fw-bold">{{ selectedRequest?.requestId || selectedRequest?.id }}</div>
+        </div>
+        <div class="col-6">
+          <small class="text-muted">Người tạo:</small>
+          <div class="fw-bold">{{ selectedRequest?.requestedBy }}</div>
+        </div>
+        <div class="col-6">
+          <small class="text-muted">Ngày tạo:</small>
+          <div class="fw-bold">{{ selectedRequest?.requestedDate | date:'dd/MM/yyyy' }}</div>
+        </div>
+        <div class="col-6">
+          <small class="text-muted">Loại yêu cầu:</small>
+          <div class="fw-bold">
+            <app-badge [value]="selectedRequest?.requestType" type="action"></app-badge>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Thông tin chi tiết yêu cầu -->
+  <div class="card border-0 bg-light mt-3" *ngIf="requestDetail">
+    <div class="card-body">
+      <h6 class="card-title text-muted mb-3">
+        <i class="fas fa-user me-2"></i>Thông tin người dùng
+      </h6>
+      <div class="row g-2">
+        <div class="col-6">
+          <small class="text-muted">Tên đăng nhập:</small>
+          <div class="fw-bold">{{ requestDetail.userName }}</div>
+        </div>
+        <div class="col-6">
+          <small class="text-muted">Họ tên:</small>
+          <div class="fw-bold">{{ requestDetail.fullName }}</div>
+        </div>
+        <div class="col-6">
+          <small class="text-muted">Email:</small>
+          <div class="fw-bold">{{ requestDetail.email }}</div>
+        </div>
+        <div class="col-6">
+          <small class="text-muted">Số điện thoại:</small>
+          <div class="fw-bold">{{ requestDetail.phoneNumber }}</div>
+        </div>
+        <div class="col-6">
+          <small class="text-muted">Chi nhánh:</small>
+          <div class="fw-bold">{{ requestDetail.branchName }}</div>
+        </div>
+        <div class="col-6">
+          <small class="text-muted">Vai trò:</small>
+          <div class="fw-bold">{{ requestDetail.roleName }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  <div class="text-center py-3" *ngIf="isLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Đang tải...</span>
+    </div>
+    <div class="mt-2 text-muted">Đang tải thông tin chi tiết...</div>
+  </div>
+</div>
+<div class="modal-footer border-top-0 d-flex justify-content-end">
+  <button type="button" class="btn btn-secondary me-2" (click)="modalRef?.hide()" [disabled]="isApproving">
+    Hủy
+  </button>
+  <button type="button" class="btn btn-primary" (click)="approveUser()" [disabled]="isApproving || isLoading">
+    <span *ngIf="isApproving" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+    <i *ngIf="!isApproving" class="fas fa-check me-1"></i>
+    {{ isApproving ? 'Đang xử lý...' : 'Xác nhận' }}
+  </button>
+</div>

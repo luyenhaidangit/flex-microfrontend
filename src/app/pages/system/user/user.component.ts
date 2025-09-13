@@ -25,10 +25,13 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	@ViewChild('createUserModal') createUserModalTemplateRef!: TemplateRef<any>;
 	@ViewChild('editUserModal') editUserModalTemplateRef!: TemplateRef<any>;
 	@ViewChild('deleteUserModal') deleteUserModalTemplateRef!: TemplateRef<any>;
+	@ViewChild('approveUserModal') approveUserModalTemplateRef!: TemplateRef<any>;
 	modalRef?: BsModalRef | null = null;
 	editModalRef?: BsModalRef | null = null;
 	deleteModalRef?: BsModalRef | null = null;
+	approveModalRef?: BsModalRef | null = null;
 	isDeleteModalVisible = false;
+	selectedRequest: any = null;
 
 	constructor(
 		private userService: UserService,
@@ -136,14 +139,30 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	// Pending request methods
 	openPendingDetailModal(request: any): void {
 		console.log('openPendingDetailModal', request);
+		// TODO: Implement pending detail modal
 	}
 
 	openApproveModal(request: any): void {
-		console.log('openApproveModal', request);
+		this.selectedRequest = request;
+		this.approveModalRef = this.modalService.show(this.approveUserModalTemplateRef, {
+			class: 'modal-xl',
+			backdrop: 'static',
+			keyboard: false,
+			ignoreBackdropClick: true
+		});
 	}
 
 	openRejectModal(request: any): void {
 		console.log('openRejectModal', request);
+		// TODO: Implement reject modal
+	}
+
+	// Handle approve success
+	onUserApproved(result: any): void {
+		console.log('User request approved:', result);
+		this.toast.success('Phê duyệt yêu cầu thành công!');
+		this.approveModalRef?.hide();
+		this.onSearch();
 	}
 
 	// Modal methods

@@ -14,6 +14,7 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { BranchComponent } from './branch/branch.component';
@@ -25,10 +26,11 @@ import { UserDetailModalComponent } from './user/user-detail-modal/user-detail-m
 import { CreateUserModalComponent } from './user/create-user-modal/create-user-modal.component';
 import { EditUserModalComponent } from './user/edit-user-modal/edit-user-modal.component';
 import { DeleteUserModalComponent } from './user/delete-user-modal/delete-user-modal.component';
+import { ApproveUserModalComponent } from './user/approve-user-modal/approve-user-modal.component';
 import { PaginationModule as CustomPaginationModule } from '../../core/components/pagination/pagination.module';
 
 @NgModule({
-  declarations: [BranchComponent, RoleComponent, UsersComponent, UserDetailModalComponent, CreateUserModalComponent, EditUserModalComponent, DeleteUserModalComponent],
+  declarations: [BranchComponent, RoleComponent, UsersComponent, UserDetailModalComponent, CreateUserModalComponent, EditUserModalComponent, DeleteUserModalComponent, ApproveUserModalComponent],
   imports: [
     CommonModule,
     SystemRoutingModule,
@@ -43,6 +45,7 @@ import { PaginationModule as CustomPaginationModule } from '../../core/component
     ReactiveFormsModule,
     SharedModule,
     TabsModule.forRoot(),
+    ModalModule.forRoot(),
     CustomPaginationModule
   ]
 })
