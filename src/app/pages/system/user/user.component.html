@@ -163,6 +163,7 @@
 <ng-template #deleteUserModal>
 	<app-delete-user-modal 
 		[user]="selectedItem"
+		[isVisible]="isDeleteModalVisible"
 		(close)="onDeleteModalClose()"
 		(deleted)="onUserDeleted()">
 	</app-delete-user-modal>

@@ -28,6 +28,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	modalRef?: BsModalRef | null = null;
 	editModalRef?: BsModalRef | null = null;
 	deleteModalRef?: BsModalRef | null = null;
+	isDeleteModalVisible = false;
 
 	constructor(
 		private userService: UserService,
@@ -124,6 +125,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	openDeleteModal(user: UserItem): void {
 		console.log('openDeleteModal', user);
 		this.selectedItem = user;
+		this.isDeleteModalVisible = true;
 		this.deleteModalRef = this.modalService.show(this.deleteUserModalTemplateRef, {
 			class: 'modal-xl',
 			backdrop: 'static',
@@ -172,11 +174,13 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 
 	onDeleteModalClose(): void {
+		this.isDeleteModalVisible = false;
 		this.deleteModalRef?.hide();
 		this.selectedItem = null;
 	}
 
 	onUserDeleted(): void {
+		this.isDeleteModalVisible = false;
 		this.deleteModalRef?.hide();
 		this.selectedItem = null;
 		// Reload data after user delete request is sent
