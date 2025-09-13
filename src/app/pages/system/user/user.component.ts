@@ -17,22 +17,24 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 })
 
 export class UsersComponent extends EntityListComponent<UserFilter> implements OnInit, OnDestroy {
-
+	
 	CONFIG = USER_CONFIG;
-
+	
 	branches: { id: number; name: string }[] = [];
 	
 	@ViewChild('createUserModal') createUserModalTemplateRef!: TemplateRef<any>;
 	@ViewChild('editUserModal') editUserModalTemplateRef!: TemplateRef<any>;
 	@ViewChild('deleteUserModal') deleteUserModalTemplateRef!: TemplateRef<any>;
 	@ViewChild('approveUserModal') approveUserModalTemplateRef!: TemplateRef<any>;
+	@ViewChild('rejectUserModal') rejectUserModalTemplateRef!: TemplateRef<any>;
 	modalRef?: BsModalRef | null = null;
 	editModalRef?: BsModalRef | null = null;
 	deleteModalRef?: BsModalRef | null = null;
 	approveModalRef?: BsModalRef | null = null;
+	rejectModalRef?: BsModalRef | null = null;
 	isDeleteModalVisible = false;
 	selectedRequest: any = null;
-
+	
 	constructor(
 		private userService: UserService,
 		private systemService: SystemService,
@@ -41,8 +43,8 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	) {
 		super({ keyword: '', branchId: null, type: null });
 	}
-
-    ngOnInit(): void {		
+	
+	ngOnInit(): void {		
 		this.loadingTable = true;
 		
 		const branchesCall = this.systemService.getBranchesForFilter();
@@ -82,11 +84,11 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 			}
 		});
 	}
-
+	
 	ngOnDestroy(): void {
 		this.cleanup();
 	}
-
+	
 	// Implement method abstract base
 	public onSearch(): void {
 		if (this.activeTabId === 'approved') {
@@ -95,13 +97,13 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 			this.loadData<any>(this.userService.getPendingUserRequests(this.getCleanSearchParams()));
 		}
 	}
-
+	
 	onTabChange(tabId: string): void {
 		this.activeTabId = tabId;
 		this.onSearch();
 	}
-
-
+	
+	
 	openCreateModal(): void {
 		console.log('openCreateModal');
 		this.modalRef = this.modalService.show(this.createUserModalTemplateRef, {
@@ -110,11 +112,11 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 			keyboard: false
 		});
 	}
-
+	
 	openDetailModal(user: UserItem): void {
 		super.openDetailModal(user);
 	}
-
+	
 	openEditModal(user: UserItem): void {
 		console.log('openEditModal', user);
 		this.selectedItem = user;
@@ -124,7 +126,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 			keyboard: false
 		});
 	}
-
+	
 	openDeleteModal(user: UserItem): void {
 		console.log('openDeleteModal', user);
 		this.selectedItem = user;
@@ -135,13 +137,13 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 			keyboard: false
 		});
 	}
-
+	
 	// Pending request methods
 	openPendingDetailModal(request: any): void {
 		console.log('openPendingDetailModal', request);
 		// TODO: Implement pending detail modal
 	}
-
+	
 	openApproveModal(request: any): void {
 		this.selectedRequest = request;
 		this.approveModalRef = this.modalService.show(this.approveUserModalTemplateRef, {
@@ -151,12 +153,18 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 			ignoreBackdropClick: true
 		});
 	}
-
+	
 	openRejectModal(request: any): void {
 		console.log('openRejectModal', request);
-		// TODO: Implement reject modal
+		this.selectedRequest = request;
+		this.rejectModalRef = this.modalService.show(this.rejectUserModalTemplateRef, {
+			class: 'modal-xl',
+			backdrop: 'static',
+			keyboard: false,
+			ignoreBackdropClick: true
+		});
 	}
-
+	
 	// Handle approve success
 	onUserApproved(result: any): void {
 		console.log('User request approved:', result);
@@ -164,40 +172,48 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		this.approveModalRef?.hide();
 		this.onSearch();
 	}
-
+	
+	// Handle reject success
+	onUserRejected(result: any): void {
+		console.log('User request rejected:', result);
+		this.toast.success('Từ chối yêu cầu thành công!');
+		this.rejectModalRef?.hide();
+		this.onSearch();
+	}
+	
 	// Modal methods
 	onDetailModalClose(): void {
 		super.onDetailModalClose();
 	}
-
+	
 	onCreateModalClose(): void {
 		this.modalRef?.hide();
 	}
-
+	
 	onUserCreated(): void {
 		this.modalRef?.hide();
 		// Reload data after user is created
 		this.onSearch();
 	}
-
+	
 	onEditModalClose(): void {
 		this.editModalRef?.hide();
 		this.selectedItem = null;
 	}
-
+	
 	onUserUpdated(): void {
 		this.editModalRef?.hide();
 		this.selectedItem = null;
 		// Reload data after user is updated
 		this.onSearch();
 	}
-
+	
 	onDeleteModalClose(): void {
 		this.isDeleteModalVisible = false;
 		this.deleteModalRef?.hide();
 		this.selectedItem = null;
 	}
-
+	
 	onUserDeleted(): void {
 		this.isDeleteModalVisible = false;
 		this.deleteModalRef?.hide();

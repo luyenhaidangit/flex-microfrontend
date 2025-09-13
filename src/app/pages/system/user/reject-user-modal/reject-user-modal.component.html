@@ -1,0 +1,37 @@
+<!-- Modal từ chối yêu cầu người dùng -->
+<div class="modal-header">
+  <h5 class="modal-title text-danger fw-semibold">
+    <i class="fas fa-times-circle me-2"></i> Xác nhận từ chối yêu cầu
+  </h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+</div>
+<div class="modal-body px-4 py-3">
+  <div class="form-group">
+    <label for="rejectionReason" class="form-label fw-bold text-muted">
+      Lý do từ chối
+    </label>
+    <textarea 
+      id="rejectionReason"
+      class="form-control" 
+      [(ngModel)]="rejectionReason"
+      placeholder="Nhập lý do từ chối..."
+      rows="4"
+      maxlength="500"
+      [disabled]="isRejecting">
+    </textarea>
+  </div>
+</div>
+<div class="modal-footer border-top-0 d-flex justify-content-end">
+  <button type="button" class="btn btn-secondary me-2" (click)="modalRef?.hide()" [disabled]="isRejecting">
+    Hủy
+  </button>
+  <button 
+    type="button" 
+    class="btn btn-danger" 
+    (click)="rejectUser()" 
+    [disabled]="isRejecting || !rejectionReason || rejectionReason.trim().length === 0">
+    <span *ngIf="isRejecting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+    <i *ngIf="!isRejecting" class="fas fa-times me-1"></i>
+    {{ isRejecting ? 'Đang xử lý...' : 'Từ chối' }}
+  </button>
+</div>
