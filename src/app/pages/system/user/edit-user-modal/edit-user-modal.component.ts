@@ -29,6 +29,7 @@ export class EditUserModalComponent implements OnInit, OnChanges {
   isLoading = false;
   isSubmitting = false;
   isLoadingInitial = false;
+  private hasLoadedData = false; // Flag to prevent duplicate API calls
 
   constructor(
     private fb: FormBuilder,
@@ -40,11 +41,14 @@ export class EditUserModalComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.initializeForm();
-    this.loadInitialData();
+    // Check if user is already available and load data
+    if (this.user && !this.hasLoadedData) {
+      this.loadInitialData();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['user'] && this.user) {
+    if (changes['user'] && this.user && !this.hasLoadedData) {
       this.loadInitialData();
     }
   }
@@ -72,7 +76,12 @@ export class EditUserModalComponent implements OnInit, OnChanges {
   }
 
   private loadInitialData(): void {
+    if (this.hasLoadedData) {
+      return; // Prevent duplicate calls
+    }
+    
     this.isLoadingInitial = true;
+    this.hasLoadedData = true; // Set flag to prevent duplicate calls
     
     // Load user details - this will provide all needed data including branch info
     if (this.user?.userName) {
@@ -171,6 +180,8 @@ export class EditUserModalComponent implements OnInit, OnChanges {
   closeModal(): void {
     this.modalRef?.hide();
     this.close.emit();
+    // Reset flag when modal closes to allow reopening
+    this.hasLoadedData = false;
   }
 
   // Helper methods for form validation
