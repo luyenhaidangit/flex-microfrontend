@@ -4,6 +4,12 @@ import { ToastService } from 'angular-toastify';
 import { Subject, takeUntil } from 'rxjs';
 import { UserService } from '../user.service';
 
+export interface UserRequestDetail {
+  requestId: number;
+  requestedBy: string;
+  requestedDate: string;
+  requestType: string;
+}
 
 @Component({
   selector: 'app-reject-user-modal',
@@ -15,6 +21,7 @@ export class RejectUserModalComponent implements OnInit, OnDestroy {
   @Input() modalRef?: BsModalRef | null = null;
   @Output() rejected = new EventEmitter<any>();
 
+  requestDetail: UserRequestDetail | null = null;
   isRejecting = false;
   rejectionReason = '';
 
@@ -26,12 +33,31 @@ export class RejectUserModalComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // No initialization needed for simple modal
+    if (this.selectedRequest) {
+      this.parseRequestDetailFromData();
+    }
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  /**
+   * Parse request detail from existing data (no API call needed)
+   */
+  private parseRequestDetailFromData(): void {
+    if (!this.selectedRequest) {
+      this.toastService.error('Không tìm thấy thông tin yêu cầu!');
+      return;
+    }
+
+    this.requestDetail = {
+      requestId: this.selectedRequest.requestId || this.selectedRequest.id,
+      requestedBy: this.selectedRequest.requestedBy || this.selectedRequest.makerBy || 'N/A',
+      requestedDate: this.selectedRequest.requestedDate || this.selectedRequest.makerTime || new Date().toISOString(),
+      requestType: this.selectedRequest.requestType || this.selectedRequest.action || 'N/A'
+    };
   }
 
   /**
