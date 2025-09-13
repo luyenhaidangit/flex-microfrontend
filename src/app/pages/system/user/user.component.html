@@ -158,3 +158,12 @@
 		(updated)="onUserUpdated()">
 	</app-edit-user-modal>
 </ng-template>
+
+<!-- Delete User Modal Template -->
+<ng-template #deleteUserModal>
+	<app-delete-user-modal 
+		[user]="selectedItem"
+		(close)="onDeleteModalClose()"
+		(deleted)="onUserDeleted()">
+	</app-delete-user-modal>
+</ng-template>

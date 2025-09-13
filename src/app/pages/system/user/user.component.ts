@@ -24,8 +24,10 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	
 	@ViewChild('createUserModal') createUserModalTemplateRef!: TemplateRef<any>;
 	@ViewChild('editUserModal') editUserModalTemplateRef!: TemplateRef<any>;
+	@ViewChild('deleteUserModal') deleteUserModalTemplateRef!: TemplateRef<any>;
 	modalRef?: BsModalRef | null = null;
 	editModalRef?: BsModalRef | null = null;
+	deleteModalRef?: BsModalRef | null = null;
 
 	constructor(
 		private userService: UserService,
@@ -90,6 +92,11 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		}
 	}
 
+	onTabChange(tabId: string): void {
+		this.activeTabId = tabId;
+		this.onSearch();
+	}
+
 
 	openCreateModal(): void {
 		console.log('openCreateModal');
@@ -98,6 +105,13 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 			backdrop: 'static',
 			keyboard: false
 		});
+	}
+
+	openDetailModal(user: UserItem): void {
+		console.log('openDetailModal', user);
+		this.selectedItem = user;
+		// TODO: Implement detail modal if needed
+		this.toast.info('Chức năng xem chi tiết đang được phát triển');
 	}
 
 	openEditModal(user: UserItem): void {
@@ -112,7 +126,12 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 
 	openDeleteModal(user: UserItem): void {
 		console.log('openDeleteModal', user);
-		super.openDeleteModal(user);
+		this.selectedItem = user;
+		this.deleteModalRef = this.modalService.show(this.deleteUserModalTemplateRef, {
+			class: 'modal-lg',
+			backdrop: 'static',
+			keyboard: false
+		});
 	}
 
 	// Pending request methods
@@ -152,6 +171,18 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		this.editModalRef?.hide();
 		this.selectedItem = null;
 		// Reload data after user is updated
+		this.onSearch();
+	}
+
+	onDeleteModalClose(): void {
+		this.deleteModalRef?.hide();
+		this.selectedItem = null;
+	}
+
+	onUserDeleted(): void {
+		this.deleteModalRef?.hide();
+		this.selectedItem = null;
+		// Reload data after user delete request is sent
 		this.onSearch();
 	}
 }

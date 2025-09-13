@@ -76,6 +76,13 @@ export class UserService {
 	}
 	
 	/**
+	* Create delete user request with comment
+	*/
+	createDeleteUserRequest(username: string, data: any): Observable<any> {
+		return this.http.post<any>(`${this.apiUrl}/approved/${username}/delete`, data);
+	}
+	
+	/**
 	* Approve pending user request by ID
 	*/
 	approvePendingUserRequest(requestId: number, comment?: string): Observable<any> {

@@ -1,0 +1,76 @@
+<!-- Delete User Modal -->
+<form [formGroup]="deleteForm" (ngSubmit)="onSubmit()" class="needs-validation">
+  <div class="modal-header">
+    <h5 class="modal-title text-danger fw-semibold">
+      <i class="fas fa-trash-alt me-2"></i>Gửi yêu cầu xóa người dùng
+    </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="onClose()"></button>
+  </div>
+  <div class="modal-body px-4 py-3">
+    <!-- User Information -->
+    <div class="card border-0 bg-light mb-3">
+      <div class="card-body">
+        <h6 class="card-title text-muted mb-3">
+          <i class="fas fa-info-circle me-2"></i>Thông tin người dùng sẽ xóa
+        </h6>
+        <div class="row g-2">
+          <div class="col-md-6">
+            <small class="text-muted">Tên đăng nhập:</small>
+            <div class="fw-bold">{{ user?.userName }}</div>
+          </div>
+          <div class="col-md-6">
+            <small class="text-muted">Email:</small>
+            <div class="fw-bold">{{ user?.email || 'Không có email' }}</div>
+          </div>
+          <div class="col-md-6">
+            <small class="text-muted">Họ và tên:</small>
+            <div class="fw-bold">{{ user?.fullName || 'Không có tên' }}</div>
+          </div>
+          <div class="col-md-6">
+            <small class="text-muted">Chi nhánh:</small>
+            <div class="fw-bold">{{ user?.branchName || 'Không có chi nhánh' }}</div>
+          </div>
+          <div class="col-md-6">
+            <small class="text-muted">Trạng thái:</small>
+            <div class="fw-bold">
+              <app-badge [value]="user?.isActive" type="status"></app-badge>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <small class="text-muted">Ngày tạo:</small>
+            <div class="fw-bold">{{ user?.createdAt | date:'dd/MM/yyyy HH:mm' || 'Không có thông tin' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Reason Form -->
+    <div class="position-relative">
+      <label class="form-label">Lý do xóa</label>
+      <textarea 
+        class="form-control" 
+        formControlName="comment" 
+        rows="3"
+        placeholder="Nhập lý do xóa người dùng (tối đa 500 ký tự)"
+        [ngClass]="{'is-invalid': commentControl?.touched && commentControl?.invalid}">
+      </textarea>
+      <div *ngIf="commentControl?.touched && commentControl?.invalid" class="invalid-tooltip">
+        <span *ngIf="commentControl?.errors?.['maxlength']">Lý do xóa không được vượt quá 500 ký tự</span>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer border-top-0">
+    <button type="button" class="btn btn-secondary me-2" (click)="onClose()">
+      Hủy
+    </button>
+    <button 
+      type="submit" 
+      class="btn btn-danger"
+      [disabled]="!isFormValid"
+      [class.loading]="isSubmitting">
+      <i class="fas fa-paper-plane me-1" *ngIf="!isSubmitting"></i>
+      <i class="fas fa-spinner fa-spin me-1" *ngIf="isSubmitting"></i>
+      {{ isSubmitting ? 'Đang gửi...' : 'Gửi yêu cầu xóa' }}
+    </button>
+  </div>
+</form>
