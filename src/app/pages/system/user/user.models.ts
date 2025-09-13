@@ -11,6 +11,7 @@ export interface UserItem {
 	fullName?: string;
 	branchId?: number;
 	branchName?: string;
+	branch?: BranchItem; // Full branch object from API
 	isActive?: boolean;
 	createdAt?: string;
 }

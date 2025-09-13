@@ -74,36 +74,57 @@ export class EditUserModalComponent implements OnInit, OnChanges {
   private loadInitialData(): void {
     this.isLoadingInitial = true;
     
-    // Use branches from input if available, otherwise load from API
-    if (this.branches && this.branches.length > 0) {
-      this.populateForm();
-      this.isLoadingInitial = false;
+    // Load user details - this will provide all needed data including branch info
+    if (this.user?.userName) {
+      this.loadUserDetails();
     } else {
-      this.loadBranches();
+      this.isLoadingInitial = false;
     }
   }
 
-  private loadBranches(): void {
+  private loadUserDetails(): void {
+    if (!this.user?.userName) {
+      this.isLoadingInitial = false;
+      return;
+    }
+
     this.isLoading = true;
-    this.systemService.getBranchesForFilter()
-      .pipe(
-        // finalize(() => this.isLoading = false)
-      )
+    this.userService.getUserByUsername(this.user.userName)
       .subscribe({
         next: (res) => {
           this.isLoading = false;
           if (res?.isSuccess) {
-            this.branches = res.data || [];
-            this.populateForm();
-            this.isLoadingInitial = false;
+            // Update user with fresh data from API
+            this.user = res.data;
+            
+            // Use branches from input if available, otherwise create from user data
+            if (this.branches && this.branches.length > 0) {
+              this.populateForm();
+              this.isLoadingInitial = false;
+            } else {
+              // Create branches list from user's branch info if no branches provided
+              if (this.user.branch) {
+                this.branches = [this.user.branch];
+              } else if (this.user.branchId && this.user.branchName) {
+                // Fallback: create branch object from branchId and branchName
+                this.branches = [{
+                  id: this.user.branchId,
+                  name: this.user.branchName
+                }];
+              } else {
+                this.branches = [];
+              }
+              this.populateForm();
+              this.isLoadingInitial = false;
+            }
           } else {
-            this.branches = [];
+            this.toastService.error(res?.message || 'Không thể tải thông tin user!');
             this.isLoadingInitial = false;
           }
         },
-        error: () => {
+        error: (err) => {
           this.isLoading = false;
-          this.branches = [];
+          this.toastService.error('Lỗi khi tải thông tin user!');
           this.isLoadingInitial = false;
         }
       });
