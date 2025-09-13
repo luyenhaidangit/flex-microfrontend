@@ -108,10 +108,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 
 	openDetailModal(user: UserItem): void {
-		console.log('openDetailModal', user);
-		this.selectedItem = user;
-		// TODO: Implement detail modal if needed
-		this.toast.info('Chức năng xem chi tiết đang được phát triển');
+		super.openDetailModal(user);
 	}
 
 	openEditModal(user: UserItem): void {
