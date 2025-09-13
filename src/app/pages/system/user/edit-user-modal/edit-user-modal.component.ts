@@ -72,6 +72,19 @@ export class EditUserModalComponent implements OnInit, OnChanges {
         branchId: this.user.branchId || null,
         isActive: this.user.isActive ?? true
       });
+      
+      // Debug logging
+      console.log('Form populated with:', {
+        userName: this.user.userName,
+        email: this.user.email,
+        fullName: this.user.fullName,
+        branchId: this.user.branchId,
+        branchName: this.user.branchName,
+        branch: this.user.branch,
+        isActive: this.user.isActive,
+        availableBranches: this.branches,
+        formValue: this.userForm.value
+      });
     }
   }
 
@@ -87,6 +100,8 @@ export class EditUserModalComponent implements OnInit, OnChanges {
     if (this.user?.userName) {
       this.loadUserDetails();
     } else {
+      // If no userName, just populate form with available data
+      this.populateForm();
       this.isLoadingInitial = false;
     }
   }
@@ -106,26 +121,19 @@ export class EditUserModalComponent implements OnInit, OnChanges {
             // Update user with fresh data from API
             this.user = res.data;
             
-            // Use branches from input if available, otherwise create from user data
-            if (this.branches && this.branches.length > 0) {
-              this.populateForm();
-              this.isLoadingInitial = false;
-            } else {
-              // Create branches list from user's branch info if no branches provided
-              if (this.user.branch) {
-                this.branches = [this.user.branch];
-              } else if (this.user.branchId && this.user.branchName) {
-                // Fallback: create branch object from branchId and branchName
-                this.branches = [{
-                  id: this.user.branchId,
-                  name: this.user.branchName
-                }];
-              } else {
-                this.branches = [];
-              }
-              this.populateForm();
-              this.isLoadingInitial = false;
+            // Map branch data from API response
+            if (this.user.branch) {
+              // Set branchId from branch object
+              this.user.branchId = this.user.branch.id;
+              this.user.branchName = this.user.branch.name;
             }
+            
+            // Don't override branches list - keep the one passed from parent component
+            // The branches list should contain all available branches for selection
+            
+            // Now populate form with all data ready
+            this.populateForm();
+            this.isLoadingInitial = false;
           } else {
             this.toastService.error(res?.message || 'Không thể tải thông tin user!');
             this.isLoadingInitial = false;
