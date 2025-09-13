@@ -103,21 +103,17 @@
     </div>
   </div>
 
-  <div class="modal-footer border-top-0 d-flex justify-content-between">
-    <div>
-      <button type="button" class="btn btn-secondary me-2" (click)="onCancel()" [disabled]="isSubmitting">
-        Hủy
-      </button>
-    </div>
-    <div>
-      <button 
-        type="submit" 
-        class="btn btn-warning" 
-        [disabled]="isSubmitting || userForm.invalid || !hasChanges()">
-        <i class="fas fa-paper-plane me-1" *ngIf="!isSubmitting"></i>
-        <span class="spinner-border spinner-border-sm me-1" *ngIf="isSubmitting" role="status" aria-hidden="true"></span>
-        {{ isSubmitting ? 'Đang gửi...' : 'Gửi duyệt' }}
-      </button>
-    </div>
+  <div class="modal-footer border-top-0">
+    <button type="button" class="btn btn-secondary me-2" (click)="onCancel()" [disabled]="isSubmitting">
+      Hủy
+    </button>
+    <button 
+      type="submit" 
+      class="btn btn-warning" 
+      [disabled]="isSubmitting || userForm.invalid || !hasChanges()">
+      <i class="fas fa-paper-plane me-1" *ngIf="!isSubmitting"></i>
+      <span class="spinner-border spinner-border-sm me-1" *ngIf="isSubmitting" role="status" aria-hidden="true"></span>
+      {{ isSubmitting ? 'Đang gửi...' : 'Gửi duyệt' }}
+    </button>
   </div>
 </form>
