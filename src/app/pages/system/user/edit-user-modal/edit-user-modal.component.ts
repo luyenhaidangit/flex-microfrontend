@@ -21,11 +21,11 @@ export interface UpdateUserRequest {
 })
 export class EditUserModalComponent implements OnInit, OnChanges {
   @Input() user: UserItem | null = null;
+  @Input() branches: BranchItem[] = [];
   @Output() close = new EventEmitter<void>();
   @Output() updated = new EventEmitter<void>();
 
   userForm!: FormGroup;
-  branches: BranchItem[] = [];
   isLoading = false;
   isSubmitting = false;
   isLoadingInitial = false;
@@ -73,7 +73,14 @@ export class EditUserModalComponent implements OnInit, OnChanges {
 
   private loadInitialData(): void {
     this.isLoadingInitial = true;
-    this.loadBranches();
+    
+    // Use branches from input if available, otherwise load from API
+    if (this.branches && this.branches.length > 0) {
+      this.populateForm();
+      this.isLoadingInitial = false;
+    } else {
+      this.loadBranches();
+    }
   }
 
   private loadBranches(): void {
@@ -92,7 +99,6 @@ export class EditUserModalComponent implements OnInit, OnChanges {
           } else {
             this.branches = [];
             this.isLoadingInitial = false;
-            this.toastService.error('Không thể tải danh sách chi nhánh!');
           }
         },
         error: () => {

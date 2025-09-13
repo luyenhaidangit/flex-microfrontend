@@ -153,6 +153,7 @@
 <ng-template #editUserModal>
 	<app-edit-user-modal 
 		[user]="selectedItem"
+		[branches]="branches"
 		(close)="onEditModalClose()"
 		(updated)="onUserUpdated()">
 	</app-edit-user-modal>
