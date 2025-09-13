@@ -40,7 +40,7 @@
   <button type="button" class="btn btn-secondary me-2" (click)="modalRef?.hide()" [disabled]="isApproving">
     Hủy
   </button>
-  <button type="button" class="btn btn-primary" (click)="approveUser()" [disabled]="isApproving">
+  <button type="button" class="btn btn-success" (click)="approveUser()" [disabled]="isApproving">
     <span *ngIf="isApproving" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
     <i *ngIf="!isApproving" class="fas fa-check me-1"></i>
     {{ isApproving ? 'Đang xử lý...' : 'Xác nhận' }}
