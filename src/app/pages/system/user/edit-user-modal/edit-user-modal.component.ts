@@ -28,6 +28,7 @@ export class EditUserModalComponent implements OnInit, OnChanges {
   branches: BranchItem[] = [];
   isLoading = false;
   isSubmitting = false;
+  isLoadingInitial = false;
 
   constructor(
     private fb: FormBuilder,
@@ -39,13 +40,12 @@ export class EditUserModalComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.initializeForm();
-    this.loadBranches();
-    this.populateForm();
+    this.loadInitialData();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['user'] && this.user) {
-      this.populateForm();
+      this.loadInitialData();
     }
   }
 
@@ -71,6 +71,11 @@ export class EditUserModalComponent implements OnInit, OnChanges {
     }
   }
 
+  private loadInitialData(): void {
+    this.isLoadingInitial = true;
+    this.loadBranches();
+  }
+
   private loadBranches(): void {
     this.isLoading = true;
     this.systemService.getBranchesForFilter()
@@ -82,15 +87,18 @@ export class EditUserModalComponent implements OnInit, OnChanges {
           this.isLoading = false;
           if (res?.isSuccess) {
             this.branches = res.data || [];
+            this.populateForm();
+            this.isLoadingInitial = false;
           } else {
             this.branches = [];
+            this.isLoadingInitial = false;
             this.toastService.error('Không thể tải danh sách chi nhánh!');
           }
         },
         error: () => {
           this.isLoading = false;
           this.branches = [];
-          this.toastService.error('Lỗi khi tải danh sách chi nhánh!');
+          this.isLoadingInitial = false;
         }
       });
   }

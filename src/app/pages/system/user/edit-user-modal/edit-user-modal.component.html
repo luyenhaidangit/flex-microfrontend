@@ -8,7 +8,16 @@
 
 <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="needs-validation">
   <div class="modal-body px-4 py-3">
-    <div class="row gy-3">
+    <!-- Loading state for initial data -->
+    <div *ngIf="isLoadingInitial" class="text-center py-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Đang tải...</span>
+      </div>
+      <p class="mt-2 text-muted">Đang tải thông tin người dùng...</p>
+    </div>
+
+    <!-- Form content -->
+    <div *ngIf="!isLoadingInitial" class="row gy-3">
       <!-- Tên đăng nhập -->
       <div class="col-md-6 position-relative">
         <label class="form-label">Tên đăng nhập <span class="text-danger">*</span></label>
@@ -97,20 +106,20 @@
     </div>
 
     <!-- Changes indicator -->
-    <div *ngIf="hasChanges()" class="alert alert-info mt-3 mb-0">
+    <div *ngIf="!isLoadingInitial && hasChanges()" class="alert alert-info mt-3 mb-0">
       <i class="fas fa-exclamation-triangle me-2"></i>
       <strong>Lưu ý:</strong> Bạn đã thay đổi thông tin người dùng. Những thay đổi này sẽ được gửi để duyệt.
     </div>
   </div>
 
   <div class="modal-footer border-top-0">
-    <button type="button" class="btn btn-secondary me-2" (click)="onCancel()" [disabled]="isSubmitting">
+    <button type="button" class="btn btn-secondary me-2" (click)="onCancel()" [disabled]="isSubmitting || isLoadingInitial">
       Hủy
     </button>
     <button 
       type="submit" 
       class="btn btn-warning" 
-      [disabled]="isSubmitting || userForm.invalid || !hasChanges()">
+      [disabled]="isSubmitting || isLoadingInitial || userForm.invalid || !hasChanges()">
       <i class="fas fa-paper-plane me-1" *ngIf="!isSubmitting"></i>
       <span class="spinner-border spinner-border-sm me-1" *ngIf="isSubmitting" role="status" aria-hidden="true"></span>
       {{ isSubmitting ? 'Đang gửi...' : 'Gửi duyệt' }}
