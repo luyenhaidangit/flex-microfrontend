@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ToastService } from 'angular-toastify';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -30,8 +29,7 @@ export class DeleteUserModalComponent implements OnInit, OnDestroy, OnChanges {
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private toastService: ToastService,
-    public modalRef: BsModalRef
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -63,7 +61,6 @@ export class DeleteUserModalComponent implements OnInit, OnDestroy, OnChanges {
 
   onClose(): void {
     this.close.emit();
-    this.modalRef?.hide();
     this.resetStates();
   }
 

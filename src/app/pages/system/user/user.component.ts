@@ -22,13 +22,10 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	
 	branches: { id: number; name: string }[] = [];
 	
-	@ViewChild('deleteUserModal') deleteUserModalTemplateRef!: TemplateRef<any>;
 	@ViewChild('approveUserModal') approveUserModalTemplateRef!: TemplateRef<any>;
 	@ViewChild('rejectUserModal') rejectUserModalTemplateRef!: TemplateRef<any>;
-	deleteModalRef?: BsModalRef | null = null;
 	approveModalRef?: BsModalRef | null = null;
 	rejectModalRef?: BsModalRef | null = null;
-	isDeleteModalVisible = false;
 	selectedRequest: any = null;
 	
 	constructor(
@@ -113,14 +110,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 	
 	openDeleteModal(user: UserItem): void {
-		console.log('openDeleteModal', user);
-		this.selectedItem = user;
-		this.isDeleteModalVisible = true;
-		this.deleteModalRef = this.modalService.show(this.deleteUserModalTemplateRef, {
-			class: 'modal-xl',
-			backdrop: 'static',
-			keyboard: false
-		});
+		super.openDeleteModal(user);
 	}
 	
 	// Pending request methods
@@ -192,15 +182,11 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 	
 	onDeleteModalClose(): void {
-		this.isDeleteModalVisible = false;
-		this.deleteModalRef?.hide();
-		this.selectedItem = null;
+		super.onDeleteModalClose();
 	}
 	
 	onUserDeleted(): void {
-		this.isDeleteModalVisible = false;
-		this.deleteModalRef?.hide();
-		this.selectedItem = null;
+		super.onDeleteModalClose();
 		// Reload data after user delete request is sent
 		this.onSearch();
 	}

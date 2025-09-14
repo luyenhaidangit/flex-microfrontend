@@ -157,16 +157,13 @@
 	(created)="onUserCreated()">
 </app-create-user-modal>
 
-
-<!-- Delete User Modal Template -->
-<ng-template #deleteUserModal>
-	<app-delete-user-modal 
-		[user]="selectedItem"
-		[isVisible]="isDeleteModalVisible"
-		(close)="onDeleteModalClose()"
-		(deleted)="onUserDeleted()">
-	</app-delete-user-modal>
-</ng-template>
+<!-- Delete User Modal Component -->
+<app-delete-user-modal 
+	[isVisible]="showDeleteModal"
+	[user]="selectedItem"
+	(close)="onDeleteModalClose()"
+	(deleted)="onUserDeleted()">
+</app-delete-user-modal>
 
 <!-- Approve User Modal Template -->
 <ng-template #approveUserModal>
