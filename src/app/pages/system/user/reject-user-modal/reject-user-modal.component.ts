@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { ToastService } from 'angular-toastify';
 import { Subject, takeUntil } from 'rxjs';
 import { UserService } from '../user.service';
@@ -15,7 +15,7 @@ export interface UserRequestDetail {
   templateUrl: './reject-user-modal.component.html',
   styleUrls: ['./reject-user-modal.component.scss']
 })
-export class RejectUserModalComponent implements OnInit, OnDestroy {
+export class RejectUserModalComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isVisible = false;
   @Input() selectedRequest: any;
   @Output() close = new EventEmitter<void>();
@@ -34,6 +34,18 @@ export class RejectUserModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.selectedRequest) {
+      this.parseRequestDetailFromData();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // Check if selectedRequest input changed and modal is visible
+    if (changes['selectedRequest'] && this.isVisible && this.selectedRequest) {
+      this.parseRequestDetailFromData();
+    }
+    
+    // Check if modal visibility changed
+    if (changes['isVisible'] && this.isVisible && this.selectedRequest) {
       this.parseRequestDetailFromData();
     }
   }
