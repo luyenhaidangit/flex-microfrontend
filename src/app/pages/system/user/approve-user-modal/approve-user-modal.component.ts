@@ -111,8 +111,6 @@ export class ApproveUserModalComponent implements OnInit, OnDestroy, OnChanges {
           this.isApproving = false;
         },
         error: (error) => {
-          console.error('Error approving user request:', error);
-          this.toastService.error('Lỗi khi phê duyệt yêu cầu!');
           this.isApproving = false;
         }
       });

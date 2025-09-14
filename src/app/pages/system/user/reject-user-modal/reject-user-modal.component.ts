@@ -119,8 +119,6 @@ export class RejectUserModalComponent implements OnInit, OnDestroy, OnChanges {
           this.isRejecting = false;
         },
         error: (error) => {
-          console.error('Error rejecting user request:', error);
-          this.toastService.error('Lỗi khi từ chối yêu cầu!');
           this.isRejecting = false;
         }
       });
