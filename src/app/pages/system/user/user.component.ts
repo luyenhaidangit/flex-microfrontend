@@ -128,7 +128,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	// Handle approve success
 	onUserApproved(result: any): void {
 		console.log('User request approved:', result);
-		this.toast.success('Phê duyệt yêu cầu thành công!');
 		super.onApproveModalClose();
 		this.onSearch();
 	}
@@ -140,7 +139,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	// Handle reject success
 	onUserRejected(result: any): void {
 		console.log('User request rejected:', result);
-		this.toast.success('Từ chối yêu cầu thành công!');
 		super.onRejectModalClose();
 		this.onSearch();
 	}

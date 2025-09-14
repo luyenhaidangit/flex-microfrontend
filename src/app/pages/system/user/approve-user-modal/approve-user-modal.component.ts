@@ -101,10 +101,10 @@ export class ApproveUserModalComponent implements OnInit, OnDestroy, OnChanges {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          if (response && response.success) {
+          if (response && response.isSuccess) {
             this.toastService.success('Phê duyệt yêu cầu thành công!');
             this.approved.emit(response.data);
-            this.onClose();
+            // Modal sẽ tự đóng thông qua event handler trong parent component
           } else {
             this.toastService.error(response?.message || 'Phê duyệt yêu cầu thất bại!');
           }

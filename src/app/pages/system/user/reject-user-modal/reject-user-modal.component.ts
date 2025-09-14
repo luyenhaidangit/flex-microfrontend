@@ -109,10 +109,10 @@ export class RejectUserModalComponent implements OnInit, OnDestroy, OnChanges {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          if (response && response.success) {
+          if (response && response.isSuccess) {
             this.toastService.success('Từ chối yêu cầu thành công!');
             this.rejected.emit(response.data);
-            this.onClose();
+            // Modal sẽ tự đóng thông qua event handler trong parent component
           } else {
             this.toastService.error(response?.message || 'Từ chối yêu cầu thất bại!');
           }
