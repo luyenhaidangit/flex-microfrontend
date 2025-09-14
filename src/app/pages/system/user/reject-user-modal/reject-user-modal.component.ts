@@ -41,11 +41,13 @@ export class RejectUserModalComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     // Check if selectedRequest input changed and modal is visible
     if (changes['selectedRequest'] && this.isVisible && this.selectedRequest) {
+      this.resetStates(); // Reset states when new request is selected
       this.parseRequestDetailFromData();
     }
     
     // Check if modal visibility changed
     if (changes['isVisible'] && this.isVisible && this.selectedRequest) {
+      this.resetStates(); // Reset states when modal opens
       this.parseRequestDetailFromData();
     }
   }
