@@ -173,11 +173,10 @@
 	(approved)="onUserApproved($event)">
 </app-approve-user-modal>
 
-<!-- Reject User Modal Template -->
-<ng-template #rejectUserModal>
-	<app-reject-user-modal 
-		[selectedRequest]="selectedRequest"
-		[modalRef]="rejectModalRef"
-		(rejected)="onUserRejected($event)">
-	</app-reject-user-modal>
-</ng-template>
+<!-- Reject User Modal Component -->
+<app-reject-user-modal 
+	[isVisible]="showRejectModal"
+	[selectedRequest]="selectedRequest"
+	(close)="onRejectModalClose()"
+	(rejected)="onUserRejected($event)">
+</app-reject-user-modal>

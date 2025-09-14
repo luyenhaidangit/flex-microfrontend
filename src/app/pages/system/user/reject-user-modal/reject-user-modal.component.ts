@@ -1,5 +1,4 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
-import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ToastService } from 'angular-toastify';
 import { Subject, takeUntil } from 'rxjs';
 import { UserService } from '../user.service';
@@ -17,8 +16,9 @@ export interface UserRequestDetail {
   styleUrls: ['./reject-user-modal.component.scss']
 })
 export class RejectUserModalComponent implements OnInit, OnDestroy {
+  @Input() isVisible = false;
   @Input() selectedRequest: any;
-  @Input() modalRef?: BsModalRef | null = null;
+  @Output() close = new EventEmitter<void>();
   @Output() rejected = new EventEmitter<any>();
 
   requestDetail: UserRequestDetail | null = null;
@@ -36,6 +36,18 @@ export class RejectUserModalComponent implements OnInit, OnDestroy {
     if (this.selectedRequest) {
       this.parseRequestDetailFromData();
     }
+  }
+
+  onClose(): void {
+    this.close.emit();
+    this.resetStates();
+  }
+
+  // Reset all states
+  private resetStates(): void {
+    this.requestDetail = null;
+    this.isRejecting = false;
+    this.rejectionReason = '';
   }
 
   ngOnDestroy(): void {
@@ -88,7 +100,7 @@ export class RejectUserModalComponent implements OnInit, OnDestroy {
           if (response && response.success) {
             this.toastService.success('Từ chối yêu cầu thành công!');
             this.rejected.emit(response.data);
-            this.modalRef?.hide();
+            this.onClose();
           } else {
             this.toastService.error(response?.message || 'Từ chối yêu cầu thất bại!');
           }

@@ -1,11 +1,14 @@
 <!-- Modal từ chối yêu cầu người dùng -->
-<div class="modal-header">
-  <h5 class="modal-title text-danger fw-semibold">
-    <i class="fas fa-times-circle me-2"></i> Xác nhận từ chối yêu cầu
-  </h5>
-  <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
-</div>
-<div class="modal-body px-4 py-3">
+<div class="modal fade show d-block" *ngIf="isVisible" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-danger fw-semibold">
+          <i class="fas fa-times-circle me-2"></i> Xác nhận từ chối yêu cầu
+        </h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="onClose()"></button>
+      </div>
+      <div class="modal-body px-4 py-3">
   <div class="card border-0 bg-light">
     <div class="card-body">
       <h6 class="card-title text-muted mb-3">
@@ -48,19 +51,22 @@
       maxlength="500"
       [disabled]="isRejecting">
     </textarea>
+      </div>
+      </div>
+      <div class="modal-footer border-top-0 d-flex justify-content-end">
+        <button type="button" class="btn btn-secondary me-2" (click)="onClose()" [disabled]="isRejecting">
+          Hủy
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-danger" 
+          (click)="rejectUser()" 
+          [disabled]="isRejecting || !rejectionReason || rejectionReason.trim().length === 0">
+          <span *ngIf="isRejecting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          <i *ngIf="!isRejecting" class="fas fa-times me-1"></i>
+          {{ isRejecting ? 'Đang xử lý...' : 'Từ chối' }}
+        </button>
+      </div>
+    </div>
   </div>
-</div>
-<div class="modal-footer border-top-0 d-flex justify-content-end">
-  <button type="button" class="btn btn-secondary me-2" (click)="modalRef?.hide()" [disabled]="isRejecting">
-    Hủy
-  </button>
-  <button 
-    type="button" 
-    class="btn btn-danger" 
-    (click)="rejectUser()" 
-    [disabled]="isRejecting || !rejectionReason || rejectionReason.trim().length === 0">
-    <span *ngIf="isRejecting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-    <i *ngIf="!isRejecting" class="fas fa-times me-1"></i>
-    {{ isRejecting ? 'Đang xử lý...' : 'Từ chối' }}
-  </button>
 </div>

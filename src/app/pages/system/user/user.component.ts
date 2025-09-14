@@ -22,8 +22,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	
 	branches: { id: number; name: string }[] = [];
 	
-	@ViewChild('rejectUserModal') rejectUserModalTemplateRef!: TemplateRef<any>;
-	rejectModalRef?: BsModalRef | null = null;
 	selectedRequest: any = null;
 	
 	constructor(
@@ -124,12 +122,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	openRejectModal(request: any): void {
 		console.log('openRejectModal', request);
 		this.selectedRequest = request;
-		this.rejectModalRef = this.modalService.show(this.rejectUserModalTemplateRef, {
-			class: 'modal-xl',
-			backdrop: 'static',
-			keyboard: false,
-			ignoreBackdropClick: true
-		});
+		super.openRejectModal(request);
 	}
 	
 	// Handle approve success
@@ -148,8 +141,12 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	onUserRejected(result: any): void {
 		console.log('User request rejected:', result);
 		this.toast.success('Từ chối yêu cầu thành công!');
-		this.rejectModalRef?.hide();
+		super.onRejectModalClose();
 		this.onSearch();
+	}
+
+	onRejectModalClose(): void {
+		super.onRejectModalClose();
 	}
 	
 	// Modal methods
