@@ -140,6 +140,15 @@
 	(close)="onDetailModalClose()">
 </app-user-detail-modal>
 
+<!-- Edit User Modal Component -->
+<app-edit-user-modal 
+	[isVisible]="showEditModal"
+	[user]="selectedItem"
+	[branches]="branches"
+	(close)="onEditModalClose()"
+	(updated)="onUserUpdated()">
+</app-edit-user-modal>
+
 <!-- Create User Modal Template -->
 <ng-template #createUserModal>
 	<app-create-user-modal 
@@ -149,15 +158,6 @@
 	</app-create-user-modal>
 </ng-template>
 
-<!-- Edit User Modal Template -->
-<ng-template #editUserModal>
-	<app-edit-user-modal 
-		[user]="selectedItem"
-		[branches]="branches"
-		(close)="onEditModalClose()"
-		(updated)="onUserUpdated()">
-	</app-edit-user-modal>
-</ng-template>
 
 <!-- Delete User Modal Template -->
 <ng-template #deleteUserModal>

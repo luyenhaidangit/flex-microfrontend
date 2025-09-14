@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ToastService } from 'angular-toastify';
 import { SystemService } from 'src/app/core/services/system.service';
 import { UserService } from '../user.service';
@@ -20,6 +19,7 @@ export interface UpdateUserRequest {
   styleUrls: ['./edit-user-modal.component.scss']
 })
 export class EditUserModalComponent implements OnInit, OnChanges {
+  @Input() isVisible = false;
   @Input() user: UserItem | null = null;
   @Input() branches: BranchItem[] = [];
   @Output() close = new EventEmitter<void>();
@@ -35,8 +35,7 @@ export class EditUserModalComponent implements OnInit, OnChanges {
     private fb: FormBuilder,
     private userService: UserService,
     private systemService: SystemService,
-    private toastService: ToastService,
-    public modalRef: BsModalRef
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -48,7 +47,13 @@ export class EditUserModalComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['user'] && this.user && !this.hasLoadedData) {
+    // Check if user input changed and modal is visible
+    if (changes['user'] && this.isVisible && this.user && !this.hasLoadedData) {
+      this.loadInitialData();
+    }
+    
+    // Check if modal visibility changed
+    if (changes['isVisible'] && this.isVisible && this.user && !this.hasLoadedData) {
       this.loadInitialData();
     }
   }
@@ -186,10 +191,16 @@ export class EditUserModalComponent implements OnInit, OnChanges {
   }
 
   closeModal(): void {
-    this.modalRef?.hide();
     this.close.emit();
-    // Reset flag when modal closes to allow reopening
+    this.resetStates();
+  }
+
+  // Reset all states
+  private resetStates(): void {
     this.hasLoadedData = false;
+    this.isLoadingInitial = false;
+    this.isSubmitting = false;
+    this.isLoading = false;
   }
 
   // Helper methods for form validation
