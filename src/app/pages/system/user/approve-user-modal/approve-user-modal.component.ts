@@ -1,5 +1,4 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
-import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ToastService } from 'angular-toastify';
 import { Subject, takeUntil } from 'rxjs';
 import { UserService } from '../user.service';
@@ -17,8 +16,9 @@ export interface UserRequestDetail {
   styleUrls: ['./approve-user-modal.component.scss']
 })
 export class ApproveUserModalComponent implements OnInit, OnDestroy {
+  @Input() isVisible = false;
   @Input() selectedRequest: any;
-  @Input() modalRef?: BsModalRef | null = null;
+  @Output() close = new EventEmitter<void>();
   @Output() approved = new EventEmitter<any>();
 
   requestDetail: UserRequestDetail | null = null;
@@ -34,6 +34,17 @@ export class ApproveUserModalComponent implements OnInit, OnDestroy {
     if (this.selectedRequest) {
       this.parseRequestDetailFromData();
     }
+  }
+
+  onClose(): void {
+    this.close.emit();
+    this.resetStates();
+  }
+
+  // Reset all states
+  private resetStates(): void {
+    this.requestDetail = null;
+    this.isApproving = false;
   }
 
   ngOnDestroy(): void {
@@ -81,7 +92,7 @@ export class ApproveUserModalComponent implements OnInit, OnDestroy {
           if (response && response.success) {
             this.toastService.success('Phê duyệt yêu cầu thành công!');
             this.approved.emit(response.data);
-            this.modalRef?.hide();
+            this.onClose();
           } else {
             this.toastService.error(response?.message || 'Phê duyệt yêu cầu thất bại!');
           }

@@ -1,11 +1,14 @@
 <!-- Modal phê duyệt yêu cầu người dùng -->
-<div class="modal-header">
-  <h5 class="modal-title text-success fw-semibold">
-    <i class="fas fa-check-circle me-2"></i> Xác nhận duyệt yêu cầu
-  </h5>
-  <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
-</div>
-<div class="modal-body px-4 py-3">
+<div class="modal fade show d-block" *ngIf="isVisible" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-success fw-semibold">
+          <i class="fas fa-check-circle me-2"></i> Xác nhận duyệt yêu cầu
+        </h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="onClose()"></button>
+      </div>
+      <div class="modal-body px-4 py-3">
   <div class="card border-0 bg-light">
     <div class="card-body">
       <h6 class="card-title text-muted mb-3">
@@ -32,17 +35,18 @@
         </div>
       </div>
     </div>
+      </div>
+      </div>
+      <div class="modal-footer border-top-0 d-flex justify-content-end">
+        <button type="button" class="btn btn-secondary me-2" (click)="onClose()" [disabled]="isApproving">
+          Hủy
+        </button>
+        <button type="button" class="btn btn-success" (click)="approveUser()" [disabled]="isApproving">
+          <span *ngIf="isApproving" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          <i *ngIf="!isApproving" class="fas fa-check me-1"></i>
+          {{ isApproving ? 'Đang xử lý...' : 'Xác nhận' }}
+        </button>
+      </div>
+    </div>
   </div>
-
-
-</div>
-<div class="modal-footer border-top-0 d-flex justify-content-end">
-  <button type="button" class="btn btn-secondary me-2" (click)="modalRef?.hide()" [disabled]="isApproving">
-    Hủy
-  </button>
-  <button type="button" class="btn btn-success" (click)="approveUser()" [disabled]="isApproving">
-    <span *ngIf="isApproving" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-    <i *ngIf="!isApproving" class="fas fa-check me-1"></i>
-    {{ isApproving ? 'Đang xử lý...' : 'Xác nhận' }}
-  </button>
 </div>

@@ -26,6 +26,8 @@ export abstract class EntityListComponent<TFilter> {
   showEditModal = false;
   showDeleteModal = false;
   showCreateModal = false;
+  showApproveModal = false;
+  showRejectModal = false;
 
   // Destroy subject for cleanup
   protected destroy$ = new Subject<void>();
@@ -251,6 +253,8 @@ export abstract class EntityListComponent<TFilter> {
     this.showEditModal = false;
     this.showDeleteModal = false;
     this.showCreateModal = false;
+    this.showApproveModal = false;
+    this.showRejectModal = false;
     this.selectedItem = null;
   }
 
@@ -283,6 +287,38 @@ export abstract class EntityListComponent<TFilter> {
    */
   protected onCreateModalClose(): void {
     this.showCreateModal = false;
+    this.selectedItem = null;
+  }
+
+  /**
+   * Generic method to open approve modal
+   */
+  protected openApproveModal(item: any): void {
+    this.selectedItem = item;
+    this.showApproveModal = true;
+  }
+
+  /**
+   * Generic method to open reject modal
+   */
+  protected openRejectModal(item: any): void {
+    this.selectedItem = item;
+    this.showRejectModal = true;
+  }
+
+  /**
+   * Generic method to close approve modal
+   */
+  protected onApproveModalClose(): void {
+    this.showApproveModal = false;
+    this.selectedItem = null;
+  }
+
+  /**
+   * Generic method to close reject modal
+   */
+  protected onRejectModalClose(): void {
+    this.showRejectModal = false;
     this.selectedItem = null;
   }
 

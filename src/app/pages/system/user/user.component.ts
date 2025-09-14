@@ -22,9 +22,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	
 	branches: { id: number; name: string }[] = [];
 	
-	@ViewChild('approveUserModal') approveUserModalTemplateRef!: TemplateRef<any>;
 	@ViewChild('rejectUserModal') rejectUserModalTemplateRef!: TemplateRef<any>;
-	approveModalRef?: BsModalRef | null = null;
 	rejectModalRef?: BsModalRef | null = null;
 	selectedRequest: any = null;
 	
@@ -115,18 +113,12 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	
 	// Pending request methods
 	openPendingDetailModal(request: any): void {
-		console.log('openPendingDetailModal', request);
 		// TODO: Implement pending detail modal
 	}
 	
 	openApproveModal(request: any): void {
 		this.selectedRequest = request;
-		this.approveModalRef = this.modalService.show(this.approveUserModalTemplateRef, {
-			class: 'modal-xl',
-			backdrop: 'static',
-			keyboard: false,
-			ignoreBackdropClick: true
-		});
+		super.openApproveModal(request);
 	}
 	
 	openRejectModal(request: any): void {
@@ -144,8 +136,12 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	onUserApproved(result: any): void {
 		console.log('User request approved:', result);
 		this.toast.success('Phê duyệt yêu cầu thành công!');
-		this.approveModalRef?.hide();
+		super.onApproveModalClose();
 		this.onSearch();
+	}
+
+	onApproveModalClose(): void {
+		super.onApproveModalClose();
 	}
 	
 	// Handle reject success

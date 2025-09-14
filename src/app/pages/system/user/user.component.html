@@ -165,14 +165,13 @@
 	(deleted)="onUserDeleted()">
 </app-delete-user-modal>
 
-<!-- Approve User Modal Template -->
-<ng-template #approveUserModal>
-	<app-approve-user-modal 
-		[selectedRequest]="selectedRequest"
-		[modalRef]="approveModalRef"
-		(approved)="onUserApproved($event)">
-	</app-approve-user-modal>
-</ng-template>
+<!-- Approve User Modal Component -->
+<app-approve-user-modal 
+	[isVisible]="showApproveModal"
+	[selectedRequest]="selectedRequest"
+	(close)="onApproveModalClose()"
+	(approved)="onUserApproved($event)">
+</app-approve-user-modal>
 
 <!-- Reject User Modal Template -->
 <ng-template #rejectUserModal>
