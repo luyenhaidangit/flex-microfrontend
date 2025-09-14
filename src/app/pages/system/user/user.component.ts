@@ -22,11 +22,9 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	
 	branches: { id: number; name: string }[] = [];
 	
-	@ViewChild('createUserModal') createUserModalTemplateRef!: TemplateRef<any>;
 	@ViewChild('deleteUserModal') deleteUserModalTemplateRef!: TemplateRef<any>;
 	@ViewChild('approveUserModal') approveUserModalTemplateRef!: TemplateRef<any>;
 	@ViewChild('rejectUserModal') rejectUserModalTemplateRef!: TemplateRef<any>;
-	modalRef?: BsModalRef | null = null;
 	deleteModalRef?: BsModalRef | null = null;
 	approveModalRef?: BsModalRef | null = null;
 	rejectModalRef?: BsModalRef | null = null;
@@ -103,12 +101,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	
 	
 	openCreateModal(): void {
-		console.log('openCreateModal');
-		this.modalRef = this.modalService.show(this.createUserModalTemplateRef, {
-			class: 'modal-xl',
-			backdrop: 'static',
-			keyboard: false
-		});
+		super.openCreateModal();
 	}
 	
 	openDetailModal(user: UserItem): void {
@@ -116,7 +109,6 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 	
 	openEditModal(user: UserItem): void {
-		console.log('openEditModal', user);
 		super.openEditModal(user);
 	}
 	
@@ -180,11 +172,11 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	}
 	
 	onCreateModalClose(): void {
-		this.modalRef?.hide();
+		super.onCreateModalClose();
 	}
 	
 	onUserCreated(): void {
-		this.modalRef?.hide();
+		super.onCreateModalClose();
 		// Reload data after user is created
 		this.onSearch();
 	}

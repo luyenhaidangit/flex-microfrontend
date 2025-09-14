@@ -149,14 +149,13 @@
 	(updated)="onUserUpdated()">
 </app-edit-user-modal>
 
-<!-- Create User Modal Template -->
-<ng-template #createUserModal>
-	<app-create-user-modal 
-		[branches]="branches"
-		(close)="onCreateModalClose()"
-		(created)="onUserCreated()">
-	</app-create-user-modal>
-</ng-template>
+<!-- Create User Modal Component -->
+<app-create-user-modal 
+	[isVisible]="showCreateModal"
+	[branches]="branches"
+	(close)="onCreateModalClose()"
+	(created)="onUserCreated()">
+</app-create-user-modal>
 
 
 <!-- Delete User Modal Template -->

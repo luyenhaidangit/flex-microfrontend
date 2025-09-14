@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ToastService } from 'angular-toastify';
 import { SystemService } from 'src/app/core/services/system.service';
 import { UserService } from '../user.service';
@@ -20,6 +19,7 @@ export interface CreateUserRequest {
   styleUrls: ['./create-user-modal.component.scss']
 })
 export class CreateUserModalComponent implements OnInit {
+  @Input() isVisible = false;
   @Input() branches: BranchItem[] = [];
   @Output() close = new EventEmitter<void>();
   @Output() created = new EventEmitter<void>();
@@ -32,8 +32,7 @@ export class CreateUserModalComponent implements OnInit {
     private fb: FormBuilder,
     private userService: UserService,
     private systemService: SystemService,
-    private toastService: ToastService,
-    public modalRef: BsModalRef
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -125,8 +124,16 @@ export class CreateUserModalComponent implements OnInit {
   }
 
   closeModal(): void {
-    this.modalRef?.hide();
     this.close.emit();
+    this.resetStates();
+  }
+
+  // Reset all states
+  private resetStates(): void {
+    this.userForm.reset();
+    this.userForm.patchValue({ isActive: true });
+    this.isSubmitting = false;
+    this.isLoading = false;
   }
 
   // Helper methods for form validation

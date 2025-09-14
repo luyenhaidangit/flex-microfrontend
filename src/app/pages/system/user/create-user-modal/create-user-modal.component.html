@@ -1,13 +1,16 @@
 <!-- Create User Modal -->
-<div class="modal-header">
-  <h5 class="modal-title text-success fw-semibold">
-    <i class="fas fa-plus-circle me-2"></i>Thêm mới người dùng
-  </h5>
-  <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
-</div>
+<div class="modal fade show d-block" *ngIf="isVisible" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-success fw-semibold">
+          <i class="fas fa-plus-circle me-2"></i>Thêm mới người dùng
+        </h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+      </div>
 
-<form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="needs-validation">
-  <div class="modal-body px-4 py-3">
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="needs-validation">
+        <div class="modal-body px-4 py-3">
     <div class="row gy-3">
       <!-- Tên đăng nhập -->
       <div class="col-md-6 position-relative">
@@ -93,17 +96,20 @@
     </div>
   </div>
 
-  <div class="modal-footer border-top-0">
-    <button type="button" class="btn btn-secondary me-2" (click)="onCancel()" [disabled]="isSubmitting">
-      Hủy
-    </button>
-    <button 
-      type="submit" 
-      class="btn btn-success" 
-      [disabled]="isSubmitting || userForm.invalid">
-      <i class="fas fa-paper-plane me-1" *ngIf="!isSubmitting"></i>
-      <span class="spinner-border spinner-border-sm me-1" *ngIf="isSubmitting" role="status" aria-hidden="true"></span>
-      {{ isSubmitting ? 'Đang gửi...' : 'Gửi duyệt' }}
-    </button>
+        <div class="modal-footer border-top-0">
+          <button type="button" class="btn btn-secondary me-2" (click)="onCancel()" [disabled]="isSubmitting">
+            Hủy
+          </button>
+          <button 
+            type="submit" 
+            class="btn btn-success" 
+            [disabled]="isSubmitting || userForm.invalid">
+            <i class="fas fa-paper-plane me-1" *ngIf="!isSubmitting"></i>
+            <span class="spinner-border spinner-border-sm me-1" *ngIf="isSubmitting" role="status" aria-hidden="true"></span>
+            {{ isSubmitting ? 'Đang gửi...' : 'Gửi duyệt' }}
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
-</form>
+</div>
