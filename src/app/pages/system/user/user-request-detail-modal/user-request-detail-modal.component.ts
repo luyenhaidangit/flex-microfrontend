@@ -30,6 +30,7 @@ export class UserRequestDetailModalComponent implements OnInit, OnDestroy, OnCha
 
 	requestDetailData: UserRequestDetailData | null = null;
 	isLoadingRequestDetail = false;
+	private hasLoadedForCurrentRequest = false;
 
 	private destroy$ = new Subject<void>();
 
@@ -42,13 +43,13 @@ export class UserRequestDetailModalComponent implements OnInit, OnDestroy, OnCha
 	}
 
 	ngOnChanges(changes: SimpleChanges): void {
-		// Check if selectedRequest input changed and modal is visible
-		if (changes['selectedRequest'] && this.isVisible && this.selectedRequest) {
-			this.loadRequestDetail();
+		// Reset flag when selectedRequest changes
+		if (changes['selectedRequest']) {
+			this.hasLoadedForCurrentRequest = false;
 		}
 		
-		// Check if modal visibility changed
-		if (changes['isVisible'] && this.isVisible && this.selectedRequest) {
+		// Only load when modal becomes visible AND we have a selected request AND haven't loaded yet
+		if (this.isVisible && this.selectedRequest && !this.hasLoadedForCurrentRequest) {
 			this.loadRequestDetail();
 		}
 	}
@@ -71,8 +72,14 @@ export class UserRequestDetailModalComponent implements OnInit, OnDestroy, OnCha
 			return;
 		}
 
+		// Prevent duplicate calls
+		if (this.hasLoadedForCurrentRequest) {
+			return;
+		}
+
 		this.isLoadingRequestDetail = true;
 		this.requestDetailData = null;
+		this.hasLoadedForCurrentRequest = true;
 
 		this.userService.getPendingUserRequestById(this.selectedRequest.requestId)
 			.pipe(
@@ -201,5 +208,6 @@ export class UserRequestDetailModalComponent implements OnInit, OnDestroy, OnCha
 	private resetStates(): void {
 		this.requestDetailData = null;
 		this.isLoadingRequestDetail = false;
+		this.hasLoadedForCurrentRequest = false;
 	}
 }
