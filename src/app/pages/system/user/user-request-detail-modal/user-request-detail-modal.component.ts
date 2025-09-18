@@ -65,7 +65,7 @@ export class UserRequestDetailModalComponent implements OnInit, OnDestroy, OnCha
 
 	// Load detailed request information
 	private loadRequestDetail(): void {
-		if (!this.selectedRequest?.id) {
+		if (!this.selectedRequest?.requestId) {
 			this.toast.error('Không tìm thấy thông tin yêu cầu!');
 			this.onClose();
 			return;
@@ -74,7 +74,7 @@ export class UserRequestDetailModalComponent implements OnInit, OnDestroy, OnCha
 		this.isLoadingRequestDetail = true;
 		this.requestDetailData = null;
 
-		this.userService.getPendingUserRequestById(this.selectedRequest.id)
+		this.userService.getPendingUserRequestById(this.selectedRequest.requestId)
 			.pipe(
 				takeUntil(this.destroy$),
 				finalize(() => this.isLoadingRequestDetail = false)
