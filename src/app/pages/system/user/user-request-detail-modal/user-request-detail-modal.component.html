@@ -63,18 +63,18 @@
 									<div class="changes-summary">
 										<div *ngIf="getRequestType() === 'CREATE'" class="text-success">
 											<i class="fas fa-plus-circle me-1"></i>
-											<strong>Tạo mới người dùng:</strong> {{ getUserName(requestDetailData.newData) }}
+											<strong>Tạo mới người dùng:</strong> {{ getDisplayName(requestDetailData.newData) }}
 										</div>
 										<div *ngIf="getRequestType() === 'UPDATE'" class="text-warning">
 											<i class="fas fa-edit me-1"></i>
-											<strong>Cập nhật người dùng:</strong> {{ getUserName(requestDetailData.oldData) }}
+											<strong>Cập nhật người dùng:</strong> {{ getDisplayName(requestDetailData.oldData) }}
 											<div class="small text-muted mt-1">
 												<span class="change-count">Có thay đổi</span>
 											</div>
 										</div>
 										<div *ngIf="getRequestType() === 'DELETE'" class="text-danger">
 											<i class="fas fa-trash-alt me-1"></i>
-											<strong>Xóa người dùng:</strong> {{ getUserName(requestDetailData.oldData) }}
+											<strong>Xóa người dùng:</strong> {{ getDisplayName(requestDetailData.oldData) }}
 										</div>
 									</div>
 								</div>
@@ -126,8 +126,8 @@
 										<tr>
 											<td class="fw-bold">Trạng thái</td>
 											<td class="bg-success bg-opacity-10">
-												<i [class]="getUserStatusIcon(requestDetailData.newData)" class="me-1"></i>
-												{{ getUserStatusText(requestDetailData.newData) }}
+												<i class="fas fa-check-circle text-success me-1"></i>
+												Hoạt động
 											</td>
 										</tr>
 									</tbody>

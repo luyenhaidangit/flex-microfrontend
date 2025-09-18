@@ -6,11 +6,14 @@ import { UserService } from '../user.service';
 import { UserItem } from '../user.models';
 
 export interface UserRequestDetailData {
-	requestId: number;
-	requestedBy: string;
-	requestedDate: string;
-	requestType: 'CREATE' | 'UPDATE' | 'DELETE';
-	status: string;
+	requestId: string | number;
+	createdBy?: string;
+	createdDate?: string;
+	type?: 'CREATE' | 'UPDATE' | 'DELETE';
+	requestedBy?: string;
+	requestedDate?: string;
+	requestType?: 'CREATE' | 'UPDATE' | 'DELETE';
+	status?: string;
 	newData?: any;
 	oldData?: any;
 	rejectReason?: string;
@@ -104,7 +107,7 @@ export class UserRequestDetailModalComponent implements OnInit, OnDestroy, OnCha
 
 	// Get request type from data
 	getRequestType(): string | null {
-		return this.requestDetailData?.requestType || null;
+		return this.requestDetailData?.type || this.requestDetailData?.requestType || null;
 	}
 
 	// Get request type icon
@@ -149,17 +152,22 @@ export class UserRequestDetailModalComponent implements OnInit, OnDestroy, OnCha
 
 	// Get created by
 	getCreatedBy(): string {
-		return this.requestDetailData?.requestedBy || '';
+		return this.requestDetailData?.createdBy || this.requestDetailData?.requestedBy || '';
 	}
 
 	// Get created date
 	getCreatedDate(): string {
-		return this.requestDetailData?.requestedDate || '';
+		return this.requestDetailData?.createdDate || this.requestDetailData?.requestedDate || '';
 	}
 
 	// Get user name from data
 	getUserName(data: any): string {
 		return data?.userName || data?.fullName || '';
+	}
+
+	// Get user name for display (prioritize fullName over userName)
+	getDisplayName(data: any): string {
+		return data?.fullName || data?.userName || '';
 	}
 
 	// Get user email from data
