@@ -28,10 +28,11 @@ import { EditUserModalComponent } from './user/edit-user-modal/edit-user-modal.c
 import { DeleteUserModalComponent } from './user/delete-user-modal/delete-user-modal.component';
 import { ApproveUserModalComponent } from './user/approve-user-modal/approve-user-modal.component';
 import { RejectUserModalComponent } from './user/reject-user-modal/reject-user-modal.component';
+import { UserRequestDetailModalComponent } from './user/user-request-detail-modal/user-request-detail-modal.component';
 import { PaginationModule as CustomPaginationModule } from '../../core/components/pagination/pagination.module';
 
 @NgModule({
-  declarations: [BranchComponent, RoleComponent, UsersComponent, UserDetailModalComponent, CreateUserModalComponent, EditUserModalComponent, DeleteUserModalComponent, ApproveUserModalComponent, RejectUserModalComponent],
+  declarations: [BranchComponent, RoleComponent, UsersComponent, UserDetailModalComponent, CreateUserModalComponent, EditUserModalComponent, DeleteUserModalComponent, ApproveUserModalComponent, RejectUserModalComponent, UserRequestDetailModalComponent],
   imports: [
     CommonModule,
     SystemRoutingModule,

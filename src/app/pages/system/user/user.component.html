@@ -180,3 +180,10 @@
 	(close)="onRejectModalClose()"
 	(rejected)="onUserRejected($event)">
 </app-reject-user-modal>
+
+<!-- User Request Detail Modal Component -->
+<app-user-request-detail-modal 
+	[isVisible]="showRequestDetailModal"
+	[selectedRequest]="selectedRequest"
+	(close)="onRequestDetailModalClose()">
+</app-user-request-detail-modal>

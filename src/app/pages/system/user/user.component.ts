@@ -23,6 +23,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	branches: { id: number; name: string }[] = [];
 	
 	selectedRequest: any = null;
+	showRequestDetailModal = false;
 	
 	constructor(
 		private userService: UserService,
@@ -111,7 +112,8 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 	
 	// Pending request methods
 	openPendingDetailModal(request: any): void {
-		// TODO: Implement pending detail modal
+		this.selectedRequest = request;
+		this.showRequestDetailModal = true;
 	}
 	
 	openApproveModal(request: any): void {
@@ -180,5 +182,11 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		super.onDeleteModalClose();
 		// Reload data after user delete request is sent
 		this.onSearch();
+	}
+	
+	// Request detail modal methods
+	onRequestDetailModalClose(): void {
+		this.showRequestDetailModal = false;
+		this.selectedRequest = null;
 	}
 }
