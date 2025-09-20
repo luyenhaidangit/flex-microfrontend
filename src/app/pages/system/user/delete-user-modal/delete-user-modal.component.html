@@ -73,7 +73,7 @@
           [class.loading]="isSubmitting"
           (click)="onSubmit()">
           <i class="fas fa-paper-plane me-1" *ngIf="!isSubmitting"></i>
-          <i class="fas fa-spinner fa-spin me-1" *ngIf="isSubmitting"></i>
+          <span class="spinner-border spinner-border-sm me-1" *ngIf="isSubmitting" role="status" aria-hidden="true"></span>
           {{ isSubmitting ? 'Đang gửi...' : 'Gửi yêu cầu xóa' }}
         </button>
       </div>
