@@ -54,9 +54,13 @@ export class AuthenticationService {
   }
 
   logout(): void {
-    this.clearTokenFromStorage();
-    this.clearTimersAndState();
-    this.router.navigate(['/account/login']);
+    // Call logout API first
+    this.callLogoutApi().finally(() => {
+      // Always clear local state regardless of API call result
+      this.clearTokenFromStorage();
+      this.clearTimersAndState();
+      this.router.navigate(['/account/login']);
+    });
   }
 
   /** Lấy token (cho Interceptor/Guard) */
@@ -97,6 +101,18 @@ export class AuthenticationService {
   }
 
   // ===== Internal =====
+  private async callLogoutApi(): Promise<void> {
+    const token = this.getToken();
+    if (!token) return; // No token to logout
+    
+    try {
+      await firstValueFrom(this.http.post('/api/auth/logout', {}));
+    } catch (error) {
+      // Log error but don't prevent logout
+      console.warn('Logout API call failed:', error);
+    }
+  }
+
   private bootstrapFromStorage(loadProfile = false): void {
     const token = this.readRawToken();
     if (!token) { this.forceLogout(false); return; }
@@ -129,9 +145,13 @@ export class AuthenticationService {
   }
 
   private forceLogout(navigate = true): void {
-    this.clearTimersAndState();
-    this.clearTokenFromStorage();
-    if (navigate) this.router.navigate(['/account/login']);
+    // Call logout API first
+    this.callLogoutApi().finally(() => {
+      // Always clear local state regardless of API call result
+      this.clearTimersAndState();
+      this.clearTokenFromStorage();
+      if (navigate) this.router.navigate(['/account/login']);
+    });
   }
 
   private clearTimersAndState(): void {
