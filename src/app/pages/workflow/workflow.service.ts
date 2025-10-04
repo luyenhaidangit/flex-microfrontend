@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class WorkflowService {
-  private readonly baseUrl = '/api/workflow';
+  private readonly baseUrl = '/api';
 
   constructor(private http: HttpClient) {}
 
