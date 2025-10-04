@@ -4,35 +4,44 @@
   <div class="bg-white rounded shadow-sm p-3">
     <app-tabs [tabs]="tabsConfig.items" [activeId]="activeTabId" (activeIdChange)="onTabChange($event)"></app-tabs>
 
+    <!-- Search -->
     <div class="row gx-3 mb-3 gy-2 align-items-end">
       <div class="col-md-3">
         <label class="form-label fw-bold text-muted">Từ khóa</label>
         <input class="form-control" type="text" placeholder="Nhập từ khóa..." [(ngModel)]="state.filter.keyword">
       </div>
-
-      <div class="col-md-3">
+    
+      <!-- Display only in approved tab -->
+      <div class="col-md-3" *ngIf="activeTabId === 'approved'">
         <label class="form-label fw-bold text-muted">Trạng thái</label>
         <select class="form-select" [(ngModel)]="state.filter.state">
           <option *ngFor="let option of CONFIG.search.stateOptions" [ngValue]="option.value">{{ option.label }}</option>
         </select>
       </div>
-
-      <div class="col-md-2">
-        <div class="form-check mt-4 pt-2">
-          <input class="form-check-input" type="checkbox" [(ngModel)]="state.filter.onlyActive" [ngModelOptions]="{standalone: true}">
-          <label class="form-check-label">Chỉ hiển thị Active</label>
-        </div>
+    
+      <!-- Display only in pending tab -->
+      <div class="col-md-3" *ngIf="activeTabId === 'pending'">
+        <label class="form-label fw-bold text-muted">Loại yêu cầu</label>
+        <select class="form-select" [(ngModel)]="state.filter.type">
+          <option *ngFor="let option of filterConfig.requestTypeOptions" [ngValue]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
       </div>
-
+    
       <div class="col-md-2">
-        <button class="btn btn-primary w-100" (click)="onSearch()"><i class="bx bx-search-alt-2"></i> Tìm kiếm</button>
+        <button class="btn btn-primary w-100" (click)="onSearch()">
+          <i class="bx bx-search-alt-2"></i> Tìm kiếm
+        </button>
       </div>
-
+    
       <div class="col-md-4 text-md-end">
-        <button type="button" class="btn btn-success fw-bold" (click)="openCreateModal()"><i class="fas fa-plus me-1"></i> Thêm mới</button>
+        <button type="button" class="btn btn-success fw-bold" (click)="openCreateModal()">
+          <i class="fas fa-plus me-1"></i> Thêm mới
+        </button>
       </div>
     </div>
-
+    
     <div class="table-responsive table-header-primary">
       <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
         <thead>
@@ -48,38 +57,58 @@
           </tr>
         </tbody>
         <tbody *ngIf="!loadingTable && items.length">
+          <!-- Approved tab content -->
           <ng-container *ngIf="activeTabId === 'approved'">
-            <tr *ngFor="let d of items">
-              <td>{{ d.code | safeField }}</td>
-              <td>{{ d.name | safeField }}</td>
-              <td>{{ d.version | safeField }}</td>
-              <td>{{ d.state | safeField }}</td>
-              <td><app-badge [value]="d.isActive" type="status"></app-badge></td>
+            <tr *ngFor="let u of items">
+              <td>{{ u.userName | safeField }}</td>
+              <td>{{ u.fullName | safeField }}</td>
+              <td>{{ u.email | safeField }}</td>
+              <td>{{ u.branchName | safeField }}</td>
+              <td>
+                <app-badge [value]="u.isActive" type="status"></app-badge>
+              </td>
               <td class="action-column">
-                <button class="btn btn-link p-0 text-info" (click)="openDetailModal(d)" title="Xem"><i class="fas fa-eye"></i></button>
-                <button class="btn btn-link p-0 ms-2 text-warning" (click)="openEditModal(d)" title="Sửa"><i class="fas fa-edit"></i></button>
-                <button class="btn btn-link p-0 ms-2 text-primary" (click)="openPublishModal(d)" title="Gửi publish"><i class="fas fa-upload"></i></button>
+                <button class="btn btn-link p-0 text-info" (click)="openDetailModal(u)" title="Xem">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-link p-0 ms-2 text-warning" (click)="openEditModal(u)" title="Sửa">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-link p-0 ms-2 text-danger" (click)="openDeleteModal(u)" title="Xoá">
+                  <i class="fas fa-trash"></i>
+                </button>
               </td>
             </tr>
           </ng-container>
+          <!-- Pending tab content -->
           <ng-container *ngIf="activeTabId === 'pending'">
-            <tr *ngFor="let r of items">
-              <td>{{ r.code | safeField }}</td>
-              <td>{{ r.name | safeField }}</td>
-              <td><app-badge [value]="r.action" type="action"></app-badge></td>
-              <td>{{ r.requestedDate | date:'dd/MM/yyyy HH:mm' }}</td>
-              <td>{{ r.requestedBy | safeField }}</td>
+            <tr *ngFor="let u of items">
+              <td>{{ u.userName | safeField }}</td>
+              <td>{{ u.fullName | safeField }}</td>
+              <td>{{ u.email | safeField }}</td>
+              <td>
+                <app-badge [value]="u.action" type="action"></app-badge>
+              </td>
+              <td>{{ u.requestedDate | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ u.requestedBy | safeField }}</td>
               <td class="action-column">
-                <button class="btn btn-link p-0 text-info" (click)="openPendingDetailModal(r)" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
-                <button class="btn btn-link p-0 ms-2 text-success" (click)="openApproveModal(r)" title="Duyệt"><i class="fas fa-check"></i></button>
-                <button class="btn btn-link p-0 ms-2 text-danger" (click)="openRejectModal(r)" title="Từ chối"><i class="fas fa-times"></i></button>
+                <button class="btn btn-link p-0 text-info" (click)="openPendingDetailModal(u)" title="Xem chi tiết">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-link p-0 ms-2 text-success" (click)="openApproveModal(u)" title="Duyệt">
+                  <i class="fas fa-check"></i>
+                </button>
+                <button class="btn btn-link p-0 ms-2 text-danger" (click)="openRejectModal(u)" title="Từ chối">
+                  <i class="fas fa-times"></i>
+                </button>
               </td>
             </tr>
           </ng-container>
         </tbody>
         <tbody *ngIf="!loadingTable && !items.length">
           <tr>
-            <td [attr.colspan]="CONFIG.table.columns[activeTabId]?.length || 0" class="text-center text-muted">Không có dữ liệu</td>
+            <td [attr.colspan]="CONFIG.table.columns[activeTabId]?.length || 0" class="text-center text-muted">Không có dữ
+              liệu</td>
           </tr>
         </tbody>
       </table>
