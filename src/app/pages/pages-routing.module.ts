@@ -11,6 +11,8 @@ const routes: Routes = [
   { path: '', loadChildren: () => import('./dashboards/dashboards.module').then(m => m.DashboardsModule) },
   // System
   { path: 'system', loadChildren: () => import('./system/system.module').then(m => m.SystemModule) },
+  // Workflow
+  { path: 'workflow', loadChildren: () => import('./workflow/workflow.module').then(m => m.WorkflowModule) },
   { path: 'calendar', component: CalendarComponent },
   { path: 'chat', component: ChatComponent },
   { path: 'filemanager', component: FilemanagerComponent },

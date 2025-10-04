@@ -72,12 +72,13 @@ export const MENU: MenuItem[] = [
                 label: 'MENUITEMS.SYSTEM.MANAGESYSTEM.USERS',
                 link: '/system/user',
             },
-            {
-                id: 'workflow-module.definitions',
-                label: 'MENUITEMS.SYSTEM.MANAGESYSTEM.WORKFLOW',
-                link: '/system/workflow',
-            },
         ]
+    },
+    {
+        id: 'workflow-module',
+        label: 'MENUITEMS.WORKFLOW.TEXT',
+        icon: 'bx bx-git-pull-request',
+        link: '/workflow',
     },
     // {
     //     id: 17,

@@ -53,9 +53,11 @@
         "BRANCH": "Branch Management",
         "ROLE": "Role Management",
         "USERS": "User Management",
-        "WORKFLOW": "Workflow Management",
         "SETTINGS": "System Settings"
       }
+    },
+    "WORKFLOW": {
+      "TEXT": "Workflow Management"
     },
     "MENU": {
       "TEXT": "System"

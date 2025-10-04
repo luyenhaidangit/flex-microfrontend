@@ -2,7 +2,6 @@ export const WORKFLOW_CONFIG = {
   breadcrumb: {
     title: 'Quản lý quy trình phê duyệt',
     items: [
-      { label: 'Quản trị hệ thống' },
       { label: 'Quản lý quy trình', active: true }
     ]
   },
