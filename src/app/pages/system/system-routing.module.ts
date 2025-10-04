@@ -4,6 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { BranchComponent } from './branch/branch.component';
 import { RoleComponent } from './role/role.component';
 import { UsersComponent } from './user/user.component';
+import { WorkflowComponent } from './workflow/workflow.component';
 
 const routes: Routes = [
     {
@@ -17,6 +18,10 @@ const routes: Routes = [
     {
         path: 'user',
         component: UsersComponent
+    },
+    {
+        path: 'workflow',
+        component: WorkflowComponent
     },
     {
         path: 'settings',

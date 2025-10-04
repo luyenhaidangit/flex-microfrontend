@@ -1,0 +1,145 @@
+<div class="container-fluid">
+  <app-page-title title="{{ CONFIG.breadcrumb.title }}" [breadcrumbItems]="CONFIG.breadcrumb.items"></app-page-title>
+
+  <div class="bg-white rounded shadow-sm p-3">
+    <app-tabs [tabs]="tabsConfig.items" [activeId]="activeTabId" (activeIdChange)="onTabChange($event)"></app-tabs>
+
+    <div class="row gx-3 mb-3 gy-2 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label fw-bold text-muted">Từ khóa</label>
+        <input class="form-control" type="text" placeholder="Nhập từ khóa..." [(ngModel)]="state.filter.keyword">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label fw-bold text-muted">Trạng thái</label>
+        <select class="form-select" [(ngModel)]="state.filter.state">
+          <option *ngFor="let option of CONFIG.search.stateOptions" [ngValue]="option.value">{{ option.label }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <div class="form-check mt-4 pt-2">
+          <input class="form-check-input" type="checkbox" [(ngModel)]="state.filter.onlyActive" [ngModelOptions]="{standalone: true}">
+          <label class="form-check-label">Chỉ hiển thị Active</label>
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <button class="btn btn-primary w-100" (click)="onSearch()"><i class="bx bx-search-alt-2"></i> Tìm kiếm</button>
+      </div>
+
+      <div class="col-md-4 text-md-end">
+        <button type="button" class="btn btn-success fw-bold" (click)="openCreateModal()"><i class="fas fa-plus me-1"></i> Thêm mới</button>
+      </div>
+    </div>
+
+    <div class="table-responsive table-header-primary">
+      <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
+        <thead>
+          <tr>
+            <th *ngFor="let col of CONFIG.table.columns[activeTabId]">{{ col.label }}</th>
+          </tr>
+        </thead>
+        <tbody *ngIf="loadingTable">
+          <tr *ngFor="let _ of [].constructor(CONFIG.table.skeleton[activeTabId]?.rows || 8)">
+            <td *ngFor="let w of CONFIG.table.skeleton[activeTabId]?.columns || []">
+              <app-skeleton [width]="w" height="18px"></app-skeleton>
+            </td>
+          </tr>
+        </tbody>
+        <tbody *ngIf="!loadingTable && items.length">
+          <ng-container *ngIf="activeTabId === 'approved'">
+            <tr *ngFor="let d of items">
+              <td>{{ d.code | safeField }}</td>
+              <td>{{ d.name | safeField }}</td>
+              <td>{{ d.version | safeField }}</td>
+              <td>{{ d.state | safeField }}</td>
+              <td><app-badge [value]="d.isActive" type="status"></app-badge></td>
+              <td class="action-column">
+                <button class="btn btn-link p-0 text-info" (click)="openDetailModal(d)" title="Xem"><i class="fas fa-eye"></i></button>
+                <button class="btn btn-link p-0 ms-2 text-warning" (click)="openEditModal(d)" title="Sửa"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-link p-0 ms-2 text-primary" (click)="openPublishModal(d)" title="Gửi publish"><i class="fas fa-upload"></i></button>
+              </td>
+            </tr>
+          </ng-container>
+          <ng-container *ngIf="activeTabId === 'pending'">
+            <tr *ngFor="let r of items">
+              <td>{{ r.code | safeField }}</td>
+              <td>{{ r.name | safeField }}</td>
+              <td><app-badge [value]="r.action" type="action"></app-badge></td>
+              <td>{{ r.requestedDate | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ r.requestedBy | safeField }}</td>
+              <td class="action-column">
+                <button class="btn btn-link p-0 text-info" (click)="openPendingDetailModal(r)" title="Xem chi tiết"><i class="fas fa-eye"></i></button>
+                <button class="btn btn-link p-0 ms-2 text-success" (click)="openApproveModal(r)" title="Duyệt"><i class="fas fa-check"></i></button>
+                <button class="btn btn-link p-0 ms-2 text-danger" (click)="openRejectModal(r)" title="Từ chối"><i class="fas fa-times"></i></button>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+        <tbody *ngIf="!loadingTable && !items.length">
+          <tr>
+            <td [attr.colspan]="CONFIG.table.columns[activeTabId]?.length || 0" class="text-center text-muted">Không có dữ liệu</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <app-pagination [paginationState]="getPaginationState()" [pageSizeOptions]="paginationConfig.pageSizeOptions" [maxVisiblePages]="5" (pageChanged)="onPageChange($event)" (pageSizeChanged)="onPageSizeChange($event)"></app-pagination>
+  </div>
+</div>
+
+<!-- Workflow Detail Modal Component -->
+<app-workflow-detail-modal 
+  [isVisible]="showDetailModal"
+  [workflow]="selectedItem"
+  (close)="onDetailModalClose()">
+</app-workflow-detail-modal>
+
+<!-- Create Workflow Modal Component -->
+<app-create-workflow-modal 
+  [isVisible]="showCreateModal"
+  (close)="onCreateModalClose()"
+  (created)="onCreated()">
+</app-create-workflow-modal>
+
+<!-- Edit Workflow Modal Component -->
+<app-edit-workflow-modal 
+  [isVisible]="showEditModal"
+  [workflow]="selectedItem"
+  (close)="onEditModalClose()"
+  (updated)="onUpdated()">
+</app-edit-workflow-modal>
+
+<!-- Publish Workflow Modal Component -->
+<app-publish-workflow-modal 
+  [isVisible]="showPublishModal"
+  [workflow]="selectedItem"
+  (close)="onPublishModalClose()"
+  (published)="onPublished($event)">
+</app-publish-workflow-modal>
+
+<!-- Approve Workflow Modal Component -->
+<app-approve-workflow-modal 
+  [isVisible]="showApproveModal"
+  [selectedRequest]="selectedRequest"
+  (close)="onApproveModalClose()"
+  (approved)="onApproved($event)">
+</app-approve-workflow-modal>
+
+<!-- Reject Workflow Modal Component -->
+<app-reject-workflow-modal 
+  [isVisible]="showRejectModal"
+  [selectedRequest]="selectedRequest"
+  (close)="onRejectModalClose()"
+  (rejected)="onRejected($event)">
+</app-reject-workflow-modal>
+
+<!-- Workflow Request Detail Modal Component -->
+<app-workflow-request-detail-modal 
+  [isVisible]="showRequestDetailModal"
+  [selectedRequest]="selectedRequest"
+  (close)="onRequestDetailModalClose()">
+</app-workflow-request-detail-modal>
+
+

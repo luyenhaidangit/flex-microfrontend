@@ -1,0 +1,41 @@
+<div class="modal" tabindex="-1" [ngClass]="{ 'show d-block': isVisible }" aria-hidden="true" *ngIf="isVisible">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Tạo Workflow (Draft)</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="onClose()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="form" (ngSubmit)="submit()">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label fw-bold">Mã</label>
+              <input class="form-control" formControlName="code" />
+            </div>
+            <div class="col-md-8">
+              <label class="form-label fw-bold">Tên</label>
+              <input class="form-control" formControlName="name" />
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-bold">Mô tả</label>
+              <textarea rows="2" class="form-control" formControlName="description"></textarea>
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-bold">Policy JSON (tuỳ chọn)</label>
+              <textarea rows="6" class="form-control" formControlName="policy" placeholder='{"mode":"simple"}'></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="onClose()">Đóng</button>
+        <button type="button" class="btn btn-success" (click)="submit()" [disabled]="isSubmitting || !form?.valid">
+          <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+          Lưu Draft
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+

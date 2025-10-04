@@ -30,9 +30,17 @@ import { ApproveUserModalComponent } from './user/approve-user-modal/approve-use
 import { RejectUserModalComponent } from './user/reject-user-modal/reject-user-modal.component';
 import { UserRequestDetailModalComponent } from './user/user-request-detail-modal/user-request-detail-modal.component';
 import { PaginationModule as CustomPaginationModule } from '../../core/components/pagination/pagination.module';
+import { WorkflowComponent } from './workflow/workflow.component';
+import { ApproveWorkflowModalComponent } from './workflow/approve-workflow-modal/approve-workflow-modal.component';
+import { RejectWorkflowModalComponent } from './workflow/reject-workflow-modal/reject-workflow-modal.component';
+import { WorkflowDetailModalComponent } from './workflow/workflow-detail-modal/workflow-detail-modal.component';
+import { CreateWorkflowModalComponent } from './workflow/create-workflow-modal/create-workflow-modal.component';
+import { WorkflowRequestDetailModalComponent } from './workflow/workflow-request-detail-modal/workflow-request-detail-modal.component';
+import { PublishWorkflowModalComponent } from './workflow/publish-workflow-modal/publish-workflow-modal.component';
+import { EditWorkflowModalComponent } from './workflow/edit-workflow-modal/edit-workflow-modal.component';
 
 @NgModule({
-  declarations: [BranchComponent, RoleComponent, UsersComponent, UserDetailModalComponent, CreateUserModalComponent, EditUserModalComponent, DeleteUserModalComponent, ApproveUserModalComponent, RejectUserModalComponent, UserRequestDetailModalComponent],
+  declarations: [BranchComponent, RoleComponent, UsersComponent, UserDetailModalComponent, CreateUserModalComponent, EditUserModalComponent, DeleteUserModalComponent, ApproveUserModalComponent, RejectUserModalComponent, UserRequestDetailModalComponent, WorkflowComponent, ApproveWorkflowModalComponent, RejectWorkflowModalComponent, WorkflowDetailModalComponent, CreateWorkflowModalComponent, WorkflowRequestDetailModalComponent, PublishWorkflowModalComponent, EditWorkflowModalComponent],
   imports: [
     CommonModule,
     SystemRoutingModule,

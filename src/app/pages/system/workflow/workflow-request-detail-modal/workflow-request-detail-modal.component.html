@@ -1,0 +1,29 @@
+<div class="modal" tabindex="-1" [ngClass]="{ 'show d-block': isVisible }" aria-hidden="true" *ngIf="isVisible">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Chi tiết yêu cầu</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="onClose()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-md-4"><strong>Mã:</strong> {{ detail?.code }}</div>
+          <div class="col-md-8"><strong>Tên:</strong> {{ detail?.name }}</div>
+          <div class="col-md-4"><strong>Hành động:</strong> {{ detail?.action }}</div>
+          <div class="col-md-4"><strong>Người tạo:</strong> {{ detail?.requestedBy }}</div>
+          <div class="col-md-4"><strong>Thời gian:</strong> {{ detail?.requestedDate | date:'dd/MM/yyyy HH:mm' }}</div>
+        </div>
+        <hr>
+        <div>
+          <div class="fw-bold mb-1">Dữ liệu thay đổi (rút gọn)</div>
+          <pre class="bg-light p-2 rounded small mb-0">{{ selectedRequest | json }}</pre>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="onClose()">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+

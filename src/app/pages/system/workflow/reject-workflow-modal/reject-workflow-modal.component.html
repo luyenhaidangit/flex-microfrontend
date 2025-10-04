@@ -1,0 +1,25 @@
+<div class="modal" tabindex="-1" [ngClass]="{ 'show d-block': isVisible }" aria-hidden="true" *ngIf="isVisible">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Từ chối yêu cầu publish</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="onClose()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label fw-bold">Lý do</label>
+          <textarea class="form-control" rows="3" [(ngModel)]="rejectionReason"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="onClose()">Đóng</button>
+        <button type="button" class="btn btn-danger" (click)="reject()" [disabled]="isRejecting">
+          <span *ngIf="isRejecting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+          Xác nhận từ chối
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+

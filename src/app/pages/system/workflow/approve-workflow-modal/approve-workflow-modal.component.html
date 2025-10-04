@@ -1,0 +1,22 @@
+<div class="modal" tabindex="-1" [ngClass]="{ 'show d-block': isVisible }" aria-hidden="true" *ngIf="isVisible">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Phê duyệt yêu cầu publish</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="onClose()"></button>
+      </div>
+      <div class="modal-body">
+        <p>Bạn có chắc chắn muốn phê duyệt yêu cầu này?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="onClose()">Đóng</button>
+        <button type="button" class="btn btn-success" (click)="approve()" [disabled]="isApproving">
+          <span *ngIf="isApproving" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+          Xác nhận
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
