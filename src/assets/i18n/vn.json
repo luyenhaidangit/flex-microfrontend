@@ -124,6 +124,9 @@
         "SETTINGS": "Cài đặt hệ thống"
       }
     },
+    "BRANCH": {
+      "TEXT": "Quản lý chi nhánh"
+    },
     "WORKFLOW": {
       "TEXT": "Quản lý quy trình"
     },

@@ -74,6 +74,12 @@ export const MENU: MenuItem[] = [
             },
         ]
     },
+    {
+        id: 'branch-component',
+        label: 'MENUITEMS.BRANCH.TEXT',
+        icon: 'bx bx-building',
+        link: '/branch',
+    },
     // {
     //     id: 'workflow-module',
     //     label: 'MENUITEMS.WORKFLOW.TEXT',
