@@ -7,14 +7,19 @@ import { ToastService } from 'angular-toastify';
 import { Branch, PagingState, RequestDetailData, BranchSearchParams } from './branch.models';
 import { finalize } from 'rxjs/operators';
 import { getBranchTypeLabel } from './branch.helper';
+import { BRANCH_CONFIG } from './branch.config';
+import { EntityListComponent } from 'src/app/core/components/base/entity-list.component';
 
 @Component({
   selector: 'app-branch',
   templateUrl: './branch.component.html',
   styleUrls: ['./branch.component.scss']
 })
-export class BranchComponent implements OnInit {
+export class BranchComponent extends EntityListComponent<any> implements OnInit {
   
+  // Config base
+  CONFIG = BRANCH_CONFIG;
+
   // Prepare default static data
   DEFAULT_PER_PAGE_OPTIONS = DEFAULT_PER_PAGE_OPTIONS;
   breadCrumbItems = [

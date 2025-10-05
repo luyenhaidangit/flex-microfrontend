@@ -44,6 +44,9 @@ import { BranchComponent } from './branch/branch.component';
 
 import { FilemanagerComponent } from './filemanager/filemanager.component';
 
+// Module
+import { PaginationModule as CustomPaginationModule } from 'src/app/core/components/pagination/pagination.module';
+
 @NgModule({
   declarations: [CalendarComponent, ChatComponent, FilemanagerComponent, BranchComponent],
   imports: [
@@ -79,7 +82,8 @@ import { FilemanagerComponent } from './filemanager/filemanager.component';
     CollapseModule.forRoot(),
     SimplebarAngularModule,
     LightboxModule,
-    PickerModule
+    PickerModule,
+    CustomPaginationModule
   ],
 })
 export class PagesModule { }

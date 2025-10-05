@@ -1,14 +1,14 @@
 <!-- View -->
 <!-- View -->
 <div class="container-fluid">
-  <!-- <app-page-title title="Quản lý chi nhánh" [breadcrumbItems]="breadCrumbItems"></app-page-title> -->
+  <app-page-title title="{{ CONFIG.breadcrumb.title }}" [breadcrumbItems]="CONFIG.breadcrumb.items"></app-page-title>
 
   <div class="bg-white rounded shadow-sm p-3">
     <!-- Tabset -->
-    <!-- <tabset class="nav-pills nav-tabs mb-3">
+    <tabset class="nav-pills nav-tabs mb-3">
       <tab heading="Đã duyệt" (selectTab)="switchTab('approved')"></tab>
       <tab heading="Chờ duyệt" (selectTab)="switchTab('pending')"></tab>
-    </tabset> -->
+    </tabset>
 
     <!-- Search form -->
     <div class="row gx-3 mb-3 gy-2 align-items-end">
@@ -150,6 +150,11 @@
         </li>
       </ul>
 
+      <!-- Pagination -->
+      <app-pagination [paginationState]="getPaginationState()" [pageSizeOptions]="paginationConfig.pageSizeOptions"
+        [maxVisiblePages]="5" (pageChanged)="onPageChange($event)" (pageSizeChanged)="onPageSizeChange($event)">
+      </app-pagination>
+      
       <!-- page size -->
       <!-- <div class="per-page">
         Hiển thị
