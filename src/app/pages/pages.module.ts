@@ -40,11 +40,12 @@ import { CalendarComponent } from './calendar/calendar.component';
 import { MapsModule } from './maps/maps.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ChatComponent } from './chat/chat.component';
+import { BranchComponent } from './branch/branch.component';
 
 import { FilemanagerComponent } from './filemanager/filemanager.component';
 
 @NgModule({
-  declarations: [CalendarComponent, ChatComponent, FilemanagerComponent],
+  declarations: [CalendarComponent, ChatComponent, FilemanagerComponent, BranchComponent],
   imports: [
     CommonModule,
     FormsModule,

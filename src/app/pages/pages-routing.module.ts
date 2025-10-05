@@ -5,13 +5,15 @@ import { CalendarComponent } from './calendar/calendar.component';
 import { ChatComponent } from './chat/chat.component';
 import { DefaultComponent } from './dashboards/default/default.component';
 import { FilemanagerComponent } from './filemanager/filemanager.component';
+import { BranchComponent } from 'src/app/pages/branch/branch.component';
 
 const routes: Routes = [
   // { path: '', redirectTo: 'dashboard' },
   { path: '', loadChildren: () => import('./dashboards/dashboards.module').then(m => m.DashboardsModule) },
   // System
   { path: 'system', loadChildren: () => import('./system/system.module').then(m => m.SystemModule) },
-  // Workflow
+  // Components
+  { path: 'branch', component: BranchComponent },
   { path: 'workflow', loadChildren: () => import('./workflow/workflow.module').then(m => m.WorkflowModule) },
   { path: 'calendar', component: CalendarComponent },
   { path: 'chat', component: ChatComponent },

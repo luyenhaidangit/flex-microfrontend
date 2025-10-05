@@ -1,0 +1,62 @@
+export interface Branch {
+  id: number;
+  name: string;
+  code: string;
+  branchType: number; // Thêm trường BranchType theo C# entity
+  description?: string; // Thêm trường Description theo C# entity
+
+  isActive: 'Y' | 'N' | boolean;
+  createdAt: string;
+  lastUpdated?: string;
+  status: 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED';
+  version?: number;
+  parentId?: number;
+  makerId?: string;
+  checkerId?: string;
+  requestId?: number;
+  // Additional fields from API response
+  requestedBy?: string;
+  requestedDate?: string;
+  approveDate?: string;
+  pendingAction?: 'CREATE' | 'UPDATE' | 'DELETE';
+  requestType?: 'CREATE' | 'UPDATE' | 'DELETE';
+}
+
+export interface BranchSearchParams {
+  pageIndex: number;
+  pageSize: number;
+  keyword?: string;
+  isActive?: 'Y' | 'N' | null;
+  type?: 'CREATE' | 'UPDATE' | 'DELETE' | null;
+}
+
+export interface PagingState {
+  pageIndex: number;
+  pageSize: number;
+  totalPages: number;
+  totalItems: number;
+  keyword?: string;
+  isActive?: boolean | null;
+  type?: 'CREATE' | 'UPDATE' | 'DELETE' | null;
+  createdDate?: Date | null;
+}
+
+export interface PagingRequest {
+  pageIndex: number;
+  pageSize: number;
+  keyword?: string;
+  isActive?: boolean;
+  createdDate?: string;
+}
+
+export interface RequestDetailData {
+  requestId: string;
+  createdBy: string;
+  createdDate: string;
+  type: 'CREATE' | 'UPDATE' | 'DELETE';
+  oldData?: any;
+  newData?: any;
+  rejectReason?: string;
+  rejectedBy?: string;
+  rejectedDate?: string;
+}
