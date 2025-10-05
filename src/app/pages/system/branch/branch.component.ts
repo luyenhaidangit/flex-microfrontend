@@ -1,22 +1,26 @@
-import { Component, OnInit, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { BranchService } from './branch.service';
+import { DEFAULT_PER_PAGE_OPTIONS } from 'src/app/core/constants/shared.constant';
 import { ToastService } from 'angular-toastify';
-import { BranchItem, BranchFilter, RequestDetailData } from './branch.models';
-import { BRANCH_CONFIG } from './branch.config';
-import { EntityListComponent } from 'src/app/core/components/base/entity-list.component';
-import { forkJoin, Subject } from 'rxjs';
-import { finalize, takeUntil } from 'rxjs/operators';
+import { Branch, PagingState, RequestDetailData, BranchSearchParams } from './branch.models';
+import { finalize } from 'rxjs/operators';
+import { getBranchTypeLabel } from './branch.helper';
 
 @Component({
   selector: 'app-branch',
   templateUrl: './branch.component.html',
   styleUrls: ['./branch.component.scss']
 })
-export class BranchComponent extends EntityListComponent<BranchFilter> implements OnInit, OnDestroy {
+export class BranchComponent implements OnInit {
   
-  CONFIG = BRANCH_CONFIG;
+  // Prepare default static data
+  DEFAULT_PER_PAGE_OPTIONS = DEFAULT_PER_PAGE_OPTIONS;
+  breadCrumbItems = [
+    { label: 'Quản trị hệ thống' },
+    { label: 'Quản lý chi nhánh', active: true }
+  ];
 
   @ViewChild('detailModal') detailModalTemplateRef!: TemplateRef<any>;
   @ViewChild('createModal') createTemplateRef!: TemplateRef<any>;
@@ -26,8 +30,18 @@ export class BranchComponent extends EntityListComponent<BranchFilter> implement
   branchForm!: FormGroup;
   deleteForm!: FormGroup;
 
-  selectedRequest: any = null;
-  showRequestDetailModal = false;
+  pendingItems: Branch[] = [];
+
+  pagingState: PagingState = {
+    pageIndex : 1,
+    pageSize  : 10,
+    totalPages: 0,
+    totalItems: 0,
+    keyword   : '',
+    isActive  : null,
+    type: null,
+    createdDate: null
+  };
 
   @ViewChild('approveModal') approveTemplateRef!: TemplateRef<any>;
   @ViewChild('rejectModal') rejectTemplateRef!: TemplateRef<any>;
@@ -40,17 +54,23 @@ export class BranchComponent extends EntityListComponent<BranchFilter> implement
   rejectForm!: FormGroup;
 
   // Prepare component
+  isLoadingList = false;
   isLoadingHistory = false;
   isLoadingRequestDetail = false;
   modalRef?: BsModalRef | null = null;
   isSubmitting: boolean = false;
 
   // Prepare data for the component
-  selectedItem: BranchItem | null = null;
+  items: Branch[] = [];
+  selectedItem: Branch | null = null;
   changeHistory: any[] = [];
 
   showSubmitConfirm = false;
   rejectedReason: string | null = null;
+
+  // Tab navigation state
+  activeTab: 'approved' | 'pending' = 'approved';
+  pendingCount: number = 0;
 
   // Enhanced detail modal properties
   requestDetailData: RequestDetailData | null = null;
@@ -62,19 +82,35 @@ export class BranchComponent extends EntityListComponent<BranchFilter> implement
   isApproving = false;
   isRejecting = false;
 
-  // Helper methods
-  public getBranchTypeLabel = this.getBranchTypeLabelHelper;
-  
-  private getBranchTypeLabelHelper(branchType: number): string {
-    switch (branchType) {
-      case 1: return 'Hội sở chính';
-      case 2: return 'Chi nhánh';
-      case 3: return 'Phòng giao dịch';
-      default: return 'Không xác định';
+  // Current user info
+  currentUser: any = null;
+
+  skeletonRows = Array.from({ length: 8 });
+  tableConfig = {
+    approved: {
+      head: ['Mã chi nhánh', 'Tên chi nhánh', 'Loại chi nhánh', 'Mô tả', 'Trạng thái', 'Thao tác'],
+      skeletonCols: ['60px', '140px', '100px', '200px', '80px', '120px']
+    },
+    pending: {
+      head: ['Mã chi nhánh', 'Tên chi nhánh', 'Mô tả', 'Loại yêu cầu', 'Người tạo', 'Ngày tạo', 'Thao tác'],
+      skeletonCols: ['60px', '140px', '200px', '90px', '120px', '90px', '120px']
     }
+  };
+
+  get headCols(): string[] {
+    return this.tableConfig[this.activeTab].head;
+  }
+  get skeletonCols(): string[] {
+    return this.tableConfig[this.activeTab].skeletonCols;
+  }
+  get colspan(): number {
+    return this.headCols.length;
   }
 
-  trackByCode(_: number, item: BranchItem) { return item.code; }
+  // Helper methods
+  public getBranchTypeLabel = getBranchTypeLabel;
+
+  trackByCode(_: number, item: Branch) { return item.code; }
   trackById(_: number, item: any)    { return item.requestId ?? item.id; }
 
   constructor(
@@ -82,15 +118,11 @@ export class BranchComponent extends EntityListComponent<BranchFilter> implement
     private modalService: BsModalService,
     private fb: FormBuilder,
     private toastService: ToastService
-  ) {
-    super({ keyword: '', isActive: null, type: null });
-  }
+  ) {}
 
   ngOnInit(): void {
-    this.loadingTable = true;
-    
-    // Load initial data
-    this.onSearch();
+    // Load data
+    this.getItems();
 
     // Initialize forms
     this.branchForm = this.fb.group({
@@ -115,45 +147,123 @@ export class BranchComponent extends EntityListComponent<BranchFilter> implement
     this.overrideToastIconSize();
   }
 
-  ngOnDestroy(): void {
-    this.cleanup();
+  // Handle search all items
+  get searchParams(): BranchSearchParams {
+    const { pageIndex, pageSize, keyword, isActive } = this.pagingState;
+    const params: BranchSearchParams = { pageIndex, pageSize };
+    if (keyword?.trim()) params.keyword = keyword.trim();
+    if (isActive === true) params.isActive = 'Y';
+    else if (isActive === false) params.isActive = 'N';
+    return params;
   }
 
-  // Implement abstract method from base class
-  public onSearch(): void {
-    if (this.activeTabId === 'approved') {
-      this.loadData<BranchItem>(this.branchService.getApprovedBranches(this.getCleanSearchParams()));
+  // Handle search for pending items (with requestType filter)
+  get pendingSearchParams(): BranchSearchParams {
+    const { pageIndex, pageSize, keyword, type } = this.pagingState;
+    const params: BranchSearchParams = { pageIndex, pageSize };
+    if (keyword?.trim()) params.keyword = keyword.trim();
+    if (type) params.type = type;
+    return params;
+  }
+
+  private updatePagingState(page: Partial<PagingState>) {
+    Object.assign(this.pagingState, {
+      pageIndex: page.pageIndex,
+      pageSize: page.pageSize,
+      totalPages: page.totalPages,
+      totalItems: page.totalItems
+    });
+  }
+
+  getItems(): void {
+    this.isLoadingList = true;
+    this.branchService.getApprovedBranches({ ...this.searchParams })
+      .pipe(finalize(() => this.isLoadingList = false))
+      .subscribe({
+        next: (res) => {
+          if (res?.isSuccess) {
+            const { items, ...page } = res.data;
+            this.items = items ?? [];
+            this.updatePagingState(page);
+          } else {
+            this.items = [];
+          }
+        }
+      });
+  }
+
+  onSearch(): void {
+    if (this.activeTab === 'approved') {
+      this.getItems();
     } else {
-      this.loadData<any>(this.branchService.getPendingBranches(this.getCleanSearchParams()));
+      this.getPendingItems();
     }
   }
 
-  onTabChange(tabId: string): void {
-    this.activeTabId = tabId;
+  changePage(page: number): void {
+    if (page < 1 || page > this.pagingState.totalPages || page === this.pagingState.pageIndex) return;
+    this.pagingState.pageIndex = page;
     this.onSearch();
   }
 
-  // Override detail modal to add branch-specific logic
-  override openDetailModal(branch: BranchItem): void {
-    super.openDetailModal(branch);
+  changePageSize(): void {
+    this.pagingState.pageIndex = 1;
+    this.onSearch();
   }
 
-  // Pending request methods
-  openPendingDetailModal(request: any): void {
-    this.selectedRequest = request;
-    this.showRequestDetailModal = true;
-  }
-  
-  // Override approve modal to add branch-specific logic
-  override openApproveModal(request: any): void {
-    this.selectedRequest = request;
-    super.openApproveModal(request);
-  }
-  
-  // Override reject modal to add branch-specific logic
-  override openRejectModal(request: any): void {
-    this.selectedRequest = request;
-    super.openRejectModal(request);
+  // Handle view detail item
+  openDetailModal(item: any): void {
+    if (this.activeTab === 'approved') {
+      const code = item?.code;
+      if (!code) {
+        this.toastService.error('Không tìm thấy mã chi nhánh!');
+        return;
+      }
+      this.selectedItem = null;
+      this.branchService.getApprovedBranchByCode(code).subscribe({
+        next: (res) => {
+          this.selectedItem = res?.data || item;
+          
+          // Reset change history when opening modal
+          this.changeHistory = [];
+          
+          this.modalRef = this.modalService.show(this.detailModalTemplateRef, { 
+            class: 'modal-xl',
+            backdrop: 'static',
+            keyboard: false, 
+          });
+        }
+      });
+    } else {
+      // pending tab: show request detail modal
+      const requestId = item?.requestId || item?.id;
+      if (!requestId) {
+        this.toastService.error('Không tìm thấy ID yêu cầu!');
+        return;
+      }
+      this.requestDetailData = null;
+      this.selectedItem = item;
+      this.isApproving = false;
+      this.isRejecting = false;
+      this.branchService.getBranchRequestDetail(requestId).subscribe({
+        next: (res) => {
+          if (res?.isSuccess) {
+            this.requestDetailData = res.data;
+            this.modalRef = this.modalService.show(this.requestDetailTemplateRef, {
+              class: 'modal-xl',
+              backdrop: 'static',
+              keyboard: false,
+              ignoreBackdropClick: true
+            });
+            this.modalRef.onHidden?.subscribe(() => {
+              this.resetLoadingStates();
+            });
+          } else {
+            this.toastService.error('Không thể lấy thông tin chi tiết yêu cầu!');
+          }
+        }
+      });
+    }
   }
 
   // Load change history when history tab is opened
@@ -184,8 +294,8 @@ export class BranchComponent extends EntityListComponent<BranchFilter> implement
       });
   }
 
-  // Override create modal to add branch-specific logic
-  override openCreateModal(): void {
+  // Open create modal
+  openCreateModal(): void {
     this.branchForm.reset();
     this.branchForm.patchValue({
       isActive: true,
@@ -216,7 +326,7 @@ export class BranchComponent extends EntityListComponent<BranchFilter> implement
           this.toastService.success('Gửi duyệt thành công!');
           this.branchForm.reset();
           this.modalRef?.hide();
-          this.onSearch();
+          this.getItems();
         },
         error: (err) => {
           this.handleError(err, 'Gửi duyệt thất bại!');
@@ -224,8 +334,8 @@ export class BranchComponent extends EntityListComponent<BranchFilter> implement
       });
   }
 
-  // Override edit modal to add branch-specific logic
-  override openEditModal(item: BranchItem): void {
+  // Open edit modal
+  openEditModal(item: Branch): void {
     this.selectedItem = item;
     this.branchForm.patchValue({
       code: item.code,
@@ -263,13 +373,13 @@ export class BranchComponent extends EntityListComponent<BranchFilter> implement
         next: (response) => {
           this.toastService.success('Yêu cầu cập nhật chi nhánh đã được gửi thành công!');
           this.closeModal();
-          this.onSearch();
+          this.onSearch(); // Reload data
         }
       });
   }
 
-  // Override delete modal to add branch-specific logic
-  override openDeleteModal(item: BranchItem): void {
+  // Open delete modal
+  openDeleteModal(item: Branch): void {
     this.selectedItem = item;
     this.deleteForm.reset();
     this.openModal(this.deleteTemplateRef, {
@@ -295,69 +405,35 @@ export class BranchComponent extends EntityListComponent<BranchFilter> implement
         next: (response) => {
           this.toastService.success('Yêu cầu xóa chi nhánh đã được gửi thành công!');
           this.closeModal();
-          this.onSearch();
+          this.onSearch(); // Reload data
         }
       });
   }
 
-  // Handle approve success
-  onBranchApproved(result: any): void {
-    console.log('Branch request approved:', result);
-    super.onApproveModalClose();
-    this.onSearch();
-  }
-
-  onApproveModalClose(): void {
-    super.onApproveModalClose();
-  }
-  
-  // Handle reject success
-  onBranchRejected(result: any): void {
-    console.log('Branch request rejected:', result);
-    super.onRejectModalClose();
-    this.onSearch();
-  }
-
-  onRejectModalClose(): void {
-    super.onRejectModalClose();
-  }
-  
-  // Modal callback methods
-  onDetailModalClose(): void {
-    super.onDetailModalClose();
-  }
-  
-  onCreateModalClose(): void {
-    super.onCreateModalClose();
-  }
-  
-  onBranchCreated(): void {
-    super.onCreateModalClose();
-    this.onSearch();
-  }
-  
-  onEditModalClose(): void {
-    super.onEditModalClose();
-  }
-  
-  onBranchUpdated(): void {
-    super.onEditModalClose();
-    this.onSearch();
-  }
-  
-  onDeleteModalClose(): void {
-    super.onDeleteModalClose();
-  }
-  
-  onBranchDeleted(): void {
-    super.onDeleteModalClose();
-    this.onSearch();
-  }
-  
-  // Request detail modal methods
-  onRequestDetailModalClose(): void {
-    this.showRequestDetailModal = false;
-    this.selectedRequest = null;
+  // Get pending items
+  getPendingItems(): void {
+    // Gọi API lấy chi nhánh chờ duyệt
+    this.isLoadingList = true;
+    const params = { ...this.pendingSearchParams };
+    this.branchService.getPendingBranches(params)
+      .pipe(finalize(() => this.isLoadingList = false))
+      .subscribe({
+        next: (res) => {
+          if (res?.isSuccess) {
+            const { items, ...page } = res.data;
+            this.pendingItems = items ?? [];
+            Object.assign(this.pagingState, {
+              pageIndex : page.pageIndex,
+              pageSize  : page.pageSize,
+              totalPages: page.totalPages,
+              totalItems: page.totalItems
+            });
+          } else {
+            this.pendingItems = [];
+            this.toastService.error('Không lấy được danh sách chi nhánh chờ duyệt!');
+          }
+        }
+      });
   }
 
   openRequestDetailModal(item: any): void {
@@ -412,6 +488,12 @@ export class BranchComponent extends EntityListComponent<BranchFilter> implement
     }, 100);
   }
 
+  switchTab(tab: 'approved' | 'pending') {
+    // Luôn gọi lại API khi chuyển tab, kể cả khi tab không đổi
+    this.activeTab = tab;
+    this.pagingState.pageIndex = 1; // Reset về trang đầu tiên khi chuyển tab
+    this.onSearch();
+  }
 
   // Thay đổi các nơi gọi search() thành onSearch()
   // Trong onSubmitBranch, submitEditBranchForm, confirmDeleteBranch, approveBranch, confirmRejectBranch, v.v.
@@ -449,6 +531,15 @@ export class BranchComponent extends EntityListComponent<BranchFilter> implement
     });
   }
 
+  openApproveModal(item: any): void {
+    this.selectedItem = item;
+    this.openModal(this.approveTemplateRef, {
+      class: 'modal-xl',
+      backdrop: 'static',
+      keyboard: false,
+      ignoreBackdropClick: true
+    });
+  }
 
   approveBranch(): void {
     // Prevent double submission
@@ -473,6 +564,33 @@ export class BranchComponent extends EntityListComponent<BranchFilter> implement
     });
   }
 
+  openRejectModal(item?: any): void {
+    if (item) {
+      this.selectedItem = item;
+    }
+    this.rejectForm.reset();
+
+    if (this.modalRef) {
+      const oldModalRef = this.modalRef;
+      oldModalRef.onHidden?.subscribe(() => {
+        this.modalRef = null;
+        this.openModal(this.rejectTemplateRef, {
+          class: 'modal-xl',
+          backdrop: 'static',
+          keyboard: false,
+          ignoreBackdropClick: true
+        });
+      });
+      oldModalRef.hide();
+    } else {
+      this.openModal(this.rejectTemplateRef, {
+        class: 'modal-xl',
+        backdrop: 'static',
+        keyboard: false,
+        ignoreBackdropClick: true
+      });
+    }
+  }
 
   confirmRejectBranch(): void {
     this.rejectForm.markAllAsTouched();
