@@ -45,6 +45,7 @@ import { BranchComponent } from './branch/branch.component';
 import { FilemanagerComponent } from './filemanager/filemanager.component';
 
 // Module
+import { SharedModule } from 'src/app/shared/shared.module';
 import { PaginationModule as CustomPaginationModule } from 'src/app/core/components/pagination/pagination.module';
 
 @NgModule({
@@ -83,6 +84,7 @@ import { PaginationModule as CustomPaginationModule } from 'src/app/core/compone
     SimplebarAngularModule,
     LightboxModule,
     PickerModule,
+    SharedModule,
     CustomPaginationModule
   ],
 })
