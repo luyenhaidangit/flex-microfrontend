@@ -123,7 +123,9 @@ export class BranchComponent extends EntityListComponent<any> implements OnInit 
     private modalService: BsModalService,
     private fb: FormBuilder,
     private toastService: ToastService
-  ) {}
+  ) {
+    super({} as any);
+  }
 
   ngOnInit(): void {
     // Load data
@@ -171,7 +173,7 @@ export class BranchComponent extends EntityListComponent<any> implements OnInit 
     return params;
   }
 
-  private updatePagingState(page: Partial<PagingState>) {
+  public updatePagingState(page: Partial<PagingState>) {
     Object.assign(this.pagingState, {
       pageIndex: page.pageIndex,
       pageSize: page.pageSize,
