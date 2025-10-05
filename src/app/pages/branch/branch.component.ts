@@ -20,13 +20,6 @@ export class BranchComponent extends EntityListComponent<any> implements OnInit 
   // Config base
   CONFIG = BRANCH_CONFIG;
 
-  // Prepare default static data
-  DEFAULT_PER_PAGE_OPTIONS = DEFAULT_PER_PAGE_OPTIONS;
-  breadCrumbItems = [
-    { label: 'Quản trị hệ thống' },
-    { label: 'Quản lý chi nhánh', active: true }
-  ];
-
   @ViewChild('detailModal') detailModalTemplateRef!: TemplateRef<any>;
   @ViewChild('createModal') createTemplateRef!: TemplateRef<any>;
   @ViewChild('editModal') editTemplateRef!: TemplateRef<any>;
@@ -44,8 +37,7 @@ export class BranchComponent extends EntityListComponent<any> implements OnInit 
     totalItems: 0,
     keyword   : '',
     isActive  : null,
-    type: null,
-    createdDate: null
+    type: null
   };
 
   @ViewChild('approveModal') approveTemplateRef!: TemplateRef<any>;
@@ -61,7 +53,6 @@ export class BranchComponent extends EntityListComponent<any> implements OnInit 
   // Prepare component
   isLoadingList = false;
   isLoadingHistory = false;
-  isLoadingRequestDetail = false;
   modalRef?: BsModalRef | null = null;
   isSubmitting: boolean = false;
 
@@ -75,7 +66,6 @@ export class BranchComponent extends EntityListComponent<any> implements OnInit 
 
   // Tab navigation state
   activeTab: 'approved' | 'pending' = 'approved';
-  pendingCount: number = 0;
 
   // Enhanced detail modal properties
   requestDetailData: RequestDetailData | null = null;
@@ -86,9 +76,6 @@ export class BranchComponent extends EntityListComponent<any> implements OnInit 
   // Loading states for approve/reject actions
   isApproving = false;
   isRejecting = false;
-
-  // Current user info
-  currentUser: any = null;
 
   skeletonRows = Array.from({ length: 8 });
   tableConfig = {
@@ -205,17 +192,6 @@ export class BranchComponent extends EntityListComponent<any> implements OnInit 
     } else {
       this.getPendingItems();
     }
-  }
-
-  changePage(page: number): void {
-    if (page < 1 || page > this.pagingState.totalPages || page === this.pagingState.pageIndex) return;
-    this.pagingState.pageIndex = page;
-    this.onSearch();
-  }
-
-  changePageSize(): void {
-    this.pagingState.pageIndex = 1;
-    this.onSearch();
   }
 
   // Handle view detail item
@@ -632,30 +608,6 @@ export class BranchComponent extends EntityListComponent<any> implements OnInit 
     this.resetLoadingStates();
   }
 
-  // Method to handle modal backdrop click
-  onBackdropClick(): void {
-    if (this.isApproving || this.isRejecting) {
-      this.toastService.warn('Không thể đóng modal khi đang thực hiện thao tác');
-      return;
-    }
-    this.closeModal();
-  }
-
-  // Method to handle ESC key press
-  onEscKey(): void {
-    if (this.isApproving || this.isRejecting) {
-      this.toastService.warn('Không thể đóng modal khi đang thực hiện thao tác');
-      return;
-    }
-    this.closeModal();
-  }
-
-  // Hàm xử lý input: upperCase và loại bỏ dấu cách, có thể tái sử dụng cho các input khác
-  onInputUpperNoSpace(controlName: string, event: any) {
-    const value = event.target.value.toUpperCase().replace(/\s+/g, '');
-    this.branchForm.get(controlName)?.setValue(value, { emitEvent: false });
-  }
-
   getRequestTypeLabel(requestType: string): string {
     const type = (requestType || '').toUpperCase();
     if (type === 'CREATE') return 'Tạo mới';
@@ -722,27 +674,6 @@ export class BranchComponent extends EntityListComponent<any> implements OnInit 
 
   getRequestType(): string {
     return this.requestDetailData?.type;
-  }
-
-  // Missing methods referenced in template
-  saveDraftBranch(): void {
-    // Implementation for saving draft branch
-    this.toastService.info('Chức năng lưu nháp đang được phát triển');
-  }
-
-  openDeleteDraftModal(): void {
-    // Implementation for opening delete draft modal
-    this.openModal(this.deleteDraftModal, {
-      class: 'modal-xl',
-      backdrop: 'static',
-      keyboard: false
-    });
-  }
-
-  confirmDeleteDraft(): void {
-    // Implementation for confirming delete draft
-    this.toastService.info('Chức năng xóa nháp đang được phát triển');
-    this.closeModal();
   }
 
   handleError(err: any, defaultMsg = 'Đã xảy ra lỗi!') {
