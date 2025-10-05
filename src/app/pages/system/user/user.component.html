@@ -1,189 +1,189 @@
 <div class="container-fluid">
 	<app-page-title title="{{ CONFIG.breadcrumb.title }}" [breadcrumbItems]="CONFIG.breadcrumb.items"></app-page-title>
-
+	
 	<div class="bg-white rounded shadow-sm p-3">
-
+		
 		<!-- Tabset -->
 		<app-tabs 
-			[tabs]="tabsConfig.items" 
-			[activeId]="activeTabId" 
-			(activeIdChange)="onTabChange($event)">
-		</app-tabs>
-
-		<!-- Search -->
-		<div class="row gx-3 mb-3 gy-2 align-items-end">
-			<div class="col-md-3">
-				<label class="form-label fw-bold text-muted">Từ khóa</label>
-				<input class="form-control" type="text" placeholder="Nhập từ khóa..." [(ngModel)]="state.filter.keyword">
-			</div>
-		
-			<!-- Display only in approved tab -->
-			<div class="col-md-3" *ngIf="activeTabId === 'approved'">
-				<label class="form-label fw-bold text-muted">Chi nhánh</label>
-				<select class="form-select" [(ngModel)]="state.filter.branchId">
-					<option [ngValue]="null">Tất cả</option>
-					<option *ngFor="let branch of branches" [ngValue]="branch.id">
-						{{ branch.name }}
-					</option>
-				</select>
-			</div>
-		
-			<!-- Display only in pending tab -->
-			<div class="col-md-3" *ngIf="activeTabId === 'pending'">
-				<label class="form-label fw-bold text-muted">Loại yêu cầu</label>
-				<select class="form-select" [(ngModel)]="state.filter.type">
-					<option *ngFor="let option of filterConfig.requestTypeOptions" [ngValue]="option.value">
-						{{ option.label }}
-					</option>
-				</select>
-			</div>
-		
-			<div class="col-md-2">
-				<button class="btn btn-primary w-100" (click)="onSearch()">
-					<i class="bx bx-search-alt-2"></i> Tìm kiếm
-				</button>
-			</div>
-		
-			<div class="col-md-4 text-md-end">
-				<button type="button" class="btn btn-success fw-bold" (click)="openCreateModal()">
-					<i class="fas fa-plus me-1"></i> Thêm mới
-				</button>
-			</div>
+		[tabs]="tabsConfig.items" 
+		[activeId]="activeTabId" 
+		(activeIdChange)="onTabChange($event)">
+	</app-tabs>
+	
+	<!-- Search -->
+	<div class="row gx-3 mb-3 gy-2 align-items-end">
+		<div class="col-md-3">
+			<label class="form-label fw-bold text-muted">Từ khóa</label>
+			<input class="form-control" type="text" placeholder="Nhập từ khóa..." [(ngModel)]="state.filter.keyword">
 		</div>
-
-		<div class="table-responsive table-header-primary">
-			<table class="table align-middle table-nowrap dt-responsive nowrap w-100">
-				<thead>
-					<tr>
-						<th *ngFor="let col of CONFIG.table.columns[activeTabId]">{{ col.label }}</th>
-					</tr>
-				</thead>
-				<tbody *ngIf="loadingTable">
-					<tr *ngFor="let _ of [].constructor(CONFIG.table.skeleton[activeTabId]?.rows || 8)">
-						<td *ngFor="let w of CONFIG.table.skeleton[activeTabId]?.columns || []">
-							<app-skeleton [width]="w" height="18px"></app-skeleton>
+		
+		<!-- Display only in approved tab -->
+		<div class="col-md-3" *ngIf="activeTabId === 'approved'">
+			<label class="form-label fw-bold text-muted">Chi nhánh</label>
+			<select class="form-select" [(ngModel)]="state.filter.branchId">
+				<option [ngValue]="null">Tất cả</option>
+				<option *ngFor="let branch of branches" [ngValue]="branch.id">
+					{{ branch.name }}
+				</option>
+			</select>
+		</div>
+		
+		<!-- Display only in pending tab -->
+		<div class="col-md-3" *ngIf="activeTabId === 'pending'">
+			<label class="form-label fw-bold text-muted">Loại yêu cầu</label>
+			<select class="form-select" [(ngModel)]="state.filter.type">
+				<option *ngFor="let option of filterConfig.requestTypeOptions" [ngValue]="option.value">
+					{{ option.label }}
+				</option>
+			</select>
+		</div>
+		
+		<div class="col-md-2">
+			<button class="btn btn-primary w-100" (click)="onSearch()">
+				<i class="bx bx-search-alt-2"></i> Tìm kiếm
+			</button>
+		</div>
+		
+		<div class="col-md-4 text-md-end">
+			<button type="button" class="btn btn-success fw-bold" (click)="openCreateModal()">
+				<i class="fas fa-plus me-1"></i> Thêm mới
+			</button>
+		</div>
+	</div>
+	
+	<div class="table-responsive table-header-primary">
+		<table class="table align-middle table-nowrap dt-responsive nowrap w-100">
+			<thead>
+				<tr>
+					<th *ngFor="let col of CONFIG.table.columns[activeTabId]">{{ col.label }}</th>
+				</tr>
+			</thead>
+			<tbody *ngIf="loadingTable">
+				<tr *ngFor="let _ of [].constructor(CONFIG.table.skeleton[activeTabId]?.rows || 8)">
+					<td *ngFor="let w of CONFIG.table.skeleton[activeTabId]?.columns || []">
+						<app-skeleton [width]="w" height="18px"></app-skeleton>
+					</td>
+				</tr>
+			</tbody>
+			<tbody *ngIf="!loadingTable && items.length">
+				<!-- Approved tab content -->
+				<ng-container *ngIf="activeTabId === 'approved'">
+					<tr *ngFor="let u of items">
+						<td>{{ u.userName | safeField }}</td>
+						<td>{{ u.fullName | safeField }}</td>
+						<td>{{ u.email | safeField }}</td>
+						<td>{{ u.branchName | safeField }}</td>
+						<td>
+							<app-badge [value]="u.isActive" type="status"></app-badge>
+						</td>
+						<td class="action-column">
+							<button class="btn btn-link p-0 text-info" (click)="openDetailModal(u)" title="Xem">
+								<i class="fas fa-eye"></i>
+							</button>
+							<button class="btn btn-link p-0 ms-2 text-warning" (click)="openEditModal(u)" title="Sửa">
+								<i class="fas fa-edit"></i>
+							</button>
+							<button class="btn btn-link p-0 ms-2 text-danger" (click)="openDeleteModal(u)" title="Xoá">
+								<i class="fas fa-trash"></i>
+							</button>
 						</td>
 					</tr>
-				</tbody>
-				<tbody *ngIf="!loadingTable && items.length">
-					<!-- Approved tab content -->
-					<ng-container *ngIf="activeTabId === 'approved'">
-						<tr *ngFor="let u of items">
-							<td>{{ u.userName | safeField }}</td>
-							<td>{{ u.fullName | safeField }}</td>
-							<td>{{ u.email | safeField }}</td>
-							<td>{{ u.branchName | safeField }}</td>
-							<td>
-								<app-badge [value]="u.isActive" type="status"></app-badge>
-							</td>
-							<td class="action-column">
-								<button class="btn btn-link p-0 text-info" (click)="openDetailModal(u)" title="Xem">
-									<i class="fas fa-eye"></i>
-								</button>
-								<button class="btn btn-link p-0 ms-2 text-warning" (click)="openEditModal(u)" title="Sửa">
-									<i class="fas fa-edit"></i>
-								</button>
-								<button class="btn btn-link p-0 ms-2 text-danger" (click)="openDeleteModal(u)" title="Xoá">
-									<i class="fas fa-trash"></i>
-								</button>
-							</td>
-						</tr>
-					</ng-container>
-					<!-- Pending tab content -->
-					<ng-container *ngIf="activeTabId === 'pending'">
-						<tr *ngFor="let u of items">
-							<td>{{ u.userName | safeField }}</td>
-							<td>{{ u.fullName | safeField }}</td>
-							<td>{{ u.email | safeField }}</td>
-							<td>
-								<app-badge [value]="u.action" type="action"></app-badge>
-							</td>
-							<td>{{ u.requestedDate | date:'dd/MM/yyyy HH:mm' }}</td>
-							<td>{{ u.requestedBy | safeField }}</td>
-							<td class="action-column">
-								<button class="btn btn-link p-0 text-info" (click)="openPendingDetailModal(u)" title="Xem chi tiết">
-									<i class="fas fa-eye"></i>
-								</button>
-								<button class="btn btn-link p-0 ms-2 text-success" (click)="openApproveModal(u)" title="Duyệt">
-									<i class="fas fa-check"></i>
-								</button>
-								<button class="btn btn-link p-0 ms-2 text-danger" (click)="openRejectModal(u)" title="Từ chối">
-									<i class="fas fa-times"></i>
-								</button>
-							</td>
-						</tr>
-					</ng-container>
-				</tbody>
-				<tbody *ngIf="!loadingTable && !items.length">
-					<tr>
-						<td [attr.colspan]="CONFIG.table.columns[activeTabId]?.length || 0" class="text-center text-muted">Không có dữ liệu</td>
+				</ng-container>
+				<!-- Pending tab content -->
+				<ng-container *ngIf="activeTabId === 'pending'">
+					<tr *ngFor="let u of items">
+						<td>{{ u.userName | safeField }}</td>
+						<td>{{ u.fullName | safeField }}</td>
+						<td>{{ u.email | safeField }}</td>
+						<td>
+							<app-badge [value]="u.action" type="action"></app-badge>
+						</td>
+						<td>{{ u.requestedDate | date:'dd/MM/yyyy HH:mm' }}</td>
+						<td>{{ u.requestedBy | safeField }}</td>
+						<td class="action-column">
+							<button class="btn btn-link p-0 text-info" (click)="openPendingDetailModal(u)" title="Xem chi tiết">
+								<i class="fas fa-eye"></i>
+							</button>
+							<button class="btn btn-link p-0 ms-2 text-success" (click)="openApproveModal(u)" title="Duyệt">
+								<i class="fas fa-check"></i>
+							</button>
+							<button class="btn btn-link p-0 ms-2 text-danger" (click)="openRejectModal(u)" title="Từ chối">
+								<i class="fas fa-times"></i>
+							</button>
+						</td>
 					</tr>
-				</tbody>
-			</table>
-		</div>
-
-		<!-- Pagination -->
-		<app-pagination
-			[paginationState]="getPaginationState()"
-			[pageSizeOptions]="paginationConfig.pageSizeOptions"
-			[maxVisiblePages]="5"
-			(pageChanged)="onPageChange($event)"
-			(pageSizeChanged)="onPageSizeChange($event)">
-		</app-pagination>
+				</ng-container>
+			</tbody>
+			<tbody *ngIf="!loadingTable && !items.length">
+				<tr>
+					<td [attr.colspan]="CONFIG.table.columns[activeTabId]?.length || 0" class="text-center text-muted">Không có dữ liệu</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
+	
+	<!-- Pagination -->
+	<app-pagination
+	[paginationState]="getPaginationState()"
+	[pageSizeOptions]="paginationConfig.pageSizeOptions"
+	[maxVisiblePages]="5"
+	(pageChanged)="onPageChange($event)"
+	(pageSizeChanged)="onPageSizeChange($event)">
+</app-pagination>
+</div>
 </div>
 
 <!-- User Detail Modal Component -->
 <app-user-detail-modal 
-	[isVisible]="showDetailModal"
-	[user]="selectedItem"
-	(close)="onDetailModalClose()">
+[isVisible]="showDetailModal"
+[user]="selectedItem"
+(close)="onDetailModalClose()">
 </app-user-detail-modal>
 
 <!-- Edit User Modal Component -->
 <app-edit-user-modal 
-	[isVisible]="showEditModal"
-	[user]="selectedItem"
-	[branches]="branches"
-	(close)="onEditModalClose()"
-	(updated)="onUserUpdated()">
+[isVisible]="showEditModal"
+[user]="selectedItem"
+[branches]="branches"
+(close)="onEditModalClose()"
+(updated)="onUserUpdated()">
 </app-edit-user-modal>
 
 <!-- Create User Modal Component -->
 <app-create-user-modal 
-	[isVisible]="showCreateModal"
-	[branches]="branches"
-	(close)="onCreateModalClose()"
-	(created)="onUserCreated()">
+[isVisible]="showCreateModal"
+[branches]="branches"
+(close)="onCreateModalClose()"
+(created)="onUserCreated()">
 </app-create-user-modal>
 
 <!-- Delete User Modal Component -->
 <app-delete-user-modal 
-	[isVisible]="showDeleteModal"
-	[user]="selectedItem"
-	(close)="onDeleteModalClose()"
-	(deleted)="onUserDeleted()">
+[isVisible]="showDeleteModal"
+[user]="selectedItem"
+(close)="onDeleteModalClose()"
+(deleted)="onUserDeleted()">
 </app-delete-user-modal>
 
 <!-- Approve User Modal Component -->
 <app-approve-user-modal 
-	[isVisible]="showApproveModal"
-	[selectedRequest]="selectedRequest"
-	(close)="onApproveModalClose()"
-	(approved)="onUserApproved($event)">
+[isVisible]="showApproveModal"
+[selectedRequest]="selectedRequest"
+(close)="onApproveModalClose()"
+(approved)="onUserApproved($event)">
 </app-approve-user-modal>
 
 <!-- Reject User Modal Component -->
 <app-reject-user-modal 
-	[isVisible]="showRejectModal"
-	[selectedRequest]="selectedRequest"
-	(close)="onRejectModalClose()"
-	(rejected)="onUserRejected($event)">
+[isVisible]="showRejectModal"
+[selectedRequest]="selectedRequest"
+(close)="onRejectModalClose()"
+(rejected)="onUserRejected($event)">
 </app-reject-user-modal>
 
 <!-- User Request Detail Modal Component -->
 <app-user-request-detail-modal 
-	[isVisible]="showRequestDetailModal"
-	[selectedRequest]="selectedRequest"
-	(close)="onRequestDetailModalClose()">
+[isVisible]="showRequestDetailModal"
+[selectedRequest]="selectedRequest"
+(close)="onRequestDetailModalClose()">
 </app-user-request-detail-modal>
