@@ -50,15 +50,13 @@ export class BranchComponent extends EntityListComponent<any> implements OnInit 
   @ViewChild('requestDetailModal') requestDetailTemplateRef!: TemplateRef<any>;
   rejectForm!: FormGroup;
 
-  // Prepare component
-  isLoadingList = false;
+  // Prepare component: reuse base loading flag
+  get isLoadingList() { return this.loadingTable; }
   isLoadingHistory = false;
   modalRef?: BsModalRef | null = null;
   isSubmitting: boolean = false;
 
-  // Prepare data for the component
-  items: Branch[] = [];
-  selectedItem: Branch | null = null;
+  // items and selectedItem are provided by EntityListComponent
   changeHistory: any[] = [];
 
   showSubmitConfirm = false;
@@ -115,8 +113,8 @@ export class BranchComponent extends EntityListComponent<any> implements OnInit 
   }
 
   ngOnInit(): void {
-    // Load data
-    this.getItems();
+    // Initial load using base helper
+    this.onSearch();
 
     // Initialize forms
     this.branchForm = this.fb.group({
@@ -169,30 +167,38 @@ export class BranchComponent extends EntityListComponent<any> implements OnInit 
     });
   }
 
-  getItems(): void {
-    this.isLoadingList = true;
-    this.branchService.getApprovedBranches({ ...this.searchParams })
-      .pipe(finalize(() => this.isLoadingList = false))
-      .subscribe({
-        next: (res) => {
-          if (res?.isSuccess) {
-            const { items, ...page } = res.data;
-            this.items = items ?? [];
-            this.updatePagingState(page);
-          } else {
-            this.items = [];
-          }
-        }
-      });
-  }
-
+  // Implement abstract onSearch using base loader
   onSearch(): void {
     if (this.activeTab === 'approved') {
-      this.getItems();
+      const params = { ...this.searchParams };
+      this.loadData<Branch>(this.branchService.getApprovedBranches(params));
     } else {
-      this.getPendingItems();
+      const params = { ...this.pendingSearchParams };
+      // Keep pendingItems in sync for template, while leveraging base items
+      this.loadingTable = true;
+      this.branchService.getPendingBranches(params)
+        .pipe(finalize(() => this.loadingTable = false))
+        .subscribe({
+          next: (res) => {
+            if (res?.isSuccess) {
+              const { items, totalItems, totalPages } = res.data || {};
+              this.items = items ?? [];
+              this.pendingItems = items ?? [];
+              this.updatePagingState({ totalItems, totalPages });
+            } else {
+              this.items = [];
+              this.pendingItems = [];
+            }
+          },
+          error: () => {
+            this.items = [];
+            this.pendingItems = [];
+          }
+        });
     }
   }
+
+  // onSearch now handled above
 
   // Handle view detail item
   openDetailModal(item: any): void {
@@ -309,7 +315,7 @@ export class BranchComponent extends EntityListComponent<any> implements OnInit 
           this.toastService.success('Gửi duyệt thành công!');
           this.branchForm.reset();
           this.modalRef?.hide();
-          this.getItems();
+          this.onSearch();
         },
         error: (err) => {
           this.handleError(err, 'Gửi duyệt thất bại!');
@@ -396,21 +402,17 @@ export class BranchComponent extends EntityListComponent<any> implements OnInit 
   // Get pending items
   getPendingItems(): void {
     // Gọi API lấy chi nhánh chờ duyệt
-    this.isLoadingList = true;
+    this.loadingTable = true;
     const params = { ...this.pendingSearchParams };
     this.branchService.getPendingBranches(params)
-      .pipe(finalize(() => this.isLoadingList = false))
+      .pipe(finalize(() => this.loadingTable = false))
       .subscribe({
         next: (res) => {
           if (res?.isSuccess) {
-            const { items, ...page } = res.data;
+            const { items, totalItems, totalPages, ...page } = res.data || {};
             this.pendingItems = items ?? [];
-            Object.assign(this.pagingState, {
-              pageIndex : page.pageIndex,
-              pageSize  : page.pageSize,
-              totalPages: page.totalPages,
-              totalItems: page.totalItems
-            });
+            this.items = items ?? [];
+            this.updatePagingState({ totalItems, totalPages });
           } else {
             this.pendingItems = [];
             this.toastService.error('Không lấy được danh sách chi nhánh chờ duyệt!');

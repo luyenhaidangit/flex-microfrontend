@@ -18,8 +18,6 @@ export class HttpInterceptor implements HttpSystemInterceptor {
   constructor(
     private loadingService: LoaderService,
     private toastService: ToastService,
-    private authService: AuthenticationService,
-    private errorMessageService: ErrorMessageService,
     private injector: Injector
   ) {}
 
@@ -44,7 +42,8 @@ export class HttpInterceptor implements HttpSystemInterceptor {
     if (skipAuth) {
       request = request.clone({ headers: request.headers.delete(Header.SkipAuth) });
     } else if (this.isSameApi(request.url)) {
-      const bearerToken = this.authService.getToken();
+      const authService = this.injector.get(AuthenticationService);
+      const bearerToken = authService.getToken();
       if (bearerToken) {
         request = request.clone({
           setHeaders: { Authorization: `Bearer ${bearerToken}` }
@@ -66,7 +65,7 @@ export class HttpInterceptor implements HttpSystemInterceptor {
           if (!skipToast) {
             // Nếu có errorCode, sử dụng translation, nếu không thì dùng message như cũ
             if (error?.error?.errorCode) {
-              const errorMessage = this.errorMessageService.getErrorMessage(error);
+              const errorMessage = this.injector.get(ErrorMessageService).getErrorMessage(error);
               this.toastService.error(errorMessage);
             } else {
               const msg = error?.error?.message || error?.message || 'Đã xảy ra lỗi!';
@@ -80,7 +79,7 @@ export class HttpInterceptor implements HttpSystemInterceptor {
           // Lazy inject ModalService to avoid circular dependency
           const modalService = this.injector.get(ModalService);
           modalService.closeAllModals();
-          this.authService.logout();
+          this.injector.get(AuthenticationService).logout();
         }
 
         return throwError(() => error);
