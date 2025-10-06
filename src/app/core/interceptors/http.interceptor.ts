@@ -14,7 +14,9 @@ import { ErrorMessageService } from '../services/error-message.service';
 import { ModalService } from '../services/modal.service';
 
 @Injectable()
-export class HttpInterceptor implements HttpSystemInterceptor {
+export class AppHttpInterceptor implements HttpSystemInterceptor {
+  private readonly apiBase = environment.apiBaseUrl.replace(/\/+$/, '');
+
   constructor(
     private loadingService: LoaderService,
     private toastService: ToastService,
@@ -97,8 +99,7 @@ export class HttpInterceptor implements HttpSystemInterceptor {
 
   private isSameApi(url: string): boolean {
     // Chỉ gắn token nếu URL bắt đầu bằng apiBaseUrl
-    const base = environment.apiBaseUrl.replace(/\/+$/, '');
-    return this.isAbsoluteUrl(url) && url.startsWith(base);
+    return this.isAbsoluteUrl(url) && url.startsWith(this.apiBase);
   }
 
   private joinUrl(base: string, path: string): string {

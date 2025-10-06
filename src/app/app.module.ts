@@ -23,7 +23,7 @@ import { CyptolandingComponent } from './cyptolanding/cyptolanding.component';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
-import { HttpInterceptor } from './core/interceptors/http.interceptor';
+import { AppHttpInterceptor } from './core/interceptors/http.interceptor';
 import { ToastrModule } from 'ngx-toastr';
 import { AngularToastifyModule } from 'angular-toastify';
 import { AppInitializerService } from './core/services/app-initializer.service';
@@ -67,7 +67,7 @@ export function createTranslateLoader(http: HttpClient): any {
   bootstrap: [AppComponent],
   providers: [
     { provide: APP_INITIALIZER, useFactory: initFactory, deps: [AppInitializerService], multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: HttpInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AppHttpInterceptor, multi: true },
   ],
 })
 export class AppModule { }
