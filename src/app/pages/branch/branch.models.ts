@@ -22,6 +22,12 @@ export interface Branch {
   requestType?: 'CREATE' | 'UPDATE' | 'DELETE';
 }
 
+export interface BranchFilter {
+  keyword?: string;
+  isActive?: boolean | null;
+  type?: 'CREATE' | 'UPDATE' | 'DELETE' | null;
+}
+
 export interface BranchSearchParams {
   pageIndex: number;
   pageSize: number;

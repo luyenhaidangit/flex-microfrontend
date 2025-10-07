@@ -4,7 +4,7 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { BranchService } from './branch.service';
 import { DEFAULT_PER_PAGE_OPTIONS } from 'src/app/core/constants/shared.constant';
 import { ToastService } from 'angular-toastify';
-import { Branch, PagingState, RequestDetailData, BranchSearchParams } from './branch.models';
+import { Branch, RequestDetailData, BranchSearchParams, BranchFilter } from './branch.models';
 import { finalize } from 'rxjs/operators';
 import { getBranchTypeLabel } from './branch.helper';
 import { BRANCH_CONFIG } from './branch.config';
@@ -15,7 +15,7 @@ import { EntityListComponent } from 'src/app/core/components/base/entity-list.co
   templateUrl: './branch.component.html',
   styleUrls: ['./branch.component.scss']
 })
-export class BranchComponent extends EntityListComponent<any, Branch> implements OnInit {
+export class BranchComponent extends EntityListComponent<BranchFilter, Branch> implements OnInit {
   
   // Config base
   CONFIG = BRANCH_CONFIG;
@@ -29,16 +29,6 @@ export class BranchComponent extends EntityListComponent<any, Branch> implements
   deleteForm!: FormGroup;
 
   pendingItems: Branch[] = [];
-
-  pagingState: PagingState = {
-    pageIndex : 1,
-    pageSize  : 10,
-    totalPages: 0,
-    totalItems: 0,
-    keyword   : '',
-    isActive  : null,
-    type: null
-  };
 
   @ViewChild('approveModal') approveTemplateRef!: TemplateRef<any>;
   @ViewChild('rejectModal') rejectTemplateRef!: TemplateRef<any>;
@@ -109,7 +99,7 @@ export class BranchComponent extends EntityListComponent<any, Branch> implements
     private fb: FormBuilder,
     private toastService: ToastService
   ) {
-    super({} as any);
+    super({ keyword: '', isActive: null, type: null });
   }
 
   ngOnInit(): void {
@@ -141,7 +131,9 @@ export class BranchComponent extends EntityListComponent<any, Branch> implements
 
   // Handle search all items
   get searchParams(): BranchSearchParams {
-    const { pageIndex, pageSize, keyword, isActive } = this.pagingState;
+    const { index: pageIndex, size: pageSize } = this.state.paging;
+    const { keyword, isActive } = this.state.filter;
+    
     const params: BranchSearchParams = { pageIndex, pageSize };
     if (keyword?.trim()) params.keyword = keyword.trim();
     if (isActive === true) params.isActive = 'Y';
@@ -151,20 +143,13 @@ export class BranchComponent extends EntityListComponent<any, Branch> implements
 
   // Handle search for pending items (with requestType filter)
   get pendingSearchParams(): BranchSearchParams {
-    const { pageIndex, pageSize, keyword, type } = this.pagingState;
+    const { index: pageIndex, size: pageSize } = this.state.paging;
+    const { keyword, type } = this.state.filter;
+    
     const params: BranchSearchParams = { pageIndex, pageSize };
     if (keyword?.trim()) params.keyword = keyword.trim();
     if (type) params.type = type;
     return params;
-  }
-
-  public updatePagingState(page: Partial<PagingState>) {
-    Object.assign(this.pagingState, {
-      pageIndex: page.pageIndex,
-      pageSize: page.pageSize,
-      totalPages: page.totalPages,
-      totalItems: page.totalItems
-    });
   }
 
   // Implement abstract onSearch using base loader
@@ -476,7 +461,7 @@ export class BranchComponent extends EntityListComponent<any, Branch> implements
   switchTab(tab: 'approved' | 'pending') {
     // Luôn gọi lại API khi chuyển tab, kể cả khi tab không đổi
     this.activeTab = tab;
-    this.pagingState.pageIndex = 1; // Reset về trang đầu tiên khi chuyển tab
+    this.state.paging.index = 1; // Reset về trang đầu tiên khi chuyển tab
     this.onSearch();
   }
 
