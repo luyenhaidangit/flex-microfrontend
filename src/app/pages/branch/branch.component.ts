@@ -544,8 +544,8 @@ export class BranchComponent extends EntityListComponent<BranchFilter, Branch> i
     } else if (this.requestDetailData) {
       this.selectedRequest = {
         requestId: this.requestDetailData.requestId,
-        requestedBy: this.requestDetailData.createdBy,
-        requestedDate: this.requestDetailData.createdDate,
+        requestedBy: this.requestDetailData.requestedBy || '',
+        requestedDate: this.requestDetailData.requestedDate || '',
         requestType: this.requestDetailData.type
       };
     } else if (this.selectedItem) {
@@ -641,11 +641,11 @@ export class BranchComponent extends EntityListComponent<BranchFilter, Branch> i
 
 
   getCreatedBy(): string {
-    return this.requestDetailData?.createdBy;
+    return this.requestDetailData?.requestedBy || '';
   }
 
   getCreatedDate(): string {
-    return this.requestDetailData?.createdDate;
+    return this.requestDetailData?.requestedDate || '';
   }
 
   getRequestType(): string {

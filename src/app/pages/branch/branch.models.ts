@@ -57,8 +57,8 @@ export interface PagingRequest {
 
 export interface RequestDetailData {
   requestId: string;
-  createdBy: string;
-  createdDate: string;
+  requestedBy?: string;
+  requestedDate?: string;
   type: 'CREATE' | 'UPDATE' | 'DELETE';
   oldData?: any;
   newData?: any;
