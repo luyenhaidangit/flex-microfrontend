@@ -12,7 +12,7 @@ import { WorkflowService } from './workflow.service';
   templateUrl: './workflow.component.html',
   styleUrls: ['./workflow.component.scss']
 })
-export class WorkflowComponent extends EntityListComponent<any> implements OnInit, OnDestroy {
+export class WorkflowComponent extends EntityListComponent<any, any> implements OnInit, OnDestroy {
 
   CONFIG = WORKFLOW_CONFIG;
 
@@ -48,9 +48,7 @@ export class WorkflowComponent extends EntityListComponent<any> implements OnIni
       });
   }
 
-  ngOnDestroy(): void {
-    this.cleanup();
-  }
+  ngOnDestroy(): void { this.cleanup(); }
 
   public onSearch(): void {
     if (this.activeTabId === 'approved') {

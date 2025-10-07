@@ -6,14 +6,16 @@ import { Subject } from 'rxjs';
 import { PaginationState } from '../pagination/pagination/pagination.component';
 import { REQUEST_TYPE_OPTIONS } from 'src/app/core/constants/request-types.constant';
 
-export abstract class EntityListComponent<TFilter> {
+type ModalType = 'detail' | 'edit' | 'delete' | 'create' | 'approve' | 'reject';
+
+export abstract class EntityListComponent<TFilter, TItem = any> {
   protected readonly config = ENTITY_LIST_CONFIG;
 
   // Properties
   activeTabId: string = this.config.tabs.default;
   loadingTable = false;
-  items: any[] = [];
-  selectedItem: any;
+  items: TItem[] = [];
+  selectedItem: TItem | null = null;
   state: ListState<TFilter>;
   
   // Default configuration
@@ -21,13 +23,27 @@ export abstract class EntityListComponent<TFilter> {
   paginationConfig: any = this.config.pagination;
   filterConfig: any = this.config.filter;
 
-  // Modal state management
-  showDetailModal = false;
-  showEditModal = false;
-  showDeleteModal = false;
-  showCreateModal = false;
-  showApproveModal = false;
-  showRejectModal = false;
+  // Modal state management (compat shim via getters/setters)
+  modalState: Record<ModalType, boolean> = {
+    detail: false,
+    edit: false,
+    delete: false,
+    create: false,
+    approve: false,
+    reject: false
+  };
+  get showDetailModal() { return this.modalState.detail; }
+  set showDetailModal(v: boolean) { this.modalState.detail = v; }
+  get showEditModal() { return this.modalState.edit; }
+  set showEditModal(v: boolean) { this.modalState.edit = v; }
+  get showDeleteModal() { return this.modalState.delete; }
+  set showDeleteModal(v: boolean) { this.modalState.delete = v; }
+  get showCreateModal() { return this.modalState.create; }
+  set showCreateModal(v: boolean) { this.modalState.create = v; }
+  get showApproveModal() { return this.modalState.approve; }
+  set showApproveModal(v: boolean) { this.modalState.approve = v; }
+  get showRejectModal() { return this.modalState.reject; }
+  set showRejectModal(v: boolean) { this.modalState.reject = v; }
 
   // Destroy subject for cleanup
   protected destroy$ = new Subject<void>();
@@ -65,16 +81,21 @@ export abstract class EntityListComponent<TFilter> {
    * @param apiCall Observable API call
    * @param itemType Type of items (for type safety)
    */
-  protected loadData<T>(apiCall: Observable<any>, itemType?: new() => T): void {
+  protected beforeLoad(): void {}
+  protected afterLoad(): void {}
+  protected onLoadError(error: any): void {}
+
+  protected loadData<T = TItem>(apiCall: Observable<any>, itemType?: new() => T): void {
+    this.beforeLoad();
     this.loadingTable = true;
     apiCall.pipe(
-      finalize(() => this.loadingTable = false),
+      finalize(() => { this.loadingTable = false; this.afterLoad(); }),
       takeUntil(this.destroy$)
     ).subscribe({
       next: (res: any) => {
         if (res?.isSuccess) {
           const { items, pageMeta } = this.extractPagingFromResponse<T>(res.data);
-          this.items = items as any[];
+          this.items = (items as unknown as TItem[]) || [];
           this.updatePagingState(pageMeta);
         } else {
           this.items = [];
@@ -82,6 +103,7 @@ export abstract class EntityListComponent<TFilter> {
       },
       error: (err) => {
         this.items = [];
+        this.onLoadError(err);
       }
     });
   }
@@ -124,6 +146,21 @@ export abstract class EntityListComponent<TFilter> {
   // ---------- Internal method ----------
   resetToFirstPage(): void {
     this.state.paging.index = 1;
+  }
+
+  protected setPage(index: number): void {
+    const total = this.state.paging.totalPages ?? 1;
+    if (index < 1 || index > total || index === this.state.paging.index) return;
+    this.state.paging.index = index;
+    this.onSearch();
+  }
+
+  protected setPageSize(size: number): void {
+    if (size && size > 0) {
+      this.state.paging.size = size;
+    }
+    this.resetToFirstPage();
+    this.onSearch();
   }
 
   onPageChange(page: number): void {
@@ -213,7 +250,7 @@ export abstract class EntityListComponent<TFilter> {
    * Generic method to open detail modal
    * Child classes can override to add custom logic
    */
-  protected openDetailModal(item: any): void {
+  protected openDetailModal(item: TItem): void {
     this.selectedItem = item;
     this.showDetailModal = true;
   }
@@ -222,7 +259,7 @@ export abstract class EntityListComponent<TFilter> {
    * Generic method to open edit modal
    * Child classes can override to add custom logic
    */
-  protected openEditModal(item: any): void {
+  protected openEditModal(item: TItem): void {
     this.selectedItem = item;
     this.showEditModal = true;
   }
@@ -231,7 +268,7 @@ export abstract class EntityListComponent<TFilter> {
    * Generic method to open delete modal
    * Child classes can override to add custom logic
    */
-  protected openDeleteModal(item: any): void {
+  protected openDeleteModal(item: TItem): void {
     this.selectedItem = item;
     this.showDeleteModal = true;
   }
@@ -243,6 +280,17 @@ export abstract class EntityListComponent<TFilter> {
   protected openCreateModal(): void {
     this.selectedItem = null;
     this.showCreateModal = true;
+  }
+
+  protected openStateModal(type: ModalType, item?: TItem): void {
+    this.closeAllModals();
+    this.selectedItem = item ?? null;
+    this.modalState[type] = true;
+  }
+
+  protected closeStateModal(type: ModalType): void {
+    this.modalState[type] = false;
+    this.selectedItem = null;
   }
 
   /**
@@ -293,7 +341,7 @@ export abstract class EntityListComponent<TFilter> {
   /**
    * Generic method to open approve modal
    */
-  protected openApproveModal(item: any): void {
+  protected openApproveModal(item: TItem): void {
     this.selectedItem = item;
     this.showApproveModal = true;
   }
@@ -301,7 +349,7 @@ export abstract class EntityListComponent<TFilter> {
   /**
    * Generic method to open reject modal
    */
-  protected openRejectModal(item: any): void {
+  protected openRejectModal(item: TItem): void {
     this.selectedItem = item;
     this.showRejectModal = true;
   }
@@ -330,7 +378,6 @@ export abstract class EntityListComponent<TFilter> {
   protected cleanup(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    // Close all modals on cleanup
     this.closeAllModals();
   }
 }

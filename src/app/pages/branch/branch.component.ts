@@ -15,7 +15,7 @@ import { EntityListComponent } from 'src/app/core/components/base/entity-list.co
   templateUrl: './branch.component.html',
   styleUrls: ['./branch.component.scss']
 })
-export class BranchComponent extends EntityListComponent<any> implements OnInit {
+export class BranchComponent extends EntityListComponent<any, Branch> implements OnInit {
   
   // Config base
   CONFIG = BRANCH_CONFIG;

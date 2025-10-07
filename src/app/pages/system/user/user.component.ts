@@ -16,7 +16,7 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 	styleUrls: ['./user.component.scss']
 })
 
-export class UsersComponent extends EntityListComponent<UserFilter> implements OnInit, OnDestroy {
+export class UsersComponent extends EntityListComponent<UserFilter, UserItem> implements OnInit, OnDestroy {
 	
 	CONFIG = USER_CONFIG;
 	
@@ -75,9 +75,7 @@ export class UsersComponent extends EntityListComponent<UserFilter> implements O
 		});
 	}
 	
-	ngOnDestroy(): void {
-		this.cleanup();
-	}
+  ngOnDestroy(): void { this.cleanup(); }
 	
 	// Implement method abstract base
 	public onSearch(): void {
