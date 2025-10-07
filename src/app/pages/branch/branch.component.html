@@ -483,39 +483,13 @@
   </div>
 </ng-template>
 
-<!-- Modal từ chối yêu cầu -->
-<ng-template #rejectModal>
-  <form [formGroup]="rejectForm" (ngSubmit)="confirmRejectBranch()" class="needs-validation">
-    <div class="modal-header">
-      <h5 class="modal-title text-danger fw-semibold">
-        <i class="fas fa-times-circle me-2"></i> Từ chối yêu cầu
-      </h5>
-      <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
-    </div>
-    <div class="modal-body px-4 py-3">
-      <div class="position-relative">
-        <label class="form-label">Lý do từ chối</label>
-        <textarea
-          class="form-control"
-          formControlName="reason"
-          rows="3"
-          placeholder="Nhập lý do từ chối..."
-          [ngClass]="{'is-invalid': rejectForm.controls.reason.touched && rejectForm.controls.reason.invalid}">
-        </textarea>
-        <div *ngIf="rejectForm.controls.reason.touched && rejectForm.controls.reason.invalid" class="invalid-tooltip">
-          <span *ngIf="rejectForm.controls.reason.errors?.required">Lý do không được để trống</span>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer border-top-0">
-      <button type="submit" class="btn btn-danger">
-        <i class="fas fa-times me-1"></i>
-        Xác nhận từ chối
-      </button>
-      <button type="button" class="btn btn-secondary" (click)="closeModal()">Hủy</button>
-    </div>
-  </form>
-</ng-template>
+<!-- Reject Branch Modal Component -->
+<app-reject-branch-modal 
+  [isVisible]="showRejectModal"
+  [selectedRequest]="selectedRequest"
+  (close)="onRejectModalClose()"
+  (rejected)="onBranchRejected($event)">
+</app-reject-branch-modal>
 
 <!-- Enhanced Branch Request Detail Modal -->
 <ng-template #requestDetailModal>

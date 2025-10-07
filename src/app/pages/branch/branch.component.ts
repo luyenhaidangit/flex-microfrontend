@@ -29,16 +29,15 @@ export class BranchComponent extends EntityListComponent<BranchFilter, Branch> i
   deleteForm!: FormGroup;
 
   pendingItems: Branch[] = [];
+  selectedRequest: any = null;
 
   @ViewChild('approveModal') approveTemplateRef!: TemplateRef<any>;
-  @ViewChild('rejectModal') rejectTemplateRef!: TemplateRef<any>;
   @ViewChild('approveEditModal') approveEditTemplateRef!: TemplateRef<any>;
   @ViewChild('rejectEditModal') rejectEditTemplateRef!: TemplateRef<any>;
   @ViewChild('approveDeleteModal') approveDeleteTemplateRef!: TemplateRef<any>;
   @ViewChild('rejectDeleteModal') rejectDeleteTemplateRef!: TemplateRef<any>;
   @ViewChild('deleteDraftModal') deleteDraftModal!: TemplateRef<any>;
   @ViewChild('requestDetailModal') requestDetailTemplateRef!: TemplateRef<any>;
-  rejectForm!: FormGroup;
 
   // Prepare component: reuse base loading flag
   get isLoadingList() { return this.loadingTable; }
@@ -119,10 +118,6 @@ export class BranchComponent extends EntityListComponent<BranchFilter, Branch> i
 
     this.deleteForm = this.fb.group({
       comment: ['', [Validators.maxLength(500)]]
-    });
-
-    this.rejectForm = this.fb.group({
-      reason: ['', [Validators.required]]
     });
     
     // Override toast icon size with JavaScript
@@ -535,56 +530,50 @@ export class BranchComponent extends EntityListComponent<BranchFilter, Branch> i
   }
 
   openRejectModal(item?: any): void {
-    if (item) {
-      this.selectedItem = item;
-    }
-    this.rejectForm.reset();
-
+    console.log('openRejectModal', item);
+    
+    // Close current modal first if exists
     if (this.modalRef) {
-      const oldModalRef = this.modalRef;
-      oldModalRef.onHidden?.subscribe(() => {
-        this.modalRef = null;
-        this.openModal(this.rejectTemplateRef, {
-          class: 'modal-xl',
-          backdrop: 'static',
-          keyboard: false,
-          ignoreBackdropClick: true
-        });
-      });
-      oldModalRef.hide();
-    } else {
-      this.openModal(this.rejectTemplateRef, {
-        class: 'modal-xl',
-        backdrop: 'static',
-        keyboard: false,
-        ignoreBackdropClick: true
-      });
+      this.modalRef.hide();
+      this.modalRef = null;
     }
+    
+    // Set selected request from item or requestDetailData
+    if (item) {
+      this.selectedRequest = item;
+    } else if (this.requestDetailData) {
+      this.selectedRequest = {
+        requestId: this.requestDetailData.requestId,
+        requestedBy: this.requestDetailData.createdBy,
+        requestedDate: this.requestDetailData.createdDate,
+        requestType: this.requestDetailData.type
+      };
+    } else if (this.selectedItem) {
+      this.selectedRequest = this.selectedItem;
+    }
+    
+    // Open reject modal using component
+    super.openRejectModal(this.selectedRequest);
   }
 
-  confirmRejectBranch(): void {
-    this.rejectForm.markAllAsTouched();
-    if (this.rejectForm.invalid) return;
-    
-    // Validate reason length
-    const reason = this.rejectForm.value.reason?.trim();
-    
-    // Lấy requestId từ requestDetailData hoặc selectedItem
-    const requestId = this.requestDetailData?.requestId || this.selectedItem?.requestId || this.selectedItem?.id;
-    if (!requestId) {
-      this.toastService.error('Không tìm thấy ID yêu cầu!');
-      return;
-    }
+  onRejectModalClose(): void {
+    super.onRejectModalClose();
+    this.selectedRequest = null;
+  }
 
-    // Gửi request từ chối
-    this.branchService.rejectBranch(requestId, reason).subscribe({
-      next: (res) => {
-        this.toastService.success('Đã từ chối yêu cầu thành công!');
-        this.modalRef?.hide();
-        // Reload data dựa trên tab hiện tại
-        this.onSearch();
-      }
-    });
+  onBranchRejected(result: any): void {
+    console.log('Branch request rejected:', result);
+    super.onRejectModalClose();
+    this.selectedRequest = null;
+    
+    // Close request detail modal if open
+    if (this.modalRef) {
+      this.modalRef.hide();
+      this.modalRef = null;
+    }
+    
+    // Reload data
+    this.onSearch();
   }
 
   // Method to handle action cancellation

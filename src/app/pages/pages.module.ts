@@ -41,6 +41,7 @@ import { MapsModule } from './maps/maps.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ChatComponent } from './chat/chat.component';
 import { BranchComponent } from './branch/branch.component';
+import { RejectBranchModalComponent } from './branch/reject-branch-modal/reject-branch-modal.component';
 
 import { FilemanagerComponent } from './filemanager/filemanager.component';
 
@@ -49,7 +50,13 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { PaginationModule as CustomPaginationModule } from 'src/app/core/components/pagination/pagination.module';
 
 @NgModule({
-  declarations: [CalendarComponent, ChatComponent, FilemanagerComponent, BranchComponent],
+  declarations: [
+    CalendarComponent, 
+    ChatComponent, 
+    FilemanagerComponent, 
+    BranchComponent,
+    RejectBranchModalComponent
+  ],
   imports: [
     CommonModule,
     FormsModule,

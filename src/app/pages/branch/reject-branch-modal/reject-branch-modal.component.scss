@@ -1,0 +1,28 @@
+// Reject Branch Modal Styles
+.modal {
+  &.show {
+    display: block;
+  }
+}
+
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.card {
+  border: 1px solid #e9ecef;
+}
+
+.form-control {
+  &:disabled {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+  }
+}
+
+.btn {
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
