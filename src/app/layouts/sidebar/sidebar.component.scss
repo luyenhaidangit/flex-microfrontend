@@ -5,3 +5,27 @@
 .custom-menu-font{
     font-family: 'Roboto', sans-serif;
 }
+
+/* Improve submenu readability + prevent overflow clipping */
+.vertical-menu {
+  overflow-x: hidden;
+}
+
+#sidebar-menu {
+  .metismenu {
+    .sub-menu li a,
+    .sub-menu li .side-nav-link-ref {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    /* extra indent for 3rd level */
+    .sub-menu .sub-menu {
+      padding-left: 14px;
+      border-left: 1px dashed rgba(255,255,255,0.1);
+    }
+  }
+}

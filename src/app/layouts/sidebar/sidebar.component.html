@@ -27,19 +27,19 @@
 
           <ul *ngIf="hasItems(item)" class="sub-menu" aria-expanded="false">
             <li *ngFor="let subitem of item.subItems">
-              <a routerLink="{{subitem.link}}" *ngIf="!hasItems(subitem)" class="side-nav-link-ref"
+              <a routerLink="{{subitem.link}}" *ngIf="!hasItems(subitem)" class="side-nav-link-ref" [title]="(subitem.label | translate)"
                 [attr.data-parent]="subitem.parentId" routerLinkActive="active">
                 {{ subitem.label | translate}}
                 <span class="custom-menu-font badge rounded-pill bg-{{subitem.badge.variant}} float-end" *ngIf="subitem.badge">{{subitem.badge.text |
                   translate}}</span>
               </a>
-              <a *ngIf="hasItems(subitem)" class="custom-menu-font side-nav-link-a-ref has-arrow" href="javascript:void(0);"
+              <a *ngIf="hasItems(subitem)" class="custom-menu-font side-nav-link-a-ref has-arrow" href="javascript:void(0);" [title]="(subitem.label | translate)"
                 [attr.data-parent]="subitem.parentId">
                 {{ subitem.label | translate}}
               </a>
               <ul *ngIf="hasItems(subitem)" class="custom-menu-font sub-menu mm-collapse" aria-expanded="false">
                 <li *ngFor="let subSubitem of subitem.subItems">
-                  <a [attr.data-parent]="subSubitem.parentId" routerLink="{{subSubitem.link}}" routerLinkActive="active"
+                  <a [attr.data-parent]="subSubitem.parentId" routerLink="{{subSubitem.link}}" routerLinkActive="active" [title]="(subSubitem.label | translate)"
                     class="side-nav-link-ref">
                     {{ subSubitem.label | translate }}
                   </a>
