@@ -11,8 +11,7 @@ import { mapSettleMethodLabel, mapYesNo } from './securities-domain.helper';
       <app-page-title [title]="CONFIG.breadcrumb.title" [breadcrumbItems]="CONFIG.breadcrumb.items"></app-page-title>
 
       <div class="bg-white rounded shadow-sm p-3">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <div></div>
+        <div class="d-flex align-items-center mb-3">
           <button class="btn btn-outline-secondary" (click)="fetch()" [disabled]="loading">
             <i class="bx bx-refresh"></i> Tải lại
           </button>
