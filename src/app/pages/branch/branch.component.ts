@@ -20,7 +20,6 @@ export class BranchComponent extends EntityListComponent<BranchFilter, Branch> i
   // Config base
   CONFIG = BRANCH_CONFIG;
 
-  @ViewChild('detailModal') detailModalTemplateRef!: TemplateRef<any>;
   @ViewChild('createModal') createTemplateRef!: TemplateRef<any>;
   @ViewChild('editModal') editTemplateRef!: TemplateRef<any>;
   @ViewChild('deleteModal') deleteTemplateRef!: TemplateRef<any>;
@@ -41,12 +40,8 @@ export class BranchComponent extends EntityListComponent<BranchFilter, Branch> i
 
   // Prepare component: reuse base loading flag
   get isLoadingList() { return this.loadingTable; }
-  isLoadingHistory = false;
   modalRef?: BsModalRef | null = null;
   isSubmitting: boolean = false;
-
-  // items and selectedItem are provided by EntityListComponent
-  changeHistory: any[] = [];
 
   showSubmitConfirm = false;
   rejectedReason: string | null = null;
@@ -63,6 +58,9 @@ export class BranchComponent extends EntityListComponent<BranchFilter, Branch> i
   // Loading states for approve/reject actions
   isApproving = false;
   isRejecting = false;
+
+  // Branch detail modal state
+  selectedBranch: Branch | null = null;
 
   skeletonRows = Array.from({ length: 8 });
   tableConfig = {
@@ -183,26 +181,9 @@ export class BranchComponent extends EntityListComponent<BranchFilter, Branch> i
   // Handle view detail item
   openDetailModal(item: any): void {
     if (this.activeTab === 'approved') {
-      const code = item?.code;
-      if (!code) {
-        this.toastService.error('Không tìm thấy mã chi nhánh!');
-        return;
-      }
-      this.selectedItem = null;
-      this.branchService.getApprovedBranchByCode(code).subscribe({
-        next: (res) => {
-          this.selectedItem = res?.data || item;
-          
-          // Reset change history when opening modal
-          this.changeHistory = [];
-          
-          this.modalRef = this.modalService.show(this.detailModalTemplateRef, { 
-            class: 'modal-xl',
-            backdrop: 'static',
-            keyboard: false, 
-          });
-        }
-      });
+      // Use branch-detail-modal component
+      this.selectedBranch = item;
+      this.showDetailModal = true;
     } else {
       // pending tab: show request detail modal
       const requestId = item?.requestId || item?.id;
@@ -235,32 +216,10 @@ export class BranchComponent extends EntityListComponent<BranchFilter, Branch> i
     }
   }
 
-  // Load change history when history tab is opened
-  loadChangeHistory(): void {
-    if (!this.selectedItem?.code) {
-      this.toastService.error('Không tìm thấy mã chi nhánh!');
-      return;
-    }
-
-    // Only load if not already loaded
-    if (this.changeHistory.length > 0) {
-      return;
-    }
-
-    this.isLoadingHistory = true;
-    this.branchService.getBranchChangeHistory(this.selectedItem.code)
-      .pipe(finalize(() => this.isLoadingHistory = false))
-      .subscribe({
-        next: (res) => {
-          if (res?.isSuccess) {
-            // Use the API response directly without transformation
-            this.changeHistory = res.data || [];
-          } else {
-            this.changeHistory = [];
-            this.toastService.error('Không thể lấy lịch sử thay đổi!');
-          }
-        }
-      });
+  // Handle branch detail modal close
+  onBranchDetailModalClose(): void {
+    super.onDetailModalClose();
+    this.selectedBranch = null;
   }
 
   // Open create modal

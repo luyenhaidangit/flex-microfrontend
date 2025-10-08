@@ -133,111 +133,6 @@
   </div>
 </div>
 
-<!-- Modal: Chi tiết -->
-<ng-template #detailModal>
-  <div class="modal-header">
-    <h5 class="modal-title text-primary fw-semibold">
-      <i class="fas fa-info-circle me-2"></i>Chi tiết chi nhánh
-      <app-badge *ngIf="selectedItem?.status" [value]="selectedItem?.status" type="status"></app-badge>
-    </h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
-  </div>
-  <div class="modal-body px-4 py-3">
-    <tabset>
-      <tab heading="Thông tin">
-        <div class="row gy-2 mt-3">
-          <div class="col-md-6">
-            <label class="form-label fw-bold text-muted">Mã chi nhánh</label>
-            <div class="text-dark ps-1">{{ selectedItem?.code | safeField }}</div>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-bold text-muted">Tên chi nhánh</label>
-            <div class="text-dark ps-1">{{ selectedItem?.name | safeField }}</div>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-bold text-muted">Loại chi nhánh</label>
-            <div class="text-dark ps-1">{{ getBranchTypeLabel(selectedItem?.branchType) | safeField }}</div>
-          </div>
-          <div class="col-md-12">
-            <label class="form-label fw-bold text-muted">Mô tả</label>
-            <div class="text-dark ps-1">{{ selectedItem?.description | safeField }}</div>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-bold text-muted">Trạng thái</label>
-            <div class="text-dark ps-1">
-              <app-badge [value]="selectedItem?.isActive" type="status"></app-badge>
-            </div>
-          </div>
-        </div>
-        <div *ngIf="selectedItem?.status === 'REJECTED' && selectedItem?.rejectReason" class="alert alert-danger mt-3">
-          <i class="fas fa-ban me-2"></i>
-          <strong>Lý do từ chối:</strong> {{ selectedItem?.rejectReason }}
-          <div class="small text-muted mt-1">
-            Từ chối bởi: {{ selectedItem?.rejectedBy | safeField }} lúc {{ selectedItem?.rejectedDate | date:'dd/MM/yyyy' }}
-          </div>
-        </div>
-      </tab>
-      <tab heading="Lịch sử thay đổi" (selectTab)="loadChangeHistory()">
-        <div class="mt-3">
-          <div *ngIf="isLoadingHistory" class="text-center py-4">
-            <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">Đang tải...</span>
-            </div>
-            <p class="mt-2 text-muted">Đang tải lịch sử thay đổi...</p>
-          </div>
-          <div *ngIf="!isLoadingHistory">
-            <div *ngIf="changeHistory?.length; else noHistory">
-              <div class="table-responsive">
-                <table class="table table-hover">
-                  <thead class="table-light">
-                    <tr>
-                      <th>Thao tác</th>
-                      <th>Người tạo</th>
-                      <th>Ngày tạo</th>
-                      <th>Người duyệt</th>
-                      <th>Ngày duyệt</th>
-                      <th>Ghi chú</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let h of changeHistory">
-                      <td>
-                        <span class="badge"
-                              [ngClass]="{
-                                'bg-success': (h.operation || h.Operation) === 'CREATE',
-                                'bg-warning': (h.operation || h.Operation) === 'UPDATE',
-                                'bg-danger': (h.operation || h.Operation) === 'DELETE',
-                                'bg-secondary': ['CREATE','UPDATE','DELETE'].indexOf((h.operation || h.Operation) || '') === -1
-                              }">
-                          {{ (h.operation || h.Operation) || '-' }}
-                        </span>
-                      </td>
-                      <td>{{ (h.requestedBy || h.RequestedBy) || '-' }}</td>
-                      <td>{{ (h.requestedDate || h.RequestedDate) | date:'dd/MM/yyyy HH:mm' }}</td>
-                      <td>{{ (h.approvedBy || h.ApprovedBy) || '-' }}</td>
-                      <td>{{ (h.approvedDate || h.ApprovedDate) | date:'dd/MM/yyyy HH:mm' }}</td>
-                      <td>{{ (h.comments || h.Comments) || '-' }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <ng-template #noHistory>
-              <div class="text-muted text-center py-4">
-                <i class="fas fa-history text-muted mb-3" style="font-size: 3rem;"></i>
-                <p>Chưa có lịch sử thay đổi cho chi nhánh này.</p>
-              </div>
-            </ng-template>
-          </div>
-        </div>
-      </tab>
-    </tabset>
-  </div>
-  <div class="modal-footer border-top-0">
-    <button type="button" class="btn btn-outline-secondary" (click)="modalRef?.hide()">Đóng</button>
-  </div>
-</ng-template>
-
 <!-- Create Modal -->
 <ng-template #createModal>
   <form [formGroup]="branchForm" class="needs-validation">
@@ -712,3 +607,10 @@
     </div>
   </div>
 </ng-template>
+
+<!-- Branch Detail Modal Component -->
+<app-branch-detail-modal 
+  [isVisible]="showDetailModal"
+  [branch]="selectedBranch"
+  (close)="onBranchDetailModalClose()">
+</app-branch-detail-modal>
