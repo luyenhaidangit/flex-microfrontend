@@ -80,6 +80,17 @@ export const MENU: MenuItem[] = [
         icon: 'bx bx-building',
         link: '/branch',
     },
+    {
+        id: 'securities-title',
+        label: 'CHỨNG KHOÁN',
+        isTitle: true
+    },
+    {
+        id: 'securities-module',
+        label: 'Miền thanh toán',
+        icon: 'bx bx-globe',
+        link: '/securities/domains'
+    },
     // {
     //     id: 'workflow-module',
     //     label: 'MENUITEMS.WORKFLOW.TEXT',
@@ -938,4 +949,3 @@ export const MENU: MenuItem[] = [
     //     ]
     // }
 ];
-
