@@ -3,26 +3,30 @@ import { ToastService } from 'angular-toastify';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { BranchService } from '../branch.service';
+import { getBranchTypeLabel } from '../branch.helper';
 
 @Component({
-	selector: 'app-user-detail-modal',
-	templateUrl: './user-detail-modal.component.html',
-	styleUrls: ['./user-detail-modal.component.scss']
+	selector: 'app-branch-detail-modal',
+	templateUrl: './branch-detail-modal.component.html',
+	styleUrls: ['./branch-detail-modal.component.scss']
 })
-export class UserDetailModalComponent implements OnInit, OnDestroy, OnChanges {
+export class BranchDetailModalComponent implements OnInit, OnDestroy, OnChanges {
 	@Input() isVisible = false;
-	@Input() user: any | null = null;
+	@Input() branch: any | null = null;
 	@Output() close = new EventEmitter<void>();
 
 	selectedItem: any | null = null;
 	changeHistory: any[] = [];
 	isLoadingHistory = false;
-	isLoadingUserDetail = false;
+	isLoadingBranchDetail = false;
 
 	private destroy$ = new Subject<void>();
 
+	// Helper method for branch type label
+	public getBranchTypeLabel = getBranchTypeLabel;
+
 	constructor(
-		private userService: BranchService,
+		private branchService: BranchService,
 		private toast: ToastService
 	) {}
 
@@ -30,14 +34,14 @@ export class UserDetailModalComponent implements OnInit, OnDestroy, OnChanges {
 	}
 
 	ngOnChanges(changes: SimpleChanges): void {		
-		// Check if user input changed and modal is visible
-		if (changes['user'] && this.isVisible && this.user) {
-			this.loadUserDetail();
+		// Check if branch input changed and modal is visible
+		if (changes['branch'] && this.isVisible && this.branch) {
+			this.loadBranchDetail();
 		}
 		
 		// Check if modal visibility changed
-		if (changes['isVisible'] && this.isVisible && this.user) {
-			this.loadUserDetail();
+		if (changes['isVisible'] && this.isVisible && this.branch) {
+			this.loadBranchDetail();
 		}
 	}
 
@@ -51,34 +55,34 @@ export class UserDetailModalComponent implements OnInit, OnDestroy, OnChanges {
 		this.resetStates();
 	}
 
-	// Load detailed user information
-	private loadUserDetail(): void {
-		if (!this.user?.userName) {
-			this.toast.error('Không tìm thấy thông tin người dùng!');
+	// Load detailed branch information
+	private loadBranchDetail(): void {
+		if (!this.branch?.code) {
+			this.toast.error('Không tìm thấy mã chi nhánh!');
 			this.onClose();
 			return;
 		}
 
-		this.isLoadingUserDetail = true;
+		this.isLoadingBranchDetail = true;
 		this.changeHistory = [];
 		this.selectedItem = null;
 
-		this.userService.getBranchRequestDetail(this.user.userName)
+		this.branchService.getApprovedBranchByCode(this.branch.code)
 			.pipe(
 				takeUntil(this.destroy$),
-				finalize(() => this.isLoadingUserDetail = false)
+				finalize(() => this.isLoadingBranchDetail = false)
 			)
 			.subscribe({
 				next: (res) => {
 					if (res?.isSuccess) {
 						this.selectedItem = res.data;
 					} else {
-						this.toast.error('Không thể lấy thông tin chi tiết người dùng!');
+						this.toast.error('Không thể lấy thông tin chi tiết chi nhánh!');
 						this.onClose();
 					}
 				},
 				error: (err) => {
-					this.toast.error('Không thể lấy thông tin chi tiết người dùng!');
+					this.toast.error('Không thể lấy thông tin chi tiết chi nhánh!');
 					this.onClose();
 				}
 			});
@@ -86,8 +90,8 @@ export class UserDetailModalComponent implements OnInit, OnDestroy, OnChanges {
 
 	// Load change history when history tab is opened
 	loadChangeHistory(): void {
-		if (!this.selectedItem?.userName) {
-			this.toast.error('Không tìm thấy username người dùng!');
+		if (!this.selectedItem?.code) {
+			this.toast.error('Không tìm thấy mã chi nhánh!');
 			return;
 		}
 
@@ -97,7 +101,7 @@ export class UserDetailModalComponent implements OnInit, OnDestroy, OnChanges {
 		}
 
 		this.isLoadingHistory = true;
-		this.userService.getBranchChangeHistory(this.selectedItem.userName)
+		this.branchService.getBranchChangeHistory(this.selectedItem.code)
 			.pipe(
 				takeUntil(this.destroy$),
 				finalize(() => this.isLoadingHistory = false)
@@ -122,7 +126,7 @@ export class UserDetailModalComponent implements OnInit, OnDestroy, OnChanges {
 	private resetStates(): void {
 		this.selectedItem = null;
 		this.changeHistory = [];
-		this.isLoadingUserDetail = false;
+		this.isLoadingBranchDetail = false;
 		this.isLoadingHistory = false;
 	}
 }
