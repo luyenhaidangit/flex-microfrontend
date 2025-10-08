@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { SecuritiesDomainService } from './securities-domain.service';
+import { SECURITIES_DOMAIN_CONFIG } from './securities-domain.config';
+import { mapSettleMethodLabel, mapYesNo } from './securities-domain.helper';
 
 @Component({
   selector: 'app-securities-domain-list',
   styleUrls: ['./securities-domain-list.component.scss'],
   template: `
     <div class="container-fluid">
-      <app-page-title title="Miền thanh toán" [breadcrumbItems]="[{ label: 'Chứng khoán' }, { label: 'Miền thanh toán', active: true }]"></app-page-title>
+      <app-page-title [title]="CONFIG.breadcrumb.title" [breadcrumbItems]="CONFIG.breadcrumb.items"></app-page-title>
 
       <div class="bg-white rounded shadow-sm p-3">
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -22,18 +24,13 @@ import { SecuritiesDomainService } from './securities-domain.service';
           <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
             <thead>
               <tr>
-                <th style="min-width: 220px">Tên Domain</th>
-                <th>Loại hình TT</th>
-                <th>Chu kì TT</th>
-                <th>Phương thức TT CK</th>
-                <th>Phương thức TT Tiền</th>
-                <th>Domain mặc định</th>
+                <th *ngFor="let col of CONFIG.table.columns" [style.minWidth]="col.width">{{ col.label }}</th>
               </tr>
             </thead>
 
             <tbody *ngIf="loading">
               <tr *ngFor="let _ of [].constructor(8)">
-                <td *ngFor="let w of skeletonColumns">
+                <td *ngFor="let w of CONFIG.table.skeleton.columns">
                   <app-skeleton [width]="w" height="18px"></app-skeleton>
                 </td>
               </tr>
@@ -41,17 +38,12 @@ import { SecuritiesDomainService } from './securities-domain.service';
 
             <tbody *ngIf="!loading && rows.length">
               <tr *ngFor="let r of rows; trackBy: trackByCode">
-                <td>
-                  <div class="fw-500">{{ r.domainName }}</div>
-                  <div class="text-muted small">{{ r.domainCode }}</div>
-                </td>
+                <td><div class="fw-500">{{ r.domainName }}</div><div class="text-muted small">{{ r.domainCode }}</div></td>
                 <td>{{ r.settlementType }}</td>
                 <td>{{ r.settlementCycle }}</td>
-                <td>{{ r.secSettlementType }}</td>
-                <td>{{ r.cashSettleType }}</td>
-                <td>
-                  <app-badge [value]="r.isDefault" type="status"></app-badge>
-                </td>
+                <td>{{ mapSettleMethodLabel(r.secSettlementType) }}</td>
+                <td>{{ mapSettleMethodLabel(r.cashSettleType) }}</td>
+                <td>{{ mapYesNo(r.isDefault) }}</td>
               </tr>
             </tbody>
 
@@ -70,7 +62,9 @@ export class SecuritiesDomainListComponent implements OnInit {
   loading = false;
   rows: any[] = [];
   error?: string;
-  skeletonColumns = ['30%', '14%', '10%', '16%', '16%', '10%'];
+  CONFIG = SECURITIES_DOMAIN_CONFIG;
+  mapSettleMethodLabel = mapSettleMethodLabel;
+  mapYesNo = mapYesNo;
 
   constructor(private service: SecuritiesDomainService) {}
 
