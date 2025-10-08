@@ -1,9 +1,8 @@
 <div class="container-fluid">
-  <app-page-title title="Miền thanh toán" [breadcrumbItems]="[{ label: 'Chứng khoán' }, { label: 'Miền thanh toán', active: true }]"></app-page-title>
+  <app-page-title [title]="CONFIG.breadcrumb.title" [breadcrumbItems]="CONFIG.breadcrumb.items"></app-page-title>
 
   <div class="bg-white rounded shadow-sm p-3">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <div></div>
+    <div class="d-flex align-items-center gap-2 mb-3">
       <button class="btn btn-outline-secondary" (click)="fetch()" [disabled]="loading">
         <i class="bx bx-refresh"></i> Tải lại
       </button>
@@ -15,18 +14,13 @@
       <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
         <thead>
           <tr>
-            <th style="min-width: 220px">Tên Domain</th>
-            <th>Loại hình TT</th>
-            <th>Chu kì TT</th>
-            <th>Phương thức TT CK</th>
-            <th>Phương thức TT Tiền</th>
-            <th>Domain mặc định</th>
+            <th *ngFor="let col of CONFIG.table.columns" [style.minWidth]="col.width">{{ col.label }}</th>
           </tr>
         </thead>
 
         <tbody *ngIf="loading">
-          <tr *ngFor="let _ of [].constructor(8)">
-            <td *ngFor="let w of skeletonColumns">
+          <tr *ngFor="let _ of [].constructor(CONFIG.table.skeleton.rows)">
+            <td *ngFor="let w of CONFIG.table.skeleton.columns">
               <app-skeleton [width]="w" height="18px"></app-skeleton>
             </td>
           </tr>
@@ -34,27 +28,21 @@
 
         <tbody *ngIf="!loading && rows.length">
           <tr *ngFor="let r of rows; trackBy: trackByCode">
-            <td>
-              <div class="fw-500">{{ r.domainName }}</div>
-              <div class="text-muted small">{{ r.domainCode }}</div>
-            </td>
+            <td><div class="fw-500">{{ r.domainName }}</div><div class="text-muted small">{{ r.domainCode }}</div></td>
             <td>{{ r.settlementType }}</td>
             <td>{{ r.settlementCycle }}</td>
-            <td>{{ r.secSettlementType }}</td>
-            <td>{{ r.cashSettleType }}</td>
-            <td>
-              <app-badge [value]="r.isDefault" type="status"></app-badge>
-            </td>
+            <td>{{ mapSettleMethodLabel(r.secSettlementType) }}</td>
+            <td>{{ mapSettleMethodLabel(r.cashSettleType) }}</td>
+            <td>{{ mapYesNo(r.isDefault) }}</td>
           </tr>
         </tbody>
 
         <tbody *ngIf="!loading && !rows.length">
           <tr>
-            <td colspan="6" class="text-center text-muted">Không có dữ liệu</td>
+            <td colspan="6" class="text-center text-muted">Không có dữ liệu.</td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
 </div>
-
