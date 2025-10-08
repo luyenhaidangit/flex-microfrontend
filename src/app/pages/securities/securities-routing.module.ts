@@ -4,7 +4,6 @@ import { SecuritiesDomainListComponent } from './securities-domain/securities-do
 
 const routes: Routes = [
   { path: 'domains', component: SecuritiesDomainListComponent },
-  { path: 'payment-methods', loadComponent: () => import('./securities-payment-methods/securities-payment-methods.component').then(m => m.SecuritiesPaymentMethodsComponent) },
   { path: '', redirectTo: 'domains', pathMatch: 'full' }
 ];
 
