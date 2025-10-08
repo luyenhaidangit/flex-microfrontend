@@ -15,6 +15,7 @@ export class SecuritiesDomainListComponent implements OnInit {
   CONFIG = SECURITIES_DOMAIN_CONFIG;
   mapSettleMethodLabel = mapSettleMethodLabel;
   mapYesNo = mapYesNo;
+  showInfo = false;
 
   constructor(private service: SecuritiesDomainService) {}
 
@@ -39,5 +40,13 @@ export class SecuritiesDomainListComponent implements OnInit {
 
   trackByCode(index: number, item: any) {
     return item.domainCode || index;
+  }
+
+  openInfo() {
+    this.showInfo = true;
+  }
+
+  closeInfo() {
+    this.showInfo = false;
   }
 }

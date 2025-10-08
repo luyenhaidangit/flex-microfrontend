@@ -1,10 +1,14 @@
 <div class="container-fluid">
   <app-page-title [title]="CONFIG.breadcrumb.title" [breadcrumbItems]="CONFIG.breadcrumb.items"></app-page-title>
 
-  <div class="bg-white rounded shadow-sm p-3">
+  <div class="bg-white rounded shadow-sm p-3 position-relative">
     <div class="d-flex align-items-center gap-2 mb-3">
       <button class="btn btn-outline-secondary" (click)="fetch()" [disabled]="loading">
         <i class="bx bx-refresh"></i> Tải lại
+      </button>
+      <span class="ms-auto"></span>
+      <button type="button" class="btn btn-light" (click)="openInfo()" aria-label="Giải thích các trường">
+        <i class="mdi mdi-help-circle-outline"></i>
       </button>
     </div>
 
@@ -44,5 +48,44 @@
         </tbody>
       </table>
     </div>
+    <!-- Info Drawer -->
+    <div class="info-drawer" [class.info-drawer--open]="showInfo" role="dialog" aria-labelledby="infoDrawerTitle">
+      <div class="info-drawer__header d-flex align-items-center justify-content-between">
+        <h5 id="infoDrawerTitle" class="mb-0">Giải thích các trường thông tin</h5>
+        <button class="btn btn-link text-muted" (click)="closeInfo()" aria-label="Đóng">
+          <i class="mdi mdi-close"></i>
+        </button>
+      </div>
+      <div class="info-drawer__body">
+        <ul class="list-unstyled mb-0 small">
+          <li class="mb-3">
+            <div class="fw-600">DVP3</div>
+            <div class="text-muted">Thanh toán ròng cuối ngày giữa tiền và chứng khoán.</div>
+          </li>
+          <li class="mb-3">
+            <div class="fw-600">T+2</div>
+            <div class="text-muted">Thanh toán sau 2 ngày làm việc kể từ ngày giao dịch.</div>
+          </li>
+          <li class="mb-3">
+            <div class="fw-600">NET</div>
+            <div class="text-muted">Xử lý theo phương thức ròng (gộp nhiều giao dịch).</div>
+          </li>
+          <li class="mb-3">
+            <div class="fw-600">TRAN</div>
+            <div class="text-muted">Xử lý theo từng giao dịch (không gộp).</div>
+          </li>
+          <li class="mb-3">
+            <div class="fw-600">Tiền/CK</div>
+            <div class="text-muted">Phương thức thanh toán cho tiền và chứng khoán có thể khác nhau.</div>
+          </li>
+          <li>
+            <div class="fw-600">Mặc định</div>
+            <div class="text-muted">Xác định miền được ưu tiên khi không chỉ định cụ thể.</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-drawer-overlay" *ngIf="showInfo" (click)="closeInfo()"></div>
   </div>
 </div>
