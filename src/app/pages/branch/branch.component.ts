@@ -61,6 +61,9 @@ export class BranchComponent extends EntityListComponent<BranchFilter, Branch> i
 
   // Branch detail modal state
   selectedBranch: Branch | null = null;
+  
+  // Request detail modal state
+  showRequestDetailModal = false;
 
   skeletonRows = Array.from({ length: 8 });
   tableConfig = {
@@ -222,6 +225,12 @@ export class BranchComponent extends EntityListComponent<BranchFilter, Branch> i
     this.selectedBranch = null;
   }
 
+  // Handle branch request detail modal close
+  onBranchRequestDetailModalClose(): void {
+    this.showRequestDetailModal = false;
+    this.selectedRequest = null;
+  }
+
   // Open create modal
   openCreateModal(): void {
     this.branchForm.reset();
@@ -367,33 +376,8 @@ export class BranchComponent extends EntityListComponent<BranchFilter, Branch> i
       return;
     }
 
-    this.requestDetailData = null;
-    this.selectedItem = item;
-    
-    // Reset loading states
-    this.isApproving = false;
-    this.isRejecting = false;
-
-    this.branchService.getBranchRequestDetail(requestId).subscribe({
-      next: (res) => {
-        if (res?.isSuccess) {
-          this.requestDetailData = res.data;
-          this.modalRef = this.modalService.show(this.requestDetailTemplateRef, { 
-            class: 'modal-xl',
-            backdrop: 'static',
-            keyboard: false,
-            ignoreBackdropClick: true
-          });
-          
-          // Reset loading states when modal is hidden
-          this.modalRef.onHidden?.subscribe(() => {
-            this.resetLoadingStates();
-          });
-        } else {
-          this.toastService.error('Không thể lấy thông tin chi tiết yêu cầu!');
-        }
-      }
-    });
+    this.selectedRequest = item;
+    this.showRequestDetailModal = true;
   }
 
   private overrideToastIconSize(): void {

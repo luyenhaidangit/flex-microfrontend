@@ -386,8 +386,15 @@
   (rejected)="onBranchRejected($event)">
 </app-reject-branch-modal>
 
-<!-- Enhanced Branch Request Detail Modal -->
-<ng-template #requestDetailModal>
+<!-- Branch Request Detail Modal Component -->
+<app-branch-request-detail-modal 
+  [isVisible]="showRequestDetailModal"
+  [selectedRequest]="selectedRequest"
+  (close)="onBranchRequestDetailModalClose()">
+</app-branch-request-detail-modal>
+
+<!-- Old template removed - replaced with component above -->
+<ng-template #requestDetailModalOld>
   <div class="modal-header">
     <h5 class="modal-title fw-semibold">
       <i [class]="getRequestTypeIcon(getRequestType())" 

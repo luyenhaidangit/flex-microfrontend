@@ -42,6 +42,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ChatComponent } from './chat/chat.component';
 import { BranchComponent } from './branch/branch.component';
 import { BranchDetailModalComponent } from './branch/branch-detail-modal/branch-detail-modal.component';
+import { BranchRequestDetailModalComponent } from './branch/branch-request-detail-modal/branch-request-detail-modal.component';
 import { RejectBranchModalComponent } from './branch/reject-branch-modal/reject-branch-modal.component';
 
 import { FilemanagerComponent } from './filemanager/filemanager.component';
@@ -57,6 +58,7 @@ import { PaginationModule as CustomPaginationModule } from 'src/app/core/compone
     FilemanagerComponent, 
     BranchComponent,
     BranchDetailModalComponent,
+    BranchRequestDetailModalComponent,
     RejectBranchModalComponent
   ],
   imports: [

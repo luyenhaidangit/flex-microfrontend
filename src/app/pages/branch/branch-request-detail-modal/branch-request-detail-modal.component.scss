@@ -1,0 +1,38 @@
+// Branch Request Detail Modal Styles
+.comparison-table {
+  th {
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+  
+  td {
+    font-size: 0.875rem;
+    vertical-align: middle;
+  }
+}
+
+.bg-light-warning {
+  background-color: rgba(255, 193, 7, 0.1) !important;
+}
+
+.changes-summary {
+  .change-count {
+    font-style: italic;
+  }
+}
+
+.card-header {
+  h6 {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+}
+
+.modal-dialog-scrollable {
+  max-height: 90vh;
+}
+
+.modal-body {
+  max-height: calc(90vh - 120px);
+  overflow-y: auto;
+}
