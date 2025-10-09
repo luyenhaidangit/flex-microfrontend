@@ -1,0 +1,70 @@
+<div class="container-fluid">
+  <app-page-title title="Thành viên lưu ký" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+  <div class="bg-white rounded shadow-sm p-3">
+    <!-- Search -->
+    <div class="row gx-3 mb-3 gy-2 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label fw-bold text-muted">Mã TVLK</label>
+        <input class="form-control" type="text" placeholder="Nhập mã..." [(ngModel)]="filter.depositCode">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label fw-bold text-muted">Tên viết tắt</label>
+        <input class="form-control" type="text" placeholder="Nhập tên viết tắt..." [(ngModel)]="filter.shortName">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-bold text-muted">Tên đầy đủ</label>
+        <input class="form-control" type="text" placeholder="Nhập tên đầy đủ..." [(ngModel)]="filter.fullName">
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary w-100" (click)="onSearch()">
+          <i class="bx bx-search-alt-2"></i> Tìm kiếm
+        </button>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+    <div class="table-responsive table-header-primary">
+      <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
+        <thead>
+          <tr>
+            <th style="min-width: 140px">Mã TVLK</th>
+            <th style="min-width: 200px">Tên viết tắt</th>
+            <th style="min-width: 320px">Tên đầy đủ</th>
+          </tr>
+        </thead>
+
+        <tbody *ngIf="loading">
+          <tr *ngFor="let _ of [].constructor(skeleton.rows)">
+            <td *ngFor="let w of skeleton.columns"><app-skeleton [width]="w" height="18px"></app-skeleton></td>
+          </tr>
+        </tbody>
+
+        <tbody *ngIf="!loading && items.length">
+          <tr *ngFor="let m of items">
+            <td class="fw-500">{{ m.depositCode }}</td>
+            <td>{{ m.shortName }}</td>
+            <td>{{ m.fullName }}</td>
+          </tr>
+        </tbody>
+
+        <tbody *ngIf="!loading && !items.length">
+          <tr>
+            <td colspan="3" class="text-center text-muted">Không có dữ liệu.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <app-pagination
+      [paginationState]="getPaginationState()"
+      [pageSizeOptions]="[{value:10,label:'10'},{value:20,label:'20'},{value:50,label:'50'}]"
+      [maxVisiblePages]="5"
+      (pageChanged)="onPageChange($event)"
+      (pageSizeChanged)="onPageSizeChange($event)">
+    </app-pagination>
+  </div>
+</div>
+

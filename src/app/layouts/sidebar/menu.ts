@@ -948,4 +948,15 @@ export const MENU: MenuItem[] = [
     //         },
     //     ]
     // }
+    {
+        id: 'master-title',
+        label: 'Danh mục cơ sở',
+        isTitle: true
+    },
+    {
+        id: 'master.deposit-members',
+        label: 'Thành viên lưu ký',
+        link: '/master/deposit-members',
+        icon: 'bx bx-collection'
+    },
 ];

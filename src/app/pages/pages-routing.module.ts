@@ -31,6 +31,7 @@ const routes: Routes = [
   { path: 'ui', loadChildren: () => import('./ui/ui.module').then(m => m.UiModule) },
   { path: 'form', loadChildren: () => import('./form/form.module').then(m => m.FormModule) },
   { path: 'securities', loadChildren: () => import('./securities/securities.module').then(m => m.SecuritiesModule) },
+  { path: 'master', loadChildren: () => import('./master/master.module').then(m => m.MasterModule) },
   { path: 'tables', loadChildren: () => import('./tables/tables.module').then(m => m.TablesModule) },
   { path: 'icons', loadChildren: () => import('./icons/icons.module').then(m => m.IconsModule) },
   { path: 'charts', loadChildren: () => import('./chart/chart.module').then(m => m.ChartModule) },
