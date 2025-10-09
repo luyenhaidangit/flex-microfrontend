@@ -18,8 +18,9 @@ export class DepositMemberService {
     if (params.depositCode) query.DepositCode = params.depositCode;
     if (params.shortName) query.ShortName = params.shortName;
     if (params.fullName) query.FullName = params.fullName;
-    if (params.sortColumn) query.SortColumn = params.sortColumn;
-    if (params.sortDirection) query.SortDirection = params.sortDirection;
+    // Backend prefers camelCase: orderBy, sortBy
+    if (params.sortColumn) query.orderBy = params.sortColumn;
+    if (params.sortDirection) query.sortBy = params.sortDirection;
 
     return this.http.get<PagedResponse<DepositMemberItem>>(`${this.apiUrl}/paging`, { params: query });
   }

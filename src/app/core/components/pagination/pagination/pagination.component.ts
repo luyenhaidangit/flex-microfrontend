@@ -16,7 +16,6 @@ export interface PaginationState {
       <app-page-numbers
         [currentPage]="paginationState.index"
         [totalPages]="paginationState.totalPages"
-        [maxVisiblePages]="maxVisiblePages"
         (pageChanged)="onPageChange($event)">
       </app-page-numbers>
       

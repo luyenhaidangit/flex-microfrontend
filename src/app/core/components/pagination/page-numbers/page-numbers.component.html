@@ -7,7 +7,7 @@
   </li>
 
   <!-- Page numbers -->
-  <ng-container *ngFor="let page of getPageNumbers(); let idx = index">
+  <ng-container *ngFor="let page of getFixedPageNumbers(); let idx = index">
     <!-- Ellipsis sentinel -->
     <li *ngIf="page === -1" class="page-item disabled">
       <span class="page-link">…</span>
@@ -25,4 +25,3 @@
     </a>
   </li>
 </ul>
-
