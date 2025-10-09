@@ -12,6 +12,7 @@ export interface DepositMemberSearchParams {
   depositCode?: string | null;
   shortName?: string | null;
   fullName?: string | null;
+  bicCode?: string | null;
   sortColumn?: 'depositCode' | 'shortName' | 'fullName' | 'bicCode';
   sortDirection?: 'asc' | 'desc';
 }

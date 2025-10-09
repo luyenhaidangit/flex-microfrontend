@@ -23,7 +23,8 @@ export class DepositMemberComponent implements OnInit {
   filter = {
     depositCode: '',
     shortName: '',
-    fullName: ''
+    fullName: '',
+    bicCode: ''
   };
 
   // Pagination state (compatible with app-pagination)
@@ -95,6 +96,7 @@ export class DepositMemberComponent implements OnInit {
       depositCode: this.filter.depositCode?.trim() || undefined,
       shortName: this.filter.shortName?.trim() || undefined,
       fullName: this.filter.fullName?.trim() || undefined,
+      bicCode: this.filter.bicCode?.trim() || undefined,
       sortColumn: this.sort.column || undefined,
       sortDirection: this.sort.direction || undefined,
     };

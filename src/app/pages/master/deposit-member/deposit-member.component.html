@@ -3,27 +3,29 @@
 
   <div class="bg-white rounded shadow-sm p-3">
     <!-- Search -->
-    <div class="row gx-3 mb-3 gy-2 align-items-end">
-      <div class="col-md-3">
-        <label class="form-label fw-bold text-muted">Mã TVLK</label>
-        <input class="form-control" type="text" placeholder="Nhập mã..." [(ngModel)]="filter.depositCode">
-      </div>
-      <div class="col-md-3">
-        <label class="form-label fw-bold text-muted">Tên viết tắt</label>
-        <input class="form-control" type="text" placeholder="Nhập tên viết tắt..." [(ngModel)]="filter.shortName">
-      </div>
-      <div class="col-md-4">
-        <label class="form-label fw-bold text-muted">Tên đầy đủ</label>
-        <input class="form-control" type="text" placeholder="Nhập tên đầy đủ..." [(ngModel)]="filter.fullName">
-      </div>
-      <div class="col-md-2">
-        <button class="btn btn-primary w-100" (click)="onSearch()">
-          <i class="bx bx-search-alt-2"></i> Tìm kiếm
-        </button>
-      </div>
-    </div>
-
-    <!-- Error -->
+<div class="row gx-3 mb-3 gy-2 align-items-end">
+  <div class="col-md-2">
+    <label class="form-label fw-bold text-muted">Mã TVLK</label>
+    <input class="form-control" type="text" placeholder="Nhập mã..." [(ngModel)]="filter.depositCode">
+  </div>
+  <div class="col-md-2">
+    <label class="form-label fw-bold text-muted">Tên viết tắt</label>
+    <input class="form-control" type="text" placeholder="Nhập tên viết tắt..." [(ngModel)]="filter.shortName">
+  </div>
+  <div class="col-md-2">
+    <label class="form-label fw-bold text-muted">Tên đầy đủ</label>
+    <input class="form-control" type="text" placeholder="Nhập tên đầy đủ..." [(ngModel)]="filter.fullName">
+  </div>
+  <div class="col-md-2">
+    <label class="form-label fw-bold text-muted">BIC Code</label>
+    <input class="form-control" type="text" placeholder="Nhập BIC..." [(ngModel)]="filter.bicCode">
+  </div>
+  <div class="col-md-2">
+    <button class="btn btn-primary w-100" (click)="onSearch()">
+      <i class="bx bx-search-alt-2"></i> Tìm kiếm
+    </button>
+  </div>
+</div><!-- Error -->
     <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
     <div class="table-responsive table-header-primary">
@@ -112,3 +114,4 @@
     </app-pagination>
   </div>
 </div>
+

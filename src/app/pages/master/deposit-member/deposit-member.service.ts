@@ -18,6 +18,7 @@ export class DepositMemberService {
     if (params.depositCode) query.DepositCode = params.depositCode;
     if (params.shortName) query.ShortName = params.shortName;
     if (params.fullName) query.FullName = params.fullName;
+    if (params.bicCode) query.BicCode = params.bicCode;
     // Backend prefers camelCase: orderBy, sortBy
     if (params.sortColumn) query.orderBy = params.sortColumn;
     if (params.sortDirection) query.sortBy = params.sortDirection;
