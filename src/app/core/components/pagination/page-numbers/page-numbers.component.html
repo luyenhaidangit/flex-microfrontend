@@ -1,0 +1,28 @@
+<ul class="pagination mb-0">
+  <!-- Previous button -->
+  <li class="page-item cursor-pointer" [class.disabled]="currentPage === 1">
+    <a class="page-link" (click)="onPageChange(currentPage - 1)">
+      <i class="mdi mdi-chevron-left"></i>
+    </a>
+  </li>
+
+  <!-- Page numbers -->
+  <ng-container *ngFor="let page of getPageNumbers(); let idx = index">
+    <!-- Ellipsis sentinel -->
+    <li *ngIf="page === -1" class="page-item disabled">
+      <span class="page-link">…</span>
+    </li>
+    <!-- Normal page -->
+    <li *ngIf="page !== -1" class="page-item cursor-pointer" [class.active]="currentPage === page">
+      <a class="page-link" (click)="onPageChange(page)">{{ page }}</a>
+    </li>
+  </ng-container>
+
+  <!-- Next button -->
+  <li class="page-item cursor-pointer" [class.disabled]="currentPage === totalPages">
+    <a class="page-link" (click)="onPageChange(currentPage + 1)">
+      <i class="mdi mdi-chevron-right"></i>
+    </a>
+  </li>
+</ul>
+
