@@ -3,6 +3,7 @@ export interface DepositMemberItem {
   depositCode: string;
   shortName: string;
   fullName: string;
+  bicCode?: string;
 }
 
 export interface DepositMemberSearchParams {
@@ -23,4 +24,3 @@ export interface PagedResponse<T> {
     pageSize?: number;
   } | null;
 }
-

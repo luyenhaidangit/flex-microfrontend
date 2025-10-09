@@ -37,7 +37,7 @@ export class DepositMemberComponent implements OnInit {
   // Table skeleton
   skeleton = {
     rows: 8,
-    columns: ['120px', '160px', '320px']
+    columns: ['140px', '200px', '320px', '160px', '120px']
   };
 
   constructor(private service: DepositMemberService) {}
@@ -96,5 +96,20 @@ export class DepositMemberComponent implements OnInit {
       }
     });
   }
-}
 
+  // Action handlers (placeholder)
+  onView(item: DepositMemberItem): void {
+    // TODO: Hook up detail modal
+    console.log('View deposit member', item);
+  }
+
+  onEdit(item: DepositMemberItem): void {
+    // TODO: Hook up edit modal
+    console.log('Edit deposit member', item);
+  }
+
+  onDelete(item: DepositMemberItem): void {
+    // TODO: Hook up delete confirmation
+    console.log('Delete deposit member', item);
+  }
+}
