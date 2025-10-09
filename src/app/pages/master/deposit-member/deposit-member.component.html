@@ -68,7 +68,6 @@
                 }"></i>
               </button>
             </th>
-            <th style="min-width: 120px">Thao tác</th>
           </tr>
         </thead>
 
@@ -84,23 +83,12 @@
             <td>{{ m.shortName }}</td>
             <td>{{ m.fullName }}</td>
             <td>{{ m.bicCode }}</td>
-            <td class="action-column">
-              <button class="btn btn-link p-0 text-info" (click)="onView(m)" title="Xem">
-                <i class="fas fa-eye"></i>
-              </button>
-              <button class="btn btn-link p-0 ms-2 text-warning" (click)="onEdit(m)" title="Sửa">
-                <i class="fas fa-edit"></i>
-              </button>
-              <button class="btn btn-link p-0 ms-2 text-danger" (click)="onDelete(m)" title="Xóa">
-                <i class="fas fa-trash"></i>
-              </button>
-            </td>
           </tr>
         </tbody>
 
         <tbody *ngIf="!loading && !items.length">
           <tr>
-            <td colspan="5" class="text-center text-muted">Không có dữ liệu.</td>
+            <td colspan="4" class="text-center text-muted">Không có dữ liệu.</td>
           </tr>
         </tbody>
       </table>
