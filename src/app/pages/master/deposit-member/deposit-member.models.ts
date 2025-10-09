@@ -12,6 +12,8 @@ export interface DepositMemberSearchParams {
   depositCode?: string | null;
   shortName?: string | null;
   fullName?: string | null;
+  sortColumn?: 'depositCode' | 'shortName' | 'fullName' | 'bicCode';
+  sortDirection?: 'asc' | 'desc';
 }
 
 export interface PagedResponse<T> {

@@ -30,10 +30,42 @@
       <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
         <thead>
           <tr>
-            <th style="min-width: 140px">Mã TVLK</th>
-            <th style="min-width: 200px">Tên viết tắt</th>
-            <th style="min-width: 320px">Tên đầy đủ</th>
-            <th style="min-width: 160px">BIC Code</th>
+            <th style="min-width: 140px">
+              <button class="th-sort" (click)="onSort('depositCode')">
+                Mã TVLK
+                <i class="mdi" [ngClass]="{
+                  'mdi-arrow-up': sort.column==='depositCode' && sort.direction==='asc',
+                  'mdi-arrow-down': sort.column==='depositCode' && sort.direction==='desc'
+                }"></i>
+              </button>
+            </th>
+            <th style="min-width: 200px">
+              <button class="th-sort" (click)="onSort('shortName')">
+                Tên viết tắt
+                <i class="mdi" [ngClass]="{
+                  'mdi-arrow-up': sort.column==='shortName' && sort.direction==='asc',
+                  'mdi-arrow-down': sort.column==='shortName' && sort.direction==='desc'
+                }"></i>
+              </button>
+            </th>
+            <th style="min-width: 320px">
+              <button class="th-sort" (click)="onSort('fullName')">
+                Tên đầy đủ
+                <i class="mdi" [ngClass]="{
+                  'mdi-arrow-up': sort.column==='fullName' && sort.direction==='asc',
+                  'mdi-arrow-down': sort.column==='fullName' && sort.direction==='desc'
+                }"></i>
+              </button>
+            </th>
+            <th style="min-width: 160px">
+              <button class="th-sort" (click)="onSort('bicCode')">
+                BIC Code
+                <i class="mdi" [ngClass]="{
+                  'mdi-arrow-up': sort.column==='bicCode' && sort.direction==='asc',
+                  'mdi-arrow-down': sort.column==='bicCode' && sort.direction==='desc'
+                }"></i>
+              </button>
+            </th>
             <th style="min-width: 120px">Thao tác</th>
           </tr>
         </thead>

@@ -34,6 +34,12 @@ export class DepositMemberComponent implements OnInit {
     totalPages: 0
   };
 
+  // Sorting state
+  sort: { column: 'depositCode' | 'shortName' | 'fullName' | 'bicCode' | null; direction: 'asc' | 'desc' | null } = {
+    column: null,
+    direction: null
+  };
+
   // Table skeleton
   skeleton = {
     rows: 8,
@@ -68,6 +74,20 @@ export class DepositMemberComponent implements OnInit {
     this.load();
   }
 
+  onSort(column: 'depositCode' | 'shortName' | 'fullName' | 'bicCode'): void {
+    if (this.sort.column === column) {
+      this.sort.direction = this.sort.direction === 'asc' ? 'desc' : (this.sort.direction === 'desc' ? null : 'asc');
+      if (!this.sort.direction) {
+        this.sort.column = null;
+      }
+    } else {
+      this.sort.column = column;
+      this.sort.direction = 'asc';
+    }
+    this.paging.index = 1;
+    this.load();
+  }
+
   private load(): void {
     const params: DepositMemberSearchParams = {
       pageIndex: this.paging.index,
@@ -75,6 +95,8 @@ export class DepositMemberComponent implements OnInit {
       depositCode: this.filter.depositCode?.trim() || undefined,
       shortName: this.filter.shortName?.trim() || undefined,
       fullName: this.filter.fullName?.trim() || undefined,
+      sortColumn: this.sort.column || undefined,
+      sortDirection: this.sort.direction || undefined,
     };
 
     this.loading = true;
