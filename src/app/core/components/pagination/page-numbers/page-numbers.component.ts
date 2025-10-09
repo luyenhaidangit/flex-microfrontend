@@ -12,14 +12,16 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
       </li>
       
       <!-- Page numbers -->
-      <li 
-        *ngFor="let page of getPageNumbers(); let idx = index" 
-        class="page-item cursor-pointer"
-        [class.active]="currentPage === page">
-        <a class="page-link" (click)="onPageChange(page)">
-          {{ page }}
-        </a>
-      </li>
+      <ng-container *ngFor="let page of getPageNumbers(); let idx = index">
+        <!-- Ellipsis sentinel -->
+        <li *ngIf="page === -1" class="page-item disabled">
+          <span class="page-link">…</span>
+        </li>
+        <!-- Normal page -->
+        <li *ngIf="page !== -1" class="page-item cursor-pointer" [class.active]="currentPage === page">
+          <a class="page-link" (click)="onPageChange(page)">{{ page }}</a>
+        </li>
+      </ng-container>
       
       <!-- Next button -->
       <li class="page-item cursor-pointer" [class.disabled]="currentPage === totalPages">
