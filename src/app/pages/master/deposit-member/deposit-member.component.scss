@@ -22,3 +22,10 @@
   gap: 6px;
   cursor: pointer;
 }
+
+/* Keep original header (blue) color; only emphasize weight when sorted */
+.th-sort { color: inherit !important; }
+.th-sort .mdi { color: inherit; }
+.th-sort:hover, .th-sort:focus { color: inherit !important; text-decoration: none; outline: none; }
+th.sorted { font-weight: 900; color: inherit !important; }
+.th-sort.active { font-weight: 800; }
