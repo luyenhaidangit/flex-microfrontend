@@ -1,0 +1,33 @@
+/* Info Drawer (scoped to page title component) */
+.info-drawer {
+  position: fixed;
+  top: 0;
+  right: -320px;
+  width: 320px;
+  height: 100vh;
+  background: #fff;
+  box-shadow: 0 0 24px rgba(0,0,0,0.12);
+  z-index: 1040;
+  transition: right 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-drawer--open { right: 0; }
+
+.info-drawer__header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.info-drawer__body {
+  padding: 16px;
+  overflow: auto;
+}
+
+.info-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.25);
+  z-index: 1035;
+}

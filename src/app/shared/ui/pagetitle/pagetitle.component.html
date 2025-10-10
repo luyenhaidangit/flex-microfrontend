@@ -1,18 +1,41 @@
 <!-- breadcrumb item -->
 <div class="row">
   <div class="col-12">
-    <div class="page-title-box d-flex align-items-center justify-content-between">
+    <div class="page-title-box d-flex align-items-center justify-content-between gap-2">
       <h4 class="mb-0 font-size-18">{{ title }}</h4>
-      <div class="page-title-right">
-        <ol class="breadcrumb m-0">
-          <ng-container *ngFor="let item of breadcrumbItems">
-            <li class="breadcrumb-item" *ngIf="!item.active"><span class="cursor-pointer">{{ item.label }}</span>
-            </li>
-            <li class="breadcrumb-item active" *ngIf="item.active">{{ item.label }}
-            </li>
-          </ng-container>
-        </ol>
+      <div class="d-flex align-items-center gap-2">
+        <div class="page-title-right">
+          <ol class="breadcrumb m-0">
+            <ng-container *ngFor="let item of breadcrumbItems">
+              <li class="breadcrumb-item" *ngIf="!item.active"><span class="cursor-pointer">{{ item.label }}</span>
+              </li>
+              <li class="breadcrumb-item active" *ngIf="item.active">{{ item.label }}
+              </li>
+            </ng-container>
+          </ol>
+        </div>
+        <!-- Optional help button -->
+        <button *ngIf="infoTemplate" type="button" class="btn btn-light" (click)="openInfo()" aria-label="Gợi ý mô tả chức năng">
+          <i class="mdi mdi-help-circle-outline"></i>
+        </button>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Optional Info Drawer -->
+<ng-container *ngIf="infoTemplate">
+  <div class="info-drawer" [class.info-drawer--open]="showInfo" role="dialog" aria-labelledby="infoDrawerTitle">
+    <div class="info-drawer__header d-flex align-items-center justify-content-between">
+      <h5 id="infoDrawerTitle" class="mb-0">{{ infoTitle || 'Gợi ý mô tả' }}</h5>
+      <button class="btn btn-link text-muted" (click)="closeInfo()" aria-label="Đóng">
+        <i class="mdi mdi-close"></i>
+      </button>
+    </div>
+    <div class="info-drawer__body">
+      <ng-container [ngTemplateOutlet]="infoTemplate"></ng-container>
+    </div>
+  </div>
+  <div class="info-drawer-overlay" *ngIf="showInfo" (click)="closeInfo()"></div>
+  
+</ng-container>
