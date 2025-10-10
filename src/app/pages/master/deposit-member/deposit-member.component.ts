@@ -47,6 +47,9 @@ export class DepositMemberComponent implements OnInit {
     columns: ['140px', '200px', '320px', '160px']
   };
 
+  // Info drawer state
+  showInfo = false;
+
   constructor(private service: DepositMemberService) {}
 
   ngOnInit(): void {
@@ -120,5 +123,9 @@ export class DepositMemberComponent implements OnInit {
       }
     });
   }
+
+  // Info drawer handlers
+  openInfo(): void { this.showInfo = true; }
+  closeInfo(): void { this.showInfo = false; }
 
 }
