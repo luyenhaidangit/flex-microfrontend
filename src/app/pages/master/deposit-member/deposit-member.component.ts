@@ -164,9 +164,17 @@ export class DepositMemberComponent implements OnInit {
 
   // ==== Upload guideline extras ====
   onDownloadTemplate(): void {
-    const href = 'assets/templates/deposit_member_template.csv';
-    const a = document.createElement('a'); a.href = href; a.download = 'deposit_member_template.csv';
-    a.target = '_blank'; a.rel = 'noopener'; a.click();
+    this.service.downloadImportTemplate().subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'deposit_member_template.xlsx';
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+      error: () => this.toastr.error('Không thể tải file mẫu', 'Lỗi')
+    });
   }
 
   // ==== History & Preview ====
@@ -187,7 +195,7 @@ export class DepositMemberComponent implements OnInit {
   }
 
   exportPreview(id: string): void {
-    (this.service as any).exportImportPreview(id).subscribe({
+    this.service.exportImportPreview(id).subscribe({
       next: (blob) => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a'); a.href = url; a.download = 'deposit_member_preview.xlsx'; a.click();

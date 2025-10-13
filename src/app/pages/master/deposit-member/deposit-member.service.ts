@@ -50,4 +50,10 @@ export class DepositMemberService {
     const url = `/api/depositmember/imports/${encodeURIComponent(id)}/export`;
     return this.http.get(url, { responseType: 'blob' });
   }
+
+  // Download sample template for import
+  downloadImportTemplate() {
+    const url = `/api/depositmember/template`;
+    return this.http.get(url, { responseType: 'blob' });
+  }
 }
