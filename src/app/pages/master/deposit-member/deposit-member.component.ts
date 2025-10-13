@@ -61,7 +61,7 @@ export class DepositMemberComponent implements OnInit {
   effectiveDate?: Date | null;
   bsConfig: Partial<BsDatepickerConfig> = { 
     dateInputFormat: 'DD/MM/YYYY',
-    minDate: new Date(),
+    minDate: this.getTomorrow(),
     showWeekNumbers: false
   };
 
@@ -137,6 +137,9 @@ export class DepositMemberComponent implements OnInit {
   // ==== Import handling ====
   openImportModal(): void {
     this.importForm = {}; this.importError = undefined; this.uploading = false;
+    // Set default effective date to tomorrow
+    this.effectiveDate = this.getTomorrow();
+    this.onEffectiveDateChange(this.effectiveDate);
     this.modalRef = this.modalService.show(this.importModal, { class: 'modal-lg' });
   }
 
@@ -167,14 +170,14 @@ export class DepositMemberComponent implements OnInit {
 
   onEffectiveDateChange(date: Date | null): void {
     if (date) {
-      // Validate that selected date is not before today
-      const today = new Date();
-      today.setHours(0, 0, 0, 0); // Reset time to start of day for comparison
+      // Validate that selected date is not before tomorrow
+      const tomorrow = this.getTomorrow();
+      tomorrow.setHours(0, 0, 0, 0); // Reset time to start of day for comparison
       const selectedDate = new Date(date);
       selectedDate.setHours(0, 0, 0, 0);
       
-      if (selectedDate < today) {
-        this.toastr.error('Ngày hiệu lực không được nhỏ hơn ngày hiện tại', 'Lỗi validation');
+      if (selectedDate < tomorrow) {
+        this.toastr.error('Ngày hiệu lực phải từ ngày mai trở đi', 'Lỗi validation');
         this.effectiveDate = null;
         this.importForm.effectiveDate = undefined;
         this.effectiveDateDisplay = undefined;
@@ -200,13 +203,13 @@ export class DepositMemberComponent implements OnInit {
 
     // Double-check date validation before submit
     if (this.effectiveDate) {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      const tomorrow = this.getTomorrow();
+      tomorrow.setHours(0, 0, 0, 0);
       const selectedDate = new Date(this.effectiveDate);
       selectedDate.setHours(0, 0, 0, 0);
       
-      if (selectedDate < today) {
-        this.importError = 'Ngày hiệu lực không được nhỏ hơn ngày hiện tại';
+      if (selectedDate < tomorrow) {
+        this.importError = 'Ngày hiệu lực phải từ ngày mai trở đi';
         return;
       }
     }
@@ -430,7 +433,7 @@ export class DepositMemberComponent implements OnInit {
   /**
    * 4. Kiểm tra ràng buộc nghiệp vụ (business validation) - sẽ được BE xử lý
    * - DepositCode không trùng DB
-   * - EffectiveDate >= current date
+   * - EffectiveDate >= tomorrow
    */
   private validateBusinessRules(): void {
     // Business rules sẽ được validate ở backend
@@ -438,12 +441,21 @@ export class DepositMemberComponent implements OnInit {
     
     if (this.importForm.effectiveDate) {
       const effectiveDate = new Date(this.importForm.effectiveDate);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      const tomorrow = this.getTomorrow();
+      tomorrow.setHours(0, 0, 0, 0);
       
-      if (effectiveDate < today) {
-        this.toastr.warning('Ngày hiệu lực không được nhỏ hơn ngày hiện tại', 'Cảnh báo');
+      if (effectiveDate < tomorrow) {
+        this.toastr.warning('Ngày hiệu lực phải từ ngày mai trở đi', 'Cảnh báo');
       }
     }
+  }
+
+  /**
+   * Get tomorrow's date
+   */
+  private getTomorrow(): Date {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow;
   }
 }
