@@ -35,21 +35,6 @@ export class DepositMemberService {
   
   // Import deposit members via CSV upload
   importDepositMembers(formData: FormData) {
-    return this.http.post<any>(`${this.apiUrl}/import`, formData);
-  }
-  
-  // Get import history
-  getImportHistory() {
-    return this.http.get<any[]>(`${this.apiUrl}/imports`);
-  }
-  
-  // Get preview details for an uploaded file
-  getImportPreview(id: string) {
-    return this.http.get<any>(`${this.apiUrl}/imports/${encodeURIComponent(id)}/preview`);
-  }
-  
-  // Export preview result (Excel)
-  exportImportPreview(id: string) {
-    return this.http.get(`${this.apiUrl}/imports/${encodeURIComponent(id)}/export`, { responseType: 'blob' });
+    return this.http.post<any>(`${this.apiUrl}/stage`, formData);
   }
 }
