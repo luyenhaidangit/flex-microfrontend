@@ -144,24 +144,61 @@
   </div>
   <div class="modal-body">
     <!-- Upload row -->
-    <div class="row g-2 align-items-end mb-2">
-      <div class="col-md-6">
+    <div class="row g-3 mb-3">
+      <div class="col-md-4">
         <label class="form-label fw-bold text-muted">Tệp Excel/CSV</label>
-        <input type="file" accept=".csv,.xlsx" class="form-control" (change)="onFileSelected($event)">
+        <div class="input-group">
+          <input 
+            type="file" 
+            accept=".csv,.xlsx" 
+            class="form-control d-none" 
+            id="fileInput"
+            (change)="onFileSelected($event)"
+            #fileInput>
+          <input 
+            type="text" 
+            class="form-control" 
+            [value]="importForm.file?.name || 'Chưa chọn file'"
+            readonly
+            placeholder="Chọn file Excel/CSV...">
+          <button class="btn btn-outline-secondary" type="button" (click)="fileInput.click()">
+            <i class="bx bx-folder-open"></i> Chọn file
+          </button>
+        </div>
+        <div *ngIf="importForm.file" class="mt-2">
+          <small class="text-success">
+            <i class="bx bx-check-circle"></i> 
+            {{ importForm.file.name }} ({{ getFileSize(importForm.file.size) }})
+          </small>
+        </div>
       </div>
       <div class="col-md-3">
         <label class="form-label fw-bold text-muted">Ngày hiệu lực</label>
-        <input type="text" class="form-control" bsDatepicker [bsConfig]="bsConfig" placeholder="dd/MM/yyyy" [(ngModel)]="effectiveDate" (bsValueChange)="onEffectiveDateChange($event)">
+        <div class="input-group">
+          <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+          <input 
+            type="text" 
+            class="form-control" 
+            bsDatepicker 
+            [bsConfig]="bsConfig" 
+            placeholder="dd/MM/yyyy" 
+            [(ngModel)]="effectiveDate" 
+            (bsValueChange)="onEffectiveDateChange($event)">
+        </div>
       </div>
-      <div class="col-md-3 d-flex gap-2">
-        <button type="button" class="btn btn-primary flex-grow-1" (click)="submitImport()" [disabled]="!importForm.file || !importForm.effectiveDate || uploading">
-          <i class="bx bx-upload"></i>
-          <span *ngIf="!uploading">Upload</span>
-          <span *ngIf="uploading">Đang xử lý...</span>
-        </button>
-        <button type="button" class="btn btn-outline-secondary" (click)="onDownloadTemplate()" title="Tải file mẫu">
-          <i class="bx bx-download"></i>
-        </button>
+      <div class="col-md-3">
+        <label class="form-label fw-bold text-muted">&nbsp;</label>
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-primary flex-grow-1" (click)="submitImport()" [disabled]="!importForm.file || !importForm.effectiveDate || uploading">
+            <i class="bx bx-upload" *ngIf="!uploading"></i>
+            <span class="spinner-border spinner-border-sm me-1" *ngIf="uploading" role="status" aria-hidden="true"></span>
+            <span *ngIf="!uploading">Upload</span>
+            <span *ngIf="uploading">Đang xử lý...</span>
+          </button>
+          <button type="button" class="btn btn-outline-secondary" (click)="onDownloadTemplate()" title="Tải file mẫu">
+            <i class="bx bx-download"></i>
+          </button>
+        </div>
       </div>
     </div>
     <small class="text-muted d-block mb-3">
