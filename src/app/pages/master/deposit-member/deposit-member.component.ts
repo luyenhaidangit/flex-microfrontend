@@ -2,7 +2,8 @@
 import { DepositMemberItem, DepositMemberSearchParams } from './deposit-member.models';
 import { DepositMemberService } from './deposit-member.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
+import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap/datepicker';
+import { defineLocale, viLocale } from 'ngx-bootstrap/chronos';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -64,7 +65,16 @@ export class DepositMemberComponent implements OnInit {
     showWeekNumbers: false
   };
 
-  constructor(private service: DepositMemberService, private modalService: BsModalService, private toastr: ToastrService) {}
+  constructor(
+    private service: DepositMemberService, 
+    private modalService: BsModalService, 
+    private toastr: ToastrService,
+    private bsLocaleService: BsLocaleService
+  ) {
+    // Define and set Vietnamese locale for datepicker
+    defineLocale('vi', viLocale);
+    this.bsLocaleService.use('vi');
+  }
 
   ngOnInit(): void { this.load(); }
 
