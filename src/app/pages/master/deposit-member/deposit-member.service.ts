@@ -44,4 +44,10 @@ export class DepositMemberService {
     const url = `/api/depositmember/imports/${encodeURIComponent(id)}/preview`;
     return this.http.get<any>(url);
   }
+
+  // Export preview result (Excel)
+  exportImportPreview(id: string) {
+    const url = `/api/depositmember/imports/${encodeURIComponent(id)}/export`;
+    return this.http.get(url, { responseType: 'blob' });
+  }
 }

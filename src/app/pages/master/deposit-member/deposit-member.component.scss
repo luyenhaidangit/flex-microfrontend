@@ -65,3 +65,8 @@ th.sorted { font-weight: 900; color: inherit !important; }
 }
 
 .fw-600 { font-weight: 600; }
+
+/* Make completed rows look lighter */
+.row-completed {
+  opacity: 0.75;
+}
