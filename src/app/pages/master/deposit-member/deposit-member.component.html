@@ -190,9 +190,9 @@
         <label class="form-label fw-bold text-muted">&nbsp;</label>
         <div class="d-flex gap-2">
           <button type="button" class="btn btn-primary flex-grow-1" (click)="submitImport()" [disabled]="!importForm.file || !importForm.effectiveDate || uploading">
-            <i class="bx bx-upload" *ngIf="!uploading"></i>
+            <i class="bx bx-upload me-1" *ngIf="!uploading"></i>
             <span class="spinner-border spinner-border-sm me-1" *ngIf="uploading" role="status" aria-hidden="true"></span>
-            <span *ngIf="!uploading">Upload</span>
+            <span *ngIf="!uploading">Tải lên</span>
             <span *ngIf="uploading">Đang xử lý...</span>
           </button>
           <button type="button" class="btn btn-outline-secondary" (click)="onDownloadTemplate()" title="Tải file mẫu">
