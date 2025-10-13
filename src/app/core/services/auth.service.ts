@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, firstValueFrom } from 'rxjs';
 import { LocalStorage } from '../enums/local-storage.enum';
+import { ModalService } from './modal.service';
 
 export interface MeProfile {
   sub?: string;
@@ -32,7 +33,7 @@ export class AuthenticationService {
   private accessToken: string | null = null;
   private logoutTimer: any;
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient, private router: Router, private injector: Injector) {
     this.bootstrapFromStorage();
 
     // Sync multi-tab
@@ -57,6 +58,8 @@ export class AuthenticationService {
     // Call logout API first
     this.callLogoutApi().finally(() => {
       // Always clear local state regardless of API call result
+      // Ensure all UI overlays are closed (modals/backdrops)
+      this.getModalService()?.closeAllModals();
       this.clearTokenFromStorage();
       this.clearTimersAndState();
       this.router.navigate(['/account/login']);
@@ -148,6 +151,8 @@ export class AuthenticationService {
     // Call logout API first
     this.callLogoutApi().finally(() => {
       // Always clear local state regardless of API call result
+      // Close any open modals globally to avoid overlay stuck on login
+      this.getModalService()?.closeAllModals();
       this.clearTimersAndState();
       this.clearTokenFromStorage();
       if (navigate) this.router.navigate(['/account/login']);
@@ -188,6 +193,15 @@ export class AuthenticationService {
       const base64 = token.split('.')[1];
       if (!base64) return null;
       return JSON.parse(atob(base64));
+    } catch {
+      return null;
+    }
+  }
+
+  /** Lazily resolve ModalService to avoid creating it during app initialization */
+  private getModalService(): ModalService | null {
+    try {
+      return this.injector.get(ModalService);
     } catch {
       return null;
     }

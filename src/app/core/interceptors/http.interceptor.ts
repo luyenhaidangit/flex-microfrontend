@@ -11,7 +11,6 @@ import { Header, HttpError } from '../enums/http.enum';
 import { LoaderService } from '../services/loader.service';
 import { AuthenticationService } from '../services/auth.service';
 import { ErrorMessageService } from '../services/error-message.service';
-import { ModalService } from '../services/modal.service';
 
 @Injectable()
 export class AppHttpInterceptor implements HttpSystemInterceptor {
@@ -78,9 +77,7 @@ export class AppHttpInterceptor implements HttpSystemInterceptor {
 
         // Auto logout when 401
         if (error.status === 401) {
-          // Lazy inject ModalService to avoid circular dependency
-          const modalService = this.injector.get(ModalService);
-          modalService.closeAllModals();
+          // Delegate cleanup + navigation to AuthenticationService
           this.injector.get(AuthenticationService).logout();
         }
 
