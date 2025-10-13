@@ -140,7 +140,24 @@ export class DepositMemberComponent implements OnInit {
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files && input.files.length ? input.files[0] : undefined;
+    
+    if (file) {
+      // 1. Kiểm tra kỹ thuật file (file-level validation)
+      const fileValidation = this.validateFile(file);
+      if (!fileValidation.isValid) {
+        this.importError = fileValidation.error;
+        this.importForm.file = undefined;
+        // Reset file input
+        input.value = '';
+        return;
+      }
+      
+      // 2. Kiểm tra cấu trúc file (schema validation) - async
+      this.validateFileStructure(file);
+    }
+    
     this.importForm.file = file || undefined;
+    this.importError = undefined;
   }
 
   onEffectiveDateChange(date: Date | null): void {
@@ -158,6 +175,10 @@ export class DepositMemberComponent implements OnInit {
       this.importError = 'Vui lòng chọn tệp và ngày hiệu lực';
       return;
     }
+
+    // 4. Kiểm tra ràng buộc nghiệp vụ (business validation)
+    this.validateBusinessRules();
+
     const form = new FormData();
     form.append('File', this.importForm.file);
     form.append('EffectiveDate', this.importForm.effectiveDate);
@@ -170,6 +191,7 @@ export class DepositMemberComponent implements OnInit {
       },
       error: (err) => {
         this.uploading = false;
+        // 5. Backend sẽ trả về business validation errors
         const msg = err?.error?.message || 'Upload thất bại: Không thể lưu file lên hệ thống. Vui lòng thử lại hoặc liên hệ bộ phận vận hành.';
         this.importError = msg; this.toastr.error(msg, 'Lỗi upload');
       }
@@ -232,5 +254,201 @@ export class DepositMemberComponent implements OnInit {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  // ===== VALIDATION METHODS =====
+  
+  /**
+   * 1. Kiểm tra kỹ thuật file (file-level validation)
+   * - Định dạng file (.xlsx, .csv)
+   * - Dung lượng file
+   * - Encoding UTF-8 (cho CSV)
+   */
+  private validateFile(file: File): { isValid: boolean; error?: string } {
+    // Kiểm tra định dạng file
+    const allowedExtensions = ['.xlsx', '.csv'];
+    const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+    
+    if (!allowedExtensions.includes(fileExtension)) {
+      return {
+        isValid: false,
+        error: `Định dạng file không hợp lệ. Chỉ chấp nhận: ${allowedExtensions.join(', ')}`
+      };
+    }
+
+    // Kiểm tra dung lượng file (max 10MB)
+    const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSizeInBytes) {
+      return {
+        isValid: false,
+        error: `File quá lớn. Dung lượng tối đa: ${this.getFileSize(maxSizeInBytes)}`
+      };
+    }
+
+    // Kiểm tra file rỗng
+    if (file.size === 0) {
+      return {
+        isValid: false,
+        error: 'File không được rỗng'
+      };
+    }
+
+    return { isValid: true };
+  }
+
+  /**
+   * 2. Kiểm tra cấu trúc file (schema validation)
+   * - Header đủ cột: DepositCode, ShortName, FullName
+   * - Số dòng > 0
+   */
+  private validateFileStructure(file: File): void {
+    const reader = new FileReader();
+    
+    reader.onload = (e) => {
+      try {
+        const content = e.target?.result as string;
+        const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+        
+        if (fileExtension === '.csv') {
+          this.validateCsvStructure(content);
+        } else if (fileExtension === '.xlsx') {
+          // TODO: Implement XLSX validation when XLSX.js is available
+          console.log('XLSX validation not implemented yet');
+        }
+      } catch (error) {
+        this.importError = 'Không thể đọc file. Vui lòng kiểm tra lại file.';
+      }
+    };
+
+    reader.onerror = () => {
+      this.importError = 'Lỗi khi đọc file. Vui lòng thử lại.';
+    };
+
+    reader.readAsText(file, 'UTF-8');
+  }
+
+  /**
+   * Validate CSV structure
+   */
+  private validateCsvStructure(content: string): void {
+    const lines = content.split('\n').filter(line => line.trim());
+    
+    // Kiểm tra có ít nhất header và 1 dòng dữ liệu
+    if (lines.length < 2) {
+      this.importError = 'File phải có ít nhất 1 dòng dữ liệu (ngoài header)';
+      return;
+    }
+
+    // Kiểm tra header
+    const header = lines[0].toLowerCase().split(',').map(h => h.trim().replace(/"/g, ''));
+    const requiredHeaders = ['depositcode', 'shortname', 'fullname'];
+    
+    const missingHeaders = requiredHeaders.filter(req => 
+      !header.some(h => h === req)
+    );
+
+    if (missingHeaders.length > 0) {
+      this.importError = `Thiếu cột bắt buộc: ${missingHeaders.join(', ')}. Header phải có: ${requiredHeaders.join(', ')}`;
+      return;
+    }
+
+    // Kiểm tra dữ liệu không toàn blank
+    const dataLines = lines.slice(1);
+    const hasData = dataLines.some(line => 
+      line.split(',').some(cell => cell.trim() && cell.trim() !== '""')
+    );
+
+    if (!hasData) {
+      this.importError = 'File không có dữ liệu hợp lệ. Tất cả dòng đều trống.';
+      return;
+    }
+
+    // Kiểm tra ràng buộc dữ liệu cơ bản (row-level validation)
+    this.validateCsvData(dataLines, header);
+  }
+
+  /**
+   * 3. Kiểm tra ràng buộc dữ liệu cơ bản (row-level validation)
+   * - Ô bắt buộc không null (DepositCode, FullName)
+   * - Kiểu dữ liệu hợp lệ
+   */
+  private validateCsvData(dataLines: string[], header: string[]): void {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    dataLines.forEach((line, index) => {
+      const rowNumber = index + 2; // +2 vì bắt đầu từ dòng 2 (sau header)
+      const cells = line.split(',').map(cell => cell.trim().replace(/"/g, ''));
+      
+      // Kiểm tra DepositCode không rỗng
+      const depositCodeIndex = header.indexOf('depositcode');
+      if (depositCodeIndex >= 0 && (!cells[depositCodeIndex] || cells[depositCodeIndex] === '')) {
+        errors.push(`Dòng ${rowNumber}: DepositCode không được để trống`);
+      }
+
+      // Kiểm tra FullName không rỗng
+      const fullNameIndex = header.indexOf('fullname');
+      if (fullNameIndex >= 0 && (!cells[fullNameIndex] || cells[fullNameIndex] === '')) {
+        errors.push(`Dòng ${rowNumber}: FullName không được để trống`);
+      }
+
+      // Cảnh báo: Tên viết hoa (warning)
+      const shortNameIndex = header.indexOf('shortname');
+      if (shortNameIndex >= 0 && cells[shortNameIndex]) {
+        const shortName = cells[shortNameIndex];
+        if (shortName !== shortName.toUpperCase()) {
+          warnings.push(`Dòng ${rowNumber}: Tên viết tắt nên viết hoa: "${shortName}"`);
+        }
+        
+        // Cảnh báo: Độ dài vượt ngưỡng
+        if (shortName.length > 50) {
+          warnings.push(`Dòng ${rowNumber}: Tên viết tắt quá dài (${shortName.length}/50 ký tự)`);
+        }
+      }
+
+      // Cảnh báo: FullName quá dài
+      if (fullNameIndex >= 0 && cells[fullNameIndex] && cells[fullNameIndex].length > 200) {
+        warnings.push(`Dòng ${rowNumber}: Tên đầy đủ quá dài (${cells[fullNameIndex].length}/200 ký tự)`);
+      }
+    });
+
+    // Hiển thị errors (chặn upload)
+    if (errors.length > 0) {
+      this.importError = `Lỗi dữ liệu:\n${errors.slice(0, 5).join('\n')}${errors.length > 5 ? `\n... và ${errors.length - 5} lỗi khác` : ''}`;
+      return;
+    }
+
+    // Hiển thị warnings (không chặn upload)
+    if (warnings.length > 0) {
+      const warningMsg = `Cảnh báo:\n${warnings.slice(0, 3).join('\n')}${warnings.length > 3 ? `\n... và ${warnings.length - 3} cảnh báo khác` : ''}`;
+      console.warn(warningMsg);
+      // Có thể hiển thị toast warning thay vì console
+      this.toastr.warning(`Có ${warnings.length} cảnh báo về dữ liệu. Kiểm tra console để xem chi tiết.`, 'Cảnh báo dữ liệu');
+    }
+
+    // Nếu không có lỗi, clear error message
+    if (!this.importError) {
+      this.importError = undefined;
+    }
+  }
+
+  /**
+   * 4. Kiểm tra ràng buộc nghiệp vụ (business validation) - sẽ được BE xử lý
+   * - DepositCode không trùng DB
+   * - EffectiveDate >= current date
+   */
+  private validateBusinessRules(): void {
+    // Business rules sẽ được validate ở backend
+    // FE chỉ có thể validate những gì có sẵn locally
+    
+    if (this.importForm.effectiveDate) {
+      const effectiveDate = new Date(this.importForm.effectiveDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      if (effectiveDate < today) {
+        this.toastr.warning('Ngày hiệu lực không được nhỏ hơn ngày hiện tại', 'Cảnh báo');
+      }
+    }
   }
 }

@@ -166,9 +166,13 @@
           </button>
         </div>
         <div *ngIf="importForm.file" class="mt-2">
-          <small class="text-success">
+          <small class="text-success" *ngIf="!importError">
             <i class="bx bx-check-circle"></i> 
             {{ importForm.file.name }} ({{ getFileSize(importForm.file.size) }})
+          </small>
+          <small class="text-info" *ngIf="importError">
+            <i class="bx bx-info-circle"></i> 
+            {{ importForm.file.name }} ({{ getFileSize(importForm.file.size) }}) - Cần kiểm tra lỗi
           </small>
         </div>
       </div>
@@ -189,7 +193,7 @@
       <div class="col-md-3">
         <label class="form-label fw-bold text-muted">&nbsp;</label>
         <div class="d-flex gap-2">
-          <button type="button" class="btn btn-primary flex-grow-1" (click)="submitImport()" [disabled]="!importForm.file || !importForm.effectiveDate || uploading">
+          <button type="button" class="btn btn-primary flex-grow-1" (click)="submitImport()" [disabled]="!importForm.file || !importForm.effectiveDate || uploading || importError">
             <i class="bx bx-upload me-1" *ngIf="!uploading"></i>
             <span class="spinner-border spinner-border-sm me-1" *ngIf="uploading" role="status" aria-hidden="true"></span>
             <span *ngIf="!uploading">Tải lên</span>
