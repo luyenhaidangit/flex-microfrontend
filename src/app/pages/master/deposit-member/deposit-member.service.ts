@@ -25,4 +25,11 @@ export class DepositMemberService {
 
     return this.http.get<PagedResponse<DepositMemberItem>>(`${this.apiUrl}/paging`, { params: query });
   }
+
+  // Import deposit members via CSV upload
+  importDepositMembers(formData: FormData) {
+    // The backend endpoint for import
+    const url = '/api/depositmember/import';
+    return this.http.post<any>(url, formData);
+  }
 }

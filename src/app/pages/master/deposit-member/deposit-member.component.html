@@ -15,7 +15,7 @@
       </li>
       <li>
         <div class="fw-600">BIC Code</div>
-        <div class="text-muted">Mã SWIFT/BIC dùng cho định danh ngân hàng khi thanh toán.</div>
+        <div class="text-muted">Mã SWIFT/BIC định danh ngân hàng khi thanh toán.</div>
       </li>
     </ul>
   </ng-template>
@@ -47,10 +47,15 @@
         <label class="form-label fw-bold text-muted">BIC Code</label>
         <input class="form-control" type="text" placeholder="Nhập BIC..." [(ngModel)]="filter.bicCode">
       </div>
-      <div class="col-md-2">
-        <button class="btn btn-primary w-100" (click)="onSearch()">
-          <i class="bx bx-search-alt-2"></i> Tìm kiếm
-        </button>
+      <div class="col-md-4">
+        <div class="d-flex gap-2">
+          <button class="btn btn-primary flex-fill" (click)="onSearch()">
+            <i class="bx bx-search-alt-2"></i> Tìm kiếm
+          </button>
+          <button class="btn btn-outline-secondary" (click)="openImportModal()" title="Nhập">
+            <i class="bx bx-import"></i> Nhập
+          </button>
+        </div>
       </div>
     </div>
     <!-- Error -->
@@ -131,3 +136,30 @@
   </div>
 </div>
 
+<!-- Import Modal -->
+<ng-template #importModal>
+  <div class="modal-header">
+    <h5 class="modal-title">Nhập thành viên lưu ký</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeImportModal()"></button>
+  </div>
+  <div class="modal-body">
+    <div class="mb-3">
+      <label class="form-label fw-bold text-muted">Tệp CSV</label>
+      <input type="file" accept=".csv" class="form-control" (change)="onFileSelected($event)">
+      <div class="form-text">Định dạng CSV. Kích thước tối đa theo cấu hình máy chủ.</div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label fw-bold text-muted">Ngày hiệu lực</label>
+      <input type="date" class="form-control" [(ngModel)]="importForm.effectiveDate">
+    </div>
+    <div *ngIf="importError" class="alert alert-danger">{{ importError }}</div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="closeImportModal()" [disabled]="uploading">Hủy</button>
+    <button type="button" class="btn btn-primary" (click)="submitImport()" [disabled]="!importForm.file || !importForm.effectiveDate || uploading">
+      <i class="bx bx-upload"></i>
+      <span *ngIf="!uploading">Tải lên</span>
+      <span *ngIf="uploading">Đang tải...</span>
+    </button>
+  </div>
+</ng-template>

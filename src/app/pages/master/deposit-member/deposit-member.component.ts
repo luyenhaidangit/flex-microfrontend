@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { DepositMemberItem, DepositMemberSearchParams } from './deposit-member.models';
 import { DepositMemberService } from './deposit-member.service';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-deposit-member-list',
@@ -13,7 +14,6 @@ export class DepositMemberComponent implements OnInit {
     { label: 'Danh mục cơ sở' },
     { label: 'Thành viên lưu ký', active: true }
   ];
-
   // UI state
   loading = false;
   items: DepositMemberItem[] = [];
@@ -47,8 +47,14 @@ export class DepositMemberComponent implements OnInit {
     columns: ['140px', '200px', '320px', '160px']
   };
 
+  // Import modal state
+  @ViewChild('importModal') importModal!: TemplateRef<any>;
+  modalRef?: BsModalRef;
+  importForm: { file?: File; effectiveDate?: string } = {};
+  uploading = false;
+  importError?: string;
 
-  constructor(private service: DepositMemberService) {}
+  constructor(private service: DepositMemberService, private modalService: BsModalService) {}
 
   ngOnInit(): void {
     this.load();
@@ -124,4 +130,48 @@ export class DepositMemberComponent implements OnInit {
 
   // Info moved to app-page-title via template
 
+  // ==== Import handling ====
+  openImportModal(): void {
+    this.importForm = {};
+    this.importError = undefined;
+    this.uploading = false;
+    this.modalRef = this.modalService.show(this.importModal, { class: 'modal-md' });
+  }
+
+  closeImportModal(): void {
+    this.modalRef?.hide();
+    this.modalRef = undefined;
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files && input.files.length ? input.files[0] : undefined;
+    this.importForm.file = file || undefined;
+  }
+
+  submitImport(): void {
+    if (!this.importForm.file || !this.importForm.effectiveDate) {
+      this.importError = 'Vui lòng chọn tệp và ngày hiệu lực';
+      return;
+    }
+    const form = new FormData();
+    // ASP.NET Core model binder is case-insensitive; use property names for clarity
+    form.append('File', this.importForm.file);
+    form.append('EffectiveDate', this.importForm.effectiveDate);
+
+    this.uploading = true;
+    this.importError = undefined;
+    this.service.importDepositMembers(form).subscribe({
+      next: () => {
+        this.uploading = false;
+        this.closeImportModal();
+        // Reload list after successful import
+        this.onSearch();
+      },
+      error: (err) => {
+        this.uploading = false;
+        this.importError = err?.error?.message || 'Tải lên thất bại';
+      }
+    });
+  }
 }
