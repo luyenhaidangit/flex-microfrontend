@@ -150,7 +150,7 @@
         <div class="input-group">
           <input 
             type="file" 
-            accept=".csv,.xlsx" 
+            accept=".csv,.xlsx,.xls" 
             class="form-control d-none" 
             id="fileInput"
             (change)="onFileSelected($event)"
@@ -160,7 +160,7 @@
             class="form-control" 
             [value]="importForm.file?.name || 'Chưa chọn file'"
             readonly
-            placeholder="Chọn file Excel/CSV...">
+            placeholder="Chọn file Excel (.xlsx, .xls) hoặc CSV...">
           <button class="btn btn-outline-secondary" type="button" (click)="fileInput.click()">
             <i class="bx bx-folder-open"></i> Chọn file
           </button>
@@ -207,7 +207,8 @@
       </div>
     </div>
     <small class="text-muted d-block mb-3">
-      • File phải có header: DepositCode, ShortName, FullName, Address. Khuyến nghị encoding UTF-8.
+      • File phải có header: DepositCode, ShortName, FullName, Address. Khuyến nghị encoding UTF-8.<br>
+      • Định dạng hỗ trợ: Excel (.xlsx, .xls) và CSV. Dung lượng tối đa: 10MB.
     </small>
 
     <div *ngIf="importError" class="alert alert-danger">{{ importError }}</div>

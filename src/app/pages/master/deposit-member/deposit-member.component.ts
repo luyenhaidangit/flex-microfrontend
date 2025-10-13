@@ -149,22 +149,27 @@ export class DepositMemberComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     const file = input.files && input.files.length ? input.files[0] : undefined;
     
-    if (file) {
-      // 1. Kiểm tra kỹ thuật file (file-level validation)
-      const fileValidation = this.validateFile(file);
-      if (!fileValidation.isValid) {
-        this.importError = fileValidation.error;
-        this.importForm.file = undefined;
-        // Reset file input
-        input.value = '';
-        return;
-      }
-      
-      // 2. Kiểm tra cấu trúc file (schema validation) - async
-      this.validateFileStructure(file);
+    // File là bắt buộc
+    if (!file) {
+      this.importError = 'Vui lòng chọn file để upload';
+      this.importForm.file = undefined;
+      return;
+    }
+
+    // 1. Kiểm tra kỹ thuật file (file-level validation)
+    const fileValidation = this.validateFile(file);
+    if (!fileValidation.isValid) {
+      this.importError = fileValidation.error;
+      this.importForm.file = undefined;
+      // Reset file input
+      input.value = '';
+      return;
     }
     
-    this.importForm.file = file || undefined;
+    // 2. Kiểm tra cấu trúc file (schema validation) - async
+    this.validateFileStructure(file);
+    
+    this.importForm.file = file;
     this.importError = undefined;
   }
 
@@ -258,19 +263,45 @@ export class DepositMemberComponent implements OnInit {
   
   /**
    * 1. Kiểm tra kỹ thuật file (file-level validation)
-   * - Định dạng file (.xlsx, .csv)
-   * - Dung lượng file
+   * - File bắt buộc phải được chọn
+   * - Định dạng file (.xlsx, .csv, .xls)
+   * - Dung lượng file (≤ 10MB)
+   * - MIME type hợp lệ
    * - Encoding UTF-8 (cho CSV)
    */
   private validateFile(file: File): { isValid: boolean; error?: string } {
+    // Kiểm tra file có tồn tại không
+    if (!file) {
+      return {
+        isValid: false,
+        error: 'Vui lòng chọn file để upload'
+      };
+    }
+
     // Kiểm tra định dạng file
-    const allowedExtensions = ['.xlsx', '.csv'];
+    const allowedExtensions = ['.xlsx', '.csv', '.xls'];
     const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
     
     if (!allowedExtensions.includes(fileExtension)) {
       return {
         isValid: false,
         error: `Định dạng file không hợp lệ. Chỉ chấp nhận: ${allowedExtensions.join(', ')}`
+      };
+    }
+
+    // Kiểm tra MIME type
+    const allowedMimeTypes = [
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+      'application/vnd.ms-excel', // .xls
+      'text/csv', // .csv
+      'application/csv', // .csv alternative
+      'text/plain' // .csv alternative
+    ];
+
+    if (!allowedMimeTypes.includes(file.type)) {
+      return {
+        isValid: false,
+        error: `MIME type không hợp lệ. File type: ${file.type || 'unknown'}. Chỉ chấp nhận Excel và CSV files.`
       };
     }
 
@@ -288,6 +319,15 @@ export class DepositMemberComponent implements OnInit {
       return {
         isValid: false,
         error: 'File không được rỗng'
+      };
+    }
+
+    // Kiểm tra tên file không chứa ký tự đặc biệt nguy hiểm
+    const dangerousChars = /[<>:"/\\|?*\x00-\x1f]/;
+    if (dangerousChars.test(file.name)) {
+      return {
+        isValid: false,
+        error: 'Tên file chứa ký tự không hợp lệ. Vui lòng đổi tên file.'
       };
     }
 
@@ -309,9 +349,11 @@ export class DepositMemberComponent implements OnInit {
         
         if (fileExtension === '.csv') {
           this.validateCsvStructure(content);
-        } else if (fileExtension === '.xlsx') {
-          // TODO: Implement XLSX validation when XLSX.js is available
-          console.log('XLSX validation not implemented yet');
+        } else if (fileExtension === '.xlsx' || fileExtension === '.xls') {
+          // TODO: Implement XLSX/XLS validation when XLSX.js is available
+          console.log('Excel validation not implemented yet - will be validated on backend');
+          // Clear any previous errors since Excel files will be validated on backend
+          this.importError = undefined;
         }
       } catch (error) {
         this.importError = 'Không thể đọc file. Vui lòng kiểm tra lại file.';
