@@ -52,21 +52,13 @@ export class DepositMemberComponent implements OnInit {
 
   // Import & Preview state
   @ViewChild('importModal') importModal!: TemplateRef<any>;
-  @ViewChild('previewModal') previewModal!: TemplateRef<any>;
   modalRef?: BsModalRef;
-  previewRef?: BsModalRef;
   importForm: { file?: File; effectiveDate?: string } = {};
   uploading = false;
   importError?: string;
   effectiveDateDisplay?: string;
   effectiveDate?: Date | null;
   bsConfig: Partial<BsDatepickerConfig> = { dateInputFormat: 'DD/MM/YYYY' };
-  importHistory: Array<{ id: string; fileName: string; effectiveDate: string | Date; uploadDate: string | Date; status: 'Pending' | 'Completed' | 'Failed'; checksum?: string; uploader?: string; recordCount?: number; }> = [];
-  importHistoryStatusFilter: 'All' | 'Pending' | 'Completed' | 'Failed' = 'All';
-
-  previewData: { summary?: { created?: number; updated?: number; deactivated?: number }; items?: Array<{ depositCode: string; shortNameOld?: string; shortNameNew?: string; fullNameOld?: string; fullNameNew?: string; action: 'NEW' | 'UPDATE' | 'DEACTIVATE' | string; }>; } | null = null;
-  previewError?: string;
-  currentPreviewId?: string;
 
   constructor(private service: DepositMemberService, private modalService: BsModalService, private toastr: ToastrService) {}
 
@@ -132,7 +124,6 @@ export class DepositMemberComponent implements OnInit {
   openImportModal(): void {
     this.importForm = {}; this.importError = undefined; this.uploading = false;
     this.modalRef = this.modalService.show(this.importModal, { class: 'modal-lg' });
-    this.loadImportHistory();
   }
 
   closeImportModal(): void { this.modalRef?.hide(); this.modalRef = undefined; }
@@ -206,46 +197,6 @@ export class DepositMemberComponent implements OnInit {
     });
   }
 
-  // ==== History & Preview ====
-  private loadImportHistory(): void {
-    this.service.getImportHistory().subscribe({
-      next: (list: any[]) => { this.importHistory = Array.isArray(list) ? list : []; },
-      error: () => { this.importHistory = []; }
-    });
-  }
-
-  previewUpload(f: { id: string }): void {
-    this.previewError = undefined; this.previewData = null; this.currentPreviewId = f.id;
-    this.previewRef = this.modalService.show(this.previewModal, { class: 'modal-lg' });
-    this.service.getImportPreview(f.id).subscribe({
-      next: (data: any) => { this.previewData = data || { summary: {}, items: [] }; },
-      error: (err) => { this.previewError = err?.error?.message || 'Không tải được dữ liệu xem trước'; }
-    });
-  }
-
-  exportPreview(id: string): void {
-    this.service.exportImportPreview(id).subscribe({
-      next: (res: any) => { const blob = (res && res.body) ? (res.body as Blob) : (res as Blob); const cd = res?.headers?.get ? (res.headers.get("Content-Disposition") || res.headers.get("content-disposition")) : null; let filename = "deposit_member_template.xlsx"; if (cd) { const match = /filename\*=UTF-8'([^;]+)|filename=\"?([^;\"]+)\"?/i.exec(cd); const raw = decodeURIComponent((match && (match[1] || match[2])) || "").trim(); if (raw) filename = raw; } const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url); },
-      error: () => this.toastr.error('Không thể xuất kết quả', 'Lỗi')
-    });
-  }
-
-  exportCurrentPreview(): void {
-    if (!this.currentPreviewId) return;
-    this.exportPreview(this.currentPreviewId);
-  }
-
-  closePreviewModal(): void {
-    this.previewRef?.hide(); this.previewRef = undefined; this.previewData = null; this.previewError = undefined; this.currentPreviewId = undefined;
-  }
-
-  reupload(_: any): void { this.toastr.info('Chức năng Tải lại sẽ hỗ trợ sau', 'Thông tin'); }
-  replaceUpload(_: any): void { this.toastr.info('Chức năng Thay thế sẽ hỗ trợ sau', 'Thông tin'); }
-
-  get importHistoryFiltered() {
-    if (this.importHistoryStatusFilter === 'All') return this.importHistory;
-    return this.importHistory.filter(x => x.status === this.importHistoryStatusFilter);
-  }
 
   // Helper method to format file size
   getFileSize(bytes: number): string {
