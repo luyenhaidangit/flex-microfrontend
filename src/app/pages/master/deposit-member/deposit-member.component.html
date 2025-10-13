@@ -177,7 +177,7 @@
         </div>
       </div>
       <div class="col-md-3">
-        <label class="form-label fw-bold text-muted">Ngày hiệu lực</label>
+        <label class="form-label fw-bold text-muted">Ngày hiệu lực <span class="text-danger">*</span></label>
         <div class="input-group">
           <span class="input-group-text"><i class="bx bx-calendar"></i></span>
           <input 
@@ -187,7 +187,8 @@
             [bsConfig]="bsConfig" 
             placeholder="dd/MM/yyyy" 
             [(ngModel)]="effectiveDate" 
-            (bsValueChange)="onEffectiveDateChange($event)">
+            (bsValueChange)="onEffectiveDateChange($event)"
+            readonly>
         </div>
       </div>
       <div class="col-md-3">

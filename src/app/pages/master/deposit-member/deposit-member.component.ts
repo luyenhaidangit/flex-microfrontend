@@ -58,7 +58,11 @@ export class DepositMemberComponent implements OnInit {
   importError?: string;
   effectiveDateDisplay?: string;
   effectiveDate?: Date | null;
-  bsConfig: Partial<BsDatepickerConfig> = { dateInputFormat: 'DD/MM/YYYY' };
+  bsConfig: Partial<BsDatepickerConfig> = { 
+    dateInputFormat: 'DD/MM/YYYY',
+    minDate: new Date(),
+    showWeekNumbers: false
+  };
 
   constructor(private service: DepositMemberService, private modalService: BsModalService, private toastr: ToastrService) {}
 
@@ -153,11 +157,28 @@ export class DepositMemberComponent implements OnInit {
 
   onEffectiveDateChange(date: Date | null): void {
     if (date) {
+      // Validate that selected date is not before today
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Reset time to start of day for comparison
+      const selectedDate = new Date(date);
+      selectedDate.setHours(0, 0, 0, 0);
+      
+      if (selectedDate < today) {
+        this.toastr.error('Ngày hiệu lực không được nhỏ hơn ngày hiện tại', 'Lỗi validation');
+        this.effectiveDate = null;
+        this.importForm.effectiveDate = undefined;
+        this.effectiveDateDisplay = undefined;
+        return;
+      }
+      
       const y = date.getFullYear();
       const m = ('0' + (date.getMonth() + 1)).slice(-2);
       const d = ('0' + date.getDate()).slice(-2);
       this.importForm.effectiveDate = `${y}-${m}-${d}`;
       this.effectiveDateDisplay = `${d}/${m}/${y}`;
+    } else {
+      this.importForm.effectiveDate = undefined;
+      this.effectiveDateDisplay = undefined;
     }
   }
 
@@ -165,6 +186,19 @@ export class DepositMemberComponent implements OnInit {
     if (!this.importForm.file || !this.importForm.effectiveDate) {
       this.importError = 'Vui lòng chọn tệp và ngày hiệu lực';
       return;
+    }
+
+    // Double-check date validation before submit
+    if (this.effectiveDate) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const selectedDate = new Date(this.effectiveDate);
+      selectedDate.setHours(0, 0, 0, 0);
+      
+      if (selectedDate < today) {
+        this.importError = 'Ngày hiệu lực không được nhỏ hơn ngày hiện tại';
+        return;
+      }
     }
 
     // 4. Kiểm tra ràng buộc nghiệp vụ (business validation)
