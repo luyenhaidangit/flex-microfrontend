@@ -32,4 +32,16 @@ export class DepositMemberService {
     const url = '/api/depositmember/import';
     return this.http.post<any>(url, formData);
   }
+
+  // Get import history (stub endpoint name; adjust to backend)
+  getImportHistory() {
+    const url = '/api/depositmember/imports';
+    return this.http.get<any[]>(url);
+  }
+
+  // Get preview details for an uploaded file
+  getImportPreview(id: string) {
+    const url = `/api/depositmember/imports/${encodeURIComponent(id)}/preview`;
+    return this.http.get<any>(url);
+  }
 }

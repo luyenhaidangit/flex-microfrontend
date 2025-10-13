@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { DepositMemberItem, DepositMemberSearchParams } from './deposit-member.models';
 import { DepositMemberService } from './deposit-member.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -14,6 +14,7 @@ export class DepositMemberComponent implements OnInit {
     { label: 'Danh mục cơ sở' },
     { label: 'Thành viên lưu ký', active: true }
   ];
+
   // UI state
   loading = false;
   items: DepositMemberItem[] = [];
@@ -47,12 +48,18 @@ export class DepositMemberComponent implements OnInit {
     columns: ['140px', '200px', '320px', '160px']
   };
 
-  // Import modal state
+  // Import & Preview state
   @ViewChild('importModal') importModal!: TemplateRef<any>;
+  @ViewChild('previewModal') previewModal!: TemplateRef<any>;
   modalRef?: BsModalRef;
+  previewRef?: BsModalRef;
   importForm: { file?: File; effectiveDate?: string } = {};
   uploading = false;
   importError?: string;
+  importHistory: Array<{ id: string; fileName: string; effectiveDate: string | Date; uploadDate: string | Date; status: 'Pending' | 'Completed' | 'Failed'; }> = [];
+
+  previewData: { summary?: { created?: number; updated?: number; deactivated?: number }; items?: Array<{ depositCode: string; shortNameOld?: string; shortNameNew?: string; fullNameOld?: string; fullNameNew?: string; action: 'NEW' | 'UPDATE' | 'DEACTIVATE' | string; }>; } | null = null;
+  previewError?: string;
 
   constructor(private service: DepositMemberService, private modalService: BsModalService) {}
 
@@ -112,7 +119,7 @@ export class DepositMemberComponent implements OnInit {
     this.error = undefined;
     this.service.getPaging(params).subscribe({
       next: (res) => {
-        const page = res?.data || undefined as any;
+        const page = res?.data || (undefined as any);
         this.items = page?.items ?? [];
         this.paging.totalItems = page?.totalItems ?? 0;
         this.paging.totalPages = page?.totalPages ?? 0;
@@ -128,14 +135,13 @@ export class DepositMemberComponent implements OnInit {
     });
   }
 
-  // Info moved to app-page-title via template
-
   // ==== Import handling ====
   openImportModal(): void {
     this.importForm = {};
     this.importError = undefined;
     this.uploading = false;
-    this.modalRef = this.modalService.show(this.importModal, { class: 'modal-md' });
+    this.modalRef = this.modalService.show(this.importModal, { class: 'modal-lg' });
+    this.loadImportHistory();
   }
 
   closeImportModal(): void {
@@ -155,7 +161,6 @@ export class DepositMemberComponent implements OnInit {
       return;
     }
     const form = new FormData();
-    // ASP.NET Core model binder is case-insensitive; use property names for clarity
     form.append('File', this.importForm.file);
     form.append('EffectiveDate', this.importForm.effectiveDate);
 
@@ -165,7 +170,6 @@ export class DepositMemberComponent implements OnInit {
       next: () => {
         this.uploading = false;
         this.closeImportModal();
-        // Reload list after successful import
         this.onSearch();
       },
       error: (err) => {
@@ -173,5 +177,49 @@ export class DepositMemberComponent implements OnInit {
         this.importError = err?.error?.message || 'Tải lên thất bại';
       }
     });
+  }
+
+  // ==== Upload guideline extras ====
+  onDownloadTemplate(): void {
+    const href = 'assets/templates/deposit_member_template.xlsx';
+    const a = document.createElement('a');
+    a.href = href;
+    a.download = 'deposit_member_template.xlsx';
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.click();
+  }
+
+  // ==== History & Preview ====
+  private loadImportHistory(): void {
+    this.service.getImportHistory().subscribe({
+      next: (list: any[]) => { this.importHistory = Array.isArray(list) ? list : []; },
+      error: () => { this.importHistory = []; }
+    });
+  }
+
+  previewUpload(f: { id: string }): void {
+    this.previewError = undefined;
+    this.previewData = null;
+    this.previewRef = this.modalService.show(this.previewModal, { class: 'modal-lg' });
+    this.service.getImportPreview(f.id).subscribe({
+      next: (data: any) => { this.previewData = data || { summary: {}, items: [] }; },
+      error: (err) => { this.previewError = err?.error?.message || 'Không tải được dữ liệu xem trước'; }
+    });
+  }
+
+  closePreviewModal(): void {
+    this.previewRef?.hide();
+    this.previewRef = undefined;
+    this.previewData = null;
+    this.previewError = undefined;
+  }
+
+  reupload(_: any): void {
+    this.importError = 'Chức năng Tải lại sẽ được hỗ trợ sau';
+  }
+
+  replaceUpload(_: any): void {
+    this.importError = 'Chức năng Thay thế sẽ được hỗ trợ sau';
   }
 }
