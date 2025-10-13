@@ -9,6 +9,7 @@ export class DepositMemberService {
 
   constructor(private http: HttpClient) {}
 
+  // Get paged deposit members with filters and sorting
   getPaging(params: DepositMemberSearchParams): Observable<PagedResponse<DepositMemberItem>> {
     // Map to backend expected param names (DepositCode, ShortName, FullName)
     const query: any = {
@@ -26,34 +27,28 @@ export class DepositMemberService {
     return this.http.get<PagedResponse<DepositMemberItem>>(`${this.apiUrl}/paging`, { params: query });
   }
 
-  // Import deposit members via CSV upload
-  importDepositMembers(formData: FormData) {
-    // The backend endpoint for import
-    const url = '/api/depositmember/import';
-    return this.http.post<any>(url, formData);
+  // Download sample template for import
+  downloadImportTemplate() {
+    return this.http.get(`${this.apiUrl}/template`, { responseType: 'blob' });
   }
 
-  // Get import history (stub endpoint name; adjust to backend)
+  // Import deposit members via CSV upload
+  importDepositMembers(formData: FormData) {
+    return this.http.post<any>(`${this.apiUrl}/import`, formData);
+  }
+
+  // Get import history
   getImportHistory() {
-    const url = '/api/depositmember/imports';
-    return this.http.get<any[]>(url);
+    return this.http.get<any[]>(`${this.apiUrl}/imports`);
   }
 
   // Get preview details for an uploaded file
   getImportPreview(id: string) {
-    const url = `/api/depositmember/imports/${encodeURIComponent(id)}/preview`;
-    return this.http.get<any>(url);
+    return this.http.get<any>(`${this.apiUrl}/imports/${encodeURIComponent(id)}/preview`);
   }
 
   // Export preview result (Excel)
   exportImportPreview(id: string) {
-    const url = `/api/depositmember/imports/${encodeURIComponent(id)}/export`;
-    return this.http.get(url, { responseType: 'blob' });
-  }
-
-  // Download sample template for import
-  downloadImportTemplate() {
-    const url = `/api/depositmember/template`;
-    return this.http.get(url, { responseType: 'blob' });
+    return this.http.get(`${this.apiUrl}/imports/${encodeURIComponent(id)}/export`, { responseType: 'blob' });
   }
 }

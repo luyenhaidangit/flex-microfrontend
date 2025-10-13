@@ -187,7 +187,7 @@ export class DepositMemberComponent implements OnInit {
         a.click();
         URL.revokeObjectURL(url);
       },
-      error: () => this.toastr.error('Không thể tải file mẫu', 'Lỗi')
+      error: () => console.log('Không thể tải file mẫu', 'Lỗi')
     });
   }
 

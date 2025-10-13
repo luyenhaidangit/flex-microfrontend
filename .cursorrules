@@ -1,2 +1,5 @@
+- Các file service chuyên xử lý việc kết nối api tới backend
+- Khi code hoặc được yêu cầu refactor service.ts cần kiểm tra các công việc:
++ Kiểm tra apiUrl và dùng lại nó tại các hàm, tránh lặp code
 - Khi tạo component quản lý gì đó, làm theo mẫu của user
 - Khi tạo component như việc sử dụng code dạng .config.ts
