@@ -1,4 +1,4 @@
-<div class="container-fluid">
+﻿<div class="container-fluid">
   <ng-template #depositInfo>
     <ul class="list-unstyled mb-0 small">
       <li class="mb-3">
@@ -151,7 +151,7 @@
       </div>
       <div class="col-md-3">
         <label class="form-label fw-bold text-muted">Ngày hiệu lực</label>
-        <input type="date" class="form-control" [(ngModel)]="importForm.effectiveDate">
+        <input type="text" class="form-control" bsDatepicker [bsConfig]="bsConfig" placeholder="dd/MM/yyyy" [(ngModel)]="effectiveDate" (bsValueChange)="onEffectiveDateChange($event)">
       </div>
       <div class="col-md-3 d-flex gap-2">
         <button type="button" class="btn btn-primary flex-grow-1" (click)="submitImport()" [disabled]="!importForm.file || !importForm.effectiveDate || uploading">

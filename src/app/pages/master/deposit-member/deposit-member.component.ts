@@ -1,7 +1,8 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+﻿import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { DepositMemberItem, DepositMemberSearchParams } from './deposit-member.models';
 import { DepositMemberService } from './deposit-member.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -57,6 +58,9 @@ export class DepositMemberComponent implements OnInit {
   importForm: { file?: File; effectiveDate?: string } = {};
   uploading = false;
   importError?: string;
+  effectiveDateDisplay?: string;
+  effectiveDate?: Date | null;
+  bsConfig: Partial<BsDatepickerConfig> = { dateInputFormat: 'DD/MM/YYYY' };
   importHistory: Array<{ id: string; fileName: string; effectiveDate: string | Date; uploadDate: string | Date; status: 'Pending' | 'Completed' | 'Failed'; checksum?: string; uploader?: string; recordCount?: number; }> = [];
   importHistoryStatusFilter: 'All' | 'Pending' | 'Completed' | 'Failed' = 'All';
 
@@ -137,6 +141,16 @@ export class DepositMemberComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     const file = input.files && input.files.length ? input.files[0] : undefined;
     this.importForm.file = file || undefined;
+  }
+
+  onEffectiveDateChange(date: Date | null): void {
+    if (date) {
+      const y = date.getFullYear();
+      const m = ('0' + (date.getMonth() + 1)).slice(-2);
+      const d = ('0' + date.getDate()).slice(-2);
+      this.importForm.effectiveDate = `${y}-${m}-${d}`;
+      this.effectiveDateDisplay = `${d}/${m}/${y}`;
+    }
   }
 
   submitImport(): void {
