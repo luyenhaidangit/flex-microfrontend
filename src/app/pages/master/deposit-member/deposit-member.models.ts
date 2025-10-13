@@ -1,3 +1,10 @@
+import { PagedResponse, PagingSortingParams } from '../../../core/models/api.models';
+
+/**
+ * Deposit Member specific models
+ * Domain-specific interfaces for deposit member functionality
+ */
+
 export interface DepositMemberItem {
   id?: number;
   depositCode: string;
@@ -6,24 +13,13 @@ export interface DepositMemberItem {
   bicCode?: string;
 }
 
-export interface DepositMemberSearchParams {
-  pageIndex: number;
-  pageSize: number;
+export interface DepositMemberSearchParams extends PagingSortingParams {
   depositCode?: string | null;
   shortName?: string | null;
   fullName?: string | null;
   bicCode?: string | null;
   sortColumn?: 'depositCode' | 'shortName' | 'fullName' | 'bicCode';
-  sortDirection?: 'asc' | 'desc';
 }
 
-export interface PagedResponse<T> {
-  isSuccess?: boolean;
-  data?: {
-    items?: T[];
-    totalItems?: number;
-    totalPages?: number;
-    pageIndex?: number;
-    pageSize?: number;
-  } | null;
-}
+// Re-export PagedResponse for convenience (can be removed if importing from core/models directly)
+export type { PagedResponse } from '../../../core/models/api.models';

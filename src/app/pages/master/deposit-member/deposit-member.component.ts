@@ -179,14 +179,7 @@ export class DepositMemberComponent implements OnInit {
   // ==== Upload guideline extras ====
   onDownloadTemplate(): void {
     this.service.downloadImportTemplate().subscribe({
-      next: (blob) => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'deposit_member_template.xlsx';
-        a.click();
-        URL.revokeObjectURL(url);
-      },
+      next: (res: any) => { const blob = (res && res.body) ? (res.body as Blob) : (res as Blob); const cd = res?.headers?.get ? (res.headers.get("Content-Disposition") || res.headers.get("content-disposition")) : null; let filename = "deposit_member_template.xlsx"; if (cd) { const match = /filename\*=UTF-8'([^;]+)|filename=\"?([^;\"]+)\"?/i.exec(cd); const raw = decodeURIComponent((match && (match[1] || match[2])) || "").trim(); if (raw) filename = raw; } const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url); },
       error: () => console.log('Không thể tải file mẫu', 'Lỗi')
     });
   }
@@ -210,11 +203,7 @@ export class DepositMemberComponent implements OnInit {
 
   exportPreview(id: string): void {
     this.service.exportImportPreview(id).subscribe({
-      next: (blob) => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = 'deposit_member_preview.xlsx'; a.click();
-        URL.revokeObjectURL(url);
-      },
+      next: (res: any) => { const blob = (res && res.body) ? (res.body as Blob) : (res as Blob); const cd = res?.headers?.get ? (res.headers.get("Content-Disposition") || res.headers.get("content-disposition")) : null; let filename = "deposit_member_template.xlsx"; if (cd) { const match = /filename\*=UTF-8'([^;]+)|filename=\"?([^;\"]+)\"?/i.exec(cd); const raw = decodeURIComponent((match && (match[1] || match[2])) || "").trim(); if (raw) filename = raw; } const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url); },
       error: () => this.toastr.error('Không thể xuất kết quả', 'Lỗi')
     });
   }
