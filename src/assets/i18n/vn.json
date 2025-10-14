@@ -102,6 +102,12 @@
     "INVALID_REQUEST_TYPE": "Loại yêu cầu không hợp lệ",
     "USER_NAME_REQUIRED": "Tên người dùng là bắt buộc",
     "INVALID_REQUEST": "Yêu cầu không hợp lệ",
+    "FILE_DUPLICATE_RECENT": "File đã được tải lên gần đây. Vui lòng chọn file khác hoặc đợi một lúc.",
+    "CHECKSUM_COMPUTE_FAILED": "Không thể tính toán checksum của file. Vui lòng thử lại.",
+    "CSV_VALIDATION_FAILED": "Dữ liệu CSV không hợp lệ. Vui lòng kiểm tra lại file.",
+    "FILE_TOO_LARGE": "File quá lớn. Dung lượng tối đa cho phép là 10MB.",
+    "INVALID_FILE_FORMAT": "Định dạng file không được hỗ trợ. Vui lòng chọn file Excel (.xlsx, .xls) hoặc CSV.",
+    "FILE_EMPTY": "File không được để trống.",
     "NETWORK_ERROR": "Lỗi kết nối mạng",
     "CONNECTION_REFUSED": "Không thể kết nối đến máy chủ",
     "UNKNOWN_ERROR": "Đã xảy ra lỗi không xác định"

@@ -5,6 +5,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { defineLocale, viLocale } from 'ngx-bootstrap/chronos';
 import { ToastService } from 'angular-toastify';
+import { ErrorMessageService } from '../../../core/services/error-message.service';
 
 @Component({
   selector: 'app-deposit-member-list',
@@ -69,7 +70,8 @@ export class DepositMemberComponent implements OnInit {
     private service: DepositMemberService, 
     private modalService: BsModalService, 
     private toastService: ToastService,
-    private bsLocaleService: BsLocaleService
+    private bsLocaleService: BsLocaleService,
+    private errorMessageService: ErrorMessageService
   ) {
     // Define and set Vietnamese locale for datepicker
     defineLocale('vi', viLocale);
@@ -510,8 +512,8 @@ export class DepositMemberComponent implements OnInit {
       // CSV validation errors - display detailed errors
       this.displayDetailedErrors(errorResponse.errors);
     } else {
-      // General error
-      const msg = errorResponse?.message || 'Upload thất bại: Không thể lưu file lên hệ thống. Vui lòng thử lại hoặc liên hệ bộ phận vận hành.';
+      // General error - use ErrorMessageService for error mapping
+      const msg = this.errorMessageService.getErrorMessage(err) || 'Upload thất bại: Không thể lưu file lên hệ thống. Vui lòng thử lại hoặc liên hệ bộ phận vận hành.';
       this.importError = msg;
       // No toast notification - only display error in modal
     }
