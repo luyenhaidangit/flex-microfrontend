@@ -235,8 +235,7 @@ export class DepositMemberComponent implements OnInit {
       error: (err) => {
         this.uploading = false;
         // 5. Backend sẽ trả về business validation errors
-        const msg = err?.error?.message || 'Upload thất bại: Không thể lưu file lên hệ thống. Vui lòng thử lại hoặc liên hệ bộ phận vận hành.';
-        this.importError = msg; this.toastr.error(msg, 'Lỗi upload');
+        this.handleImportError(err);
       }
     });
   }
@@ -499,5 +498,74 @@ export class DepositMemberComponent implements OnInit {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     return tomorrow;
+  }
+
+  /**
+   * Handle import errors with detailed error display
+   */
+  private handleImportError(err: any): void {
+    const errorResponse = err?.error;
+    
+    if (errorResponse?.errors && Array.isArray(errorResponse.errors)) {
+      // CSV validation errors - display detailed errors
+      this.displayDetailedErrors(errorResponse.errors);
+    } else {
+      // General error
+      const msg = errorResponse?.message || 'Upload thất bại: Không thể lưu file lên hệ thống. Vui lòng thử lại hoặc liên hệ bộ phận vận hành.';
+      this.importError = msg;
+      this.toastr.error(msg, 'Lỗi upload');
+    }
+  }
+
+  /**
+   * Display detailed CSV validation errors
+   */
+  private displayDetailedErrors(errors: any[]): void {
+    if (errors.length === 0) {
+      this.importError = 'Có lỗi xảy ra khi xử lý file CSV.';
+      return;
+    }
+
+    // Group errors by row for better display
+    const errorsByRow = new Map<number, any[]>();
+    errors.forEach(error => {
+      const row = error.row || 0;
+      if (!errorsByRow.has(row)) {
+        errorsByRow.set(row, []);
+      }
+      errorsByRow.get(row)!.push(error);
+    });
+
+    // Build detailed error message
+    let errorMessage = '<div class="csv-validation-errors">';
+    errorMessage += '<h6 class="mb-2"><i class="bx bx-error-circle text-danger"></i> Lỗi validation CSV:</h6>';
+    
+    errorsByRow.forEach((rowErrors, rowNumber) => {
+      errorMessage += `<div class="mb-2">`;
+      errorMessage += `<strong>Dòng ${rowNumber}:</strong><ul class="mb-0">`;
+      
+      rowErrors.forEach(error => {
+        const column = error.column || '';
+        const message = error.message || 'Lỗi không xác định';
+        errorMessage += `<li>${column ? `<strong>${column}:</strong> ` : ''}${message}</li>`;
+      });
+      
+      errorMessage += `</ul></div>`;
+    });
+    
+    errorMessage += '<div class="mt-2 text-muted small">';
+    errorMessage += '<i class="bx bx-info-circle"></i> Vui lòng sửa các lỗi trên và thử lại.';
+    errorMessage += '</div></div>';
+
+    this.importError = errorMessage;
+
+    // Show toast with summary
+    const totalErrors = errors.length;
+    const totalRows = errorsByRow.size;
+    const summaryMsg = totalRows === 1 
+      ? `Phát hiện ${totalErrors} lỗi ở dòng ${Array.from(errorsByRow.keys())[0]}`
+      : `Phát hiện ${totalErrors} lỗi ở ${totalRows} dòng`;
+    
+    this.toastr.error(summaryMsg, 'Lỗi validation CSV');
   }
 }

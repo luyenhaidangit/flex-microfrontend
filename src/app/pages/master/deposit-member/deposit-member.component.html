@@ -211,7 +211,7 @@
       • Định dạng hỗ trợ: Excel (.xlsx, .xls) và CSV. Dung lượng tối đa: 10MB.
     </small>
 
-    <div *ngIf="importError" class="alert alert-danger">{{ importError }}</div>
+    <div *ngIf="importError" class="alert alert-danger" [innerHTML]="importError"></div>
 
   </div>
   <div class="modal-footer">

@@ -70,3 +70,34 @@ th.sorted { font-weight: 900; color: inherit !important; }
 .row-completed {
   opacity: 0.75;
 }
+
+/* CSV Validation Error Styles */
+.csv-validation-errors {
+  h6 {
+    color: #dc3545;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  
+  ul {
+    margin-left: 1rem;
+    padding-left: 0;
+  }
+  
+  li {
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+  }
+  
+  strong {
+    color: #495057;
+    font-weight: 600;
+  }
+  
+  .text-muted {
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #dee2e6;
+  }
+}
