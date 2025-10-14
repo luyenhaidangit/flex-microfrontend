@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { EndOfDayComponent } from './end-of-day/end-of-day.component';
+import { EndOfDayPageComponent } from './end-of-day/end-of-day.page.component';
 
 const routes: Routes = [
-  { path: 'end-of-day', component: EndOfDayComponent },
+  { path: 'end-of-day', component: EndOfDayPageComponent },
 ];
 
 @NgModule({
@@ -11,4 +11,3 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class OperationRoutingModule {}
-

@@ -6,10 +6,10 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { UIModule } from 'src/app/shared/ui/ui.module';
 
 import { OperationRoutingModule } from './operation-routing.module';
-import { EndOfDayComponent } from './end-of-day/end-of-day.component';
+import { EndOfDayPageComponent } from './end-of-day/end-of-day.page.component';
 
 @NgModule({
-  declarations: [EndOfDayComponent],
+  declarations: [EndOfDayPageComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -19,4 +19,3 @@ import { EndOfDayComponent } from './end-of-day/end-of-day.component';
   ]
 })
 export class OperationModule {}
-
