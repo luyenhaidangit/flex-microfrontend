@@ -91,6 +91,17 @@ export const MENU: MenuItem[] = [
         icon: 'bx bx-globe',
         link: '/securities/domains'
     },
+    {
+        id: 'operation-title',
+        label: 'Vận hành',
+        isTitle: true
+    },
+    {
+        id: 'operation.end-of-day',
+        label: 'Xử lý cuối ngày',
+        link: '/operation/end-of-day',
+        icon: 'bx bx-time-five'
+    },
     // {
     //     id: 'workflow-module',
     //     label: 'MENUITEMS.WORKFLOW.TEXT',
