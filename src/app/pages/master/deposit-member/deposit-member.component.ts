@@ -18,12 +18,12 @@ export class DepositMemberComponent implements OnInit {
     { label: 'Danh mục cơ sở' },
     { label: 'Thành viên lưu ký', active: true }
   ];
-
+  
   // UI state
   loading = false;
   items: DepositMemberItem[] = [];
   error?: string;
-
+  
   // Filters
   filter = {
     depositCode: '',
@@ -31,7 +31,7 @@ export class DepositMemberComponent implements OnInit {
     fullName: '',
     bicCode: ''
   };
-
+  
   // Pagination state (compatible with app-pagination)
   paging = {
     index: 1,
@@ -39,19 +39,19 @@ export class DepositMemberComponent implements OnInit {
     totalItems: 0,
     totalPages: 0
   };
-
+  
   // Sorting state
   sort: { column: 'depositCode' | 'shortName' | 'fullName' | 'bicCode' | null; direction: 'asc' | 'desc' | null } = {
     column: null,
     direction: null
   };
-
+  
   // Table skeleton
   skeleton = {
     rows: 8,
     columns: ['140px', '200px', '320px', '160px']
   };
-
+  
   // Import & Preview state
   @ViewChild('importModal') importModal!: TemplateRef<any>;
   modalRef?: BsModalRef;
@@ -65,7 +65,7 @@ export class DepositMemberComponent implements OnInit {
     minDate: this.getTomorrow(),
     showWeekNumbers: false
   };
-
+  
   constructor(
     private service: DepositMemberService, 
     private modalService: BsModalService, 
@@ -77,26 +77,26 @@ export class DepositMemberComponent implements OnInit {
     defineLocale('vi', viLocale);
     this.bsLocaleService.use('vi');
   }
-
+  
   ngOnInit(): void { this.load(); }
-
+  
   getPaginationState() { return { ...this.paging }; }
-
+  
   onPageChange(page: number): void {
     if (page < 1 || (this.paging.totalPages && page > this.paging.totalPages) || page === this.paging.index) return;
     this.paging.index = page;
     this.load();
   }
-
+  
   onPageSizeChange(size: number): void {
     if (size === this.paging.size) return;
     this.paging.size = size;
     this.paging.index = 1;
     this.load();
   }
-
+  
   onSearch(): void { this.paging.index = 1; this.load(); }
-
+  
   onSort(column: 'depositCode' | 'shortName' | 'fullName' | 'bicCode'): void {
     if (this.sort.column === column) {
       this.sort.direction = this.sort.direction === 'asc' ? 'desc' : (this.sort.direction === 'desc' ? null : 'asc');
@@ -106,7 +106,7 @@ export class DepositMemberComponent implements OnInit {
     }
     this.paging.index = 1; this.load();
   }
-
+  
   private load(): void {
     const params: DepositMemberSearchParams = {
       pageIndex: this.paging.index,
@@ -118,7 +118,7 @@ export class DepositMemberComponent implements OnInit {
       sortColumn: this.sort.column || undefined,
       sortDirection: this.sort.direction || undefined,
     };
-
+    
     this.loading = true; this.error = undefined;
     this.service.getPaging(params).subscribe({
       next: (res) => {
@@ -135,7 +135,7 @@ export class DepositMemberComponent implements OnInit {
       }
     });
   }
-
+  
   // ==== Import handling ====
   openImportModal(): void {
     this.importForm = {}; this.importError = undefined; this.uploading = false;
@@ -144,9 +144,9 @@ export class DepositMemberComponent implements OnInit {
     this.onEffectiveDateChange(this.effectiveDate);
     this.modalRef = this.modalService.show(this.importModal, { class: 'modal-lg' });
   }
-
+  
   closeImportModal(): void { this.modalRef?.hide(); this.modalRef = undefined; }
-
+  
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files && input.files.length ? input.files[0] : undefined;
@@ -157,7 +157,7 @@ export class DepositMemberComponent implements OnInit {
       this.importForm.file = undefined;
       return;
     }
-
+    
     // 1. Kiểm tra kỹ thuật file (file-level validation)
     const fileValidation = this.validateFile(file);
     if (!fileValidation.isValid) {
@@ -174,7 +174,7 @@ export class DepositMemberComponent implements OnInit {
     this.importForm.file = file;
     this.importError = undefined;
   }
-
+  
   onEffectiveDateChange(date: Date | null): void {
     if (date) {
       // Validate that selected date is not before tomorrow
@@ -201,13 +201,13 @@ export class DepositMemberComponent implements OnInit {
       this.effectiveDateDisplay = undefined;
     }
   }
-
+  
   submitImport(): void {
     if (!this.importForm.file || !this.importForm.effectiveDate) {
       this.importError = 'Vui lòng chọn tệp và ngày hiệu lực';
       return;
     }
-
+    
     // Double-check date validation before submit
     if (this.effectiveDate) {
       const tomorrow = this.getTomorrow();
@@ -220,14 +220,14 @@ export class DepositMemberComponent implements OnInit {
         return;
       }
     }
-
+    
     // 4. Kiểm tra ràng buộc nghiệp vụ (business validation)
     this.validateBusinessRules();
-
+    
     const form = new FormData();
     form.append('File', this.importForm.file);
     form.append('EffectiveDate', this.importForm.effectiveDate);
-
+    
     this.uploading = true; this.importError = undefined;
     this.service.importDepositMembers(form).subscribe({
       next: () => {
@@ -241,7 +241,7 @@ export class DepositMemberComponent implements OnInit {
       }
     });
   }
-
+  
   // ==== Upload guideline extras ====
   onDownloadTemplate(): void {
     this.service.downloadImportTemplate().subscribe({
@@ -249,8 +249,8 @@ export class DepositMemberComponent implements OnInit {
       error: () => console.log('Không thể tải file mẫu', 'Lỗi')
     });
   }
-
-
+  
+  
   // Helper method to format file size
   getFileSize(bytes: number): string {
     if (bytes === 0) return '0 Bytes';
@@ -259,17 +259,17 @@ export class DepositMemberComponent implements OnInit {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
-
+  
   // ===== VALIDATION METHODS =====
   
   /**
-   * 1. Kiểm tra kỹ thuật file (file-level validation)
-   * - File bắt buộc phải được chọn
-   * - Định dạng file (.xlsx, .csv, .xls)
-   * - Dung lượng file (≤ 10MB)
-   * - MIME type hợp lệ
-   * - Encoding UTF-8 (cho CSV)
-   */
+  * 1. Kiểm tra kỹ thuật file (file-level validation)
+  * - File bắt buộc phải được chọn
+  * - Định dạng file (.xlsx, .csv, .xls)
+  * - Dung lượng file (≤ 10MB)
+  * - MIME type hợp lệ
+  * - Encoding UTF-8 (cho CSV)
+  */
   private validateFile(file: File): { isValid: boolean; error?: string } {
     // Kiểm tra file có tồn tại không
     if (!file) {
@@ -278,34 +278,32 @@ export class DepositMemberComponent implements OnInit {
         error: 'Vui lòng chọn file để upload'
       };
     }
-
-    // Kiểm tra định dạng file
-    const allowedExtensions = ['.xlsx', '.csv', '.xls'];
+    
+    // Kiểm tra định dạng file - chỉ chấp nhận CSV
+    const allowedExtensions = ['.csv'];
     const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
     
     if (!allowedExtensions.includes(fileExtension)) {
       return {
         isValid: false,
-        error: `Định dạng file không hợp lệ. Chỉ chấp nhận: ${allowedExtensions.join(', ')}`
+        error: `Định dạng file không hợp lệ. Chỉ chấp nhận: CSV`
       };
     }
-
-    // Kiểm tra MIME type
+    
+    // Kiểm tra MIME type - chỉ chấp nhận CSV
     const allowedMimeTypes = [
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
-      'application/vnd.ms-excel', // .xls
       'text/csv', // .csv
       'application/csv', // .csv alternative
       'text/plain' // .csv alternative
     ];
-
+    
     if (!allowedMimeTypes.includes(file.type)) {
       return {
         isValid: false,
-        error: `MIME type không hợp lệ. File type: ${file.type || 'unknown'}. Chỉ chấp nhận Excel và CSV files.`
+        error: `MIME type không hợp lệ. File type: ${file.type || 'unknown'}. Chỉ chấp nhận CSV files.`
       };
     }
-
+    
     // Kiểm tra dung lượng file (max 10MB)
     const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
     if (file.size > maxSizeInBytes) {
@@ -314,7 +312,7 @@ export class DepositMemberComponent implements OnInit {
         error: `File quá lớn. Dung lượng tối đa: ${this.getFileSize(maxSizeInBytes)}`
       };
     }
-
+    
     // Kiểm tra file rỗng
     if (file.size === 0) {
       return {
@@ -322,7 +320,7 @@ export class DepositMemberComponent implements OnInit {
         error: 'File không được rỗng'
       };
     }
-
+    
     // Kiểm tra tên file không chứa ký tự đặc biệt nguy hiểm
     const dangerousChars = /[<>:"/\\|?*\x00-\x1f]/;
     if (dangerousChars.test(file.name)) {
@@ -331,15 +329,15 @@ export class DepositMemberComponent implements OnInit {
         error: 'Tên file chứa ký tự không hợp lệ. Vui lòng đổi tên file.'
       };
     }
-
+    
     return { isValid: true };
   }
-
+  
   /**
-   * 2. Kiểm tra cấu trúc file (schema validation)
-   * - Header đủ cột: DepositCode, ShortName, FullName
-   * - Số dòng > 0
-   */
+  * 2. Kiểm tra cấu trúc CSV file (schema validation)
+  * - Header đủ cột: DepositCode, ShortName, FullName
+  * - Số dòng > 0
+  */
   private validateFileStructure(file: File): void {
     const reader = new FileReader();
     
@@ -348,29 +346,28 @@ export class DepositMemberComponent implements OnInit {
         const content = e.target?.result as string;
         const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
         
+        // Chỉ xử lý CSV files
         if (fileExtension === '.csv') {
           this.validateCsvStructure(content);
-        } else if (fileExtension === '.xlsx' || fileExtension === '.xls') {
-          // TODO: Implement XLSX/XLS validation when XLSX.js is available
-          console.log('Excel validation not implemented yet - will be validated on backend');
-          // Clear any previous errors since Excel files will be validated on backend
-          this.importError = undefined;
+        } else {
+          // Không nên xảy ra vì đã validate ở validateFile()
+          this.importError = 'Chỉ chấp nhận file CSV';
         }
       } catch (error) {
         this.importError = 'Không thể đọc file. Vui lòng kiểm tra lại file.';
       }
     };
-
+    
     reader.onerror = () => {
       this.importError = 'Lỗi khi đọc file. Vui lòng thử lại.';
     };
-
+    
     reader.readAsText(file, 'UTF-8');
   }
-
+  
   /**
-   * Validate CSV structure
-   */
+  * Validate CSV structure
+  */
   private validateCsvStructure(content: string): void {
     const lines = content.split('\n').filter(line => line.trim());
     
@@ -379,7 +376,7 @@ export class DepositMemberComponent implements OnInit {
       this.importError = 'File phải có ít nhất 1 dòng dữ liệu (ngoài header)';
       return;
     }
-
+    
     // Kiểm tra header
     const header = lines[0].toLowerCase().split(',').map(h => h.trim().replace(/"/g, ''));
     const requiredHeaders = ['depositcode', 'shortname', 'fullname'];
@@ -387,36 +384,36 @@ export class DepositMemberComponent implements OnInit {
     const missingHeaders = requiredHeaders.filter(req => 
       !header.some(h => h === req)
     );
-
+    
     if (missingHeaders.length > 0) {
       this.importError = `Thiếu cột bắt buộc: ${missingHeaders.join(', ')}. Header phải có: ${requiredHeaders.join(', ')}`;
       return;
     }
-
+    
     // Kiểm tra dữ liệu không toàn blank
     const dataLines = lines.slice(1);
     const hasData = dataLines.some(line => 
       line.split(',').some(cell => cell.trim() && cell.trim() !== '""')
     );
-
+    
     if (!hasData) {
       this.importError = 'File không có dữ liệu hợp lệ. Tất cả dòng đều trống.';
       return;
     }
-
+    
     // Kiểm tra ràng buộc dữ liệu cơ bản (row-level validation)
     this.validateCsvData(dataLines, header);
   }
-
+  
   /**
-   * 3. Kiểm tra ràng buộc dữ liệu cơ bản (row-level validation)
-   * - Ô bắt buộc không null (DepositCode, FullName)
-   * - Kiểu dữ liệu hợp lệ
-   */
+  * 3. Kiểm tra ràng buộc dữ liệu cơ bản (row-level validation)
+  * - Ô bắt buộc không null (DepositCode, FullName)
+  * - Kiểu dữ liệu hợp lệ
+  */
   private validateCsvData(dataLines: string[], header: string[]): void {
     const errors: string[] = [];
     const warnings: string[] = [];
-
+    
     dataLines.forEach((line, index) => {
       const rowNumber = index + 2; // +2 vì bắt đầu từ dòng 2 (sau header)
       const cells = line.split(',').map(cell => cell.trim().replace(/"/g, ''));
@@ -426,13 +423,13 @@ export class DepositMemberComponent implements OnInit {
       if (depositCodeIndex >= 0 && (!cells[depositCodeIndex] || cells[depositCodeIndex] === '')) {
         errors.push(`Dòng ${rowNumber}: DepositCode không được để trống`);
       }
-
+      
       // Kiểm tra FullName không rỗng
       const fullNameIndex = header.indexOf('fullname');
       if (fullNameIndex >= 0 && (!cells[fullNameIndex] || cells[fullNameIndex] === '')) {
         errors.push(`Dòng ${rowNumber}: FullName không được để trống`);
       }
-
+      
       // Cảnh báo: Tên viết hoa (warning)
       const shortNameIndex = header.indexOf('shortname');
       if (shortNameIndex >= 0 && cells[shortNameIndex]) {
@@ -446,19 +443,19 @@ export class DepositMemberComponent implements OnInit {
           warnings.push(`Dòng ${rowNumber}: Tên viết tắt quá dài (${shortName.length}/50 ký tự)`);
         }
       }
-
+      
       // Cảnh báo: FullName quá dài
       if (fullNameIndex >= 0 && cells[fullNameIndex] && cells[fullNameIndex].length > 200) {
         warnings.push(`Dòng ${rowNumber}: Tên đầy đủ quá dài (${cells[fullNameIndex].length}/200 ký tự)`);
       }
     });
-
+    
     // Hiển thị errors (chặn upload)
     if (errors.length > 0) {
       this.importError = `Lỗi dữ liệu:\n${errors.slice(0, 5).join('\n')}${errors.length > 5 ? `\n... và ${errors.length - 5} lỗi khác` : ''}`;
       return;
     }
-
+    
     // Hiển thị warnings (không chặn upload)
     if (warnings.length > 0) {
       const warningMsg = `Cảnh báo:\n${warnings.slice(0, 3).join('\n')}${warnings.length > 3 ? `\n... và ${warnings.length - 3} cảnh báo khác` : ''}`;
@@ -466,18 +463,18 @@ export class DepositMemberComponent implements OnInit {
       // Có thể hiển thị toast warning thay vì console
       this.toastService.info(`Có ${warnings.length} cảnh báo về dữ liệu. Kiểm tra console để xem chi tiết.`);
     }
-
+    
     // Nếu không có lỗi, clear error message
     if (!this.importError) {
       this.importError = undefined;
     }
   }
-
+  
   /**
-   * 4. Kiểm tra ràng buộc nghiệp vụ (business validation) - sẽ được BE xử lý
-   * - DepositCode không trùng DB
-   * - EffectiveDate >= tomorrow
-   */
+  * 4. Kiểm tra ràng buộc nghiệp vụ (business validation) - sẽ được BE xử lý
+  * - DepositCode không trùng DB
+  * - EffectiveDate >= tomorrow
+  */
   private validateBusinessRules(): void {
     // Business rules sẽ được validate ở backend
     // FE chỉ có thể validate những gì có sẵn locally
@@ -492,19 +489,19 @@ export class DepositMemberComponent implements OnInit {
       }
     }
   }
-
+  
   /**
-   * Get tomorrow's date
-   */
+  * Get tomorrow's date
+  */
   private getTomorrow(): Date {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     return tomorrow;
   }
-
+  
   /**
-   * Handle import errors with detailed error display
-   */
+  * Handle import errors with detailed error display
+  */
   private handleImportError(err: any): void {
     const errorResponse = err?.error;
     
@@ -518,16 +515,16 @@ export class DepositMemberComponent implements OnInit {
       // No toast notification - only display error in modal
     }
   }
-
+  
   /**
-   * Display detailed CSV validation errors
-   */
+  * Display detailed CSV validation errors
+  */
   private displayDetailedErrors(errors: any[]): void {
     if (errors.length === 0) {
       this.importError = 'Có lỗi xảy ra khi xử lý file CSV.';
       return;
     }
-
+    
     // Group errors by row for better display
     const errorsByRow = new Map<number, any[]>();
     errors.forEach(error => {
@@ -537,7 +534,7 @@ export class DepositMemberComponent implements OnInit {
       }
       errorsByRow.get(row)!.push(error);
     });
-
+    
     // Build detailed error message
     let errorMessage = '<div class="csv-validation-errors">';
     errorMessage += '<h6 class="mb-2"><i class="bx bx-error-circle text-danger"></i> Lỗi validation CSV:</h6>';
@@ -558,7 +555,7 @@ export class DepositMemberComponent implements OnInit {
     errorMessage += '<div class="mt-2 text-muted small">';
     errorMessage += '<i class="bx bx-info-circle"></i> Vui lòng sửa các lỗi trên và thử lại.';
     errorMessage += '</div></div>';
-
+    
     this.importError = errorMessage;
     // No toast notification - only display error in modal
   }
