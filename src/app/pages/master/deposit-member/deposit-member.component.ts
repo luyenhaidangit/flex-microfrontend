@@ -513,7 +513,7 @@ export class DepositMemberComponent implements OnInit {
       // General error
       const msg = errorResponse?.message || 'Upload thất bại: Không thể lưu file lên hệ thống. Vui lòng thử lại hoặc liên hệ bộ phận vận hành.';
       this.importError = msg;
-      this.toastr.error(msg, 'Lỗi upload');
+      // No toast notification - only display error in modal
     }
   }
 
@@ -558,14 +558,6 @@ export class DepositMemberComponent implements OnInit {
     errorMessage += '</div></div>';
 
     this.importError = errorMessage;
-
-    // Show toast with summary
-    const totalErrors = errors.length;
-    const totalRows = errorsByRow.size;
-    const summaryMsg = totalRows === 1 
-      ? `Phát hiện ${totalErrors} lỗi ở dòng ${Array.from(errorsByRow.keys())[0]}`
-      : `Phát hiện ${totalErrors} lỗi ở ${totalRows} dòng`;
-    
-    this.toastr.error(summaryMsg, 'Lỗi validation CSV');
+    // No toast notification - only display error in modal
   }
 }
