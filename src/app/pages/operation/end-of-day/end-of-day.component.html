@@ -7,11 +7,17 @@
   <div class="bg-white rounded shadow-sm p-3">
     <p class="text-muted mb-3">Trang thao tác xử lý cuối ngày. Bạn có thể bổ sung các bước EOD và trạng thái tại đây.</p>
 
-    <button class="btn btn-primary" [disabled]="processing" (click)="runEod()">
-      <span *ngIf="!processing"><i class="bx bx-time-five"></i> Chạy xử lý cuối ngày</span>
-      <span *ngIf="processing" class="spinner-border spinner-border-sm me-1"></span>
-      <span *ngIf="processing">Đang chạy...</span>
-    </button>
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary" [disabled]="processing" (click)="runEod()">
+        <span *ngIf="!processing"><i class="bx bx-time-five"></i> Chạy xử lý cuối ngày</span>
+        <span *ngIf="processing" class="spinner-border spinner-border-sm me-1"></span>
+        <span *ngIf="processing">Đang chạy...</span>
+      </button>
+      <button class="btn btn-outline-primary" [disabled]="processingBatch" (click)="runBatchDepositMembers()">
+        <span *ngIf="!processingBatch"><i class="bx bx-cloud-upload"></i> Gửi batch Thành viên lưu ký</span>
+        <span *ngIf="processingBatch" class="spinner-border spinner-border-sm me-1"></span>
+        <span *ngIf="processingBatch">Đang chạy...</span>
+      </button>
+    </div>
   </div>
 </div>
-
