@@ -211,6 +211,24 @@
       • Định dạng hỗ trợ: CSV. Dung lượng tối đa: 10MB.
     </small>
 
+    <!-- Staged File Info -->
+    <div class="mb-3" *ngIf="loadingStagedFile || stagedFileInfo">
+      <div *ngIf="loadingStagedFile" class="d-flex align-items-center text-muted">
+        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        <span>Đang kiểm tra file đã tải lên...</span>
+      </div>
+      
+      <div *ngIf="stagedFileInfo && !loadingStagedFile" class="alert alert-info mb-0">
+        <div class="d-flex align-items-center">
+          <i class="bx bx-info-circle me-2"></i>
+          <div>
+            <strong>File đã tải lên:</strong> {{ stagedFileInfo.fileName }}<br>
+            <strong>Ngày hiệu lực:</strong> {{ stagedFileInfo.effectiveDate | date:'dd/MM/yyyy' }}
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div *ngIf="importError" class="alert alert-danger" [innerHTML]="importError"></div>
 
   </div>

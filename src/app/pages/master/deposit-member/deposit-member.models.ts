@@ -20,3 +20,8 @@ export interface DepositMemberSearchParams extends PagingSortingParams {
   bicCode?: string | null;
   sortColumn?: 'depositCode' | 'shortName' | 'fullName' | 'bicCode';
 }
+
+export interface StagedFileInfo {
+  fileName: string;
+  effectiveDate: string;
+}

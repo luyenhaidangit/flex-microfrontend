@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { DepositMemberItem, DepositMemberSearchParams } from './deposit-member.models';
+import { DepositMemberItem, DepositMemberSearchParams, StagedFileInfo } from './deposit-member.models';
 import { DepositMemberService } from './deposit-member.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap/datepicker';
@@ -59,6 +59,8 @@ export class DepositMemberComponent implements OnInit {
   uploading = false;
   importError?: string;
   effectiveDateDisplay?: string;
+  stagedFileInfo?: StagedFileInfo | null;
+  loadingStagedFile = false;
   effectiveDate?: Date | null;
   bsConfig: Partial<BsDatepickerConfig> = { 
     dateInputFormat: 'DD/MM/YYYY',
@@ -142,10 +144,31 @@ export class DepositMemberComponent implements OnInit {
     // Set default effective date to tomorrow
     this.effectiveDate = this.getTomorrow();
     this.onEffectiveDateChange(this.effectiveDate);
+    
+    // Load staged file info
+    this.loadStagedFileInfo();
+    
     this.modalRef = this.modalService.show(this.importModal, { class: 'modal-lg' });
   }
   
   closeImportModal(): void { this.modalRef?.hide(); this.modalRef = undefined; }
+
+  loadStagedFileInfo(): void {
+    this.loadingStagedFile = true;
+    this.stagedFileInfo = null;
+    
+    this.service.getStagedFile().subscribe({
+      next: (stagedFile) => {
+        this.loadingStagedFile = false;
+        this.stagedFileInfo = stagedFile;
+      },
+      error: (err) => {
+        this.loadingStagedFile = false;
+        this.stagedFileInfo = null;
+        console.error('Error loading staged file:', err);
+      }
+    });
+  }
   
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
