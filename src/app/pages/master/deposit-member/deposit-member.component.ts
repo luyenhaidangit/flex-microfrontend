@@ -4,7 +4,7 @@ import { DepositMemberService } from './deposit-member.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { defineLocale, viLocale } from 'ngx-bootstrap/chronos';
-import { ToastrService } from 'ngx-toastr';
+import { ToastService } from 'angular-toastify';
 
 @Component({
   selector: 'app-deposit-member-list',
@@ -68,7 +68,7 @@ export class DepositMemberComponent implements OnInit {
   constructor(
     private service: DepositMemberService, 
     private modalService: BsModalService, 
-    private toastr: ToastrService,
+    private toastService: ToastService,
     private bsLocaleService: BsLocaleService
   ) {
     // Define and set Vietnamese locale for datepicker
@@ -182,7 +182,7 @@ export class DepositMemberComponent implements OnInit {
       selectedDate.setHours(0, 0, 0, 0);
       
       if (selectedDate < tomorrow) {
-        this.toastr.error('Ngày hiệu lực phải từ ngày mai trở đi', 'Lỗi validation');
+        this.toastService.error('Ngày hiệu lực phải từ ngày mai trở đi');
         this.effectiveDate = null;
         this.importForm.effectiveDate = undefined;
         this.effectiveDateDisplay = undefined;
@@ -230,7 +230,7 @@ export class DepositMemberComponent implements OnInit {
     this.service.importDepositMembers(form).subscribe({
       next: () => {
         this.uploading = false; this.closeImportModal(); this.onSearch();
-        this.toastr.success('Upload thành công', 'Thành viên lưu ký');
+        this.toastService.success('Upload thành công!');
       },
       error: (err) => {
         this.uploading = false;
@@ -462,7 +462,7 @@ export class DepositMemberComponent implements OnInit {
       const warningMsg = `Cảnh báo:\n${warnings.slice(0, 3).join('\n')}${warnings.length > 3 ? `\n... và ${warnings.length - 3} cảnh báo khác` : ''}`;
       console.warn(warningMsg);
       // Có thể hiển thị toast warning thay vì console
-      this.toastr.warning(`Có ${warnings.length} cảnh báo về dữ liệu. Kiểm tra console để xem chi tiết.`, 'Cảnh báo dữ liệu');
+      this.toastService.info(`Có ${warnings.length} cảnh báo về dữ liệu. Kiểm tra console để xem chi tiết.`);
     }
 
     // Nếu không có lỗi, clear error message
@@ -486,7 +486,7 @@ export class DepositMemberComponent implements OnInit {
       tomorrow.setHours(0, 0, 0, 0);
       
       if (effectiveDate < tomorrow) {
-        this.toastr.warning('Ngày hiệu lực phải từ ngày mai trở đi', 'Cảnh báo');
+        this.toastService.info('Ngày hiệu lực phải từ ngày mai trở đi');
       }
     }
   }

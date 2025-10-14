@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { DepositMemberItem, DepositMemberSearchParams } from './deposit-member.models';
 import { PagedResponse } from '../../../core/models/api.models';
+import { Header } from '../../../core/enums/http.enum';
 
 @Injectable({ providedIn: 'root' })
 export class DepositMemberService {
@@ -35,6 +36,10 @@ export class DepositMemberService {
   
   // Import deposit members via CSV upload
   importDepositMembers(formData: FormData) {
-    return this.http.post<any>(`${this.apiUrl}/stage`, formData);
+    return this.http.post<any>(`${this.apiUrl}/stage`, formData, {
+      headers: {
+        [Header.SkipToastError]: 'true'
+      }
+    });
   }
 }
