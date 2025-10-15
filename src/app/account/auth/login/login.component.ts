@@ -5,6 +5,7 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
 import { ToastService } from 'angular-toastify';
 
 import { AuthenticationService } from '../../../core/services/auth.service';
+import { Injector } from '@angular/core';
 import { ModalService } from 'src/app/core/services/modal.service';
 import { ConfigService } from 'src/app/core/services/config.service';
 import { AUTH_MODE } from 'src/app/core/constants/config-values.constant';
@@ -40,12 +41,12 @@ export class LoginComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private configService: ConfigService,
     private toastService: ToastService,
-    private modalService: ModalService
+    private injector: Injector
   ) { }
 
   ngOnInit() {
     // Ensure any stray modals/backdrops are closed when arriving at login
-    this.modalService.closeAllModals();
+    try { this.injector.get(ModalService).closeAllModals(); } catch {}
     this.loginForm = this.formBuilder.group({
       userName: ['admin', [Validators.required]],
       password: ['Haidang106@', [Validators.required]],
