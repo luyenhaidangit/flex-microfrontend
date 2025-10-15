@@ -80,17 +80,6 @@ export const MENU: MenuItem[] = [
         icon: 'bx bx-building',
         link: '/branch',
     },
-    {
-        id: 'operation-title',
-        label: 'Vận hành',
-        isTitle: true
-    },
-    {
-        id: 'operation.end-of-day',
-        label: 'Xử lý cuối ngày',
-        link: '/operation/end-of-day',
-        icon: 'bx bx-time-five'
-    },
     // {
     //     id: 'workflow-module',
     //     label: 'MENUITEMS.WORKFLOW.TEXT',
@@ -964,5 +953,16 @@ export const MENU: MenuItem[] = [
         label: 'Thành viên lưu ký',
         link: '/master/deposit-members',
         icon: 'bx bx-collection'
+    },
+    {
+        id: 'operation-title',
+        label: 'Vận hành',
+        isTitle: true
+    },
+    {
+        id: 'operation.end-of-day',
+        label: 'Xử lý cuối ngày',
+        link: '/operation/end-of-day',
+        icon: 'bx bx-time-five'
     },
 ];
