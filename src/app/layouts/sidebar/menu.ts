@@ -81,17 +81,6 @@ export const MENU: MenuItem[] = [
         link: '/branch',
     },
     {
-        id: 'securities-title',
-        label: 'CHỨNG KHOÁN',
-        isTitle: true
-    },
-    {
-        id: 'securities-module',
-        label: 'Miền thanh toán',
-        icon: 'bx bx-globe',
-        link: '/securities/domains'
-    },
-    {
         id: 'operation-title',
         label: 'Vận hành',
         isTitle: true
@@ -963,6 +952,12 @@ export const MENU: MenuItem[] = [
         id: 'master-title',
         label: 'Danh mục cơ sở',
         isTitle: true
+    },
+    {
+        id: 'master.securities-domain',
+        label: 'Miền thanh toán',
+        link: '/master/securities-domain',
+        icon: 'bx bx-globe'
     },
     {
         id: 'master.deposit-members',

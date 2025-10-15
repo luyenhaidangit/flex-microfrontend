@@ -30,7 +30,6 @@ const routes: Routes = [
   { path: 'pages', loadChildren: () => import('./utility/utility.module').then(m => m.UtilityModule) },
   { path: 'ui', loadChildren: () => import('./ui/ui.module').then(m => m.UiModule) },
   { path: 'form', loadChildren: () => import('./form/form.module').then(m => m.FormModule) },
-  { path: 'securities', loadChildren: () => import('./securities/securities.module').then(m => m.SecuritiesModule) },
   { path: 'operation', loadChildren: () => import('src/app/pages/operation/operation.module').then(m => m.OperationModule) },
   { path: 'master', loadChildren: () => import('./master/master.module').then(m => m.MasterModule) },
   { path: 'tables', loadChildren: () => import('./tables/tables.module').then(m => m.TablesModule) },

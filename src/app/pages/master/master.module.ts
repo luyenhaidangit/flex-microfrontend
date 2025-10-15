@@ -9,10 +9,12 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 import { MasterRoutingModule } from './master-routing.module';
 import { DepositMemberComponent } from './deposit-member/deposit-member.component';
+import { SecuritiesDomainListComponent } from './securities-domain/securities-domain-list.component';
 
 @NgModule({
   declarations: [
-    DepositMemberComponent
+    DepositMemberComponent,
+    SecuritiesDomainListComponent
   ],
   imports: [
     CommonModule,
