@@ -17,7 +17,6 @@ export class SecuritiesDomainListComponent implements OnInit {
   CONFIG = SECURITIES_DOMAIN_CONFIG;
   mapSettleMethodLabel = mapSettleMethodLabel;
   mapYesNo = mapYesNo;
-  showInfo = false;
 
   // Filters
   filter = {
@@ -34,11 +33,7 @@ export class SecuritiesDomainListComponent implements OnInit {
     totalPages: 0
   };
 
-  // Sorting state
-  sort: { column: SecuritiesDomainSearchParams['sortColumn'] | null; direction: 'asc' | 'desc' | null } = {
-    column: null,
-    direction: null
-  };
+  // No sorting (backend removed ordering)
 
   constructor(private service: SecuritiesDomainService) {}
 
@@ -58,16 +53,6 @@ export class SecuritiesDomainListComponent implements OnInit {
 
   onSearch(): void { this.paging.index = 1; this.load(); }
 
-  onSort(column: NonNullable<SecuritiesDomainSearchParams['sortColumn']>): void {
-    if (this.sort.column === column) {
-      this.sort.direction = this.sort.direction === 'asc' ? 'desc' : (this.sort.direction === 'desc' ? null : 'asc');
-      if (!this.sort.direction) this.sort.column = null;
-    } else {
-      this.sort.column = column; this.sort.direction = 'asc';
-    }
-    this.paging.index = 1; this.load();
-  }
-
   private load(): void {
     const params: SecuritiesDomainSearchParams = {
       pageIndex: this.paging.index,
@@ -75,8 +60,6 @@ export class SecuritiesDomainListComponent implements OnInit {
       domainCode: this.filter.domainCode?.trim() || undefined,
       domainName: this.filter.domainName?.trim() || undefined,
       isDefault: this.filter.isDefault === '' ? undefined : this.filter.isDefault === 'true',
-      sortColumn: this.sort.column || undefined,
-      sortDirection: this.sort.direction || undefined,
     };
 
     this.loading = true; this.error = undefined;
@@ -98,7 +81,4 @@ export class SecuritiesDomainListComponent implements OnInit {
   }
 
   trackByCode(index: number, item: any) { return item.domainCode || index; }
-  openInfo() { this.showInfo = true; }
-  closeInfo() { this.showInfo = false; }
 }
-

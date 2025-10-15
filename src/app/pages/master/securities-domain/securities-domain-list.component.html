@@ -1,5 +1,34 @@
 <div class="container-fluid">
-  <app-page-title [title]="CONFIG.breadcrumb.title" [breadcrumbItems]="CONFIG.breadcrumb.items"></app-page-title>
+  <app-page-title [title]="CONFIG.breadcrumb.title" [breadcrumbItems]="CONFIG.breadcrumb.items" [infoTitle]="'Giải thích các trường thông tin'">
+    <ng-template #pageInfo>
+      <ul class="list-unstyled mb-0 small">
+        <li class="mb-3">
+          <div class="fw-600">DVP3</div>
+          <div class="text-muted">Thanh toán ròng cuối ngày giữa tiền và chứng khoán.</div>
+        </li>
+        <li class="mb-3">
+          <div class="fw-600">T+2</div>
+          <div class="text-muted">Thanh toán sau 2 ngày làm việc kể từ ngày giao dịch.</div>
+        </li>
+        <li class="mb-3">
+          <div class="fw-600">NET</div>
+          <div class="text-muted">Xử lý theo phương thức ròng (gộp nhiều giao dịch).</div>
+        </li>
+        <li class="mb-3">
+          <div class="fw-600">TRAN</div>
+          <div class="text-muted">Xử lý theo từng giao dịch (không gộp).</div>
+        </li>
+        <li class="mb-3">
+          <div class="fw-600">Tiền/CK</div>
+          <div class="text-muted">Phương thức thanh toán cho tiền và chứng khoán có thể khác nhau.</div>
+        </li>
+        <li>
+          <div class="fw-600">Mặc định</div>
+          <div class="text-muted">Xác định miền được ưu tiên khi không chỉ định cụ thể.</div>
+        </li>
+      </ul>
+    </ng-template>
+  </app-page-title>
 
   <div class="bg-white rounded shadow-sm p-3 position-relative">
     <div class="d-flex align-items-center gap-2 mb-3">
@@ -21,9 +50,7 @@
           <button class="btn btn-primary flex-grow-1" (click)="onSearch()" [disabled]="loading">
             <i class="bx bx-search"></i> Tìm kiếm
           </button>
-          <button type="button" class="btn btn-light" (click)="openInfo()" aria-label="Giải thích các trường">
-            <i class="mdi mdi-help-circle-outline"></i>
-          </button>
+          
         </div>
       </div>
     </div>
@@ -34,60 +61,12 @@
       <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
         <thead>
           <tr>
-            <th style="min-width: 220px">
-              <button class="th-sort" (click)="onSort('domainName')">
-                Tên Domain
-                <i class="mdi" [ngClass]="{
-                  'mdi-menu-up': sort.column==='domainName' && sort.direction==='asc',
-                  'mdi-menu-down': sort.column==='domainName' && sort.direction==='desc'
-                }"></i>
-              </button>
-            </th>
-            <th style="min-width: 140px">
-              <button class="th-sort" (click)="onSort('settlementType')">
-                Loại hình TT
-                <i class="mdi" [ngClass]="{
-                  'mdi-menu-up': sort.column==='settlementType' && sort.direction==='asc',
-                  'mdi-menu-down': sort.column==='settlementType' && sort.direction==='desc'
-                }"></i>
-              </button>
-            </th>
-            <th style="min-width: 120px">
-              <button class="th-sort" (click)="onSort('settlementCycle')">
-                Chu kỳ TT
-                <i class="mdi" [ngClass]="{
-                  'mdi-menu-up': sort.column==='settlementCycle' && sort.direction==='asc',
-                  'mdi-menu-down': sort.column==='settlementCycle' && sort.direction==='desc'
-                }"></i>
-              </button>
-            </th>
-            <th style="min-width: 180px">
-              <button class="th-sort" (click)="onSort('secSettlementType')">
-                Phương thức TT CK
-                <i class="mdi" [ngClass]="{
-                  'mdi-menu-up': sort.column==='secSettlementType' && sort.direction==='asc',
-                  'mdi-menu-down': sort.column==='secSettlementType' && sort.direction==='desc'
-                }"></i>
-              </button>
-            </th>
-            <th style="min-width: 180px">
-              <button class="th-sort" (click)="onSort('cashSettleType')">
-                Phương thức TT Tiền
-                <i class="mdi" [ngClass]="{
-                  'mdi-menu-up': sort.column==='cashSettleType' && sort.direction==='asc',
-                  'mdi-menu-down': sort.column==='cashSettleType' && sort.direction==='desc'
-                }"></i>
-              </button>
-            </th>
-            <th style="min-width: 140px">
-              <button class="th-sort" (click)="onSort('isDefault')">
-                Domain mặc định
-                <i class="mdi" [ngClass]="{
-                  'mdi-menu-up': sort.column==='isDefault' && sort.direction==='asc',
-                  'mdi-menu-down': sort.column==='isDefault' && sort.direction==='desc'
-                }"></i>
-              </button>
-            </th>
+            <th style="min-width: 220px">Tên Domain</th>
+            <th style="min-width: 140px">Loại hình TT</th>
+            <th style="min-width: 120px">Chu kỳ TT</th>
+            <th style="min-width: 180px">Phương thức TT CK</th>
+            <th style="min-width: 180px">Phương thức TT Tiền</th>
+            <th style="min-width: 140px">Domain mặc định</th>
           </tr>
         </thead>
 
@@ -125,45 +104,6 @@
       (pageSizeChanged)="onPageSizeChange($event)">
     </app-pagination>
 
-    <!-- Info Drawer -->
-    <div class="info-drawer" [class.info-drawer--open]="showInfo" role="dialog" aria-labelledby="infoDrawerTitle">
-      <div class="info-drawer__header d-flex align-items-center justify-content-between">
-        <h5 id="infoDrawerTitle" class="mb-0">Giải thích các trường thông tin</h5>
-        <button class="btn btn-link text-muted" (click)="closeInfo()" aria-label="Đóng">
-          <i class="mdi mdi-close"></i>
-        </button>
-      </div>
-      <div class="info-drawer__body">
-        <ul class="list-unstyled mb-0 small">
-          <li class="mb-3">
-            <div class="fw-600">DVP3</div>
-            <div class="text-muted">Thanh toán ròng cuối ngày giữa tiền và chứng khoán.</div>
-          </li>
-          <li class="mb-3">
-            <div class="fw-600">T+2</div>
-            <div class="text-muted">Thanh toán sau 2 ngày làm việc kể từ ngày giao dịch.</div>
-          </li>
-          <li class="mb-3">
-            <div class="fw-600">NET</div>
-            <div class="text-muted">Xử lý theo phương thức ròng (gộp nhiều giao dịch).</div>
-          </li>
-          <li class="mb-3">
-            <div class="fw-600">TRAN</div>
-            <div class="text-muted">Xử lý theo từng giao dịch (không gộp).</div>
-          </li>
-          <li class="mb-3">
-            <div class="fw-600">Tiền/CK</div>
-            <div class="text-muted">Phương thức thanh toán cho tiền và chứng khoán có thể khác nhau.</div>
-          </li>
-          <li>
-            <div class="fw-600">Mặc định</div>
-            <div class="text-muted">Xác định miền được ưu tiên khi không chỉ định cụ thể.</div>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="info-drawer-overlay" *ngIf="showInfo" (click)="closeInfo()"></div>
+    
   </div>
 </div>
-
