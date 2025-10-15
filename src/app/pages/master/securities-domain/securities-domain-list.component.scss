@@ -37,3 +37,130 @@
 }
 
 .fw-600 { font-weight: 600; }
+
+
+.table-header-primary thead th {
+  background: #f1f5ff;
+  color: #4356a3;
+}
+
+.fw-500 {
+  font-weight: 500;
+}
+
+.action-column {
+  white-space: nowrap;
+  width: 120px;
+}
+
+.th-sort {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+/* Keep original header (blue) color; only emphasize weight when sorted */
+.th-sort {
+  color: inherit !important;
+}
+
+.th-sort .mdi {
+  color: inherit;
+}
+
+.th-sort:hover,
+.th-sort:focus {
+  color: inherit !important;
+  text-decoration: none;
+  outline: none;
+}
+
+th.sorted {
+  font-weight: 900;
+  color: inherit !important;
+}
+
+.th-sort.active {
+  font-weight: 800;
+}
+
+/* Info Drawer (page-scoped) */
+.info-drawer {
+  position: fixed;
+  top: 0;
+  right: -320px;
+  width: 320px;
+  height: 100vh;
+  background: #fff;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.12);
+  z-index: 1040;
+  transition: right 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-drawer--open {
+  right: 0;
+}
+
+.info-drawer__header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.info-drawer__body {
+  padding: 16px;
+  overflow: auto;
+}
+
+.info-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  z-index: 1035;
+}
+
+.fw-600 {
+  font-weight: 600;
+}
+
+/* Make completed rows look lighter */
+.row-completed {
+  opacity: 0.75;
+}
+
+/* CSV Validation Error Styles */
+.csv-validation-errors {
+  h6 {
+    color: #dc3545;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  ul {
+    margin-left: 1rem;
+    padding-left: 0;
+  }
+
+  li {
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+  }
+
+  strong {
+    color: #495057;
+    font-weight: 600;
+  }
+
+  .text-muted {
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #dee2e6;
+  }
+}

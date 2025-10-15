@@ -3,13 +3,29 @@
 
   <div class="bg-white rounded shadow-sm p-3 position-relative">
     <div class="d-flex align-items-center gap-2 mb-3">
-      <button class="btn btn-outline-secondary" (click)="fetch()" [disabled]="loading">
-        <i class="bx bx-refresh"></i> Tải lại
-      </button>
-      <span class="ms-auto"></span>
-      <button type="button" class="btn btn-light" (click)="openInfo()" aria-label="Giải thích các trường">
-        <i class="mdi mdi-help-circle-outline"></i>
-      </button>
+      <div class="row g-2 w-100">
+        <div class="col-md-3">
+          <input type="text" class="form-control" placeholder="Mã domain" [(ngModel)]="filter.domainCode" (keyup.enter)="onSearch()">
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" placeholder="Tên domain" [(ngModel)]="filter.domainName" (keyup.enter)="onSearch()">
+        </div>
+        <div class="col-md-3">
+          <select class="form-select" [(ngModel)]="filter.isDefault">
+            <option value="">-- Domain mặc định --</option>
+            <option value="true">Có</option>
+            <option value="false">Không</option>
+          </select>
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+          <button class="btn btn-primary flex-grow-1" (click)="onSearch()" [disabled]="loading">
+            <i class="bx bx-search"></i> Tìm kiếm
+          </button>
+          <button type="button" class="btn btn-light" (click)="openInfo()" aria-label="Giải thích các trường">
+            <i class="mdi mdi-help-circle-outline"></i>
+          </button>
+        </div>
+      </div>
     </div>
 
     <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
@@ -18,7 +34,60 @@
       <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
         <thead>
           <tr>
-            <th *ngFor="let col of CONFIG.table.columns" [style.minWidth]="col.width">{{ col.label }}</th>
+            <th style="min-width: 220px">
+              <button class="th-sort" (click)="onSort('domainName')">
+                Tên Domain
+                <i class="mdi" [ngClass]="{
+                  'mdi-menu-up': sort.column==='domainName' && sort.direction==='asc',
+                  'mdi-menu-down': sort.column==='domainName' && sort.direction==='desc'
+                }"></i>
+              </button>
+            </th>
+            <th style="min-width: 140px">
+              <button class="th-sort" (click)="onSort('settlementType')">
+                Loại hình TT
+                <i class="mdi" [ngClass]="{
+                  'mdi-menu-up': sort.column==='settlementType' && sort.direction==='asc',
+                  'mdi-menu-down': sort.column==='settlementType' && sort.direction==='desc'
+                }"></i>
+              </button>
+            </th>
+            <th style="min-width: 120px">
+              <button class="th-sort" (click)="onSort('settlementCycle')">
+                Chu kỳ TT
+                <i class="mdi" [ngClass]="{
+                  'mdi-menu-up': sort.column==='settlementCycle' && sort.direction==='asc',
+                  'mdi-menu-down': sort.column==='settlementCycle' && sort.direction==='desc'
+                }"></i>
+              </button>
+            </th>
+            <th style="min-width: 180px">
+              <button class="th-sort" (click)="onSort('secSettlementType')">
+                Phương thức TT CK
+                <i class="mdi" [ngClass]="{
+                  'mdi-menu-up': sort.column==='secSettlementType' && sort.direction==='asc',
+                  'mdi-menu-down': sort.column==='secSettlementType' && sort.direction==='desc'
+                }"></i>
+              </button>
+            </th>
+            <th style="min-width: 180px">
+              <button class="th-sort" (click)="onSort('cashSettleType')">
+                Phương thức TT Tiền
+                <i class="mdi" [ngClass]="{
+                  'mdi-menu-up': sort.column==='cashSettleType' && sort.direction==='asc',
+                  'mdi-menu-down': sort.column==='cashSettleType' && sort.direction==='desc'
+                }"></i>
+              </button>
+            </th>
+            <th style="min-width: 140px">
+              <button class="th-sort" (click)="onSort('isDefault')">
+                Domain mặc định
+                <i class="mdi" [ngClass]="{
+                  'mdi-menu-up': sort.column==='isDefault' && sort.direction==='asc',
+                  'mdi-menu-down': sort.column==='isDefault' && sort.direction==='desc'
+                }"></i>
+              </button>
+            </th>
           </tr>
         </thead>
 
@@ -48,6 +117,14 @@
         </tbody>
       </table>
     </div>
+
+    <app-pagination
+      [paginationState]="getPaginationState()"
+      [pageSizeOptions]="[{value:10,label:'10'},{value:20,label:'20'},{value:50,label:'50'}]"
+      (pageChanged)="onPageChange($event)"
+      (pageSizeChanged)="onPageSizeChange($event)">
+    </app-pagination>
+
     <!-- Info Drawer -->
     <div class="info-drawer" [class.info-drawer--open]="showInfo" role="dialog" aria-labelledby="infoDrawerTitle">
       <div class="info-drawer__header d-flex align-items-center justify-content-between">
@@ -89,3 +166,4 @@
     <div class="info-drawer-overlay" *ngIf="showInfo" (click)="closeInfo()"></div>
   </div>
 </div>
+
