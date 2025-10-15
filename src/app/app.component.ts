@@ -1,5 +1,7 @@
 import { Component , OnInit} from '@angular/core';
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
+import { Router, ActivatedRoute, NavigationEnd, NavigationStart } from '@angular/router';
+import { Injector } from '@angular/core';
+import { ModalService } from './core/services/modal.service';
 import { Title } from '@angular/platform-browser';
 import { filter, map, mergeMap } from 'rxjs/operators';
 
@@ -12,11 +14,18 @@ export class AppComponent implements OnInit  {
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private titleService: Title
+    private titleService: Title,
+    private modalService: ModalService
   ) {}
 
   ngOnInit() {
     this.setPageTitle();
+    // Always close any open modals on route changes (e.g., redirect to login)
+    this.router.events.subscribe(ev => {
+      if (ev instanceof NavigationStart) {
+        this.modalService.closeAllModals();
+      }
+    });
   }
 
   private setPageTitle() {
