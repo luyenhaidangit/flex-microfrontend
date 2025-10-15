@@ -1,4 +1,4 @@
-import { PagingSortingParams } from '../../../core/models/api.models';
+import { PagingParams } from '../../../core/models/api.models';
 
 export interface SecuritiesDomainItem {
   domainCode: string;
@@ -10,17 +10,8 @@ export interface SecuritiesDomainItem {
   isDefault?: boolean;
 }
 
-export interface SecuritiesDomainSearchParams extends PagingSortingParams {
+export interface SecuritiesDomainSearchParams extends PagingParams {
   domainCode?: string | null;
   domainName?: string | null;
   isDefault?: boolean | null;
-  sortColumn?:
-    | 'domainCode'
-    | 'domainName'
-    | 'settlementType'
-    | 'settlementCycle'
-    | 'secSettlementType'
-    | 'cashSettleType'
-    | 'isDefault';
 }
-
