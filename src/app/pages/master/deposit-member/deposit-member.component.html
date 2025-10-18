@@ -235,10 +235,10 @@
             </div>
           </div>
           <div *ngIf="stagedFileInfo.isRequest" class="d-flex gap-2">
-            <button type="button" class="btn btn-success btn-sm" (click)="approveStaged()">
+            <button type="button" class="btn btn-success btn-sm" (click)="openApproveModal()">
               <i class="bx bx-check"></i> Duyệt
             </button>
-            <button type="button" class="btn btn-outline-danger btn-sm" (click)="rejectStaged()">
+            <button type="button" class="btn btn-outline-danger btn-sm" (click)="openRejectModal()">
               <i class="bx bx-x"></i> Từ chối
             </button>
           </div>
@@ -251,5 +251,40 @@
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="closeImportModal()" [disabled]="uploading">Đóng</button>
+  </div>
+</ng-template>
+
+<!-- Approve Confirm Modal -->
+<ng-template #approveModal>
+  <div class="modal-header">
+    <h5 class="modal-title">Xác nhận duyệt yêu cầu</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeApproveModal()"></button>
+  </div>
+  <div class="modal-body">
+    <p>Bạn có chắc chắn muốn duyệt yêu cầu nhập này?</p>
+    <ul class="list-unstyled small text-muted mb-0" *ngIf="stagedFileInfo">
+      <li><strong>File:</strong> {{ stagedFileInfo.fileName }}</li>
+      <li><strong>Ngày hiệu lực:</strong> {{ stagedFileInfo.effectiveDate | date:'dd/MM/yyyy' }}</li>
+    </ul>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="closeApproveModal()">Hủy</button>
+    <button type="button" class="btn btn-success" (click)="approveStaged(); closeApproveModal()">Duyệt</button>
+  </div>
+ </ng-template>
+
+<!-- Reject Reason Modal -->
+<ng-template #rejectModal>
+  <div class="modal-header">
+    <h5 class="modal-title">Từ chối yêu cầu nhập</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeRejectModal()"></button>
+  </div>
+  <div class="modal-body">
+    <label class="form-label fw-bold text-muted">Lý do từ chối</label>
+    <textarea class="form-control" rows="4" [(ngModel)]="rejectReason" placeholder="Nhập lý do từ chối..."></textarea>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="closeRejectModal()">Hủy</button>
+    <button type="button" class="btn btn-danger" (click)="confirmReject()" [disabled]="!rejectReason?.trim()">Từ chối</button>
   </div>
 </ng-template>
