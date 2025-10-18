@@ -22,6 +22,8 @@ export interface DepositMemberSearchParams extends PagingSortingParams {
 }
 
 export interface StagedFileInfo {
+  isRequest: boolean;
+  requestId: number;
   fileName: string;
   effectiveDate: string;
 }

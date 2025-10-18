@@ -252,7 +252,7 @@ export class DepositMemberComponent implements OnInit {
     form.append('EffectiveDate', this.importForm.effectiveDate);
     
     this.uploading = true; this.importError = undefined;
-    this.service.importDepositMembers(form).subscribe({
+    this.service.createImportRequest(form).subscribe({
       next: () => {
         this.uploading = false; this.closeImportModal(); this.onSearch();
         this.toastService.success('Upload thành công!');
@@ -323,7 +323,7 @@ export class DepositMemberComponent implements OnInit {
     if (!allowedMimeTypes.includes(file.type)) {
       return {
         isValid: false,
-        error: `MIME type không hợp lệ. File type: ${file.type || 'unknown'}. Chỉ chấp nhận CSV files.`
+        error: `MIME type khÃ´ng há»£p lá»‡. File type: ${file.type || 'unknown'}. Chá»‰ cháº¥p nháº­n CSV files.`
       };
     }
     
@@ -332,24 +332,24 @@ export class DepositMemberComponent implements OnInit {
     if (file.size > maxSizeInBytes) {
       return {
         isValid: false,
-        error: `File quá lớn. Dung lượng tối đa: ${this.getFileSize(maxSizeInBytes)}`
+        error: `File quÃ¡ lá»›n. Dung lÆ°á»£ng tá»‘i Ä‘a: ${this.getFileSize(maxSizeInBytes)}`
       };
     }
     
-    // Kiểm tra file rỗng
+    // Kiá»ƒm tra file rá»—ng
     if (file.size === 0) {
       return {
         isValid: false,
-        error: 'File không được rỗng'
+        error: 'File khÃ´ng Ä‘Æ°á»£c rá»—ng'
       };
     }
     
-    // Kiểm tra tên file không chứa ký tự đặc biệt nguy hiểm
+    // Kiá»ƒm tra tÃªn file khÃ´ng chá»©a kÃ½ tá»± Ä‘áº·c biá»‡t nguy hiá»ƒm
     const dangerousChars = /[<>:"/\\|?*\x00-\x1f]/;
     if (dangerousChars.test(file.name)) {
       return {
         isValid: false,
-        error: 'Tên file chứa ký tự không hợp lệ. Vui lòng đổi tên file.'
+        error: 'TÃªn file chá»©a kÃ½ tá»± khÃ´ng há»£p lá»‡. Vui lÃ²ng Ä‘á»•i tÃªn file.'
       };
     }
     
@@ -357,9 +357,9 @@ export class DepositMemberComponent implements OnInit {
   }
   
   /**
-  * 2. Kiểm tra cấu trúc CSV file (schema validation)
-  * - Header đủ cột: DepositCode, ShortName, FullName
-  * - Số dòng > 0
+  * 2. Kiá»ƒm tra cáº¥u trÃºc CSV file (schema validation)
+  * - Header Ä‘á»§ cá»™t: DepositCode, ShortName, FullName
+  * - Sá»‘ dÃ²ng > 0
   */
   private validateFileStructure(file: File): void {
     const reader = new FileReader();
@@ -369,20 +369,20 @@ export class DepositMemberComponent implements OnInit {
         const content = e.target?.result as string;
         const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
         
-        // Chỉ xử lý CSV files
+        // Chá»‰ xá»­ lÃ½ CSV files
         if (fileExtension === '.csv') {
           this.validateCsvStructure(content);
         } else {
-          // Không nên xảy ra vì đã validate ở validateFile()
-          this.importError = 'Chỉ chấp nhận file CSV';
+          // KhÃ´ng nÃªn xáº£y ra vÃ¬ Ä‘Ã£ validate á»Ÿ validateFile()
+          this.importError = 'Chá»‰ cháº¥p nháº­n file CSV';
         }
       } catch (error) {
-        this.importError = 'Không thể đọc file. Vui lòng kiểm tra lại file.';
+        this.importError = 'KhÃ´ng thá»ƒ Ä‘á»c file. Vui lÃ²ng kiá»ƒm tra láº¡i file.';
       }
     };
     
     reader.onerror = () => {
-      this.importError = 'Lỗi khi đọc file. Vui lòng thử lại.';
+      this.importError = 'Lá»—i khi Ä‘á»c file. Vui lÃ²ng thá»­ láº¡i.';
     };
     
     reader.readAsText(file, 'UTF-8');
@@ -394,13 +394,13 @@ export class DepositMemberComponent implements OnInit {
   private validateCsvStructure(content: string): void {
     const lines = content.split('\n').filter(line => line.trim());
     
-    // Kiểm tra có ít nhất header và 1 dòng dữ liệu
+    // Kiá»ƒm tra cÃ³ Ã­t nháº¥t header vÃ  1 dÃ²ng dá»¯ liá»‡u
     if (lines.length < 2) {
-      this.importError = 'File phải có ít nhất 1 dòng dữ liệu (ngoài header)';
+      this.importError = 'File pháº£i cÃ³ Ã­t nháº¥t 1 dÃ²ng dá»¯ liá»‡u (ngoÃ i header)';
       return;
     }
     
-    // Kiểm tra header
+    // Kiá»ƒm tra header
     const header = lines[0].toLowerCase().split(',').map(h => h.trim().replace(/"/g, ''));
     const requiredHeaders = ['depositcode', 'shortname', 'fullname'];
     
@@ -409,98 +409,98 @@ export class DepositMemberComponent implements OnInit {
     );
     
     if (missingHeaders.length > 0) {
-      this.importError = `Thiếu cột bắt buộc: ${missingHeaders.join(', ')}. Header phải có: ${requiredHeaders.join(', ')}`;
+      this.importError = `Thiáº¿u cá»™t báº¯t buá»™c: ${missingHeaders.join(', ')}. Header pháº£i cÃ³: ${requiredHeaders.join(', ')}`;
       return;
     }
     
-    // Kiểm tra dữ liệu không toàn blank
+    // Kiá»ƒm tra dá»¯ liá»‡u khÃ´ng toÃ n blank
     const dataLines = lines.slice(1);
     const hasData = dataLines.some(line => 
       line.split(',').some(cell => cell.trim() && cell.trim() !== '""')
     );
     
     if (!hasData) {
-      this.importError = 'File không có dữ liệu hợp lệ. Tất cả dòng đều trống.';
+      this.importError = 'File khÃ´ng cÃ³ dá»¯ liá»‡u há»£p lá»‡. Táº¥t cáº£ dÃ²ng Ä‘á»u trá»‘ng.';
       return;
     }
     
-    // Kiểm tra ràng buộc dữ liệu cơ bản (row-level validation)
+    // Kiá»ƒm tra rÃ ng buá»™c dá»¯ liá»‡u cÆ¡ báº£n (row-level validation)
     this.validateCsvData(dataLines, header);
   }
   
   /**
-  * 3. Kiểm tra ràng buộc dữ liệu cơ bản (row-level validation)
-  * - Ô bắt buộc không null (DepositCode, FullName)
-  * - Kiểu dữ liệu hợp lệ
+  * 3. Kiá»ƒm tra rÃ ng buá»™c dá»¯ liá»‡u cÆ¡ báº£n (row-level validation)
+  * - Ã” báº¯t buá»™c khÃ´ng null (DepositCode, FullName)
+  * - Kiá»ƒu dá»¯ liá»‡u há»£p lá»‡
   */
   private validateCsvData(dataLines: string[], header: string[]): void {
     const errors: string[] = [];
     const warnings: string[] = [];
     
     dataLines.forEach((line, index) => {
-      const rowNumber = index + 2; // +2 vì bắt đầu từ dòng 2 (sau header)
+      const rowNumber = index + 2; // +2 vÃ¬ báº¯t Ä‘áº§u tá»« dÃ²ng 2 (sau header)
       const cells = line.split(',').map(cell => cell.trim().replace(/"/g, ''));
       
-      // Kiểm tra DepositCode không rỗng
+      // Kiá»ƒm tra DepositCode khÃ´ng rá»—ng
       const depositCodeIndex = header.indexOf('depositcode');
       if (depositCodeIndex >= 0 && (!cells[depositCodeIndex] || cells[depositCodeIndex] === '')) {
-        errors.push(`Dòng ${rowNumber}: DepositCode không được để trống`);
+        errors.push(`DÃ²ng ${rowNumber}: DepositCode khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng`);
       }
       
-      // Kiểm tra FullName không rỗng
+      // Kiá»ƒm tra FullName khÃ´ng rá»—ng
       const fullNameIndex = header.indexOf('fullname');
       if (fullNameIndex >= 0 && (!cells[fullNameIndex] || cells[fullNameIndex] === '')) {
-        errors.push(`Dòng ${rowNumber}: FullName không được để trống`);
+        errors.push(`DÃ²ng ${rowNumber}: FullName khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng`);
       }
       
-      // Cảnh báo: Tên viết hoa (warning)
+      // Cáº£nh bÃ¡o: TÃªn viáº¿t hoa (warning)
       const shortNameIndex = header.indexOf('shortname');
       if (shortNameIndex >= 0 && cells[shortNameIndex]) {
         const shortName = cells[shortNameIndex];
         if (shortName !== shortName.toUpperCase()) {
-          warnings.push(`Dòng ${rowNumber}: Tên viết tắt nên viết hoa: "${shortName}"`);
+          warnings.push(`DÃ²ng ${rowNumber}: TÃªn viáº¿t táº¯t nÃªn viáº¿t hoa: "${shortName}"`);
         }
         
-        // Cảnh báo: Độ dài vượt ngưỡng
+        // Cáº£nh bÃ¡o: Äá»™ dÃ i vÆ°á»£t ngÆ°á»¡ng
         if (shortName.length > 50) {
-          warnings.push(`Dòng ${rowNumber}: Tên viết tắt quá dài (${shortName.length}/50 ký tự)`);
+          warnings.push(`DÃ²ng ${rowNumber}: TÃªn viáº¿t táº¯t quÃ¡ dÃ i (${shortName.length}/50 kÃ½ tá»±)`);
         }
       }
       
-      // Cảnh báo: FullName quá dài
+      // Cáº£nh bÃ¡o: FullName quÃ¡ dÃ i
       if (fullNameIndex >= 0 && cells[fullNameIndex] && cells[fullNameIndex].length > 200) {
-        warnings.push(`Dòng ${rowNumber}: Tên đầy đủ quá dài (${cells[fullNameIndex].length}/200 ký tự)`);
+        warnings.push(`DÃ²ng ${rowNumber}: TÃªn Ä‘áº§y Ä‘á»§ quÃ¡ dÃ i (${cells[fullNameIndex].length}/200 kÃ½ tá»±)`);
       }
     });
     
-    // Hiển thị errors (chặn upload)
+    // Hiá»ƒn thá»‹ errors (cháº·n upload)
     if (errors.length > 0) {
-      this.importError = `Lỗi dữ liệu:\n${errors.slice(0, 5).join('\n')}${errors.length > 5 ? `\n... và ${errors.length - 5} lỗi khác` : ''}`;
+      this.importError = `Lá»—i dá»¯ liá»‡u:\n${errors.slice(0, 5).join('\n')}${errors.length > 5 ? `\n... vÃ  ${errors.length - 5} lá»—i khÃ¡c` : ''}`;
       return;
     }
     
-    // Hiển thị warnings (không chặn upload)
+    // Hiá»ƒn thá»‹ warnings (khÃ´ng cháº·n upload)
     if (warnings.length > 0) {
-      const warningMsg = `Cảnh báo:\n${warnings.slice(0, 3).join('\n')}${warnings.length > 3 ? `\n... và ${warnings.length - 3} cảnh báo khác` : ''}`;
+      const warningMsg = `Cáº£nh bÃ¡o:\n${warnings.slice(0, 3).join('\n')}${warnings.length > 3 ? `\n... vÃ  ${warnings.length - 3} cáº£nh bÃ¡o khÃ¡c` : ''}`;
       console.warn(warningMsg);
-      // Có thể hiển thị toast warning thay vì console
-      this.toastService.info(`Có ${warnings.length} cảnh báo về dữ liệu. Kiểm tra console để xem chi tiết.`);
+      // CÃ³ thá»ƒ hiá»ƒn thá»‹ toast warning thay vÃ¬ console
+      this.toastService.info(`CÃ³ ${warnings.length} cáº£nh bÃ¡o vá» dá»¯ liá»‡u. Kiá»ƒm tra console Ä‘á»ƒ xem chi tiáº¿t.`);
     }
     
-    // Nếu không có lỗi, clear error message
+    // Náº¿u khÃ´ng cÃ³ lá»—i, clear error message
     if (!this.importError) {
       this.importError = undefined;
     }
   }
-  
+
   /**
-  * 4. Kiểm tra ràng buộc nghiệp vụ (business validation) - sẽ được BE xử lý
-  * - DepositCode không trùng DB
+  * 4. Kiá»ƒm tra rÃ ng buá»™c nghiá»‡p vá»¥ (business validation) - sáº½ Ä‘Æ°á»£c BE xá»­ lÃ½
+  * - DepositCode khÃ´ng trÃ¹ng DB
   * - EffectiveDate >= tomorrow
   */
   private validateBusinessRules(): void {
-    // Business rules sẽ được validate ở backend
-    // FE chỉ có thể validate những gì có sẵn locally
+    // Business rules sáº½ Ä‘Æ°á»£c validate á»Ÿ backend
+    // FE chá»‰ cÃ³ thá»ƒ validate nhá»¯ng gÃ¬ cÃ³ sáºµn locally
     
     if (this.importForm.effectiveDate) {
       const effectiveDate = new Date(this.importForm.effectiveDate);
@@ -508,9 +508,39 @@ export class DepositMemberComponent implements OnInit {
       tomorrow.setHours(0, 0, 0, 0);
       
       if (effectiveDate < tomorrow) {
-        this.toastService.info('Ngày hiệu lực phải từ ngày mai trở đi');
+        this.toastService.info('NgÃ y hiá»‡u lá»±c pháº£i tá»« ngÃ y mai trá»Ÿ Ä‘i');
       }
     }
+  }
+
+  /**
+   * Refresh staged file/request info when opening modal or on init
+   */
+  // Removed auto-refresh; staged-file is loaded only when opening the modal
+
+  /** Create request instead of staging directly */
+
+  approveStaged(): void {
+    if (!this.stagedFileInfo?.isRequest) return;
+    this.service.approveRequest(this.stagedFileInfo.requestId).subscribe({
+      next: () => {
+        this.toastService.success('Duyệt yêu cầu thành công');
+        this.loadStagedFileInfo();
+      },
+      error: (err) => this.toastService.error(this.errorMessageService.getErrorMessage(err) || 'Duyá»‡t yÃªu cáº§u tháº¥t báº¡i')
+    });
+  }
+
+  rejectStaged(): void {
+    if (!this.stagedFileInfo?.isRequest) return;
+    const reason = prompt('Nháº­p lÃ½ do tá»« chá»‘i:') ?? '';
+    this.service.rejectRequest(this.stagedFileInfo.requestId, reason).subscribe({
+      next: () => {
+        this.toastService.success('Từ chối yêu cầu thành công');
+        this.loadStagedFileInfo();
+      },
+      error: (err) => this.toastService.error(this.errorMessageService.getErrorMessage(err) || 'Tá»« chá»‘i yÃªu cáº§u tháº¥t báº¡i')
+    });
   }
   
   /**
@@ -533,7 +563,7 @@ export class DepositMemberComponent implements OnInit {
       this.displayDetailedErrors(errorResponse.errors);
     } else {
       // General error - use ErrorMessageService for error mapping
-      const msg = this.errorMessageService.getErrorMessage(err) || 'Upload thất bại: Không thể lưu file lên hệ thống. Vui lòng thử lại hoặc liên hệ bộ phận vận hành.';
+      const msg = this.errorMessageService.getErrorMessage(err) || 'Upload tháº¥t báº¡i: KhÃ´ng thá»ƒ lÆ°u file lÃªn há»‡ thá»‘ng. Vui lÃ²ng thá»­ láº¡i hoáº·c liÃªn há»‡ bá»™ pháº­n váº­n hÃ nh.';
       this.importError = msg;
       // No toast notification - only display error in modal
     }
@@ -544,7 +574,7 @@ export class DepositMemberComponent implements OnInit {
   */
   private displayDetailedErrors(errors: any[]): void {
     if (errors.length === 0) {
-      this.importError = 'Có lỗi xảy ra khi xử lý file CSV.';
+      this.importError = 'CÃ³ lá»—i xáº£y ra khi xá»­ lÃ½ file CSV.';
       return;
     }
     
@@ -560,15 +590,15 @@ export class DepositMemberComponent implements OnInit {
     
     // Build detailed error message
     let errorMessage = '<div class="csv-validation-errors">';
-    errorMessage += '<h6 class="mb-2"><i class="bx bx-error-circle text-danger"></i> Lỗi validation CSV:</h6>';
+    errorMessage += '<h6 class="mb-2"><i class="bx bx-error-circle text-danger"></i> Lá»—i validation CSV:</h6>';
     
     errorsByRow.forEach((rowErrors, rowNumber) => {
       errorMessage += `<div class="mb-2">`;
-      errorMessage += `<strong>Dòng ${rowNumber}:</strong><ul class="mb-0">`;
+      errorMessage += `<strong>DÃ²ng ${rowNumber}:</strong><ul class="mb-0">`;
       
       rowErrors.forEach(error => {
         const column = error.column || '';
-        const message = error.message || 'Lỗi không xác định';
+        const message = error.message || 'Lá»—i khÃ´ng xÃ¡c Ä‘á»‹nh';
         errorMessage += `<li>${column ? `<strong>${column}:</strong> ` : ''}${message}</li>`;
       });
       
@@ -576,10 +606,12 @@ export class DepositMemberComponent implements OnInit {
     });
     
     errorMessage += '<div class="mt-2 text-muted small">';
-    errorMessage += '<i class="bx bx-info-circle"></i> Vui lòng sửa các lỗi trên và thử lại.';
+    errorMessage += '<i class="bx bx-info-circle"></i> Vui lÃ²ng sá»­a cÃ¡c lá»—i trÃªn vÃ  thá»­ láº¡i.';
     errorMessage += '</div></div>';
     
     this.importError = errorMessage;
     // No toast notification - only display error in modal
   }
 }
+
+

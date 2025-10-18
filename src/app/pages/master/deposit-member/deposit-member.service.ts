@@ -35,9 +35,9 @@ export class DepositMemberService {
     return this.http.get(`${this.apiUrl}/template`, { responseType: 'blob', observe: 'response' });
   }
   
-  // Import deposit members via CSV upload
-  importDepositMembers(formData: FormData) {
-    return this.http.post<any>(`${this.apiUrl}/stage`, formData, {
+  // Create a request for deposit member import (replaces direct stage API)
+  createImportRequest(formData: FormData) {
+    return this.http.post<{ data: { requestId: number } }>(`${this.apiUrl}/requests`, formData, {
       headers: {
         [Header.SkipToastError]: 'true'
       }
@@ -49,5 +49,18 @@ export class DepositMemberService {
     return this.http.get<any>(`${this.apiUrl}/staged-file`).pipe(
       map(response => response.data)
     );
+  }
+
+  // Approve a pending import request
+  approveRequest(id: number) {
+    return this.http.post(`${this.apiUrl}/requests/${id}/approve`, null);
+  }
+
+  // Reject a pending import request with a reason
+  rejectRequest(id: number, reason: string) {
+    // Backend expects a raw JSON string body (e.g., "\"reason\"")
+    return this.http.post(`${this.apiUrl}/requests/${id}/reject`, JSON.stringify(reason), {
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 }
