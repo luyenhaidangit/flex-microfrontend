@@ -153,7 +153,7 @@ export class DepositMemberComponent implements OnInit {
     // Load staged file info
     this.loadStagedFileInfo();
     
-    this.modalRef = this.modalService.show(this.importModal, { class: 'modal-lg' });
+    this.modalRef = this.modalService.show(this.importModal, { class: 'modal-xl' });
   }
   
   closeImportModal(): void { this.modalRef?.hide(); this.modalRef = undefined; }
