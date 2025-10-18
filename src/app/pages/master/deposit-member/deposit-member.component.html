@@ -222,7 +222,6 @@
            [ngClass]="stagedFileInfo.isRequest ? 'alert-warning' : 'alert-info'">
         <div class="d-flex align-items-center justify-content-between">
           <div class="d-flex align-items-center">
-            <i class="bx" [ngClass]="stagedFileInfo.isRequest ? 'bx-time' : 'bx-info-circle'" class="me-2"></i>
             <div>
               <div *ngIf="stagedFileInfo.isRequest; else stagedInfo">
                 <strong>Đang chờ duyệt yêu cầu nhập.</strong><br>
