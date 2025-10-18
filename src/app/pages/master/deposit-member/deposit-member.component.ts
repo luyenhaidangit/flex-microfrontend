@@ -15,8 +15,8 @@ import { ErrorMessageService } from '../../../core/services/error-message.servic
 export class DepositMemberComponent implements OnInit {
   // Breadcrumb
   breadCrumbItems = [
-    { label: 'Danh mục cơ sở' },
-    { label: 'Thành viên lưu ký', active: true }
+    { label: 'Danh m?c co s?' },
+    { label: 'Thành viên luu ký', active: true }
   ];
   
   // UI state
@@ -54,7 +54,11 @@ export class DepositMemberComponent implements OnInit {
   
   // Import & Preview state
   @ViewChild('importModal') importModal!: TemplateRef<any>;
+  @ViewChild('approveModal') approveModal!: TemplateRef<any>;
+  @ViewChild('rejectModal') rejectModal!: TemplateRef<any>;
   modalRef?: BsModalRef;
+  approveModalRef?: BsModalRef;
+  rejectModalRef?: BsModalRef;
   importForm: { file?: File; effectiveDate?: string } = {};
   uploading = false;
   importError?: string;
@@ -62,6 +66,7 @@ export class DepositMemberComponent implements OnInit {
   stagedFileInfo?: StagedFileInfo | null;
   loadingStagedFile = false;
   effectiveDate?: Date | null;
+  rejectReason: string = '';
   bsConfig: Partial<BsDatepickerConfig> = { 
     dateInputFormat: 'DD/MM/YYYY',
     minDate: this.getTomorrow(),
@@ -132,7 +137,7 @@ export class DepositMemberComponent implements OnInit {
       },
       error: (err) => {
         this.items = []; this.paging.totalItems = 0; this.paging.totalPages = 0;
-        this.error = err?.error?.message || 'Không tải được dữ liệu';
+        this.error = err?.error?.message || 'Không t?i du?c d? li?u';
         this.loading = false;
       }
     });
@@ -152,6 +157,26 @@ export class DepositMemberComponent implements OnInit {
   }
   
   closeImportModal(): void { this.modalRef?.hide(); this.modalRef = undefined; }
+
+  // Approve/Reject confirmation modals
+  openApproveModal(): void {
+    this.approveModalRef = this.modalService.show(this.approveModal);
+  }
+
+  closeApproveModal(): void {
+    this.approveModalRef?.hide();
+    this.approveModalRef = undefined;
+  }
+
+  openRejectModal(): void {
+    this.rejectReason = '';
+    this.rejectModalRef = this.modalService.show(this.rejectModal);
+  }
+
+  closeRejectModal(): void {
+    this.rejectModalRef?.hide();
+    this.rejectModalRef = undefined;
+  }
 
   loadStagedFileInfo(): void {
     this.loadingStagedFile = true;
@@ -174,14 +199,14 @@ export class DepositMemberComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     const file = input.files && input.files.length ? input.files[0] : undefined;
     
-    // File là bắt buộc
+    // File là b?t bu?c
     if (!file) {
-      this.importError = 'Vui lòng chọn file để upload';
+      this.importError = 'Vui lòng ch?n file d? upload';
       this.importForm.file = undefined;
       return;
     }
     
-    // 1. Kiểm tra kỹ thuật file (file-level validation)
+    // 1. Ki?m tra k? thu?t file (file-level validation)
     const fileValidation = this.validateFile(file);
     if (!fileValidation.isValid) {
       this.importError = fileValidation.error;
@@ -191,7 +216,7 @@ export class DepositMemberComponent implements OnInit {
       return;
     }
     
-    // 2. Kiểm tra cấu trúc file (schema validation) - async
+    // 2. Ki?m tra c?u trúc file (schema validation) - async
     this.validateFileStructure(file);
     
     this.importForm.file = file;
@@ -207,7 +232,7 @@ export class DepositMemberComponent implements OnInit {
       selectedDate.setHours(0, 0, 0, 0);
       
       if (selectedDate < tomorrow) {
-        this.toastService.error('Ngày hiệu lực phải từ ngày mai trở đi');
+        this.toastService.error('Ngày hi?u l?c ph?i t? ngày mai tr? di');
         this.effectiveDate = null;
         this.importForm.effectiveDate = undefined;
         this.effectiveDateDisplay = undefined;
@@ -227,7 +252,7 @@ export class DepositMemberComponent implements OnInit {
   
   submitImport(): void {
     if (!this.importForm.file || !this.importForm.effectiveDate) {
-      this.importError = 'Vui lòng chọn tệp và ngày hiệu lực';
+      this.importError = 'Vui lòng ch?n t?p và ngày hi?u l?c';
       return;
     }
     
@@ -239,12 +264,12 @@ export class DepositMemberComponent implements OnInit {
       selectedDate.setHours(0, 0, 0, 0);
       
       if (selectedDate < tomorrow) {
-        this.importError = 'Ngày hiệu lực phải từ ngày mai trở đi';
+        this.importError = 'Ngày hi?u l?c ph?i t? ngày mai tr? di';
         return;
       }
     }
     
-    // 4. Kiểm tra ràng buộc nghiệp vụ (business validation)
+    // 4. Ki?m tra ràng bu?c nghi?p v? (business validation)
     this.validateBusinessRules();
     
     const form = new FormData();
@@ -259,7 +284,7 @@ export class DepositMemberComponent implements OnInit {
       },
       error: (err) => {
         this.uploading = false;
-        // 5. Backend sẽ trả về business validation errors
+        // 5. Backend s? tr? v? business validation errors
         this.handleImportError(err);
       }
     });
@@ -269,7 +294,7 @@ export class DepositMemberComponent implements OnInit {
   onDownloadTemplate(): void {
     this.service.downloadImportTemplate().subscribe({
       next: (res: any) => { const blob = (res && res.body) ? (res.body as Blob) : (res as Blob); const cd = res?.headers?.get ? (res.headers.get("Content-Disposition") || res.headers.get("content-disposition")) : null; let filename = "deposit_member_template.xlsx"; if (cd) { const match = /filename\*=UTF-8'([^;]+)|filename=\"?([^;\"]+)\"?/i.exec(cd); const raw = decodeURIComponent((match && (match[1] || match[2])) || "").trim(); if (raw) filename = raw; } const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url); },
-      error: () => console.log('Không thể tải file mẫu', 'Lỗi')
+      error: () => console.log('Không th? t?i file m?u', 'L?i')
     });
   }
   
@@ -286,34 +311,34 @@ export class DepositMemberComponent implements OnInit {
   // ===== VALIDATION METHODS =====
   
   /**
-  * 1. Kiểm tra kỹ thuật file (file-level validation)
-  * - File bắt buộc phải được chọn
-  * - Định dạng file (.xlsx, .csv, .xls)
-  * - Dung lượng file (≤ 10MB)
-  * - MIME type hợp lệ
+  * 1. Ki?m tra k? thu?t file (file-level validation)
+  * - File b?t bu?c ph?i du?c ch?n
+  * - Ð?nh d?ng file (.xlsx, .csv, .xls)
+  * - Dung lu?ng file (= 10MB)
+  * - MIME type h?p l?
   * - Encoding UTF-8 (cho CSV)
   */
   private validateFile(file: File): { isValid: boolean; error?: string } {
-    // Kiểm tra file có tồn tại không
+    // Ki?m tra file có t?n t?i không
     if (!file) {
       return {
         isValid: false,
-        error: 'Vui lòng chọn file để upload'
+        error: 'Vui lòng ch?n file d? upload'
       };
     }
     
-    // Kiểm tra định dạng file - chỉ chấp nhận CSV
+    // Ki?m tra d?nh d?ng file - ch? ch?p nh?n CSV
     const allowedExtensions = ['.csv'];
     const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
     
     if (!allowedExtensions.includes(fileExtension)) {
       return {
         isValid: false,
-        error: `Định dạng file không hợp lệ. Chỉ chấp nhận: CSV`
+        error: `Ð?nh d?ng file không h?p l?. Ch? ch?p nh?n: CSV`
       };
     }
     
-    // Kiểm tra MIME type - chỉ chấp nhận CSV
+    // Ki?m tra MIME type - ch? ch?p nh?n CSV
     const allowedMimeTypes = [
       'text/csv', // .csv
       'application/csv', // .csv alternative
@@ -327,7 +352,7 @@ export class DepositMemberComponent implements OnInit {
       };
     }
     
-    // Kiểm tra dung lượng file (max 10MB)
+    // Ki?m tra dung lu?ng file (max 10MB)
     const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
     if (file.size > maxSizeInBytes) {
       return {
@@ -391,113 +416,76 @@ export class DepositMemberComponent implements OnInit {
   /**
   * Validate CSV structure
   */
+    /**
+  * Validate CSV structure
+  */
   private validateCsvStructure(content: string): void {
-    const lines = content.split('\n').filter(line => line.trim());
-    
-    // Kiá»ƒm tra cÃ³ Ã­t nháº¥t header vÃ  1 dÃ²ng dá»¯ liá»‡u
+    const lines = content.split(/\r?\n/).filter(line => line.trim().length > 0);
     if (lines.length < 2) {
-      this.importError = 'File pháº£i cÃ³ Ã­t nháº¥t 1 dÃ²ng dá»¯ liá»‡u (ngoÃ i header)';
+      this.importError = 'File phải có ít nhất 1 dòng dữ liệu (ngoài header)';
       return;
     }
-    
-    // Kiá»ƒm tra header
-    const header = lines[0].toLowerCase().split(',').map(h => h.trim().replace(/"/g, ''));
+    const header = lines[0].toLowerCase().split(',').map(h => h.trim().replace(/\"/g, ''));
     const requiredHeaders = ['depositcode', 'shortname', 'fullname'];
-    
-    const missingHeaders = requiredHeaders.filter(req => 
-      !header.some(h => h === req)
-    );
-    
+    const missingHeaders = requiredHeaders.filter(req => !header.some(h => h === req));
     if (missingHeaders.length > 0) {
-      this.importError = `Thiáº¿u cá»™t báº¯t buá»™c: ${missingHeaders.join(', ')}. Header pháº£i cÃ³: ${requiredHeaders.join(', ')}`;
+      this.importError = `Thiếu cột bắt buộc: ${missingHeaders.join(', ')}. Header phải có: ${requiredHeaders.join(', ')}`;
       return;
     }
-    
-    // Kiá»ƒm tra dá»¯ liá»‡u khÃ´ng toÃ n blank
     const dataLines = lines.slice(1);
-    const hasData = dataLines.some(line => 
-      line.split(',').some(cell => cell.trim() && cell.trim() !== '""')
-    );
-    
+    const hasData = dataLines.some(line => line.split(',').some(cell => cell.trim() && cell.trim() !== '""'));
     if (!hasData) {
-      this.importError = 'File khÃ´ng cÃ³ dá»¯ liá»‡u há»£p lá»‡. Táº¥t cáº£ dÃ²ng Ä‘á»u trá»‘ng.';
+      this.importError = 'File không có dữ liệu hợp lệ. Tất cả dòng đều trống.';
       return;
     }
-    
-    // Kiá»ƒm tra rÃ ng buá»™c dá»¯ liá»‡u cÆ¡ báº£n (row-level validation)
     this.validateCsvData(dataLines, header);
   }
-  
+
   /**
-  * 3. Kiá»ƒm tra rÃ ng buá»™c dá»¯ liá»‡u cÆ¡ báº£n (row-level validation)
-  * - Ã” báº¯t buá»™c khÃ´ng null (DepositCode, FullName)
-  * - Kiá»ƒu dá»¯ liá»‡u há»£p lá»‡
+  * 3. Row-level validation
   */
   private validateCsvData(dataLines: string[], header: string[]): void {
     const errors: string[] = [];
     const warnings: string[] = [];
-    
     dataLines.forEach((line, index) => {
-      const rowNumber = index + 2; // +2 vÃ¬ báº¯t Ä‘áº§u tá»« dÃ²ng 2 (sau header)
-      const cells = line.split(',').map(cell => cell.trim().replace(/"/g, ''));
-      
-      // Kiá»ƒm tra DepositCode khÃ´ng rá»—ng
+      const rowNumber = index + 2;
+      const cells = line.split(',').map(cell => cell.trim().replace(/\"/g, ''));
       const depositCodeIndex = header.indexOf('depositcode');
       if (depositCodeIndex >= 0 && (!cells[depositCodeIndex] || cells[depositCodeIndex] === '')) {
-        errors.push(`DÃ²ng ${rowNumber}: DepositCode khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng`);
+        errors.push(`Dòng ${rowNumber}: DepositCode không được để trống`);
       }
-      
-      // Kiá»ƒm tra FullName khÃ´ng rá»—ng
       const fullNameIndex = header.indexOf('fullname');
       if (fullNameIndex >= 0 && (!cells[fullNameIndex] || cells[fullNameIndex] === '')) {
-        errors.push(`DÃ²ng ${rowNumber}: FullName khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng`);
+        errors.push(`Dòng ${rowNumber}: FullName không được để trống`);
       }
-      
-      // Cáº£nh bÃ¡o: TÃªn viáº¿t hoa (warning)
       const shortNameIndex = header.indexOf('shortname');
       if (shortNameIndex >= 0 && cells[shortNameIndex]) {
         const shortName = cells[shortNameIndex];
         if (shortName !== shortName.toUpperCase()) {
-          warnings.push(`DÃ²ng ${rowNumber}: TÃªn viáº¿t táº¯t nÃªn viáº¿t hoa: "${shortName}"`);
+          warnings.push(`Dòng ${rowNumber}: Tên viết tắt nên viết hoa: "${shortName}"`);
         }
-        
-        // Cáº£nh bÃ¡o: Äá»™ dÃ i vÆ°á»£t ngÆ°á»¡ng
         if (shortName.length > 50) {
-          warnings.push(`DÃ²ng ${rowNumber}: TÃªn viáº¿t táº¯t quÃ¡ dÃ i (${shortName.length}/50 kÃ½ tá»±)`);
+          warnings.push(`Dòng ${rowNumber}: Tên viết tắt quá dài (${shortName.length}/50 ký tự)`);
         }
       }
-      
-      // Cáº£nh bÃ¡o: FullName quÃ¡ dÃ i
       if (fullNameIndex >= 0 && cells[fullNameIndex] && cells[fullNameIndex].length > 200) {
-        warnings.push(`DÃ²ng ${rowNumber}: TÃªn Ä‘áº§y Ä‘á»§ quÃ¡ dÃ i (${cells[fullNameIndex].length}/200 kÃ½ tá»±)`);
+        warnings.push(`Dòng ${rowNumber}: Tên đầy đủ quá dài (${cells[fullNameIndex].length}/200 ký tự)`);
       }
     });
-    
-    // Hiá»ƒn thá»‹ errors (cháº·n upload)
     if (errors.length > 0) {
-      this.importError = `Lá»—i dá»¯ liá»‡u:\n${errors.slice(0, 5).join('\n')}${errors.length > 5 ? `\n... vÃ  ${errors.length - 5} lá»—i khÃ¡c` : ''}`;
+      this.importError = `Lỗi dữ liệu:\n${errors.slice(0, 5).join('\n')}${errors.length > 5 ? `\n... và ${errors.length - 5} lỗi khác` : ''}`;
       return;
     }
-    
-    // Hiá»ƒn thá»‹ warnings (khÃ´ng cháº·n upload)
     if (warnings.length > 0) {
-      const warningMsg = `Cáº£nh bÃ¡o:\n${warnings.slice(0, 3).join('\n')}${warnings.length > 3 ? `\n... vÃ  ${warnings.length - 3} cáº£nh bÃ¡o khÃ¡c` : ''}`;
+      const warningMsg = `Cảnh báo:\n${warnings.slice(0, 3).join('\n')}${warnings.length > 3 ? `\n... và ${warnings.length - 3} cảnh báo khác` : ''}`;
       console.warn(warningMsg);
-      // CÃ³ thá»ƒ hiá»ƒn thá»‹ toast warning thay vÃ¬ console
-      this.toastService.info(`CÃ³ ${warnings.length} cáº£nh bÃ¡o vá» dá»¯ liá»‡u. Kiá»ƒm tra console Ä‘á»ƒ xem chi tiáº¿t.`);
+      this.toastService.info(`Có ${warnings.length} cảnh báo về dữ liệu. Kiểm tra console để xem chi tiết.`);
     }
-    
-    // Náº¿u khÃ´ng cÃ³ lá»—i, clear error message
     if (!this.importError) {
       this.importError = undefined;
     }
   }
 
-  /**
-  * 4. Kiá»ƒm tra rÃ ng buá»™c nghiá»‡p vá»¥ (business validation) - sáº½ Ä‘Æ°á»£c BE xá»­ lÃ½
-  * - DepositCode khÃ´ng trÃ¹ng DB
-  * - EffectiveDate >= tomorrow
-  */
   private validateBusinessRules(): void {
     // Business rules sáº½ Ä‘Æ°á»£c validate á»Ÿ backend
     // FE chá»‰ cÃ³ thá»ƒ validate nhá»¯ng gÃ¬ cÃ³ sáºµn locally
@@ -524,7 +512,7 @@ export class DepositMemberComponent implements OnInit {
     if (!this.stagedFileInfo?.isRequest) return;
     this.service.approveRequest(this.stagedFileInfo.requestId).subscribe({
       next: () => {
-        this.toastService.success('Duyệt yêu cầu thành công');
+        this.toastService.success('Duy?t yêu c?u thành công');
         this.loadStagedFileInfo();
       },
       error: (err) => this.toastService.error(this.errorMessageService.getErrorMessage(err) || 'Duyá»‡t yÃªu cáº§u tháº¥t báº¡i')
@@ -536,13 +524,27 @@ export class DepositMemberComponent implements OnInit {
     const reason = prompt('Nháº­p lÃ½ do tá»« chá»‘i:') ?? '';
     this.service.rejectRequest(this.stagedFileInfo.requestId, reason).subscribe({
       next: () => {
-        this.toastService.success('Từ chối yêu cầu thành công');
+        this.toastService.success('T? ch?i yêu c?u thành công');
         this.loadStagedFileInfo();
       },
       error: (err) => this.toastService.error(this.errorMessageService.getErrorMessage(err) || 'Tá»« chá»‘i yÃªu cáº§u tháº¥t báº¡i')
     });
   }
   
+  // Confirm reject from modal using entered reason
+  confirmReject(): void {
+    if (!this.stagedFileInfo?.isRequest) return;
+    const reason = (this.rejectReason || '').trim();
+    this.service.rejectRequest(this.stagedFileInfo.requestId, reason).subscribe({
+      next: () => {
+        this.toastService.success('T? ch?i y�u c?u th�nh c�ng');
+        this.closeRejectModal();
+        this.loadStagedFileInfo();
+      },
+      error: (err) => this.toastService.error(this.errorMessageService.getErrorMessage(err) || 'T��� ch��`i yA�u c��\u0015u th���t b���i')
+    });
+  }
+
   /**
   * Get tomorrow's date
   */
@@ -613,5 +615,3 @@ export class DepositMemberComponent implements OnInit {
     // No toast notification - only display error in modal
   }
 }
-
-
