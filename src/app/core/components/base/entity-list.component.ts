@@ -153,38 +153,6 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
   }
 
   // ---------- Internal method ----------
-  resetToFirstPage(): void {
-    this.state.paging.index = 1;
-  }
-
-  protected setPage(index: number): void {
-    const total = this.state.paging.totalPages ?? 1;
-    if (index < 1 || index > total || index === this.state.paging.index) return;
-    this.state.paging.index = index;
-    this.onSearch();
-  }
-
-  protected setPageSize(size: number): void {
-    if (size && size > 0) {
-      this.state.paging.size = size;
-    }
-    this.resetToFirstPage();
-    this.onSearch();
-  }
-
-  onPageChange(page: number): void {
-    if (page < 1 || page > this.state.paging.totalPages || page === this.state.paging.index) return;
-    this.state.paging.index = page;
-    this.onSearch();
-  }
-
-  onPageSizeChange(pageSize?: number): void {
-    if (pageSize !== undefined) {
-      this.state.paging.size = pageSize;
-    }
-    this.resetToFirstPage();
-    this.onSearch();
-  }
 
   updatePagingState(pageMeta: Partial<PageMeta>): void {
     if (pageMeta.totalItems !== undefined || pageMeta.totalPages !== undefined) {
@@ -197,7 +165,6 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
   }
 
   // ---------- Internal method ----------
-
   // Method helper để lấy thông tin phân trang từ response
   protected extractPagingFromResponse<T>(response: any): { items: T[], pageMeta: Partial<PageMeta> } {
     const { items, totalItems, totalPages, ...rest } = response;
@@ -227,7 +194,7 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
     };
   }
 
-  // Tab change
+  // ---------- Change paging ----------
   onTabChange(tabId: string): void {
 		this.activeTabId = tabId;
 		this.resetSearchParams();
@@ -235,7 +202,22 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
 		this.onSearch();
 	}
 
-  protected resetSearchParams(): void {
+  onPageChange(page: number): void {
+    if (page < 1 || page > this.state.paging.totalPages || page === this.state.paging.index) return;
+    this.state.paging.index = page;
+    this.onSearch();
+  }
+
+  onPageSizeChange(pageSize?: number): void {
+    if (pageSize !== undefined) {
+      this.state.paging.size = pageSize;
+    }
+    this.resetToFirstPage();
+    this.onSearch();
+  }
+
+  // ---------- Helper ----------//
+  private resetSearchParams(): void {
     // Reset all filter properties to their default values
     if (this.state?.filter) {
       Object.keys(this.state.filter).forEach(key => {
@@ -251,6 +233,10 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
         }
       });
     }
+  }
+
+  private resetToFirstPage(): void {
+    this.state.paging.index = 1;
   }
 
   // ---------- Modal management methods ----------

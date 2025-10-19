@@ -24,6 +24,7 @@ export class IssuersComponent extends EntityListComponent<IssuerFilter, IssuerIt
 
 	// Functions
 	onTabChange(tabId: string): void { super.onTabChange(tabId); }
+	onPageChange(page: number): void { super.onPageChange(page); }
 	openCreateModal(): void { super.openCreateModal(); }
 	openDetailModal(issuer: IssuerItem): void { super.openDetailModal(issuer); }
 	openEditModal(issuer: IssuerItem): void { super.openEditModal(issuer); }
