@@ -17,6 +17,7 @@ export abstract class EntityListComponent<TFilter, TItem = any> {
   items: TItem[] = [];
   selectedItem: TItem | null = null;
   state: ListState<TFilter>;
+  selectedRequest: any;
   
   // Default configuration
   tabsConfig: any = this.config.tabs;
@@ -68,7 +69,7 @@ export abstract class EntityListComponent<TFilter, TItem = any> {
 
   // Hande action paging
   // ---------- Required method ----------
-  protected constructor(initFilter: TFilter) {
+  constructor(initFilter: any = null) {
     this.state = Query.init(initFilter, { index: 1, size: 10 });
   }
 

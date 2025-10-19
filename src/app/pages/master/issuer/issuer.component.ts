@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { ToastService } from 'angular-toastify';
-import { forkJoin, Subject } from 'rxjs';
+import { forkJoin } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { IssuerService } from './issuer.service';
 import { UserItem } from './issuer.models';
@@ -16,12 +16,11 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 })
 
 export class IssuersComponent extends EntityListComponent<UserFilter, IssuerItem> implements OnInit, OnDestroy {
+
+	CONFIG = ISSUER_CONFIG;
 	
-	CONFIG = ISSUER_CONFIG as any;
-	
-	branches: { id: number; name: string }[] = [];
-	
-	selectedRequest: any = null;
+	// Base
+	selectedRequest: any = this.selectedRequest;
 	showRequestDetailModal = false;
 	
 	constructor(
@@ -59,7 +58,6 @@ export class IssuersComponent extends EntityListComponent<UserFilter, IssuerItem
         }
 			},
 			error: (err) => {
-				this.branches = [];
 				this.items = [];
 			}
 		});
