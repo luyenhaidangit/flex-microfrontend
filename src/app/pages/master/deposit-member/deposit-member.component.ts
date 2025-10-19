@@ -59,6 +59,7 @@ export class DepositMemberComponent implements OnInit {
   modalRef?: BsModalRef;
   approveModalRef?: BsModalRef;
   rejectModalRef?: BsModalRef;
+  approveLoading = false;
   importForm: { file?: File; effectiveDate?: string } = {};
   uploading = false;
   importError?: string;
@@ -515,24 +516,6 @@ export class DepositMemberComponent implements OnInit {
     }
   }
 
-  /**
-   * Refresh staged file/request info when opening modal or on init
-   */
-  // Removed auto-refresh; staged-file is loaded only when opening the modal
-
-  /** Create request instead of staging directly */
-
-  approveStaged(): void {
-    if (!this.stagedFileInfo?.isRequest) return;
-    this.service.approveRequest(this.stagedFileInfo.requestId).subscribe({
-      next: () => {
-        this.toastService.success('Duy?t yêu c?u thành công');
-        this.loadStagedFileInfo();
-      },
-      error: (err) => this.toastService.error(this.errorMessageService.getErrorMessage(err) || 'Duyá»‡t yÃªu cáº§u tháº¥t báº¡i')
-    });
-  }
-
   rejectStaged(): void {
     if (!this.stagedFileInfo?.isRequest) return;
     const reason = prompt('Nháº­p lÃ½ do tá»« chá»‘i:') ?? '';
@@ -556,6 +539,24 @@ export class DepositMemberComponent implements OnInit {
         this.loadStagedFileInfo();
       },
       error: (err) => this.toastService.error(this.errorMessageService.getErrorMessage(err) || 'T��� ch��`i yA�u c��\u0015u th���t b���i')
+    });
+  }
+
+  // Approve with loading state from modal
+  approveConfirm(): void {
+    if (!this.stagedFileInfo?.isRequest || this.approveLoading) return;
+    this.approveLoading = true;
+    this.service.approveRequest(this.stagedFileInfo.requestId).subscribe({
+      next: () => {
+        this.toastService.success('Duyệt yêu cầu thành công');
+        this.approveLoading = false;
+        this.closeApproveModal();
+        this.loadStagedFileInfo();
+      },
+      error: (err) => {
+        this.approveLoading = false;
+        this.toastService.error(this.errorMessageService.getErrorMessage(err) || 'Duyệt yêu cầu thất bại');
+      }
     });
   }
 
