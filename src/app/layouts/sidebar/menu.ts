@@ -955,6 +955,12 @@ export const MENU: MenuItem[] = [
         icon: 'bx bx-collection'
     },
     {
+        id: 'master-issuers',
+        label: 'Tổ chức phát hành',
+        icon: 'bx bx-id-card',
+        link: '/master/issuers',
+    },
+    {
         id: 'operation-title',
         label: 'Vận hành',
         isTitle: true
