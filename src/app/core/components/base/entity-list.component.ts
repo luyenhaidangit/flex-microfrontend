@@ -1,3 +1,4 @@
+import { OnInit, Directive } from '@angular/core';
 import { Query, ListState, PageMeta } from 'src/app/core/features/query';
 import { ENTITY_LIST_CONFIG } from './entity-list.config';
 import { Observable } from 'rxjs';
@@ -8,14 +9,21 @@ import { REQUEST_TYPE_OPTIONS } from 'src/app/core/constants/request-types.const
 
 type ModalType = 'detail' | 'edit' | 'delete' | 'create' | 'approve' | 'reject';
 
-export abstract class EntityListComponent<TFilter, TItem = any> {
+@Directive()
+export abstract class EntityListComponent<TFilter, TItem = any> implements OnInit {
 
   // Contructor
   constructor(filter: any = {}) {
     this.state = Query.init(filter, { index: 1, size: 10 });
   }
 
-  protected readonly config = ENTITY_LIST_CONFIG;
+  // Lifecycle
+  ngOnInit(): void {
+    this.onSearch();
+  }
+
+  // Configuration
+  public config = ENTITY_LIST_CONFIG;
 
   // Properties
   activeTabId: string = this.config.tabs.default;

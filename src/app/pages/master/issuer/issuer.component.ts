@@ -1,13 +1,9 @@
-import { Component, OnInit, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
-import { ToastService } from 'angular-toastify';
-import { forkJoin } from 'rxjs';
-import { finalize, takeUntil } from 'rxjs/operators';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { IssuerService } from './issuer.service';
 import { UserItem } from './issuer.models';
-import { USER_CONFIG as ISSUER_CONFIG } from './issuer.config';
+import { ISSUER_CONFIG } from './issuer.config';
 import { IssuerFilter, IssuerItem } from './issuer.models';
 import { EntityListComponent } from 'src/app/core/components/base/entity-list.component';
-import { BsModalService } from 'ngx-bootstrap/modal';
 
 @Component({
 	selector: 'app-issuers',
@@ -24,47 +20,16 @@ export class IssuersComponent extends EntityListComponent<IssuerFilter, IssuerIt
 	selectedRequest: any = this.selectedRequest;
 	showRequestDetailModal = false;
 	
+	// Constructor
 	constructor(
-		private issuerService: IssuerService,
-		private toast: ToastService,
-		private modalService: BsModalService
+		private issuerService: IssuerService
 	) {
 		super();
 	}
-	
-	ngOnInit(): void {		
-		this.loadingTable = true;
-		
-    	const usersCall = (this.issuerService as any).getIssuers(this.getCleanSearchParams());
-		
-		// Load branches and users in parallel
-		forkJoin({
-			users: usersCall
-		}).pipe(
-			takeUntil(this.destroy$),
-			finalize(() => {
-				this.loadingTable = false;
-			})
-		).subscribe({
-			next: ({ users }) => {
-				
-        // Handle users
-        const u: any = users as any;
-        if (u?.isSuccess) {
-          const { items, pageMeta } = this.extractPagingFromResponse<UserItem>(u.data);
-          this.items = items as UserItem[];
-          this.updatePagingState(pageMeta);
-        } else {
-          this.items = [];
-        }
-			},
-			error: (err) => {
-				this.items = [];
-			}
-		});
-	}
-	
-  ngOnDestroy(): void { this.cleanup(); }
+
+	// Lifecycle
+    ngOnInit(): void { super.ngOnInit(); }
+	ngOnDestroy(): void { this.cleanup(); }
 	
 	// Implement method abstract base
 	public onSearch(): void {

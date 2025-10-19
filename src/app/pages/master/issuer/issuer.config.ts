@@ -1,4 +1,4 @@
-export const USER_CONFIG = {
+export const ISSUER_CONFIG = {
 
   // Breadcrumb configuration
   breadcrumb: {
