@@ -11,6 +11,20 @@ type ModalType = 'detail' | 'edit' | 'delete' | 'create' | 'approve' | 'reject';
 @Directive()
 export abstract class EntityListComponent<TFilter, TItem = any> implements OnInit {
 
+  // ---------- Init ----------
+  // Configuration
+  config = ENTITY_LIST_CONFIG;
+  tabsConfig: any = this.config.tabs;
+  paginationConfig: any = this.config.pagination;
+  filterConfig: any = this.config.filter;
+  activeTabId: string = this.config.tabs.default;
+  // Properties
+  loadingTable = false;
+  items: TItem[] = [];
+  selectedItem: TItem | null = null;
+  state: ListState<TFilter>;
+  selectedRequest: any;
+
   // ---------- Contructor and lifecycle ----------
   constructor(filter: any = {}) {
     this.state = Query.init(filter, { index: 1, size: 10 });
@@ -21,6 +35,8 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
   }
 
   // ---------- Build query ----------
+  protected abstract onSearch(): void;
+
   public getSearchParams(): any {
     const { paging, filter } = this.state;
     return {
@@ -85,22 +101,6 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
     this.state.paging.index = 1;
   }
 
-  // Configuration
-  public config = ENTITY_LIST_CONFIG;
-
-  // Properties
-  activeTabId: string = this.config.tabs.default;
-  loadingTable = false;
-  items: TItem[] = [];
-  selectedItem: TItem | null = null;
-  state: ListState<TFilter>;
-  selectedRequest: any;
-  
-  // Default configuration
-  tabsConfig: any = this.config.tabs;
-  paginationConfig: any = this.config.pagination;
-  filterConfig: any = this.config.filter;
-
   // Modal state management (compat shim via getters/setters)
   modalState: Record<ModalType, boolean> = {
     detail: false,
@@ -125,26 +125,6 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
 
   // Destroy subject for cleanup
   protected destroy$ = new Subject<void>();
-
-  /**
-   * Utility function để loại bỏ các giá trị null, undefined, empty string
-   * @param params Object chứa các tham số cần clean
-   * @returns Object đã được clean, chỉ giữ lại các giá trị hợp lệ
-   */
-  protected cleanParams<T extends Record<string, any>>(params: T): Partial<T> {
-    const cleaned: Partial<T> = {};
-    
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== null && value !== undefined && value !== '') {
-        if (typeof value === 'string' && value.trim() === '') return;
-        cleaned[key as keyof T] = value;
-      }
-    });
-    
-    return cleaned;
-  }
-
-  protected abstract onSearch(): void;
 
   // ---------- Generic data loading methods ----------
   
