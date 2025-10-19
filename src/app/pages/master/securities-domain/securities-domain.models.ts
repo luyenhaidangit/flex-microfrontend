@@ -13,5 +13,4 @@ export interface SecuritiesDomainItem {
 export interface SecuritiesDomainSearchParams extends PagingParams {
   domainCode?: string | null;
   domainName?: string | null;
-  isDefault?: boolean | null;
 }

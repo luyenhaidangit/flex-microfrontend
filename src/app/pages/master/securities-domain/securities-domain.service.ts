@@ -18,7 +18,6 @@ export class SecuritiesDomainService {
     };
     if (params.domainCode) query.DomainCode = params.domainCode;
     if (params.domainName) query.DomainName = params.domainName;
-    if (params.isDefault !== undefined && params.isDefault !== null) query.IsDefault = params.isDefault;
 
     return this.http.get<PagedResponse<SecuritiesDomainItem>>(`${this.apiUrl}/paging`, { params: query });
   }

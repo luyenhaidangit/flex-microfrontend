@@ -21,8 +21,7 @@ export class SecuritiesDomainListComponent implements OnInit {
   // Filters
   filter = {
     domainCode: '',
-    domainName: '',
-    isDefault: '' as '' | 'true' | 'false'
+    domainName: ''
   };
 
   // Pagination state
@@ -59,7 +58,6 @@ export class SecuritiesDomainListComponent implements OnInit {
       pageSize: this.paging.size,
       domainCode: this.filter.domainCode?.trim() || undefined,
       domainName: this.filter.domainName?.trim() || undefined,
-      isDefault: this.filter.isDefault === '' ? undefined : this.filter.isDefault === 'true',
     };
 
     this.loading = true; this.error = undefined;

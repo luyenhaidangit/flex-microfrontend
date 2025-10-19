@@ -1,4 +1,4 @@
-<div class="container-fluid">
+﻿<div class="container-fluid">
   <app-page-title [title]="CONFIG.breadcrumb.title" [breadcrumbItems]="CONFIG.breadcrumb.items" [infoTitle]="'Giải thích các trường thông tin'">
     <ng-template #pageInfo>
       <ul class="list-unstyled mb-0 small">
@@ -38,13 +38,6 @@
         </div>
         <div class="col-md-4">
           <input type="text" class="form-control" placeholder="Tên domain" [(ngModel)]="filter.domainName" (keyup.enter)="onSearch()">
-        </div>
-        <div class="col-md-3">
-          <select class="form-select" [(ngModel)]="filter.isDefault">
-            <option value="">-- Domain mặc định --</option>
-            <option value="true">Có</option>
-            <option value="false">Không</option>
-          </select>
         </div>
         <div class="col-md-2 d-flex gap-2">
           <button class="btn btn-primary flex-grow-1" (click)="onSearch()" [disabled]="loading">
@@ -107,3 +100,4 @@
     
   </div>
 </div>
+
