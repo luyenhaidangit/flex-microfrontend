@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastService } from 'angular-toastify';
 import { IssuerService as UserService } from '../issuer.service';
-import { BranchItem, UserItem } from '../issuer.models';
 
 export interface UpdateIssuerRequest {
   issuerCode: string;
@@ -19,8 +18,7 @@ export interface UpdateIssuerRequest {
 })
 export class EditUserModalComponent implements OnInit, OnChanges {
   @Input() isVisible = false;
-  @Input() user: UserItem | null = null;
-  @Input() branches: BranchItem[] = [];
+  @Input() user: any = null;
   @Output() close = new EventEmitter<void>();
   @Output() updated = new EventEmitter<void>();
 

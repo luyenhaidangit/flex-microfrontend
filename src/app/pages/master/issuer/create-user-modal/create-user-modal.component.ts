@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastService } from 'angular-toastify';
 import { SystemService } from 'src/app/core/services/system.service';
 import { UserService } from '../issuer.service';
-import { BranchItem } from '../issuer.models';
 
 export interface CreateUserRequest {
   userName: string;
@@ -20,7 +19,6 @@ export interface CreateUserRequest {
 })
 export class CreateUserModalComponent implements OnInit {
   @Input() isVisible = false;
-  @Input() branches: BranchItem[] = [];
   @Output() close = new EventEmitter<void>();
   @Output() created = new EventEmitter<void>();
 
@@ -37,10 +35,6 @@ export class CreateUserModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
-    // Nếu đã có branches từ parent, không cần gọi API
-    if (this.branches.length === 0) {
-      this.loadBranches();
-    }
   }
 
   private initializeForm(): void {
@@ -51,35 +45,6 @@ export class CreateUserModalComponent implements OnInit {
       branchId: [null, [Validators.required]],
       isActive: [true, [Validators.required]]
     });
-  }
-
-  private loadBranches(): void {
-    // Chỉ gọi API nếu chưa có branches từ parent
-    if (this.branches.length > 0) {
-      return;
-    }
-    
-    this.isLoading = true;
-    this.systemService.getBranchesForFilter()
-      .pipe(
-        // finalize(() => this.isLoading = false)
-      )
-      .subscribe({
-        next: (res) => {
-          this.isLoading = false;
-          if (res?.isSuccess) {
-            this.branches = res.data || [];
-          } else {
-            this.branches = [];
-            this.toastService.error('Không thể tải danh sách chi nhánh!');
-          }
-        },
-        error: () => {
-          this.isLoading = false;
-          this.branches = [];
-          this.toastService.error('Lỗi khi tải danh sách chi nhánh!');
-        }
-      });
   }
 
   onSubmit(): void {

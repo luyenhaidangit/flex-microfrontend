@@ -143,7 +143,6 @@
 <app-edit-user-modal 
 [isVisible]="showEditModal"
 [user]="selectedItem"
-[branches]="branches"
 (close)="onEditModalClose()"
 (updated)="onUserUpdated()">
 </app-edit-user-modal>
@@ -151,7 +150,6 @@
 <!-- Create User Modal Component -->
 <app-create-user-modal 
 [isVisible]="showCreateModal"
-[branches]="branches"
 (close)="onCreateModalClose()"
 (created)="onUserCreated()">
 </app-create-user-modal>

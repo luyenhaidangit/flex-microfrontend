@@ -11,7 +11,6 @@ export interface IssuerItem {
 	issuerName?: string;
 	branchId?: number;
 	branchName?: string;
-	branch?: BranchItem; // Full branch object from API
 	isActive?: boolean;
 	createdAt?: string;
 }
@@ -30,12 +29,6 @@ export interface PagingState {
 	totalItems: number;
 	keyword: string;
 	branchId: number | null;
-}
-
-export interface BranchItem {
-	id: number;
-	name: string;
-	code?: string;
 }
 
 export interface UpdateIssuerRequest {
