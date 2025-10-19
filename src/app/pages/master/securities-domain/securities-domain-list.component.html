@@ -31,8 +31,8 @@
   </app-page-title>
 
   <div class="bg-white rounded shadow-sm p-3 position-relative">
-    <div class="d-flex align-items-center gap-2 mb-3">
-      <div class="row g-2 w-100">
+    <div class="row g-2 align-items-end mb-3">
+      <!-- merged inputs into the same row; remove extra wrapper -->
         <div class="col-md-3">
           <label class="form-label fw-bold text-muted">Mã domain</label>
           <input type="text" class="form-control" placeholder="Mã domain" [(ngModel)]="filter.domainCode" (keyup.enter)="onSearch()">
@@ -42,10 +42,8 @@
           <input type="text" class="form-control" placeholder="Tên domain" [(ngModel)]="filter.domainName" (keyup.enter)="onSearch()">
         </div>
         
-      </div>
-
-      <div class="col-md-2 d-flex gap-2">
-        <button class="btn btn-primary flex-grow-1" (click)="onSearch()" [disabled]="loading">
+      <div class="col-auto">
+        <button class="btn btn-primary" (click)="onSearch()" [disabled]="loading">
           <i class="bx bx-search"></i> Tìm kiếm
         </button>
       </div>
