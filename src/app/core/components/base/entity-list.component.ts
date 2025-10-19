@@ -11,7 +11,7 @@ type ModalType = 'detail' | 'edit' | 'delete' | 'create' | 'approve' | 'reject';
 export abstract class EntityListComponent<TFilter, TItem = any> {
 
   // Contructor
-  constructor(filter: any = null) {
+  constructor(filter: any = {}) {
     this.state = Query.init(filter, { index: 1, size: 10 });
   }
 
