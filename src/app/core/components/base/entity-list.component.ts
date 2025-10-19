@@ -11,14 +11,78 @@ type ModalType = 'detail' | 'edit' | 'delete' | 'create' | 'approve' | 'reject';
 @Directive()
 export abstract class EntityListComponent<TFilter, TItem = any> implements OnInit {
 
-  // Contructor
+  // ---------- Contructor and lifecycle ----------
   constructor(filter: any = {}) {
     this.state = Query.init(filter, { index: 1, size: 10 });
   }
 
-  // Lifecycle
   ngOnInit(): void {
     this.onSearch();
+  }
+
+  // ---------- Build query ----------
+  public getSearchParams(): any {
+    const { paging, filter } = this.state;
+    return {
+      pageIndex: paging.index,
+      pageSize: paging.size,
+      status: this.activeTabId,
+      ...filter
+    };
+  }
+
+  public getCleanSearchParams(): any {
+    const params = this.getSearchParams();
+    
+    // Remove null, undefined, empty string values
+    return Object.fromEntries(
+      Object.entries(params).filter(([_, v]) => v != null && v !== '')
+    );
+  }
+
+  // ---------- Change paging ----------
+  onTabChange(tabId: string): void {
+		this.activeTabId = tabId;
+		this.resetSearchParams();
+    this.resetToFirstPage();
+		this.onSearch();
+	}
+
+  onPageChange(page: number): void {
+    if (page < 1 || page > this.state.paging.totalPages || page === this.state.paging.index) return;
+    this.state.paging.index = page;
+    this.onSearch();
+  }
+
+  onPageSizeChange(pageSize?: number): void {
+    if (pageSize !== undefined) {
+      this.state.paging.size = pageSize;
+    }
+    this.resetToFirstPage();
+    this.onSearch();
+  }
+
+  // ---------- Helper ----------//
+  private resetSearchParams(): void {
+    // Reset all filter properties to their default values
+    if (this.state?.filter) {
+      Object.keys(this.state.filter).forEach(key => {
+        const value = this.state.filter[key];
+        if (typeof value === 'string') {
+          this.state.filter[key] = '';
+        } else if (typeof value === 'number') {
+          this.state.filter[key] = null;
+        } else if (typeof value === 'boolean') {
+          this.state.filter[key] = false;
+        } else {
+          this.state.filter[key] = null;
+        }
+      });
+    }
+  }
+
+  private resetToFirstPage(): void {
+    this.state.paging.index = 1;
   }
 
   // Configuration
@@ -116,32 +180,6 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
     });
   }
 
-  /**
-   * Get search parameters for API calls
-   * Base implementation includes common pagination and status params
-   * Child classes can override to add custom params or modify behavior
-   */
-  protected getSearchParams(): any {
-    const baseParams = {
-      pageIndex: this.state.paging.index,
-      pageSize: this.state.paging.size,
-      status: this.activeTabId
-    };
-
-    // Merge with filter properties and additional params
-    return {
-      ...baseParams,
-      ...this.state.filter
-    };
-  }
-
-  /**
-   * Clean and return search parameters
-   */
-  protected getCleanSearchParams(): any {
-    return this.cleanParams(this.getSearchParams());
-  }
-
   // ---------- Internal method ----------
 
   updatePagingState(pageMeta: Partial<PageMeta>): void {
@@ -182,51 +220,6 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
       totalItems: this.state.paging.totalItems || 0,
       totalPages: this.state.paging.totalPages || 1
     };
-  }
-
-  // ---------- Change paging ----------
-  onTabChange(tabId: string): void {
-		this.activeTabId = tabId;
-		this.resetSearchParams();
-    this.resetToFirstPage();
-		this.onSearch();
-	}
-
-  onPageChange(page: number): void {
-    if (page < 1 || page > this.state.paging.totalPages || page === this.state.paging.index) return;
-    this.state.paging.index = page;
-    this.onSearch();
-  }
-
-  onPageSizeChange(pageSize?: number): void {
-    if (pageSize !== undefined) {
-      this.state.paging.size = pageSize;
-    }
-    this.resetToFirstPage();
-    this.onSearch();
-  }
-
-  // ---------- Helper ----------//
-  private resetSearchParams(): void {
-    // Reset all filter properties to their default values
-    if (this.state?.filter) {
-      Object.keys(this.state.filter).forEach(key => {
-        const value = this.state.filter[key];
-        if (typeof value === 'string') {
-          this.state.filter[key] = '';
-        } else if (typeof value === 'number') {
-          this.state.filter[key] = null;
-        } else if (typeof value === 'boolean') {
-          this.state.filter[key] = false;
-        } else {
-          this.state.filter[key] = null;
-        }
-      });
-    }
-  }
-
-  private resetToFirstPage(): void {
-    this.state.paging.index = 1;
   }
 
   // ---------- Modal management methods ----------
@@ -357,9 +350,6 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
 
   // ---------- Lifecycle methods ----------
   
-  /**
-   * Cleanup method - call this in ngOnDestroy of child components
-   */
   protected cleanup(): void {
     this.destroy$.next();
     this.destroy$.complete();
