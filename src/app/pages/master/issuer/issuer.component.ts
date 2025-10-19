@@ -5,9 +5,9 @@ import { finalize, takeUntil } from 'rxjs/operators';
 import { IssuerService } from './issuer.service';
 import { UserItem } from './issuer.models';
 import { USER_CONFIG as ISSUER_CONFIG } from './issuer.config';
-import { UserFilter, IssuerItem } from './issuer.models';
+import { IssuerFilter, IssuerItem } from './issuer.models';
 import { EntityListComponent } from 'src/app/core/components/base/entity-list.component';
-import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 
 @Component({
 	selector: 'app-issuers',
@@ -15,8 +15,9 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 	styleUrls: ['./issuer.component.scss']
 })
 
-export class IssuersComponent extends EntityListComponent<UserFilter, IssuerItem> implements OnInit, OnDestroy {
+export class IssuersComponent extends EntityListComponent<IssuerFilter, IssuerItem> implements OnInit, OnDestroy {
 
+	// Config
 	CONFIG = ISSUER_CONFIG;
 	
 	// Base
