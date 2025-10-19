@@ -20,8 +20,6 @@ export class AuthGuard {
     const token = this.authenticationService.getToken();
     if (token) return of(true);
 
-    // No token -> close modals and redirect to login
-    try { this.injector.get(ModalService).closeAllModals(); } catch {}
     this.router.navigate(['/account/login'], { queryParams: { returnUrl: state.url } });
     return of(false);
   }
