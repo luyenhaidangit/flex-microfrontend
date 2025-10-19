@@ -2,8 +2,8 @@ import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, S
 import { ToastService } from 'angular-toastify';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { UserService } from '../user.service';
-import { UserItem } from '../user.models';
+import { UserService } from '../issuer.service';
+import { UserItem } from '../issuer.models';
 
 export interface UserRequestDetailData {
 	requestId: string | number;

@@ -99,4 +99,7 @@ export class IssuerService {
 	}
 }
 
+// Backwards-compatible alias so existing imports of UserService keep working
+export { IssuerService as UserService };
+
 

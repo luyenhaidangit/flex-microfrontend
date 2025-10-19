@@ -3,8 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastService } from 'angular-toastify';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { UserService } from '../user.service';
-import { UserItem } from '../user.models';
+import { UserService } from '../issuer.service';
+import { UserItem } from '../issuer.models';
 
 
 @Component({

@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { ToastService } from 'angular-toastify';
 import { Subject, takeUntil } from 'rxjs';
-import { UserService } from '../user.service';
+import { UserService } from '../issuer.service';
 
 export interface UserRequestDetail {
   requestId: number;

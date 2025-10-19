@@ -2,8 +2,8 @@ import { Component, EventEmitter, Input, OnInit, Output, OnChanges, SimpleChange
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastService } from 'angular-toastify';
 import { SystemService } from 'src/app/core/services/system.service';
-import { UserService } from '../user.service';
-import { BranchItem, UserItem } from '../user.models';
+import { UserService } from '../issuer.service';
+import { BranchItem, UserItem } from '../issuer.models';
 
 export interface UpdateUserRequest {
   userName: string;

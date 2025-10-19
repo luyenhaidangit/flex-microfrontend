@@ -46,3 +46,9 @@ export interface UpdateIssuerRequest {
 	isActive: boolean;
 }
 
+// Backwards-compatible aliases for existing code
+export type UserFilter = IssuerFilter;
+export type UserItem = IssuerItem;
+export type UserSearchParams = IssuerSearchParams;
+export type UpdateUserRequest = UpdateIssuerRequest;
+

@@ -3,22 +3,22 @@ import { ToastService } from 'angular-toastify';
 import { forkJoin, Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { SystemService } from 'src/app/core/services/system.service';
-import { UserService } from './user.service';
-import { UserItem } from './user.models';
-import { USER_CONFIG } from './user.config';
-import { UserFilter } from './user.models';
+import { IssuerService as UserService } from './issuer.service';
+import { UserItem } from './issuer.models';
+import { USER_CONFIG as ISSUER_CONFIG } from './issuer.config';
+import { UserFilter } from './issuer.models';
 import { EntityListComponent } from 'src/app/core/components/base/entity-list.component';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 
 @Component({
-	selector: 'app-users',
-	templateUrl: './user.component.html',
-	styleUrls: ['./user.component.scss']
+	selector: 'app-issuers',
+	templateUrl: './issuer.component.html',
+	styleUrls: ['./issuer.component.scss']
 })
 
-export class UsersComponent extends EntityListComponent<UserFilter, UserItem> implements OnInit, OnDestroy {
+export class IssuersComponent extends EntityListComponent<UserFilter, UserItem> implements OnInit, OnDestroy {
 	
-	CONFIG = USER_CONFIG;
+	CONFIG = ISSUER_CONFIG as any;
 	
 	branches: { id: number; name: string }[] = [];
 	
