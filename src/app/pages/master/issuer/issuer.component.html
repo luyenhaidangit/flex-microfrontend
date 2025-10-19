@@ -18,15 +18,6 @@
 		</div>
 		
 		<!-- Display only in approved tab -->
-		<div class="col-md-3" *ngIf="activeTabId === 'approved'">
-			<label class="form-label fw-bold text-muted">Chi nhánh</label>
-			<select class="form-select" [(ngModel)]="state.filter.branchId">
-				<option [ngValue]="null">Tất cả</option>
-				<option *ngFor="let branch of branches" [ngValue]="branch.id">
-					{{ branch.name }}
-				</option>
-			</select>
-		</div>
 		
 		<!-- Display only in pending tab -->
 		<div class="col-md-3" *ngIf="activeTabId === 'pending'">
