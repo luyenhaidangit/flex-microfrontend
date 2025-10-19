@@ -5,7 +5,6 @@ import { Observable } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { PaginationState } from '../pagination/pagination/pagination.component';
-import { REQUEST_TYPE_OPTIONS } from 'src/app/core/constants/request-types.constant';
 
 type ModalType = 'detail' | 'edit' | 'delete' | 'create' | 'approve' | 'reject';
 
