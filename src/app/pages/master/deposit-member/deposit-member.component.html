@@ -268,8 +268,12 @@
     </ul>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="closeApproveModal()">Hủy</button>
-    <button type="button" class="btn btn-success" (click)="approveConfirm()">Duyệt</button>
+    <button type="button" class="btn btn-secondary" (click)="closeApproveModal()" [disabled]="approveLoading">Hủy</button>
+    <button type="button" class="btn btn-success" (click)="approveConfirm()" [disabled]="approveLoading">
+      <span class="spinner-border spinner-border-sm me-1" *ngIf="approveLoading" role="status" aria-hidden="true"></span>
+      <span *ngIf="!approveLoading">Duyệt</span>
+      <span *ngIf="approveLoading">Đang duyệt...</span>
+    </button>
   </div>
  </ng-template>
 
