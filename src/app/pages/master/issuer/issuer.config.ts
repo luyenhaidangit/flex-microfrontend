@@ -3,7 +3,6 @@ export const USER_CONFIG = {
   // Breadcrumb configuration
   breadcrumb: {
     title: 'Tổ chức phát hành',
-
     items: [
       { label: 'Danh mục cơ sở' },
       { label: 'Tổ chức phát hành', active: true }
@@ -14,90 +13,57 @@ export const USER_CONFIG = {
   table: {
     columns: {
       approved: [
-        { key: 'userName', label: 'Tài khoản', width: '120px' },
-        { key: 'fullName', label: 'Họ tên', width: '150px' },
-        { key: 'email', label: 'Email', width: '200px' },
-        { key: 'branchName', label: 'Chi nhánh', width: '140px' },
-        { key: 'isActive', label: 'Trạng thái', width: '100px' },
-        { key: 'actions', label: 'Thao tác', width: '120px' }
+        { key: 'issuerCode', label: 'Mã tổ chức', width: '140px' },
+        { key: 'shortName', label: 'Tên viết tắt', width: '160px' },
+        { key: 'fullName', label: 'Tên đầy đủ', width: '260px' },
+        { key: 'actions', label: 'Thao tác', width: '140px' }
       ],
       pending: [
-        { key: 'userName', label: 'Tài khoản', width: '120px' },
-        { key: 'fullName', label: 'Họ tên', width: '150px' },
-        { key: 'email', label: 'Email', width: '200px' },
-        { key: 'action', label: 'Hành động', width: '100px' },
-        { key: 'requestedDate', label: 'Ngày yêu cầu', width: '150px' },
-        { key: 'makerName', label: 'Người tạo', width: '150px' },
-        { key: 'actions', label: 'Thao tác', width: '150px' }
+        { key: 'issuerCode', label: 'Mã tổ chức', width: '140px' },
+        { key: 'shortName', label: 'Tên viết tắt', width: '160px' },
+        { key: 'fullName', label: 'Tên đầy đủ', width: '260px' },
+        { key: 'action', label: 'Hành động', width: '120px' },
+        { key: 'requestedDate', label: 'Ngày yêu cầu', width: '160px' },
+        { key: 'makerName', label: 'Người tạo', width: '160px' },
+        { key: 'actions', label: 'Thao tác', width: '140px' }
       ]
     },
     skeleton: {
-      approved: {
-        rows: 8,
-        columns: ['120px', '150px', '200px', '140px', '100px', '120px']
-      },
+      approved: { rows: 8, columns: ['140px', '160px', '260px', '140px'] },
       pending: {
         rows: 8,
-        columns: ['120px', '150px', '200px', '100px', '150px', '150px', '150px']
+        columns: ['140px', '160px', '260px', '120px', '160px', '160px', '140px']
       }
     }
   },
 
-  // Search options
+  // Search options (minimal)
   search: {
-    branchOptions: [
-      { label: 'Tất cả chi nhánh', value: null }
-    ],
-    lockStatusOptions: [
-      { label: 'Tất cả', value: null },
-      { label: 'Hoạt động', value: false },
-      { label: 'Đã khóa', value: true }
-    ]
-  },
-
-  // Form validation
-  validation: {
-    userName: {
-      required: 'Tên đăng nhập là bắt buộc',
-      minLength: 'Tên đăng nhập phải có ít nhất 3 ký tự',
-      maxLength: 'Tên đăng nhập không được quá 50 ký tự'
-    },
-    email: {
-      required: 'Email là bắt buộc',
-      pattern: 'Email không đúng định dạng'
-    },
-    fullName: {
-      required: 'Họ và tên là bắt buộc',
-      minLength: 'Họ và tên phải có ít nhất 2 ký tự'
-    }
+    branchOptions: [ { label: 'Tất cả chi nhánh', value: null } ],
+    lockStatusOptions: [ { label: 'Tất cả', value: null } ]
   },
 
   // Messages
   messages: {
     success: {
-      create: 'Tạo người dùng thành công',
-      update: 'Cập nhật người dùng thành công',
-      delete: 'Xóa người dùng thành công',
-      lock: 'Khóa người dùng thành công',
-      unlock: 'Mở khóa người dùng thành công'
+      create: 'Gửi yêu cầu tạo nhà phát hành thành công',
+      update: 'Gửi yêu cầu cập nhật thành công',
+      delete: 'Gửi yêu cầu xóa thành công'
     },
     error: {
-      create: 'Không thể tạo người dùng',
-      update: 'Không thể cập nhật người dùng',
-      delete: 'Không thể xóa người dùng',
-      load: 'Không lấy được danh sách người dùng',
+      create: 'Không thể tạo nhà phát hành',
+      update: 'Không thể cập nhật',
+      delete: 'Không thể xóa',
+      load: 'Không lấy được danh sách',
       general: 'Đã xảy ra lỗi'
     },
-    confirm: {
-      delete: 'Bạn có chắc chắn muốn xóa người dùng này?',
-      lock: 'Bạn có chắc chắn muốn khóa người dùng này?',
-      unlock: 'Bạn có chắc chắn muốn mở khóa người dùng này?'
-    }
+    confirm: { delete: 'Bạn chắc chắn muốn xóa nhà phát hành này?' }
   },
 
-  // API endpoints
+  // API endpoints (reference)
   api: {
-    users: '/api/users',
+    users: '/api/issuers',
     branches: '/api/branches'
   }
 };
+

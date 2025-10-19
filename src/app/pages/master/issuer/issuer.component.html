@@ -17,8 +17,6 @@
 			<input class="form-control" type="text" placeholder="Nhập từ khóa..." [(ngModel)]="state.filter.keyword">
 		</div>
 		
-		<!-- Display only in approved tab -->
-		
 		<!-- Display only in pending tab -->
 		<div class="col-md-3" *ngIf="activeTabId === 'pending'">
 			<label class="form-label fw-bold text-muted">Loại yêu cầu</label>
@@ -60,13 +58,9 @@
 				<!-- Approved tab content -->
 				<ng-container *ngIf="activeTabId === 'approved'">
 					<tr *ngFor="let u of items">
-						<td>{{ u.userName | safeField }}</td>
-						<td>{{ u.fullName | safeField }}</td>
-						<td>{{ u.email | safeField }}</td>
-						<td>{{ u.branchName | safeField }}</td>
-						<td>
-							<app-badge [value]="u.isActive" type="status"></app-badge>
-						</td>
+						<td>{{ (u.issuerCode || u.IssuerCode) | safeField }}</td>
+						<td>{{ (u.shortName || u.ShortName) | safeField }}</td>
+						<td>{{ (u.fullName || u.FullName) | safeField }}</td>
 						<td class="action-column">
 							<button class="btn btn-link p-0 text-info" (click)="openDetailModal(u)" title="Xem">
 								<i class="fas fa-eye"></i>
@@ -74,7 +68,7 @@
 							<button class="btn btn-link p-0 ms-2 text-warning" (click)="openEditModal(u)" title="Sửa">
 								<i class="fas fa-edit"></i>
 							</button>
-							<button class="btn btn-link p-0 ms-2 text-danger" (click)="openDeleteModal(u)" title="Xoá">
+							<button class="btn btn-link p-0 ms-2 text-danger" (click)="openDeleteModal(u)" title="Xóa">
 								<i class="fas fa-trash"></i>
 							</button>
 						</td>
@@ -83,14 +77,14 @@
 				<!-- Pending tab content -->
 				<ng-container *ngIf="activeTabId === 'pending'">
 					<tr *ngFor="let u of items">
-						<td>{{ u.userName | safeField }}</td>
-						<td>{{ u.fullName | safeField }}</td>
-						<td>{{ u.email | safeField }}</td>
+						<td>{{ (u.issuerCode || u.IssuerCode) | safeField }}</td>
+						<td>{{ (u.shortName || u.ShortName) | safeField }}</td>
+						<td>{{ (u.fullName || u.FullName) | safeField }}</td>
 						<td>
 							<app-badge [value]="u.action" type="action"></app-badge>
 						</td>
 						<td>{{ u.requestedDate | date:'dd/MM/yyyy HH:mm' }}</td>
-						<td>{{ u.requestedBy | safeField }}</td>
+						<td>{{ (u.makerName || u.requestedBy) | safeField }}</td>
 						<td class="action-column">
 							<button class="btn btn-link p-0 text-info" (click)="openPendingDetailModal(u)" title="Xem chi tiết">
 								<i class="fas fa-eye"></i>
@@ -175,3 +169,4 @@
 [selectedRequest]="selectedRequest"
 (close)="onRequestDetailModalClose()">
 </app-user-request-detail-modal>
+

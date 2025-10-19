@@ -4,13 +4,16 @@ export interface IssuerFilter {
 	type?: 'CREATE' | 'UPDATE' | 'DELETE' | null;
 }
 export interface IssuerItem {
-	id: number;
-	issuerCode: string;
-	email?: string;
-	issuerName?: string;
-	branchName?: string;
-	isActive?: boolean;
-	createdAt?: string;
+    id: number;
+    issuerCode: string;
+    // Backend may provide either issuerName or fullName/shortName
+    issuerName?: string;
+    shortName?: string;
+    fullName?: string;
+    email?: string;
+    branchName?: string;
+    isActive?: boolean;
+    createdAt?: string;
 }
 export interface IssuerSearchParams {
 	pageIndex: number;
