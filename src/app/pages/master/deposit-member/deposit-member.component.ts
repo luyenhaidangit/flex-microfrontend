@@ -15,7 +15,7 @@ import { ErrorMessageService } from '../../../core/services/error-message.servic
 export class DepositMemberComponent implements OnInit {
   // Breadcrumb
   breadCrumbItems = [
-    { label: 'Danh m?c co s?' },
+    { label: 'Danh mục cơ sở' },
     { label: 'Thành viên luu ký', active: true }
   ];
   
