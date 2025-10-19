@@ -53,7 +53,7 @@ export class DepositMemberService {
 
   // Approve a pending import request
   approveRequest(id: number) {
-    return this.http.post(`${this.apiUrl}/requests/${id}/approve`, null);
+    return this.http.post(`${this.apiUrl}/requests/${id}/approve`, '{}');
   }
 
   // Reject a pending import request with a reason

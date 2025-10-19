@@ -213,14 +213,14 @@ export class DepositMemberComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     const file = input.files && input.files.length ? input.files[0] : undefined;
     
-    // File là b?t bu?c
+    // File must be selected
     if (!file) {
-      this.importError = 'Vui lòng ch?n file d? upload';
+      this.importError = 'Vui lòng chọn file upload';
       this.importForm.file = undefined;
       return;
     }
     
-    // 1. Ki?m tra k? thu?t file (file-level validation)
+    // Validate file
     const fileValidation = this.validateFile(file);
     if (!fileValidation.isValid) {
       this.importError = fileValidation.error;
