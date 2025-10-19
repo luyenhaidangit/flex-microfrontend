@@ -131,17 +131,8 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
     // Merge with filter properties and additional params
     return {
       ...baseParams,
-      ...this.state.filter,
-      ...this.getAdditionalSearchParams()
+      ...this.state.filter
     };
-  }
-
-  /**
-   * Get additional search parameters that child classes can override
-   * This allows child classes to add custom params without overriding the entire method
-   */
-  protected getAdditionalSearchParams(): any {
-    return {};
   }
 
   /**
