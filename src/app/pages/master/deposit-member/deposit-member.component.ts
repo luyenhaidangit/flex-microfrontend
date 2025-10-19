@@ -160,7 +160,14 @@ export class DepositMemberComponent implements OnInit {
 
   // Approve/Reject confirmation modals
   openApproveModal(): void {
-    this.approveModalRef = this.modalService.show(this.approveModal);
+    this.closeImportModal();
+    setTimeout(() => {
+      this.approveModalRef = this.modalService.show(this.approveModal, {
+        class: 'modal-xl',
+        backdrop: 'static',
+        keyboard: false
+      });
+    }, 500);
   }
 
   closeApproveModal(): void {
