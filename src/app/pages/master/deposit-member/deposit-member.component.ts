@@ -63,7 +63,6 @@ export class DepositMemberComponent implements OnInit {
   importForm: { file?: File; effectiveDate?: string } = {};
   uploading = false;
   importError?: string;
-  effectiveDateDisplay?: string;
   stagedFileInfo?: StagedFileInfo | null;
   loadingStagedFile = false;
   effectiveDate?: Date | null;
@@ -250,7 +249,6 @@ export class DepositMemberComponent implements OnInit {
         this.toastService.error('Ngày hi?u l?c ph?i t? ngày mai tr? di');
         this.effectiveDate = null;
         this.importForm.effectiveDate = undefined;
-        this.effectiveDateDisplay = undefined;
         return;
       }
       
@@ -258,10 +256,8 @@ export class DepositMemberComponent implements OnInit {
       const m = ('0' + (date.getMonth() + 1)).slice(-2);
       const d = ('0' + date.getDate()).slice(-2);
       this.importForm.effectiveDate = `${y}-${m}-${d}`;
-      this.effectiveDateDisplay = `${d}/${m}/${y}`;
     } else {
       this.importForm.effectiveDate = undefined;
-      this.effectiveDateDisplay = undefined;
     }
   }
   
@@ -514,18 +510,6 @@ export class DepositMemberComponent implements OnInit {
         this.toastService.info('NgÃ y hiá»‡u lá»±c pháº£i tá»« ngÃ y mai trá»Ÿ Ä‘i');
       }
     }
-  }
-
-  rejectStaged(): void {
-    if (!this.stagedFileInfo?.isRequest) return;
-    const reason = prompt('Nháº­p lÃ½ do tá»« chá»‘i:') ?? '';
-    this.service.rejectRequest(this.stagedFileInfo.requestId, reason).subscribe({
-      next: () => {
-        this.toastService.success('T? ch?i yêu c?u thành công');
-        this.loadStagedFileInfo();
-      },
-      error: (err) => this.toastService.error(this.errorMessageService.getErrorMessage(err) || 'Tá»« chá»‘i yÃªu cáº§u tháº¥t báº¡i')
-    });
   }
   
   // Confirm reject from modal using entered reason
