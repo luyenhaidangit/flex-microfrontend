@@ -1,0 +1,82 @@
+<!-- Delete User Modal -->
+<div class="modal fade show d-block" *ngIf="isVisible" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-danger fw-semibold">
+          <i class="fas fa-trash-alt me-2"></i>Gửi yêu cầu xóa người dùng
+          <app-badge *ngIf="selectedItem?.isActive !== undefined" [value]="selectedItem?.isActive" type="status"></app-badge>
+        </h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="onClose()"></button>
+      </div>
+      <div class="modal-body px-4 py-3">
+        <!-- Loading state for user detail -->
+        <div *ngIf="isLoadingUserDetail" class="text-center py-4">
+          <div class="spinner-border text-danger" role="status">
+            <span class="visually-hidden">Đang tải...</span>
+          </div>
+          <p class="mt-2 text-muted">Đang tải thông tin chi tiết người dùng...</p>
+        </div>
+
+        <!-- User detail content -->
+        <div *ngIf="!isLoadingUserDetail">
+          <!-- User Information Card -->
+          <div class="card border-0 bg-light mb-3">
+            <div class="card-body">
+              <h6 class="card-title text-muted mb-3">
+                <i class="fas fa-info-circle me-2"></i>Thông tin người dùng sẽ xóa
+              </h6>
+              <div class="row gy-2">
+                <div class="col-md-6">
+                  <label class="form-label fw-bold text-muted">Tên đăng nhập</label>
+                  <div class="text-dark ps-1">{{ selectedItem?.userName | safeField }}</div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold text-muted">Họ và tên</label>
+                  <div class="text-dark ps-1">{{ selectedItem?.fullName | safeField }}</div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold text-muted">Email</label>
+                  <div class="text-dark ps-1">{{ selectedItem?.email | safeField }}</div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold text-muted">Chi nhánh</label>
+                  <div class="text-dark ps-1">{{ selectedItem?.branchName | safeField }}</div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-bold text-muted">Trạng thái</label>
+                  <div class="text-dark ps-1">
+                    <app-badge [value]="selectedItem?.isActive" type="status"></app-badge>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Warning Message -->
+          <div class="alert alert-warning d-flex align-items-center" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <div>
+              <strong>Cảnh báo:</strong> Bạn đang gửi yêu cầu xóa người dùng này. Yêu cầu sẽ được gửi đến người có quyền duyệt để xem xét.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-top-0">
+        <button type="button" class="btn btn-outline-secondary me-2" (click)="onClose()">
+          Hủy
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-danger"
+          [disabled]="!isFormValid || isLoadingUserDetail"
+          [class.loading]="isSubmitting"
+          (click)="onSubmit()">
+          <i class="fas fa-paper-plane me-1" *ngIf="!isSubmitting"></i>
+          <span class="spinner-border spinner-border-sm me-1" *ngIf="isSubmitting" role="status" aria-hidden="true"></span>
+          {{ isSubmitting ? 'Đang gửi...' : 'Gửi yêu cầu xóa' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
