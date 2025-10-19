@@ -537,7 +537,7 @@ export class DepositMemberComponent implements OnInit {
     const reason = (this.rejectReason || '').trim();
     this.service.rejectRequest(this.stagedFileInfo.requestId, reason).subscribe({
       next: () => {
-        this.toastService.success('T? ch?i y�u c?u th�nh c�ng');
+        this.toastService.success('Từ chối yêu cầu thành công');
         this.closeRejectModal();
         this.loadStagedFileInfo();
       },
