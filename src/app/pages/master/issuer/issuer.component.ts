@@ -24,6 +24,10 @@ export class IssuersComponent extends EntityListComponent<IssuerFilter, IssuerIt
 
 	// Functions
 	onTabChange(tabId: string): void { super.onTabChange(tabId); }
+	openCreateModal(): void { super.openCreateModal(); }
+	openDetailModal(issuer: IssuerItem): void { super.openDetailModal(issuer); }
+	openEditModal(issuer: IssuerItem): void { super.openEditModal(issuer); }
+	openDeleteModal(issuer: IssuerItem): void { super.openDeleteModal(issuer); }
 	
 	// Constructor
 	constructor(
@@ -43,24 +47,6 @@ export class IssuersComponent extends EntityListComponent<IssuerFilter, IssuerIt
     	} else {
       		this.loadData<any>(this.issuerService.getPendingIssuerRequests(this.getCleanSearchParams()));
     	}
-	}
-	
-	
-	
-	openCreateModal(): void {
-		super.openCreateModal();
-	}
-	
-	openDetailModal(user: UserItem): void {
-		super.openDetailModal(user);
-	}
-	
-	openEditModal(user: UserItem): void {
-		super.openEditModal(user);
-	}
-	
-	openDeleteModal(user: UserItem): void {
-		super.openDeleteModal(user);
 	}
 	
 	// Pending request methods
