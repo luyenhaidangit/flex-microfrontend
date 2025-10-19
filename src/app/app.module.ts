@@ -6,6 +6,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common
 import { environment } from '../environments/environment';
 
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { ModalModule } from 'ngx-bootstrap/modal';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 
@@ -58,6 +59,7 @@ export function createTranslateLoader(http: HttpClient): any {
     CarouselModule,
     AccordionModule.forRoot(),
     TabsModule.forRoot(),
+    ModalModule.forRoot(),
     TooltipModule.forRoot(),
     SharedModule,
     ScrollToModule.forRoot(),
