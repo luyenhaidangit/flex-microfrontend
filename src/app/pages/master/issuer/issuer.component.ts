@@ -2,8 +2,7 @@ import { Component, OnInit, OnDestroy, TemplateRef, ViewChild } from '@angular/c
 import { ToastService } from 'angular-toastify';
 import { forkJoin, Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
-import { SystemService } from 'src/app/core/services/system.service';
-import { IssuerService as UserService } from './issuer.service';
+import { IssuerService } from './issuer.service';
 import { UserItem } from './issuer.models';
 import { USER_CONFIG as ISSUER_CONFIG } from './issuer.config';
 import { UserFilter } from './issuer.models';
@@ -26,8 +25,7 @@ export class IssuersComponent extends EntityListComponent<UserFilter, UserItem> 
 	showRequestDetailModal = false;
 	
 	constructor(
-		private userService: UserService,
-		private systemService: SystemService,
+		private issuerService: IssuerService,
 		private toast: ToastService,
 		private modalService: BsModalService
 	) {
@@ -37,12 +35,10 @@ export class IssuersComponent extends EntityListComponent<UserFilter, UserItem> 
 	ngOnInit(): void {		
 		this.loadingTable = true;
 		
-		const branchesCall = this.systemService.getBranchesForFilter();
-    const usersCall = (this.userService as any).getIssuers(this.getCleanSearchParams());
+    	const usersCall = (this.issuerService as any).getIssuers(this.getCleanSearchParams());
 		
 		// Load branches and users in parallel
 		forkJoin({
-			branches: branchesCall,
 			users: usersCall
 		}).pipe(
 			takeUntil(this.destroy$),
@@ -50,14 +46,7 @@ export class IssuersComponent extends EntityListComponent<UserFilter, UserItem> 
 				this.loadingTable = false;
 			})
 		).subscribe({
-			next: ({ branches, users }) => {
-				
-				// Handle branches
-				if (branches?.isSuccess) {
-					this.branches = branches.data || [];
-				} else {
-					this.branches = [];
-				}
+			next: ({ users }) => {
 				
         // Handle users
         const u: any = users as any;
@@ -81,9 +70,9 @@ export class IssuersComponent extends EntityListComponent<UserFilter, UserItem> 
 	// Implement method abstract base
 	public onSearch(): void {
     if (this.activeTabId === 'approved') {
-      this.loadData<UserItem>((this.userService as any).getIssuers(this.getCleanSearchParams()));
+      this.loadData<UserItem>((this.issuerService as any).getIssuers(this.getCleanSearchParams()));
     } else {
-      this.loadData<any>((this.userService as any).getPendingIssuerRequests(this.getCleanSearchParams()));
+      this.loadData<any>((this.issuerService as any).getPendingIssuerRequests(this.getCleanSearchParams()));
     }
 	}
 	

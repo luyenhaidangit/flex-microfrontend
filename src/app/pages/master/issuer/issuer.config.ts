@@ -2,11 +2,11 @@ export const USER_CONFIG = {
 
   // Breadcrumb configuration
   breadcrumb: {
-    title: 'Quản lý người sử dụng',
+    title: 'Tổ chức phát hành',
 
     items: [
-      { label: 'Quản trị hệ thống' },
-      { label: 'Quản lý người sử dụng', active: true }
+      { label: 'Danh mục cơ sở' },
+      { label: 'Tổ chức phát hành', active: true }
     ]
   },
 
