@@ -17,8 +17,13 @@ export class IssuersComponent extends EntityListComponent<IssuerFilter, IssuerIt
 	CONFIG = ISSUER_CONFIG;
 	
 	// Base
+	// Properties
+	activeTabId: any = this.activeTabId;
 	selectedRequest: any = this.selectedRequest;
 	showRequestDetailModal = false;
+
+	// Functions
+	onTabChange(tabId: string): void { super.onTabChange(tabId); }
 	
 	// Constructor
 	constructor(
@@ -33,17 +38,13 @@ export class IssuersComponent extends EntityListComponent<IssuerFilter, IssuerIt
 	
 	// Implement method abstract base
 	public onSearch(): void {
-    if (this.activeTabId === 'approved') {
-      this.loadData<UserItem>((this.issuerService as any).getIssuers(this.getCleanSearchParams()));
-    } else {
-      this.loadData<any>((this.issuerService as any).getPendingIssuerRequests(this.getCleanSearchParams()));
-    }
+    	if (this.activeTabId === 'approved') {
+      		this.loadData<UserItem>(this.issuerService.getIssuers(this.getCleanSearchParams()));
+    	} else {
+      		this.loadData<any>(this.issuerService.getPendingIssuerRequests(this.getCleanSearchParams()));
+    	}
 	}
 	
-	onTabChange(tabId: string): void {
-		this.activeTabId = tabId;
-		this.onSearch();
-	}
 	
 	
 	openCreateModal(): void {
