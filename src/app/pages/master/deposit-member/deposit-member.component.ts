@@ -170,7 +170,15 @@ export class DepositMemberComponent implements OnInit {
 
   openRejectModal(): void {
     this.rejectReason = '';
-    this.rejectModalRef = this.modalService.show(this.rejectModal);
+    // UX: Đóng modal cha trước, sau đó mở modal từ chối để tránh chồng modal
+    this.closeImportModal();
+    setTimeout(() => {
+      this.rejectModalRef = this.modalService.show(this.rejectModal, {
+        class: 'modal-dialog-centered modal-reject',
+        backdrop: 'static',
+        keyboard: false
+      });
+    }, 500);
   }
 
   closeRejectModal(): void {
