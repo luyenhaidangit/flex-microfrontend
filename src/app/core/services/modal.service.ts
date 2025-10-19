@@ -1,12 +1,31 @@
 import { Injectable } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ModalService {
 
-  constructor(private modalService: BsModalService) {}
+  private modals: BsModalRef[] = [];
+
+  constructor(private bsModalService: BsModalService) {}
+
+  open<T>(component: any, initialState?: object): BsModalRef {
+    const ref = this.bsModalService.show(component, { initialState });
+    this.modals.push(ref);
+
+    // Xóa modal khỏi danh sách khi đóng
+    ref.onHidden?.subscribe(() => {
+      this.modals = this.modals.filter(m => m !== ref);
+    });
+
+    return ref;
+  }
+
+  closeAll(): void {
+    this.modals.forEach(m => m.hide());
+    this.modals = [];
+  }
 
   /**
    * Đóng tất cả modal đang mở trong ứng dụng
@@ -14,8 +33,8 @@ export class ModalService {
    */
   closeAllModals(): void {
     try {
-      while (this.modalService.getModalsCount() > 0) {
-        this.modalService.hide();
+      while (this.bsModalService.getModalsCount() > 0) {
+        this.bsModalService.hide();
       }
 
       // Fallback cleanup for any stray Bootstrap backdrops or custom modals
