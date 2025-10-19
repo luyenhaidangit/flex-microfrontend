@@ -9,6 +9,12 @@ import { REQUEST_TYPE_OPTIONS } from 'src/app/core/constants/request-types.const
 type ModalType = 'detail' | 'edit' | 'delete' | 'create' | 'approve' | 'reject';
 
 export abstract class EntityListComponent<TFilter, TItem = any> {
+
+  // Contructor
+  constructor(filter: any = null) {
+    this.state = Query.init(filter, { index: 1, size: 10 });
+  }
+
   protected readonly config = ENTITY_LIST_CONFIG;
 
   // Properties
@@ -65,12 +71,6 @@ export abstract class EntityListComponent<TFilter, TItem = any> {
     });
     
     return cleaned;
-  }
-
-  // Hande action paging
-  // ---------- Required method ----------
-  constructor(initFilter: any = null) {
-    this.state = Query.init(initFilter, { index: 1, size: 10 });
   }
 
   protected abstract onSearch(): void;

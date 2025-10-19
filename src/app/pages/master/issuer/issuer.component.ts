@@ -29,7 +29,7 @@ export class IssuersComponent extends EntityListComponent<IssuerFilter, IssuerIt
 		private toast: ToastService,
 		private modalService: BsModalService
 	) {
-		super({ keyword: '', type: null });
+		super({ keyword: '' });
 	}
 	
 	ngOnInit(): void {		
