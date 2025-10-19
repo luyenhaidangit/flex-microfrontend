@@ -5,7 +5,7 @@ import { finalize, takeUntil } from 'rxjs/operators';
 import { IssuerService } from './issuer.service';
 import { UserItem } from './issuer.models';
 import { USER_CONFIG as ISSUER_CONFIG } from './issuer.config';
-import { UserFilter } from './issuer.models';
+import { UserFilter, IssuerItem } from './issuer.models';
 import { EntityListComponent } from 'src/app/core/components/base/entity-list.component';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 
@@ -15,7 +15,7 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 	styleUrls: ['./issuer.component.scss']
 })
 
-export class IssuersComponent extends EntityListComponent<UserFilter, UserItem> implements OnInit, OnDestroy {
+export class IssuersComponent extends EntityListComponent<UserFilter, IssuerItem> implements OnInit, OnDestroy {
 	
 	CONFIG = ISSUER_CONFIG as any;
 	
@@ -29,7 +29,7 @@ export class IssuersComponent extends EntityListComponent<UserFilter, UserItem> 
 		private toast: ToastService,
 		private modalService: BsModalService
 	) {
-		super({ keyword: '', branchId: null, type: null });
+		super({ keyword: '', type: null });
 	}
 	
 	ngOnInit(): void {		

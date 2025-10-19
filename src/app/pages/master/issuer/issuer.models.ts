@@ -1,6 +1,5 @@
 export interface IssuerFilter {
 	keyword: string;
-	branchId: number;
 	status?: string;
 	type?: 'CREATE' | 'UPDATE' | 'DELETE' | null;
 }
@@ -9,7 +8,6 @@ export interface IssuerItem {
 	issuerCode: string;
 	email?: string;
 	issuerName?: string;
-	branchId?: number;
 	branchName?: string;
 	isActive?: boolean;
 	createdAt?: string;
