@@ -125,14 +125,7 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
 
   // Destroy subject for cleanup
   protected destroy$ = new Subject<void>();
-
-  // ---------- Generic data loading methods ----------
-  
-  /**
-   * Generic method to load data with standard pattern
-   * @param apiCall Observable API call
-   * @param itemType Type of items (for type safety)
-   */
+  // ---------- Data loading method ----------
   protected beforeLoad(): void {}
   protected afterLoad(): void {}
   protected onLoadError(error: any): void {}
