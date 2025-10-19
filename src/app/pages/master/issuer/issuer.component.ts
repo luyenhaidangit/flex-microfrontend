@@ -38,7 +38,7 @@ export class IssuersComponent extends EntityListComponent<UserFilter, UserItem> 
 		this.loadingTable = true;
 		
 		const branchesCall = this.systemService.getBranchesForFilter();
-		const usersCall = this.userService.getUsers(this.getCleanSearchParams());
+    const usersCall = (this.userService as any).getIssuers(this.getCleanSearchParams());
 		
 		// Load branches and users in parallel
 		forkJoin({
@@ -79,11 +79,11 @@ export class IssuersComponent extends EntityListComponent<UserFilter, UserItem> 
 	
 	// Implement method abstract base
 	public onSearch(): void {
-		if (this.activeTabId === 'approved') {
-			this.loadData<UserItem>(this.userService.getUsers(this.getCleanSearchParams()));
-		} else {
-			this.loadData<any>(this.userService.getPendingUserRequests(this.getCleanSearchParams()));
-		}
+    if (this.activeTabId === 'approved') {
+      this.loadData<UserItem>((this.userService as any).getIssuers(this.getCleanSearchParams()));
+    } else {
+      this.loadData<any>((this.userService as any).getPendingIssuerRequests(this.getCleanSearchParams()));
+    }
 	}
 	
 	onTabChange(tabId: string): void {

@@ -11,12 +11,26 @@ import { MasterRoutingModule } from './master-routing.module';
 import { DepositMemberComponent } from './deposit-member/deposit-member.component';
 import { SecuritiesDomainListComponent } from './securities-domain/securities-domain-list.component';
 import { IssuersComponent } from './issuer/issuer.component';
+import { ApproveUserModalComponent } from './issuer/approve-user-modal/approve-user-modal.component';
+import { RejectUserModalComponent } from './issuer/reject-user-modal/reject-user-modal.component';
+import { DeleteUserModalComponent } from './issuer/delete-user-modal/delete-user-modal.component';
+import { EditUserModalComponent } from './issuer/edit-user-modal/edit-user-modal.component';
+import { CreateUserModalComponent } from './issuer/create-user-modal/create-user-modal.component';
+import { UserDetailModalComponent } from './issuer/user-detail-modal/user-detail-modal.component';
+import { UserRequestDetailModalComponent } from './issuer/user-request-detail-modal/user-request-detail-modal.component';
 
 @NgModule({
   declarations: [
     DepositMemberComponent,
     SecuritiesDomainListComponent,
-    IssuersComponent
+    IssuersComponent,
+    ApproveUserModalComponent,
+    RejectUserModalComponent,
+    DeleteUserModalComponent,
+    EditUserModalComponent,
+    CreateUserModalComponent,
+    UserDetailModalComponent,
+    UserRequestDetailModalComponent
   ],
   imports: [
     CommonModule,

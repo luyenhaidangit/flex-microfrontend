@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { ToastService } from 'angular-toastify';
 import { Subject, takeUntil } from 'rxjs';
-import { UserService } from '../issuer.service';
+import { IssuerService as UserService } from '../issuer.service';
 
 export interface UserRequestDetail {
   requestId: number;
@@ -107,7 +107,7 @@ export class RejectUserModalComponent implements OnInit, OnDestroy, OnChanges {
 
     this.isRejecting = true;
     
-    this.userService.rejectPendingUserRequest(requestId, this.rejectionReason.trim())
+    (this.userService as any).rejectPendingIssuerRequest(requestId, this.rejectionReason.trim())
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {

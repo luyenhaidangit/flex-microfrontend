@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, S
 import { ToastService } from 'angular-toastify';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { UserService } from '../issuer.service';
+import { IssuerService as UserService } from '../issuer.service';
 import { UserItem } from '../issuer.models';
 
 @Component({
@@ -54,7 +54,7 @@ export class UserDetailModalComponent implements OnInit, OnDestroy, OnChanges {
 
 	// Load detailed user information
 	private loadUserDetail(): void {
-		if (!this.user?.userName) {
+    if (!this.user?.issuerCode) {
 			this.toast.error('Không tìm thấy thông tin người dùng!');
 			this.onClose();
 			return;
@@ -64,7 +64,7 @@ export class UserDetailModalComponent implements OnInit, OnDestroy, OnChanges {
 		this.changeHistory = [];
 		this.selectedItem = null;
 
-		this.userService.getUserByUsername(this.user.userName)
+    (this.userService as any).getIssuerByCode(this.user.issuerCode)
 			.pipe(
 				takeUntil(this.destroy$),
 				finalize(() => this.isLoadingUserDetail = false)
@@ -87,7 +87,7 @@ export class UserDetailModalComponent implements OnInit, OnDestroy, OnChanges {
 
 	// Load change history when history tab is opened
 	loadChangeHistory(): void {
-		if (!this.selectedItem?.userName) {
+    if (!this.selectedItem?.issuerCode) {
 			this.toast.error('Không tìm thấy username người dùng!');
 			return;
 		}
@@ -98,7 +98,7 @@ export class UserDetailModalComponent implements OnInit, OnDestroy, OnChanges {
 		}
 
 		this.isLoadingHistory = true;
-		this.userService.getUserChangeHistory(this.selectedItem.userName)
+    (this.userService as any).getIssuerChangeHistory(this.selectedItem.issuerCode)
 			.pipe(
 				takeUntil(this.destroy$),
 				finalize(() => this.isLoadingHistory = false)
