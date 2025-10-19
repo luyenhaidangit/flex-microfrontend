@@ -59,14 +59,15 @@ export class IssuersComponent extends EntityListComponent<UserFilter, UserItem> 
 					this.branches = [];
 				}
 				
-				// Handle users
-				if (users?.isSuccess) {
-					const { items, pageMeta } = this.extractPagingFromResponse<UserItem>(users.data);
-					this.items = items as UserItem[];
-					this.updatePagingState(pageMeta);
-				} else {
-					this.items = [];
-				}
+        // Handle users
+        const u: any = users as any;
+        if (u?.isSuccess) {
+          const { items, pageMeta } = this.extractPagingFromResponse<UserItem>(u.data);
+          this.items = items as UserItem[];
+          this.updatePagingState(pageMeta);
+        } else {
+          this.items = [];
+        }
 			},
 			error: (err) => {
 				this.branches = [];

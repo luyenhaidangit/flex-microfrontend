@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { ToastService } from 'angular-toastify';
 import { Subject, takeUntil } from 'rxjs';
-import { UserService } from '../issuer.service';
+import { IssuerService as UserService } from '../issuer.service';
 
 export interface UserRequestDetail {
   requestId: number;
@@ -97,7 +97,7 @@ export class ApproveUserModalComponent implements OnInit, OnDestroy, OnChanges {
 
     this.isApproving = true;
     
-    this.userService.approvePendingUserRequest(requestId)
+    (this.userService as any).approvePendingIssuerRequest(requestId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {

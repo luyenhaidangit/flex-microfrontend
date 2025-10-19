@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, S
 import { ToastService } from 'angular-toastify';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { UserService } from '../issuer.service';
+import { IssuerService as UserService } from '../issuer.service';
 import { UserItem } from '../issuer.models';
 
 export interface UserRequestDetailData {
@@ -84,7 +84,7 @@ export class UserRequestDetailModalComponent implements OnInit, OnDestroy, OnCha
 		this.requestDetailData = null;
 		this.hasLoadedForCurrentRequest = true;
 
-		this.userService.getPendingUserRequestById(this.selectedRequest.requestId)
+  (this.userService as any).getPendingIssuerRequestById(this.selectedRequest.requestId)
 			.pipe(
 				takeUntil(this.destroy$),
 				finalize(() => this.isLoadingRequestDetail = false)

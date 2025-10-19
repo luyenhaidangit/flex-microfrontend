@@ -1,14 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastService } from 'angular-toastify';
-import { SystemService } from 'src/app/core/services/system.service';
-import { UserService } from '../issuer.service';
+import { IssuerService as UserService } from '../issuer.service';
 import { BranchItem, UserItem } from '../issuer.models';
 
-export interface UpdateUserRequest {
-  userName: string;
+export interface UpdateIssuerRequest {
+  issuerCode: string;
   email: string;
-  fullName: string;
+  issuerName: string;
   branchId: number;
   isActive: boolean;
 }
@@ -26,196 +25,109 @@ export class EditUserModalComponent implements OnInit, OnChanges {
   @Output() updated = new EventEmitter<void>();
 
   userForm!: FormGroup;
-  isLoading = false;
   isSubmitting = false;
   isLoadingInitial = false;
-  private hasLoadedData = false; // Flag to prevent duplicate API calls
+  private hasLoadedData = false;
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private systemService: SystemService,
-    private toastService: ToastService
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
     this.initializeForm();
-    // Check if user is already available and load data
-    if (this.user && !this.hasLoadedData) {
-      this.loadInitialData();
-    }
+    if (this.user && !this.hasLoadedData) this.loadInitialData();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // Check if user input changed and modal is visible
-    if (changes['user'] && this.isVisible && this.user && !this.hasLoadedData) {
-      this.loadInitialData();
-    }
-    
-    // Check if modal visibility changed
-    if (changes['isVisible'] && this.isVisible && this.user && !this.hasLoadedData) {
-      this.loadInitialData();
-    }
+    if (changes['user'] && this.isVisible && this.user && !this.hasLoadedData) this.loadInitialData();
+    if (changes['isVisible'] && this.isVisible && this.user && !this.hasLoadedData) this.loadInitialData();
   }
 
   private initializeForm(): void {
     this.userForm = this.fb.group({
-      userName: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9._-]+'), Validators.maxLength(50)]],
+      issuerCode: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9._-]+'), Validators.maxLength(50)]],
       email: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
-      fullName: ['', [Validators.required, Validators.maxLength(100)]],
+      issuerName: ['', [Validators.required, Validators.maxLength(100)]],
       branchId: [null, [Validators.required]],
       isActive: [true, [Validators.required]]
     });
   }
 
   private populateForm(): void {
-    if (this.user) {
-      this.userForm.patchValue({
-        userName: this.user.userName,
-        email: this.user.email || '',
-        fullName: this.user.fullName || '',
-        branchId: this.user.branchId || null,
-        isActive: this.user.isActive ?? true
-      });
-      
-      // Debug logging
-      console.log('Form populated with:', {
-        userName: this.user.userName,
-        email: this.user.email,
-        fullName: this.user.fullName,
-        branchId: this.user.branchId,
-        branchName: this.user.branchName,
-        branch: this.user.branch,
-        isActive: this.user.isActive,
-        availableBranches: this.branches,
-        formValue: this.userForm.value
-      });
-    }
+    if (!this.user) return;
+    this.userForm.patchValue({
+      issuerCode: (this.user as any).issuerCode || '',
+      email: this.user.email || '',
+      issuerName: (this.user as any).issuerName || '',
+      branchId: this.user.branchId || null,
+      isActive: this.user.isActive ?? true
+    });
   }
 
   private loadInitialData(): void {
-    if (this.hasLoadedData) {
-      return; // Prevent duplicate calls
-    }
-    
+    if (this.hasLoadedData) return;
     this.isLoadingInitial = true;
-    this.hasLoadedData = true; // Set flag to prevent duplicate calls
-    
-    // Load user details - this will provide all needed data including branch info
-    if (this.user?.userName) {
-      this.loadUserDetails();
+    this.hasLoadedData = true;
+    const code = (this.user as any)?.issuerCode;
+    if (code) {
+      (this.userService as any).getIssuerByCode(code).subscribe({
+        next: (res: any) => {
+          if (res?.isSuccess) this.user = res.data;
+          this.populateForm();
+          this.isLoadingInitial = false;
+        },
+        error: () => { this.populateForm(); this.isLoadingInitial = false; }
+      });
     } else {
-      // If no userName, just populate form with available data
       this.populateForm();
       this.isLoadingInitial = false;
     }
   }
 
-  private loadUserDetails(): void {
-    if (!this.user?.userName) {
-      this.isLoadingInitial = false;
-      return;
-    }
-
-    this.isLoading = true;
-    this.userService.getUserByUsername(this.user.userName)
-      .subscribe({
-        next: (res) => {
-          this.isLoading = false;
-          if (res?.isSuccess) {
-            // Update user with fresh data from API
-            this.user = res.data;
-            
-            // Map branch data from API response
-            if (this.user.branch) {
-              // Set branchId from branch object
-              this.user.branchId = this.user.branch.id;
-              this.user.branchName = this.user.branch.name;
-            }
-            
-            // Don't override branches list - keep the one passed from parent component
-            // The branches list should contain all available branches for selection
-            
-            // Now populate form with all data ready
-            this.populateForm();
-            this.isLoadingInitial = false;
-          } else {
-            this.toastService.error(res?.message || 'Không thể tải thông tin user!');
-            this.isLoadingInitial = false;
-          }
-        },
-        error: (err) => {
-          this.isLoading = false;
-          this.toastService.error('Lỗi khi tải thông tin user!');
-          this.isLoadingInitial = false;
-        }
-      });
-  }
-
   onSubmit(): void {
     this.userForm.markAllAsTouched();
     if (this.userForm.invalid || this.isSubmitting || !this.user) return;
-
     this.isSubmitting = true;
-    const formData = this.userForm.value;
-    
-    const updateRequest: UpdateUserRequest = {
-      userName: formData.userName.trim(),
-      email: formData.email.trim(),
-      fullName: formData.fullName.trim(),
-      branchId: formData.branchId,
-      isActive: formData.isActive
+    const v = this.userForm.value;
+    const dto: UpdateIssuerRequest = {
+      issuerCode: (v.issuerCode || '').trim(),
+      email: (v.email || '').trim(),
+      issuerName: (v.issuerName || '').trim(),
+      branchId: v.branchId,
+      isActive: v.isActive
     };
-
-    this.userService.updateUserRequest(updateRequest)
-      .subscribe({
-        next: (res) => {
-          this.isSubmitting = false;
-          if (res?.isSuccess) {
-            this.toastService.success('Gửi yêu cầu cập nhật user thành công!');
-            this.updated.emit();
-            this.closeModal();
-          } else {
-            this.toastService.error(res?.message || 'Không thể cập nhật user!');
-          }
-        },
-        error: (err) => {
-          this.isSubmitting = false;
-          this.toastService.error('Lỗi khi gửi yêu cầu cập nhật user!');
+    (this.userService as any).updateIssuerRequest(dto).subscribe({
+      next: (res: any) => {
+        this.isSubmitting = false;
+        if (res?.isSuccess) {
+          this.toast.success('Cập nhật TCPH thành công');
+          this.updated.emit();
+          this.closeModal();
+        } else {
+          this.toast.error(res?.message || 'Không thể cập nhật');
         }
-      });
+      },
+      error: () => { this.isSubmitting = false; this.toast.error('Lỗi khi gửi yêu cầu'); }
+    });
   }
 
-  onCancel(): void {
-    this.closeModal();
-  }
+  onCancel(): void { this.closeModal(); }
+  closeModal(): void { this.close.emit(); this.resetStates(); }
 
-  closeModal(): void {
-    this.close.emit();
-    this.resetStates();
-  }
-
-  // Reset all states
   private resetStates(): void {
     this.hasLoadedData = false;
     this.isLoadingInitial = false;
     this.isSubmitting = false;
-    this.isLoading = false;
   }
 
-  // Helper methods for form validation
   getFieldError(fieldName: string): string {
     const field = this.userForm.get(fieldName);
     if (field?.touched && field?.invalid) {
-      if (field.errors?.['required']) {
-        return `${this.getFieldLabel(fieldName)} không được để trống`;
-      }
-      if (field.errors?.['email']) {
-        return 'Email không đúng định dạng';
-      }
-      if (field.errors?.['pattern']) {
-        return `${this.getFieldLabel(fieldName)} chỉ được chứa chữ, số, dấu chấm, gạch dưới và gạch ngang`;
-      }
+      if (field.errors?.['required']) return `${this.getFieldLabel(fieldName)} không được để trống`;
+      if (field.errors?.['email']) return 'Email không đúng định dạng';
+      if (field.errors?.['pattern']) return `${this.getFieldLabel(fieldName)} chỉ được chứa chữ, số, dấu chấm, gạch dưới và gạch ngang`;
       if (field.errors?.['maxlength']) {
         const maxLength = field.errors['maxlength'].requiredLength;
         return `${this.getFieldLabel(fieldName)} không được vượt quá ${maxLength} ký tự`;
@@ -226,9 +138,9 @@ export class EditUserModalComponent implements OnInit, OnChanges {
 
   private getFieldLabel(fieldName: string): string {
     const labels: { [key: string]: string } = {
-      userName: 'Tên đăng nhập',
+      issuerCode: 'Mã TCPH',
       email: 'Email',
-      fullName: 'Họ và tên',
+      issuerName: 'Tên TCPH',
       branchId: 'Chi nhánh',
       isActive: 'Trạng thái'
     };
@@ -240,17 +152,15 @@ export class EditUserModalComponent implements OnInit, OnChanges {
     return !!(field?.touched && field?.invalid);
   }
 
-  // Check if form has changes
   hasChanges(): boolean {
     if (!this.user) return false;
-    
-    const formData = this.userForm.value;
+    const v = this.userForm.value;
     return (
-      formData.userName !== this.user.userName ||
-      formData.email !== (this.user.email || '') ||
-      formData.fullName !== (this.user.fullName || '') ||
-      formData.branchId !== (this.user.branchId || null) ||
-      formData.isActive !== (this.user.isActive ?? true)
+      v.issuerCode !== ((this.user as any).issuerCode || '') ||
+      v.email !== (this.user.email || '') ||
+      v.issuerName !== ((this.user as any).issuerName || '') ||
+      v.branchId !== (this.user.branchId || null) ||
+      v.isActive !== (this.user.isActive ?? true)
     );
   }
 }

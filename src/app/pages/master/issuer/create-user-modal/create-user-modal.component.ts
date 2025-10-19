@@ -97,7 +97,7 @@ export class CreateUserModalComponent implements OnInit {
       isActive: formData.isActive
     };
 
-    this.userService.createUser(createRequest)
+    (this.userService as any).createIssuer(createRequest)
       .subscribe({
         next: (res) => {
           this.isSubmitting = false;

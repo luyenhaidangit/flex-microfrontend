@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastService } from 'angular-toastify';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { UserService } from '../issuer.service';
+import { IssuerService as UserService } from '../issuer.service';
 import { UserItem } from '../issuer.models';
 
 
@@ -66,7 +66,7 @@ export class DeleteUserModalComponent implements OnInit, OnDestroy, OnChanges {
 
   // Load detailed user information
   private loadUserDetail(): void {
-    if (!this.user?.userName) {
+    if (!this.user?.issuerCode) {
       this.toastService.error('Không tìm thấy thông tin người dùng!');
       this.onClose();
       return;
@@ -75,7 +75,7 @@ export class DeleteUserModalComponent implements OnInit, OnDestroy, OnChanges {
     this.isLoadingUserDetail = true;
     this.selectedItem = null;
 
-    this.userService.getUserByUsername(this.user.userName)
+    (this.userService as any).getIssuerByCode(this.user.issuerCode)
       .pipe(
         takeUntil(this.destroy$),
         finalize(() => this.isLoadingUserDetail = false)
@@ -97,13 +97,13 @@ export class DeleteUserModalComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onSubmit(): void {
-    if (!this.user?.userName) {
+    if (!this.user?.issuerCode) {
       return;
     }
 
     this.isSubmitting = true;
 
-    this.userService.createDeleteUserRequest(this.user.userName)
+    (this.userService as any).createDeleteIssuerRequest(this.user.issuerCode)
       .pipe(
         finalize(() => {
           this.isSubmitting = false;
