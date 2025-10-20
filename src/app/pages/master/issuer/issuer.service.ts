@@ -35,7 +35,7 @@ export class IssuerService {
 	* Get all pending user requests with pagination
 	*/
 	getPendingIssuerRequests(params: any): Observable<any> {
-		return this.http.get<any>(`${this.apiUrl}/request/pending`, { params });
+		return this.http.get<any>(`${this.apiUrl}/requests/pending`, { params });
 	}
 	
 	/**
