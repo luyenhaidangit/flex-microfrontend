@@ -24,6 +24,6 @@ import { TabsComponent } from './tab/tabs.component';
     BsDropdownModule.forRoot(),
     TabsModule.forRoot()
   ],
-  exports: [PagetitleComponent, LoaderComponent, LoadingComponent, SkeletonComponent, TabsComponent]
+  exports: [PagetitleComponent, LoaderComponent, LoadingComponent, SkeletonComponent, TabsComponent, TabsModule]
 })
 export class UIModule { }
