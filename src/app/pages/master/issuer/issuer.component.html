@@ -118,11 +118,11 @@
 </div>
 
 <!-- User Detail Modal Component -->
-<app-user-detail-modal 
+<app-issuer-detail-modal 
 [isVisible]="modalState.detail"
 [user]="selectedItem"
 (close)="onDetailModalClose()">
-</app-user-detail-modal>
+</app-issuer-detail-modal>
 
 <!-- Edit User Modal Component -->
 <app-edit-user-modal 
@@ -133,11 +133,11 @@
 </app-edit-user-modal>
 
 <!-- Create User Modal Component -->
-<app-create-user-modal
+<app-create-issuer-modal
 [isVisible]="modalState.create"
 (close)="onCreateModalClose()"
 (created)="onUserCreated()">
-</app-create-user-modal>
+</app-create-issuer-modal>
 
 <!-- Delete User Modal Component -->
 <app-delete-user-modal 

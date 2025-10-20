@@ -6,11 +6,11 @@ import { IssuerService as UserService } from '../issuer.service';
 import { UserItem } from '../issuer.models';
 
 @Component({
-	selector: 'app-user-detail-modal',
-	templateUrl: './user-detail-modal.component.html',
-	styleUrls: ['./user-detail-modal.component.scss']
+	selector: 'app-issuer-detail-modal',
+	templateUrl: './issuer-detail-modal.component.html',
+	styleUrls: ['./issuer-detail-modal.component.scss']
 })
-export class UserDetailModalComponent implements OnInit, OnDestroy, OnChanges {
+export class IssuerDetailModalComponent implements OnInit, OnDestroy, OnChanges {
 	@Input() isVisible = false;
 	@Input() user: UserItem | null = null;
 	@Output() close = new EventEmitter<void>();

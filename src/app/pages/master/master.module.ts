@@ -16,7 +16,7 @@ import { RejectUserModalComponent } from './issuer/reject-user-modal/reject-user
 import { DeleteUserModalComponent } from './issuer/delete-user-modal/delete-user-modal.component';
 import { EditUserModalComponent } from './issuer/edit-user-modal/edit-user-modal.component';
 import { CreateIssuerModalComponent } from './issuer/create-issuer-modal/create-issuer-modal.component';
-import { UserDetailModalComponent } from './issuer/user-detail-modal/user-detail-modal.component';
+import { IssuerDetailModalComponent } from './issuer/issuer-detail-modal/issuer-detail-modal.component';
 import { UserRequestDetailModalComponent } from './issuer/user-request-detail-modal/user-request-detail-modal.component';
 
 @NgModule({
@@ -29,7 +29,7 @@ import { UserRequestDetailModalComponent } from './issuer/user-request-detail-mo
     DeleteUserModalComponent,
     EditUserModalComponent,
     CreateIssuerModalComponent,
-    UserDetailModalComponent,
+    IssuerDetailModalComponent,
     UserRequestDetailModalComponent
   ],
   imports: [
