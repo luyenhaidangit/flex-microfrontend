@@ -109,12 +109,10 @@ export class IssuerDetailModalComponent implements OnInit, OnDestroy, OnChanges 
 					this.changeHistory = res.data || [];
 				} else {
 					this.changeHistory = [];
-					this.toast.error('Không thể lấy lịch sử thay đổi!');
 				}
 			},
 			error: () => {
 				this.changeHistory = [];
-				this.toast.error('Không thể lấy lịch sử thay đổi!');
 			}
 		});
 	}
