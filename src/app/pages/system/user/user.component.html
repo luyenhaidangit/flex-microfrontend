@@ -134,14 +134,14 @@
 
 <!-- User Detail Modal Component -->
 <app-user-detail-modal 
-[isVisible]="showDetailModal"
+[isVisible]="modalState.detail"
 [user]="selectedItem"
 (close)="onDetailModalClose()">
 </app-user-detail-modal>
 
 <!-- Edit User Modal Component -->
 <app-edit-user-modal 
-[isVisible]="showEditModal"
+[isVisible]="modalState.edit"
 [user]="selectedItem"
 [branches]="branches"
 (close)="onEditModalClose()"
@@ -150,7 +150,7 @@
 
 <!-- Create User Modal Component -->
 <app-create-user-modal 
-[isVisible]="showCreateModal"
+[isVisible]="modalState.create"
 [branches]="branches"
 (close)="onCreateModalClose()"
 (created)="onUserCreated()">
@@ -158,7 +158,7 @@
 
 <!-- Delete User Modal Component -->
 <app-delete-user-modal 
-[isVisible]="showDeleteModal"
+[isVisible]="modalState.delete"
 [user]="selectedItem"
 (close)="onDeleteModalClose()"
 (deleted)="onUserDeleted()">
@@ -166,7 +166,7 @@
 
 <!-- Approve User Modal Component -->
 <app-approve-user-modal 
-[isVisible]="showApproveModal"
+[isVisible]="modalState.approve"
 [selectedRequest]="selectedRequest"
 (close)="onApproveModalClose()"
 (approved)="onUserApproved($event)">
@@ -174,7 +174,7 @@
 
 <!-- Reject User Modal Component -->
 <app-reject-user-modal 
-[isVisible]="showRejectModal"
+[isVisible]="modalState.reject"
 [selectedRequest]="selectedRequest"
 (close)="onRejectModalClose()"
 (rejected)="onUserRejected($event)">

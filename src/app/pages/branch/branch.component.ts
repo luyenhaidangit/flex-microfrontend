@@ -186,7 +186,7 @@ export class BranchComponent extends EntityListComponent<BranchFilter, Branch> i
     if (this.activeTab === 'approved') {
       // Use branch-detail-modal component
       this.selectedBranch = item;
-      this.showDetailModal = true;
+      this.modalState.detail = true;
     } else {
       // pending tab: show request detail modal
       const requestId = item?.requestId || item?.id;

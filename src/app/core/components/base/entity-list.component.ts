@@ -81,7 +81,22 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
   // ---------- Modals ----------//
   openCreateModal(): void {
     this.selectedItem = null;
-    this.showCreateModal = true;
+    this.modalState.create = true;
+  }
+
+  protected openRejectModal(item: TItem): void {
+    this.selectedItem = item;
+    this.modalState.reject = true;
+  }
+
+  protected onApproveModalClose(): void {
+    this.modalState.approve = false;
+    this.selectedItem = null;
+  }
+
+  protected onRejectModalClose(): void {
+    this.modalState.reject = false;
+    this.selectedItem = null;
   }
 
   // ---------- Helper ----------//
@@ -116,18 +131,6 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
     approve: false,
     reject: false
   };
-  get showDetailModal() { return this.modalState.detail; }
-  set showDetailModal(v: boolean) { this.modalState.detail = v; }
-  get showEditModal() { return this.modalState.edit; }
-  set showEditModal(v: boolean) { this.modalState.edit = v; }
-  get showDeleteModal() { return this.modalState.delete; }
-  set showDeleteModal(v: boolean) { this.modalState.delete = v; }
-  get showCreateModal() { return this.modalState.create; }
-  set showCreateModal(v: boolean) { this.modalState.create = v; }
-  get showApproveModal() { return this.modalState.approve; }
-  set showApproveModal(v: boolean) { this.modalState.approve = v; }
-  get showRejectModal() { return this.modalState.reject; }
-  set showRejectModal(v: boolean) { this.modalState.reject = v; }
 
   // Destroy subject for cleanup
   protected destroy$ = new Subject<void>();
@@ -209,7 +212,7 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
    */
   protected openDetailModal(item: TItem): void {
     this.selectedItem = item;
-    this.showDetailModal = true;
+    this.modalState.detail = true;
   }
 
   /**
@@ -218,7 +221,7 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
    */
   protected openEditModal(item: TItem): void {
     this.selectedItem = item;
-    this.showEditModal = true;
+    this.modalState.edit = true;
   }
 
   /**
@@ -227,7 +230,7 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
    */
   protected openDeleteModal(item: TItem): void {
     this.selectedItem = item;
-    this.showDeleteModal = true;
+    this.modalState.delete = true;
   }
 
   protected openStateModal(type: ModalType, item?: TItem): void {
@@ -245,12 +248,12 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
    * Generic method to close all modals
    */
   protected closeAllModals(): void {
-    this.showDetailModal = false;
-    this.showEditModal = false;
-    this.showDeleteModal = false;
-    this.showCreateModal = false;
-    this.showApproveModal = false;
-    this.showRejectModal = false;
+    this.modalState.detail = false;
+    this.modalState.edit = false;
+    this.modalState.delete = false;
+    this.modalState.create = false;
+    this.modalState.approve = false;
+    this.modalState.reject = false;
     this.selectedItem = null;
   }
 
@@ -258,7 +261,7 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
    * Generic method to close detail modal
    */
   protected onDetailModalClose(): void {
-    this.showDetailModal = false;
+    this.modalState.detail = false;
     this.selectedItem = null;
   }
 
@@ -266,7 +269,7 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
    * Generic method to close edit modal
    */
   protected onEditModalClose(): void {
-    this.showEditModal = false;
+    this.modalState.edit = false;
     this.selectedItem = null;
   }
 
@@ -274,7 +277,7 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
    * Generic method to close delete modal
    */
   protected onDeleteModalClose(): void {
-    this.showDeleteModal = false;
+    this.modalState.delete = false;
     this.selectedItem = null;
   }
 
@@ -282,7 +285,7 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
    * Generic method to close create modal
    */
   protected onCreateModalClose(): void {
-    this.showCreateModal = false;
+    this.modalState.create = false;
     this.selectedItem = null;
   }
 
@@ -291,31 +294,7 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
    */
   protected openApproveModal(item: TItem): void {
     this.selectedItem = item;
-    this.showApproveModal = true;
-  }
-
-  /**
-   * Generic method to open reject modal
-   */
-  protected openRejectModal(item: TItem): void {
-    this.selectedItem = item;
-    this.showRejectModal = true;
-  }
-
-  /**
-   * Generic method to close approve modal
-   */
-  protected onApproveModalClose(): void {
-    this.showApproveModal = false;
-    this.selectedItem = null;
-  }
-
-  /**
-   * Generic method to close reject modal
-   */
-  protected onRejectModalClose(): void {
-    this.showRejectModal = false;
-    this.selectedItem = null;
+    this.modalState.approve = true;
   }
 
   // ---------- Lifecycle methods ----------

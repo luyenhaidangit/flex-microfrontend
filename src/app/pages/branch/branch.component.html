@@ -380,7 +380,7 @@
 
 <!-- Reject Branch Modal Component -->
 <app-reject-branch-modal 
-  [isVisible]="showRejectModal"
+  [isVisible]="modalState.reject"
   [selectedRequest]="selectedRequest"
   (close)="onRejectModalClose()"
   (rejected)="onBranchRejected($event)">
@@ -617,7 +617,7 @@
 
 <!-- Branch Detail Modal Component -->
 <app-branch-detail-modal 
-  [isVisible]="showDetailModal"
+  [isVisible]="modalState.detail"
   [branch]="selectedBranch"
   (close)="onBranchDetailModalClose()">
 </app-branch-detail-modal>
