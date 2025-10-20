@@ -23,6 +23,13 @@ export class IssuerService {
 	getIssuerById(id: number): Observable<any> {
 		return this.http.get<any>(`${this.apiUrl}/approved/${id}`);
 	}
+
+	/**
+	* Get approved issuer change history by id
+	*/
+	getIssuerChangeHistoryById(id: number): Observable<any> {
+		return this.http.get<any>(`${this.apiUrl}/approved/${id}/history`);
+	}
 	
 	/**
 	* Get all pending issuer requests with pagination

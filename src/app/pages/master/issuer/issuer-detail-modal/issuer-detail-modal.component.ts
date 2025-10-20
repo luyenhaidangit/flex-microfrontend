@@ -14,22 +14,22 @@ export class IssuerDetailModalComponent implements OnInit, OnDestroy, OnChanges 
 	@Input() isVisible = false;
 	@Input() user: IssuerItem | null = null;
 	@Output() close = new EventEmitter<void>();
-
+	
 	selectedItem: IssuerItem | null = null;
 	changeHistory: any[] = [];
 	isLoadingHistory = false;
 	isLoadingUserDetail = false;
-
+	
 	private destroy$ = new Subject<void>();
-
+	
 	constructor(
 		private userService: UserService,
 		private toast: ToastService
 	) {}
-
+	
 	ngOnInit(): void {
 	}
-
+	
 	ngOnChanges(changes: SimpleChanges): void {		
 		// Check if user input changed and modal is visible
 		if (changes['user'] && this.isVisible && this.user) {
@@ -41,68 +41,84 @@ export class IssuerDetailModalComponent implements OnInit, OnDestroy, OnChanges 
 			this.loadUserDetail();
 		}
 	}
-
+	
 	ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
 	}
-
+	
 	onClose(): void {
 		this.close.emit();
 		this.resetStates();
 	}
-
+	
 	// Load detailed user information
 	private loadUserDetail(): void {
-    if (!this.user?.id) {
-            this.toast.error('Không tìm thấy thông tin TCPH!');
+		if (!this.user?.id) {
+			this.toast.error('Không tìm thấy thông tin TCPH!');
 			this.onClose();
 			return;
 		}
-
+		
 		this.isLoadingUserDetail = true;
 		this.changeHistory = [];
 		this.selectedItem = null;
-
-    (this.userService as any).getIssuerById(this.user.id)
-			.pipe(
-				takeUntil(this.destroy$),
-				finalize(() => this.isLoadingUserDetail = false)
-			)
-			.subscribe({
-				next: (res) => {
-					if (res?.isSuccess) {
-						this.selectedItem = res.data;
-					} else {
-                        this.toast.error('Không thể lấy thông tin chi tiết TCPH!');
-						this.onClose();
-					}
-				},
-				error: (err) => {
-                    this.toast.error('Không thể lấy thông tin chi tiết TCPH!');
+		
+		(this.userService as any).getIssuerById(this.user.id)
+		.pipe(
+			takeUntil(this.destroy$),
+			finalize(() => this.isLoadingUserDetail = false)
+		)
+		.subscribe({
+			next: (res) => {
+				if (res?.isSuccess) {
+					this.selectedItem = res.data;
+				} else {
+					this.toast.error('Không thể lấy thông tin chi tiết TCPH!');
 					this.onClose();
 				}
-			});
+			},
+			error: (err) => {
+				this.toast.error('Không thể lấy thông tin chi tiết TCPH!');
+				this.onClose();
+			}
+		});
 	}
-
+	
 	// Load change history when history tab is opened
 	loadChangeHistory(): void {
-    if (!this.selectedItem?.id) {
-            this.toast.error('Không tìm thấy TCPH!');
+		if (!this.selectedItem?.id) {
+			this.toast.error('Không tìm thấy TCPH!');
 			return;
 		}
-
+		
 		// Only load if not already loaded
 		if (this.changeHistory.length > 0) {
 			return;
 		}
-
-    this.isLoadingHistory = true;
-    // No issuer change history endpoint available yet
-    this.isLoadingHistory = false;
-    this.changeHistory = [];
+		
+		this.isLoadingHistory = true;
+		(this.userService as any).getIssuerChangeHistoryById(this.selectedItem.id)
+		.pipe(
+			takeUntil(this.destroy$),
+			finalize(() => this.isLoadingHistory = false)
+		)
+		.subscribe({
+			next: (res: any) => {
+				if (res?.isSuccess) {
+					this.changeHistory = res.data || [];
+				} else {
+					this.changeHistory = [];
+					this.toast.error('Không thể lấy lịch sử thay đổi!');
+				}
+			},
+			error: () => {
+				this.changeHistory = [];
+				this.toast.error('Không thể lấy lịch sử thay đổi!');
+			}
+		});
 	}
-
+	
 	// Reset all states
 	private resetStates(): void {
 		this.selectedItem = null;
