@@ -15,7 +15,7 @@ import { ApproveUserModalComponent } from './issuer/approve-user-modal/approve-u
 import { RejectUserModalComponent } from './issuer/reject-user-modal/reject-user-modal.component';
 import { DeleteUserModalComponent } from './issuer/delete-user-modal/delete-user-modal.component';
 import { EditUserModalComponent } from './issuer/edit-user-modal/edit-user-modal.component';
-import { CreateUserModalComponent } from './issuer/create-user-modal/create-user-modal.component';
+import { CreateUserModalComponent } from './issuer/create-issuer-modal/create-user-modal.component';
 import { UserDetailModalComponent } from './issuer/user-detail-modal/user-detail-modal.component';
 import { UserRequestDetailModalComponent } from './issuer/user-request-detail-modal/user-request-detail-modal.component';
 
