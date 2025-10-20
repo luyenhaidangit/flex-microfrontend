@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { SharedModule } from 'src/app/shared/shared.module';
 import { UIModule } from 'src/app/shared/ui/ui.module';
@@ -35,6 +35,7 @@ import { UserRequestDetailModalComponent } from './issuer/user-request-detail-mo
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     SharedModule,
     UIModule,
     CustomPaginationModule,
