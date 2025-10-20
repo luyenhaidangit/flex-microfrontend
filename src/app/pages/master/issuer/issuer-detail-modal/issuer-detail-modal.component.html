@@ -4,18 +4,18 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title text-primary fw-semibold">
-					<i class="fas fa-info-circle me-2"></i>Chi tiết người dùng
+					<i class="fas fa-info-circle me-2"></i>Chi tiết tổ chức phát hành
 					<app-badge *ngIf="selectedItem?.isActive !== undefined" [value]="selectedItem?.isActive" type="status"></app-badge>
 				</h5>
 				<button type="button" class="btn-close" aria-label="Close" (click)="onClose()"></button>
 			</div>
 			<div class="modal-body px-4 py-3">
-				<!-- Loading state for user detail -->
+				<!-- Loading state for issuer detail -->
 				<div *ngIf="isLoadingUserDetail" class="text-center py-4">
 					<div class="spinner-border text-primary" role="status">
 						<span class="visually-hidden">Đang tải...</span>
 					</div>
-					<p class="mt-2 text-muted">Đang tải thông tin chi tiết người dùng...</p>
+					<p class="mt-2 text-muted">Đang tải thông tin chi tiết TCPH...</p>
 				</div>
 
 				<!-- User detail content -->
@@ -24,26 +24,20 @@
 						<tab heading="Thông tin">
 							<div class="row gy-2 mt-3">
 							<div class="col-md-6">
-								<label class="form-label fw-bold text-muted">Tên đăng nhập</label>
-								<div class="text-dark ps-1">{{ selectedItem?.userName | safeField }}</div>
+								<label class="form-label fw-bold text-muted">Mã TCPH</label>
+								<div class="text-dark ps-1">{{ selectedItem?.issuerCode | safeField }}</div>
 							</div>
 							<div class="col-md-6">
-								<label class="form-label fw-bold text-muted">Họ và tên</label>
+								<label class="form-label fw-bold text-muted">Tên viết tắt</label>
+								<div class="text-dark ps-1">{{ selectedItem?.shortName | safeField }}</div>
+							</div>
+							<div class="col-md-6">
+								<label class="form-label fw-bold text-muted">Tên đầy đủ</label>
 								<div class="text-dark ps-1">{{ selectedItem?.fullName | safeField }}</div>
 							</div>
 							<div class="col-md-6">
-								<label class="form-label fw-bold text-muted">Email</label>
-								<div class="text-dark ps-1">{{ selectedItem?.email | safeField }}</div>
-							</div>
-							<div class="col-md-6">
-								<label class="form-label fw-bold text-muted">Chi nhánh</label>
-								<div class="text-dark ps-1">{{ selectedItem?.branchName | safeField }}</div>
-							</div>
-							<div class="col-md-6">
 								<label class="form-label fw-bold text-muted">Trạng thái</label>
-								<div class="text-dark ps-1">
-									<app-badge [value]="selectedItem?.isActive" type="status"></app-badge>
-								</div>
+								<div class="text-dark ps-1">{{ selectedItem?.status | safeField }}</div>
 							</div>
 						</div>
 					</tab>

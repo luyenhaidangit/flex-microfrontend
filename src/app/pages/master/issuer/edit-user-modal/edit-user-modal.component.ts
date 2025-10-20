@@ -68,9 +68,9 @@ export class EditUserModalComponent implements OnInit, OnChanges {
     if (this.hasLoadedData) return;
     this.isLoadingInitial = true;
     this.hasLoadedData = true;
-    const code = (this.user as any)?.issuerCode;
-    if (code) {
-      (this.userService as any).getIssuerByCode(code).subscribe({
+    const id = (this.user as any)?.id;
+    if (id) {
+      (this.userService as any).getIssuerById(id).subscribe({
         next: (res: any) => {
           if (res?.isSuccess) this.user = res.data;
           this.populateForm();
@@ -96,7 +96,8 @@ export class EditUserModalComponent implements OnInit, OnChanges {
       branchId: v.branchId,
       isActive: v.isActive
     };
-    (this.userService as any).updateIssuerRequest(dto).subscribe({
+    const issuerId = (this.user as any)?.issuerCode || (this.user as any)?.issuerId || (this.user as any)?.id;
+    (this.userService as any).updateIssuerRequest(issuerId, dto).subscribe({
       next: (res: any) => {
         this.isSubmitting = false;
         if (res?.isSuccess) {

@@ -66,8 +66,8 @@ export class DeleteUserModalComponent implements OnInit, OnDestroy, OnChanges {
 
   // Load detailed user information
   private loadUserDetail(): void {
-    if (!this.user?.issuerCode) {
-      this.toastService.error('Không tìm thấy thông tin người dùng!');
+    if (!this.user?.id) {
+      this.toastService.error('Không tìm thấy thông tin TCPH!');
       this.onClose();
       return;
     }
@@ -75,7 +75,7 @@ export class DeleteUserModalComponent implements OnInit, OnDestroy, OnChanges {
     this.isLoadingUserDetail = true;
     this.selectedItem = null;
 
-    (this.userService as any).getIssuerByCode(this.user.issuerCode)
+    (this.userService as any).getIssuerById(this.user.id)
       .pipe(
         takeUntil(this.destroy$),
         finalize(() => this.isLoadingUserDetail = false)
@@ -85,25 +85,26 @@ export class DeleteUserModalComponent implements OnInit, OnDestroy, OnChanges {
           if (res?.isSuccess) {
             this.selectedItem = res.data;
           } else {
-            this.toastService.error('Không thể lấy thông tin chi tiết người dùng!');
+            this.toastService.error('Không thể lấy thông tin chi tiết TCPH!');
             this.onClose();
           }
         },
         error: (err) => {
-          this.toastService.error('Không thể lấy thông tin chi tiết người dùng!');
+          this.toastService.error('Không thể lấy thông tin chi tiết TCPH!');
           this.onClose();
         }
       });
   }
 
   onSubmit(): void {
-    if (!this.user?.issuerCode) {
+    if (!(this.user as any)?.issuerId && !(this.user as any)?.issuerCode) {
       return;
     }
 
     this.isSubmitting = true;
 
-    (this.userService as any).createDeleteIssuerRequest(this.user.issuerCode)
+    const issuerId = (this.user as any)?.issuerId || (this.user as any)?.issuerCode;
+    (this.userService as any).createDeleteIssuerRequest(issuerId)
       .pipe(
         finalize(() => {
           this.isSubmitting = false;

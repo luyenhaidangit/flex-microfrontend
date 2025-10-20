@@ -11,91 +11,84 @@ export class IssuerService {
 	// ===== Query APIs =====
 	
 	/**
-	* Get all approved users with pagination
+	* Get all approved issuers with pagination
 	*/
 	getIssuers(params: any): Observable<any> {
 		return this.http.get<any>(`${this.apiUrl}/approved`, { params });
 	}
 	
 	/**
-	* Get approved user by username
+	* Get approved issuer by id
 	*/
-	getIssuerByCode(code: string): Observable<any> {
-		return this.http.get<any>(`${this.apiUrl}/approved/${code}`);
+	getIssuerById(id: number): Observable<any> {
+		return this.http.get<any>(`${this.apiUrl}/approved/${id}`);
 	}
 	
 	/**
-	* Get approved user change history by username
-	*/
-	getIssuerChangeHistory(code: string): Observable<any> {
-		return this.http.get<any>(`${this.apiUrl}/approved/${code}/history`);
-	}
-	
-	/**
-	* Get all pending user requests with pagination
+	* Get all pending issuer requests with pagination
 	*/
 	getPendingIssuerRequests(params: any): Observable<any> {
 		return this.http.get<any>(`${this.apiUrl}/requests/pending`, { params });
 	}
 	
 	/**
-	* Get pending user request detail by ID
+	* Get pending issuer request detail by ID
 	*/
 	getPendingIssuerRequestById(requestId: number): Observable<any> {
-		return this.http.get<any>(`${this.apiUrl}/request/pending/${requestId}`);
+		return this.http.get<any>(`${this.apiUrl}/requests/${requestId}`);
 	}
 	
 	// ===== Command APIs =====
 	
 	/**
-	* Create a new user request
+	* Create a new issuer request
 	*/
 	createIssuer(dto: any): Observable<any> {
-		return this.http.post<any>(`${this.apiUrl}/request/create`, dto);
+		return this.http.post<any>(`${this.apiUrl}/requests/create`, dto);
 	}
 	
 	/**
-	* Create a new user request (alias for createUser)
+	* Create a new issuer request (alias)
 	*/
 	createIssuerRequest(dto: any): Observable<any> {
 		return this.createIssuer(dto);
 	}
 	
 	/**
-	* Create update user request
+	* Create update issuer request
 	*/
-	updateIssuerRequest(request: any): Observable<any> {
-		return this.http.post<any>(`${this.apiUrl}/request/update`, request);
+	updateIssuerRequest(issuerId: string, request: any): Observable<any> {
+		return this.http.post<any>(`${this.apiUrl}/${issuerId}/requests/update`, request);
 	}
 	
 	/**
-	* Create delete user request
+	* Create delete issuer request
 	*/
-	deleteIssuerRequest(code: string): Observable<any> {
-		return this.http.post<any>(`${this.apiUrl}/request/delete/${code}`, {});
+	deleteIssuerRequest(issuerId: string): Observable<any> {
+		return this.http.post<any>(`${this.apiUrl}/${issuerId}/requests/delete`, {});
 	}
 	
 	/**
-	* Create delete user request
+	* Create delete issuer request (alias)
 	*/
-	createDeleteIssuerRequest(code: string): Observable<any> {
-		return this.http.post<any>(`${this.apiUrl}/request/delete/${code}`, {});
+	createDeleteIssuerRequest(issuerId: string): Observable<any> {
+		return this.http.post<any>(`${this.apiUrl}/${issuerId}/requests/delete`, {});
 	}
 	
 	/**
-	* Approve pending user request by ID
+	* Approve pending issuer request by ID
 	*/
 	approvePendingIssuerRequest(requestId: number, comment?: string): Observable<any> {
 		const body = comment ? { comment } : {};
-		return this.http.post<any>(`${this.apiUrl}/request/pending/${requestId}/approve`, body);
+		return this.http.post<any>(`${this.apiUrl}/requests/${requestId}/approve`, body);
 	}
 	
 	/**
-	* Reject pending user request by ID
+	* Reject pending issuer request by ID
 	*/
 	rejectPendingIssuerRequest(requestId: number, reason?: string): Observable<any> {
 		const body = reason ? { reason } : {};
-		return this.http.post<any>(`${this.apiUrl}/request/pending/${requestId}/reject`, body);
+		return this.http.post<any>(`${this.apiUrl}/requests/${requestId}/reject`, body);
 	}
 }
 

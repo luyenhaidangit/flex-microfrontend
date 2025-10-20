@@ -3,7 +3,7 @@ import { ToastService } from 'angular-toastify';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { IssuerService as UserService } from '../issuer.service';
-import { UserItem } from '../issuer.models';
+import { IssuerItem } from '../issuer.models';
 
 @Component({
 	selector: 'app-issuer-detail-modal',
@@ -12,10 +12,10 @@ import { UserItem } from '../issuer.models';
 })
 export class IssuerDetailModalComponent implements OnInit, OnDestroy, OnChanges {
 	@Input() isVisible = false;
-	@Input() user: UserItem | null = null;
+	@Input() user: IssuerItem | null = null;
 	@Output() close = new EventEmitter<void>();
 
-	selectedItem: UserItem | null = null;
+	selectedItem: IssuerItem | null = null;
 	changeHistory: any[] = [];
 	isLoadingHistory = false;
 	isLoadingUserDetail = false;
@@ -54,8 +54,8 @@ export class IssuerDetailModalComponent implements OnInit, OnDestroy, OnChanges 
 
 	// Load detailed user information
 	private loadUserDetail(): void {
-    if (!this.user?.issuerCode) {
-			this.toast.error('Không tìm thấy thông tin người dùng!');
+    if (!this.user?.id) {
+            this.toast.error('Không tìm thấy thông tin TCPH!');
 			this.onClose();
 			return;
 		}
@@ -64,7 +64,7 @@ export class IssuerDetailModalComponent implements OnInit, OnDestroy, OnChanges 
 		this.changeHistory = [];
 		this.selectedItem = null;
 
-    (this.userService as any).getIssuerByCode(this.user.issuerCode)
+    (this.userService as any).getIssuerById(this.user.id)
 			.pipe(
 				takeUntil(this.destroy$),
 				finalize(() => this.isLoadingUserDetail = false)
@@ -74,12 +74,12 @@ export class IssuerDetailModalComponent implements OnInit, OnDestroy, OnChanges 
 					if (res?.isSuccess) {
 						this.selectedItem = res.data;
 					} else {
-						this.toast.error('Không thể lấy thông tin chi tiết người dùng!');
+                        this.toast.error('Không thể lấy thông tin chi tiết TCPH!');
 						this.onClose();
 					}
 				},
 				error: (err) => {
-					this.toast.error('Không thể lấy thông tin chi tiết người dùng!');
+                    this.toast.error('Không thể lấy thông tin chi tiết TCPH!');
 					this.onClose();
 				}
 			});
@@ -87,8 +87,8 @@ export class IssuerDetailModalComponent implements OnInit, OnDestroy, OnChanges 
 
 	// Load change history when history tab is opened
 	loadChangeHistory(): void {
-    if (!this.selectedItem?.issuerCode) {
-			this.toast.error('Không tìm thấy username người dùng!');
+    if (!this.selectedItem?.id) {
+            this.toast.error('Không tìm thấy TCPH!');
 			return;
 		}
 
@@ -97,26 +97,10 @@ export class IssuerDetailModalComponent implements OnInit, OnDestroy, OnChanges 
 			return;
 		}
 
-		this.isLoadingHistory = true;
-    (this.userService as any).getIssuerChangeHistory(this.selectedItem.issuerCode)
-			.pipe(
-				takeUntil(this.destroy$),
-				finalize(() => this.isLoadingHistory = false)
-			)
-			.subscribe({
-				next: (res) => {
-					if (res?.isSuccess) {
-						this.changeHistory = res.data || [];
-					} else {
-						this.changeHistory = [];
-						this.toast.error('Không thể lấy lịch sử thay đổi!');
-					}
-				},
-				error: (err) => {
-					this.changeHistory = [];
-					this.toast.error('Không thể lấy lịch sử thay đổi!');
-				}
-			});
+    this.isLoadingHistory = true;
+    // No issuer change history endpoint available yet
+    this.isLoadingHistory = false;
+    this.changeHistory = [];
 	}
 
 	// Reset all states
