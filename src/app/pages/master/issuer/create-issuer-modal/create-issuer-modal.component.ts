@@ -1,16 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastService } from 'angular-toastify';
-import { SystemService } from 'src/app/core/services/system.service';
 import { UserService } from '../issuer.service';
 
-export interface CreateUserRequest {
-  userName: string;
-  email: string;
-  fullName: string;
-  branchId: number;
-  isActive: boolean;
-}
+interface CreateIssuerRequestDto { issuerCode: string; shortName: string; fullName: string; comment?: string; }
 
 @Component({
   selector: 'app-create-issuer-modal',
@@ -23,13 +16,11 @@ export class CreateIssuerModalComponent implements OnInit {
   @Output() created = new EventEmitter<void>();
 
   userForm!: FormGroup;
-  isLoading = false;
   isSubmitting = false;
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private systemService: SystemService,
     private toastService: ToastService
   ) {}
 
@@ -39,11 +30,10 @@ export class CreateIssuerModalComponent implements OnInit {
 
   private initializeForm(): void {
     this.userForm = this.fb.group({
-      userName: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9._-]+'), Validators.maxLength(50)]],
-      email: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
-      fullName: ['', [Validators.required, Validators.maxLength(100)]],
-      branchId: [null, [Validators.required]],
-      isActive: [true, [Validators.required]]
+      issuerCode: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9._-]+'), Validators.maxLength(50)]],
+      shortName: ['', [Validators.required, Validators.maxLength(100)]],
+      fullName: ['', [Validators.required, Validators.maxLength(200)]],
+      comment: ['',[Validators.maxLength(500)]]
     });
   }
 
@@ -54,12 +44,11 @@ export class CreateIssuerModalComponent implements OnInit {
     this.isSubmitting = true;
     const formData = this.userForm.value;
     
-    const createRequest: CreateUserRequest = {
-      userName: formData.userName.trim(),
-      email: formData.email.trim(),
-      fullName: formData.fullName.trim(),
-      branchId: formData.branchId,
-      isActive: formData.isActive
+    const createRequest: CreateIssuerRequestDto = {
+      issuerCode: (formData.issuerCode || '').trim(),
+      shortName: (formData.shortName || '').trim(),
+      fullName: (formData.fullName || '').trim(),
+      comment: (formData.comment || '').trim() || undefined
     };
 
     (this.userService as any).createIssuer(createRequest)
@@ -67,13 +56,12 @@ export class CreateIssuerModalComponent implements OnInit {
         next: (res) => {
           this.isSubmitting = false;
           if (res?.isSuccess) {
-            this.toastService.success('Gửi yêu cầu tạo user thành công!');
+            this.toastService.success('Gửi yêu cầu tạo tổ chức phát hành thành công!');
             this.userForm.reset();
-            this.userForm.patchValue({ isActive: true });
             this.created.emit();
             this.closeModal();
           } else {
-            this.toastService.error(res?.message || 'Không thể tạo user!');
+            this.toastService.error(res?.message || 'Không thể tạo tổ chức phát hành!');
           }
         },
         error: (err) => {
@@ -84,7 +72,6 @@ export class CreateIssuerModalComponent implements OnInit {
 
   onCancel(): void {
     this.userForm.reset();
-    this.userForm.patchValue({ isActive: true });
     this.closeModal();
   }
 
@@ -96,9 +83,7 @@ export class CreateIssuerModalComponent implements OnInit {
   // Reset all states
   private resetStates(): void {
     this.userForm.reset();
-    this.userForm.patchValue({ isActive: true });
     this.isSubmitting = false;
-    this.isLoading = false;
   }
 
   // Helper methods for form validation
@@ -124,11 +109,10 @@ export class CreateIssuerModalComponent implements OnInit {
 
   private getFieldLabel(fieldName: string): string {
     const labels: { [key: string]: string } = {
-      userName: 'Tên đăng nhập',
-      email: 'Email',
-      fullName: 'Họ và tên',
-      branchId: 'Chi nhánh',
-      isActive: 'Trạng thái'
+      issuerCode: 'Mã TCPH',
+      shortName: 'Tên viết tắt',
+      fullName: 'Tên đầy đủ',
+      comment: 'Ghi chú'
     };
     return labels[fieldName] || fieldName;
   }

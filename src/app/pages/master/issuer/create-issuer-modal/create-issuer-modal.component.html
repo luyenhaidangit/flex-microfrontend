@@ -1,10 +1,10 @@
-<!-- Create User Modal -->
+<!-- Create Issuer Modal -->
 <div class="modal fade show d-block" *ngIf="isVisible" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title text-success fw-semibold">
-          <i class="fas fa-plus-circle me-2"></i>Thêm mới người dùng
+          <i class="fas fa-plus-circle me-2"></i>Thêm mới tổ chức phát hành
         </h5>
         <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
       </div>
@@ -12,85 +12,53 @@
       <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="needs-validation">
         <div class="modal-body px-4 py-3">
     <div class="row gy-3">
-      <!-- Tên đăng nhập -->
+      <!-- Mã TCPH -->
       <div class="col-md-6 position-relative">
-        <label class="form-label">Tên đăng nhập <span class="text-danger">*</span></label>
+        <label class="form-label">Mã TCPH <span class="text-danger">*</span></label>
         <input 
           type="text" 
           class="form-control" 
-          formControlName="userName" 
-          placeholder="Nhập tên đăng nhập"
-          [ngClass]="{'is-invalid': isFieldInvalid('userName')}"
+          formControlName="issuerCode" 
+          placeholder="Nhập mã TCPH"
+          [ngClass]="{'is-invalid': isFieldInvalid('issuerCode')}"
           appUpperNoSpace />
-        <div *ngIf="isFieldInvalid('userName')" class="invalid-tooltip">
-          {{ getFieldError('userName') }}
+        <div *ngIf="isFieldInvalid('issuerCode')" class="invalid-tooltip">
+          {{ getFieldError('issuerCode') }}
         </div>
       </div>
 
-      <!-- Email -->
+      <!-- Tên viết tắt -->
       <div class="col-md-6 position-relative">
-        <label class="form-label">Email <span class="text-danger">*</span></label>
+        <label class="form-label">Tên viết tắt <span class="text-danger">*</span></label>
         <input 
-          type="email" 
+          type="text" 
           class="form-control" 
-          formControlName="email" 
-          placeholder="Nhập email"
-          [ngClass]="{'is-invalid': isFieldInvalid('email')}" />
-        <div *ngIf="isFieldInvalid('email')" class="invalid-tooltip">
-          {{ getFieldError('email') }}
+          formControlName="shortName" 
+          placeholder="Nhập tên viết tắt"
+          [ngClass]="{'is-invalid': isFieldInvalid('shortName')}" />
+        <div *ngIf="isFieldInvalid('shortName')" class="invalid-tooltip">
+          {{ getFieldError('shortName') }}
         </div>
       </div>
 
-      <!-- Họ và tên -->
+      <!-- Tên đầy đủ -->
       <div class="col-md-6 position-relative">
-        <label class="form-label">Họ và tên <span class="text-danger">*</span></label>
+        <label class="form-label">Tên đầy đủ <span class="text-danger">*</span></label>
         <input 
           type="text" 
           class="form-control" 
           formControlName="fullName" 
-          placeholder="Nhập họ và tên"
+          placeholder="Nhập tên đầy đủ"
           [ngClass]="{'is-invalid': isFieldInvalid('fullName')}" />
         <div *ngIf="isFieldInvalid('fullName')" class="invalid-tooltip">
           {{ getFieldError('fullName') }}
         </div>
       </div>
 
-      <!-- Chi nhánh -->
+      <!-- Ghi chú -->
       <div class="col-md-6 position-relative">
-        <label class="form-label">Chi nhánh <span class="text-danger">*</span></label>
-        <select 
-          class="form-select" 
-          formControlName="branchId"
-          [ngClass]="{'is-invalid': isFieldInvalid('branchId')}"
-          [disabled]="isLoading">
-          <option [ngValue]="null">Chọn chi nhánh</option>
-          <option *ngFor="let branch of branches" [ngValue]="branch.id">
-            {{ branch.name }}
-          </option>
-        </select>
-        <div *ngIf="isLoading" class="position-absolute top-50 end-0 translate-middle-y me-3">
-          <div class="spinner-border spinner-border-sm text-primary" role="status">
-            <span class="visually-hidden">Đang tải...</span>
-          </div>
-        </div>
-        <div *ngIf="isFieldInvalid('branchId')" class="invalid-tooltip">
-          {{ getFieldError('branchId') }}
-        </div>
-      </div>
-
-      <!-- Trạng thái -->
-      <div class="col-md-6 position-relative">
-        <label class="form-label">Trạng thái <span class="text-danger">*</span></label>
-        <select 
-          class="form-select" 
-          formControlName="isActive"
-          [ngClass]="{'is-invalid': isFieldInvalid('isActive')}">
-          <option [ngValue]="true">Hoạt động</option>
-          <option [ngValue]="false">Không hoạt động</option>
-        </select>
-        <div *ngIf="isFieldInvalid('isActive')" class="invalid-tooltip">
-          {{ getFieldError('isActive') }}
-        </div>
+        <label class="form-label">Ghi chú</label>
+        <textarea class="form-control" rows="1" formControlName="comment" placeholder="Ghi chú (không bắt buộc)"></textarea>
       </div>
 
     </div>
