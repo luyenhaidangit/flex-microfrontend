@@ -78,6 +78,12 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
     this.onSearch();
   }
 
+  // ---------- Modals ----------//
+  openCreateModal(): void {
+    this.selectedItem = null;
+    this.showCreateModal = true;
+  }
+
   // ---------- Helper ----------//
   private resetSearchParams(): void {
     // Reset all filter properties to their default values
@@ -222,15 +228,6 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
   protected openDeleteModal(item: TItem): void {
     this.selectedItem = item;
     this.showDeleteModal = true;
-  }
-
-  /**
-   * Generic method to open create modal
-   * Child classes can override to add custom logic
-   */
-  protected openCreateModal(): void {
-    this.selectedItem = null;
-    this.showCreateModal = true;
   }
 
   protected openStateModal(type: ModalType, item?: TItem): void {
