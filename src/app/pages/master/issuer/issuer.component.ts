@@ -18,6 +18,7 @@ export class IssuersComponent extends EntityListComponent<IssuerFilter, IssuerIt
 	
 	// Base
 	// Properties
+	state: any = this.state;
 	activeTabId: any = this.activeTabId;
 	selectedRequest: any = this.selectedRequest;
 	showRequestDetailModal = false;
@@ -34,7 +35,8 @@ export class IssuersComponent extends EntityListComponent<IssuerFilter, IssuerIt
 	constructor(
 		private issuerService: IssuerService
 	) {
-		super();
+		var filter = { keyword: '', type: null };
+		super(filter);
 	}
 
 	// Lifecycle
