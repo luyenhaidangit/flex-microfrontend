@@ -5,7 +5,7 @@
 			<div class="modal-header">
 				<h5 class="modal-title text-primary fw-semibold">
 					<i class="fas fa-info-circle me-2"></i>Chi tiết tổ chức phát hành
-					<app-badge *ngIf="selectedItem?.isActive !== undefined" [value]="selectedItem?.isActive" type="status"></app-badge>
+					<app-badge *ngIf="selectedItem?.status" [value]="selectedItem?.status" type="status"></app-badge>
 				</h5>
 				<button type="button" class="btn-close" aria-label="Close" (click)="onClose()"></button>
 			</div>
@@ -17,134 +17,134 @@
 					</div>
 					<p class="mt-2 text-muted">Đang tải thông tin chi tiết TCPH...</p>
 				</div>
-
+				
 				<!-- User detail content -->
 				<div *ngIf="!isLoadingUserDetail">
 					<tabset>
 						<tab heading="Thông tin">
 							<div class="row gy-2 mt-3">
-							<div class="col-md-6">
-								<label class="form-label fw-bold text-muted">Mã TCPH</label>
-								<div class="text-dark ps-1">{{ selectedItem?.issuerCode | safeField }}</div>
-							</div>
-							<div class="col-md-6">
-								<label class="form-label fw-bold text-muted">Tên viết tắt</label>
-								<div class="text-dark ps-1">{{ selectedItem?.shortName | safeField }}</div>
-							</div>
-							<div class="col-md-6">
-								<label class="form-label fw-bold text-muted">Tên đầy đủ</label>
-								<div class="text-dark ps-1">{{ selectedItem?.fullName | safeField }}</div>
-							</div>
-							<div class="col-md-6">
-								<label class="form-label fw-bold text-muted">Trạng thái</label>
-								<div class="text-dark ps-1">{{ selectedItem?.status | safeField }}</div>
-							</div>
-						</div>
-					</tab>
-					<tab heading="Lịch sử thay đổi" (selectTab)="loadChangeHistory()">
-						<div class="mt-3">
-							<!-- Loading state -->
-							<div *ngIf="isLoadingHistory" class="text-center py-4">
-								<div class="spinner-border text-primary" role="status">
-									<span class="visually-hidden">Đang tải...</span>
+								<div class="col-md-6">
+									<label class="form-label fw-bold text-muted">Mã TCPH</label>
+									<div class="text-dark ps-1">{{ selectedItem?.issuerCode | safeField }}</div>
 								</div>
-								<p class="mt-2 text-muted">Đang tải lịch sử thay đổi...</p>
+								<div class="col-md-6">
+									<label class="form-label fw-bold text-muted">Tên viết tắt</label>
+									<div class="text-dark ps-1">{{ selectedItem?.shortName | safeField }}</div>
+								</div>
+								<div class="col-md-6">
+									<label class="form-label fw-bold text-muted">Tên đầy đủ</label>
+									<div class="text-dark ps-1">{{ selectedItem?.fullName | safeField }}</div>
+								</div>
+								<div class="col-md-6">
+									<label class="form-label fw-bold text-muted">Trạng thái</label>
+									<div class="text-dark ps-1"><app-badge [value]="selectedItem?.status" type="status"></app-badge></div>
+								</div>
 							</div>
-
-							<!-- History content -->
-							<div *ngIf="!isLoadingHistory">
-								<div *ngIf="changeHistory?.length; else noHistory">
-									<div class="table-responsive">
-										<table class="table table-hover">
-											<thead class="table-light">
-												<tr>
-													<th>Thông tin yêu cầu</th>
-													<th>Thông tin duyệt</th>
-													<th>Trạng thái</th>
-													<th>Mô tả thay đổi</th>
-													<th>Thông tin thay đổi</th>
-												</tr>
-											</thead>
-											<tbody>
-												<ng-container *ngFor="let history of changeHistory; let i = index">
-													<!-- Main row -->
+						</tab>
+						<tab heading="Lịch sử thay đổi" (selectTab)="loadChangeHistory()">
+							<div class="mt-3">
+								<!-- Loading state -->
+								<div *ngIf="isLoadingHistory" class="text-center py-4">
+									<div class="spinner-border text-primary" role="status">
+										<span class="visually-hidden">Đang tải...</span>
+									</div>
+									<p class="mt-2 text-muted">Đang tải lịch sử thay đổi...</p>
+								</div>
+								
+								<!-- History content -->
+								<div *ngIf="!isLoadingHistory">
+									<div *ngIf="changeHistory?.length; else noHistory">
+										<div class="table-responsive">
+											<table class="table table-hover">
+												<thead class="table-light">
 													<tr>
-														<td>
-															<div class="fw-bold">
-																<span *ngIf="history.makerBy">
-																	<i class="fas fa-user-edit me-1"></i>{{ history.makerBy }}
-																</span>
-																<span *ngIf="!history.makerBy && history.approverBy">
-																	<i class="fas fa-user-check me-1"></i>{{ history.approverBy }}
-																</span>
-															</div>
-															<small class="text-muted">
-																<span *ngIf="history.makerTime">
-																	<i class="fas fa-calendar me-1"></i>{{ history.makerTime | date:'dd/MM/yyyy' }}
-																	<i class="fas fa-clock ms-2 me-1"></i>{{ history.makerTime | date:'HH:mm:ss' }}
-																</span>
-																<span *ngIf="!history.makerTime && history.approverTime">
-																	<i class="fas fa-calendar me-1"></i>{{ history.approverTime | date:'dd/MM/yyyy' }}
-																	<i class="fas fa-clock ms-2 me-1"></i>{{ history.approverTime | date:'HH:mm:ss' }}
-																</span>
-															</small>
-														</td>
-														<td>
-															<div class="fw-bold">
-																<span *ngIf="history.approverBy">
-																	<i class="fas fa-user-check me-1"></i>{{ history.approverBy }}
-																</span>
-																<span *ngIf="!history.approverBy && history.makerBy">
-																	<i class="fas fa-user-edit me-1"></i>{{ history.makerBy }}
-																</span>
-															</div>
-															<small class="text-muted">
-																<span *ngIf="history.approverTime">
-																	<i class="fas fa-calendar me-1"></i>{{ history.approverTime | date:'dd/MM/yyyy' }}
-																	<i class="fas fa-clock ms-2 me-1"></i>{{ history.approverTime | date:'HH:mm:ss' }}
-																</span>
-																<span *ngIf="!history.approverTime && history.makerTime">
-																	<i class="fas fa-calendar me-1"></i>{{ history.makerTime | date:'dd/MM/yyyy' }}
-																	<i class="fas fa-clock ms-2 me-1"></i>{{ history.makerTime | date:'HH:mm:ss' }}
-																</span>
-															</small>
-														</td>
-														<td>
-															<div class="d-flex align-items-center">
-																<app-badge [value]="history?.status" type="status"></app-badge>
-															</div>
-														</td>
-														<td>
-															<div class="text-dark">{{ history.description }}</div>
-														</td>
-														<td>
-															<div class="text-dark" *ngIf="history.changes">
-																<div class="changes-display">
-																	<details class="changes-details">
-																		<summary class="text-primary cursor-pointer">
-																			<i class="fas fa-eye me-1"></i>Xem chi tiết
-																		</summary>
-																		<pre class="changes-display rounded bg-light mt-2 mb-0 p-2">{{ history.changes | prettyJson }}</pre>
-																	</details>
-																</div>
-															</div>
-														</td>
+														<th>Thông tin yêu cầu</th>
+														<th>Thông tin duyệt</th>
+														<th>Trạng thái</th>
+														<th>Mô tả thay đổi</th>
+														<th>Thông tin thay đổi</th>
 													</tr>
-												</ng-container>
-											</tbody>
-										</table>
+												</thead>
+												<tbody>
+													<ng-container *ngFor="let history of changeHistory; let i = index">
+														<!-- Main row -->
+														<tr>
+															<td>
+																<div class="fw-bold">
+																	<span *ngIf="history.makerBy">
+																		<i class="fas fa-user-edit me-1"></i>{{ history.makerBy }}
+																	</span>
+																	<span *ngIf="!history.makerBy && history.approverBy">
+																		<i class="fas fa-user-check me-1"></i>{{ history.approverBy }}
+																	</span>
+																</div>
+																<small class="text-muted">
+																	<span *ngIf="history.makerTime">
+																		<i class="fas fa-calendar me-1"></i>{{ history.makerTime | date:'dd/MM/yyyy' }}
+																		<i class="fas fa-clock ms-2 me-1"></i>{{ history.makerTime | date:'HH:mm:ss' }}
+																	</span>
+																	<span *ngIf="!history.makerTime && history.approverTime">
+																		<i class="fas fa-calendar me-1"></i>{{ history.approverTime | date:'dd/MM/yyyy' }}
+																		<i class="fas fa-clock ms-2 me-1"></i>{{ history.approverTime | date:'HH:mm:ss' }}
+																	</span>
+																</small>
+															</td>
+															<td>
+																<div class="fw-bold">
+																	<span *ngIf="history.approverBy">
+																		<i class="fas fa-user-check me-1"></i>{{ history.approverBy }}
+																	</span>
+																	<span *ngIf="!history.approverBy && history.makerBy">
+																		<i class="fas fa-user-edit me-1"></i>{{ history.makerBy }}
+																	</span>
+																</div>
+																<small class="text-muted">
+																	<span *ngIf="history.approverTime">
+																		<i class="fas fa-calendar me-1"></i>{{ history.approverTime | date:'dd/MM/yyyy' }}
+																		<i class="fas fa-clock ms-2 me-1"></i>{{ history.approverTime | date:'HH:mm:ss' }}
+																	</span>
+																	<span *ngIf="!history.approverTime && history.makerTime">
+																		<i class="fas fa-calendar me-1"></i>{{ history.makerTime | date:'dd/MM/yyyy' }}
+																		<i class="fas fa-clock ms-2 me-1"></i>{{ history.makerTime | date:'HH:mm:ss' }}
+																	</span>
+																</small>
+															</td>
+															<td>
+																<div class="d-flex align-items-center">
+																	<app-badge [value]="history?.status" type="status"></app-badge>
+																</div>
+															</td>
+															<td>
+																<div class="text-dark">{{ history.description }}</div>
+															</td>
+															<td>
+																<div class="text-dark" *ngIf="history.changes">
+																	<div class="changes-display">
+																		<details class="changes-details">
+																			<summary class="text-primary cursor-pointer">
+																				<i class="fas fa-eye me-1"></i>Xem chi tiết
+																			</summary>
+																			<pre class="changes-display rounded bg-light mt-2 mb-0 p-2">{{ history.changes | prettyJson }}</pre>
+																		</details>
+																	</div>
+																</div>
+															</td>
+														</tr>
+													</ng-container>
+												</tbody>
+											</table>
+										</div>
 									</div>
+									<ng-template #noHistory>
+										<div class="text-muted text-center py-4">
+											<i class="fas fa-history text-muted mb-3" style="font-size: 3rem;"></i>
+										<p>Chưa có lịch sử thay đổi cho tổ chức phát hành này.</p>
+										</div>
+									</ng-template>
 								</div>
-								<ng-template #noHistory>
-									<div class="text-muted text-center py-4">
-										<i class="fas fa-history text-muted mb-3" style="font-size: 3rem;"></i>
-										<p>Chưa có lịch sử thay đổi cho người dùng này.</p>
-									</div>
-								</ng-template>
 							</div>
-						</div>
-					</tab>
-				</tabset>
+						</tab>
+					</tabset>
 				</div>
 			</div>
 			<div class="modal-footer border-top-0">
