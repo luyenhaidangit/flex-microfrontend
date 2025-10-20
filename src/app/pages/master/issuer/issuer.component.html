@@ -65,10 +65,10 @@
 							<button class="btn btn-link p-0 text-info" (click)="openDetailModal(u)" title="Xem">
 								<i class="fas fa-eye"></i>
 							</button>
-							<button class="btn btn-link p-0 ms-2 text-warning" (click)="openEditModal(u)" title="Sửa">
+							<button *ngIf="u.status !== 'UNA'" class="btn btn-link p-0 ms-2 text-warning" (click)="openEditModal(u)" title="Sửa">
 								<i class="fas fa-edit"></i>
 							</button>
-							<button class="btn btn-link p-0 ms-2 text-danger" (click)="openDeleteModal(u)" title="Xóa">
+							<button *ngIf="u.status !== 'UNA'" class="btn btn-link p-0 ms-2 text-danger" (click)="openDeleteModal(u)" title="Xóa">
 								<i class="fas fa-trash"></i>
 							</button>
 						</td>
