@@ -13,11 +13,11 @@ export interface CreateUserRequest {
 }
 
 @Component({
-  selector: 'app-create-user-modal',
-  templateUrl: './create-user-modal.component.html',
-  styleUrls: ['./create-user-modal.component.scss']
+  selector: 'app-create-issuer-modal',
+  templateUrl: './create-issuer-modal.component.html',
+  styleUrls: ['./create-issuer-modal.component.scss']
 })
-export class CreateUserModalComponent implements OnInit {
+export class CreateIssuerModalComponent implements OnInit {
   @Input() isVisible = false;
   @Output() close = new EventEmitter<void>();
   @Output() created = new EventEmitter<void>();
