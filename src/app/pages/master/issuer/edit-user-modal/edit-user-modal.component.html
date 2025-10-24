@@ -4,7 +4,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title text-warning fw-semibold">
-          <i class="fas fa-edit me-2"></i>Chỉnh sửa người dùng
+          <i class="fas fa-edit me-2"></i>Chỉnh sửa tổ chức phát hành
         </h5>
         <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
       </div>
@@ -21,22 +21,22 @@
 
     <!-- Form content -->
     <div *ngIf="!isLoadingInitial" class="row gy-3">
-      <!-- Tên đăng nhập -->
+      <!-- Mã TCPH -->
       <div class="col-md-6 position-relative">
-        <label class="form-label">Tên đăng nhập <span class="text-danger">*</span></label>
-        <input 
-          type="text" 
-          class="form-control non-editable-field" 
-          formControlName="userName" 
-          placeholder="Nhập tên đăng nhập"
-          [ngClass]="{'is-invalid': isFieldInvalid('userName')}"
-          appUpperNoSpace 
+        <label class="form-label">Mã TCPH <span class="text-danger">*</span></label>
+        <input
+          type="text"
+          class="form-control non-editable-field"
+          formControlName="issuerCode"
+          placeholder="Mã TCPH"
+          [ngClass]="{'is-invalid': isFieldInvalid('issuerCode')}"
+          appUpperNoSpace
           readonly />
         <div class="form-text text-muted">
-          <i class="fas fa-info-circle me-1"></i>Tên đăng nhập không thể thay đổi
+          <i class="fas fa-info-circle me-1"></i>Mã TCPH không thể thay đổi
         </div>
-        <div *ngIf="isFieldInvalid('userName')" class="invalid-tooltip">
-          {{ getFieldError('userName') }}
+        <div *ngIf="isFieldInvalid('issuerCode')" class="invalid-tooltip">
+          {{ getFieldError('issuerCode') }}
         </div>
       </div>
 
@@ -54,17 +54,17 @@
         </div>
       </div>
 
-      <!-- Họ và tên -->
+      <!-- Tên TCPH -->
       <div class="col-md-6 position-relative">
-        <label class="form-label">Họ và tên <span class="text-danger">*</span></label>
+        <label class="form-label">Tên TCPH <span class="text-danger">*</span></label>
         <input 
           type="text" 
           class="form-control" 
-          formControlName="fullName" 
-          placeholder="Nhập họ và tên"
-          [ngClass]="{'is-invalid': isFieldInvalid('fullName')}" />
-        <div *ngIf="isFieldInvalid('fullName')" class="invalid-tooltip">
-          {{ getFieldError('fullName') }}
+          formControlName="issuerName" 
+          placeholder="Nhập tên TCPH"
+          [ngClass]="{'is-invalid': isFieldInvalid('issuerName')}" />
+        <div *ngIf="isFieldInvalid('issuerName')" class="invalid-tooltip">
+          {{ getFieldError('issuerName') }}
         </div>
       </div>
 

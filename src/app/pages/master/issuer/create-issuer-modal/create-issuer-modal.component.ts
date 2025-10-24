@@ -26,6 +26,7 @@ export class CreateIssuerModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
+    this.prefillIssuerCode();
   }
 
   private initializeForm(): void {
@@ -34,6 +35,16 @@ export class CreateIssuerModalComponent implements OnInit {
       shortName: ['', [Validators.required, Validators.maxLength(100)]],
       fullName: ['', [Validators.required, Validators.maxLength(200)]],
       comment: ['',[Validators.maxLength(500)]]
+    });
+  }
+
+  private prefillIssuerCode(): void {
+    (this.userService as any).getNextIssuerCode().subscribe({
+      next: (res: any) => {
+        const code = res?.data?.code || res?.code || '';
+        if (code) this.userForm.patchValue({ issuerCode: code });
+      },
+      error: () => {}
     });
   }
 

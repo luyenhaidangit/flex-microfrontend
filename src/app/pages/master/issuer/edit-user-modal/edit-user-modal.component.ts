@@ -136,13 +136,7 @@ export class EditUserModalComponent implements OnInit, OnChanges {
   }
 
   private getFieldLabel(fieldName: string): string {
-    const labels: { [key: string]: string } = {
-      issuerCode: 'Mã TCPH',
-      email: 'Email',
-      issuerName: 'Tên TCPH',
-      branchId: 'Chi nhánh',
-      isActive: 'Trạng thái'
-    };
+    const labels: { [key: string]: string } = { issuerCode: 'Mã TCPH', email: 'Email', issuerName: 'Tên TCPH', branchId: 'Chi nhánh', isActive: 'Trạng thái' };
     return labels[fieldName] || fieldName;
   }
 
@@ -154,13 +148,7 @@ export class EditUserModalComponent implements OnInit, OnChanges {
   hasChanges(): boolean {
     if (!this.user) return false;
     const v = this.userForm.value;
-    return (
-      v.issuerCode !== ((this.user as any).issuerCode || '') ||
-      v.email !== (this.user.email || '') ||
-      v.issuerName !== ((this.user as any).issuerName || '') ||
-      v.branchId !== (this.user.branchId || null) ||
-      v.isActive !== (this.user.isActive ?? true)
-    );
+    return (v.issuerCode !== ((this.user as any).issuerCode || '') || v.email !== (this.user.email || '') || v.issuerName !== ((this.user as any).issuerName || '') || v.branchId !== (this.user.branchId || null) || v.isActive !== (this.user.isActive ?? true));
   }
 }
 

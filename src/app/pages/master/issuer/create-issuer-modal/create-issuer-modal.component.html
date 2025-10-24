@@ -17,9 +17,10 @@
         <label class="form-label">Mã TCPH <span class="text-danger">*</span></label>
         <input 
           type="text" 
-          class="form-control" 
+          class="form-control non-editable-field" 
           formControlName="issuerCode" 
           placeholder="Nhập mã TCPH"
+          [readonly]="true"
           [ngClass]="{'is-invalid': isFieldInvalid('issuerCode')}"
           appUpperNoSpace />
         <div *ngIf="isFieldInvalid('issuerCode')" class="invalid-tooltip">
