@@ -4,6 +4,7 @@ import { ToastService } from 'angular-toastify';
 import { IssuerService } from '../issuer.service';
 
 export interface UpdateIssuerRequest {
+  id: number;
   issuerCode: string;
   shortName: string;
   fullName: string;
@@ -87,13 +88,13 @@ export class EditIssuerModalComponent implements OnInit, OnChanges {
     this.isSubmitting = true;
     const v = this.issuerForm.value;
     const dto: UpdateIssuerRequest = {
+      id: (this.issuer as any)?.id,
       issuerCode: (v.issuerCode || '').trim(),
       shortName: (v.shortName || '').trim(),
       fullName: (v.fullName || '').trim(),
       comment: (v.comment || '').trim()
     };
-    const issuerId = (this.issuer as any)?.issuerCode || (this.issuer as any)?.issuerId || (this.issuer as any)?.id;
-    this.issuerService.updateIssuerRequest(issuerId, dto).subscribe({
+    this.issuerService.updateIssuerRequest(dto).subscribe({
       next: (res: any) => {
         this.isSubmitting = false;
         if (res?.isSuccess) {

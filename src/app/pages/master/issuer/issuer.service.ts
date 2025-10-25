@@ -72,8 +72,8 @@ export class IssuerService {
 	/**
 	* Create update issuer request
 	*/
-	updateIssuerRequest(issuerId: string, request: any): Observable<any> {
-		return this.http.post<any>(`${this.apiUrl}/${issuerId}/requests/update`, request);
+	updateIssuerRequest(request: any): Observable<any> {
+		return this.http.post<any>(`${this.apiUrl}/requests/update`, request);
 	}
 	
 	/**
