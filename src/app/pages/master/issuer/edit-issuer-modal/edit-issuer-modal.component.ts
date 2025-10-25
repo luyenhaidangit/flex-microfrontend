@@ -5,10 +5,9 @@ import { IssuerService } from '../issuer.service';
 
 export interface UpdateIssuerRequest {
   issuerCode: string;
-  email: string;
-  issuerName: string;
-  branchId: number;
-  isActive: boolean;
+  shortName: string;
+  fullName: string;
+  comment?: string;
 }
 
 @Component({
@@ -46,10 +45,9 @@ export class EditIssuerModalComponent implements OnInit, OnChanges {
   private initializeForm(): void {
     this.issuerForm = this.fb.group({
       issuerCode: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9._-]+'), Validators.maxLength(50)]],
-      email: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
-      issuerName: ['', [Validators.required, Validators.maxLength(100)]],
-      branchId: [null, [Validators.required]],
-      isActive: [true, [Validators.required]]
+      shortName: ['', [Validators.required, Validators.maxLength(50)]],
+      fullName: ['', [Validators.required, Validators.maxLength(200)]],
+      comment: ['', [Validators.maxLength(500)]]
     });
   }
 
@@ -57,10 +55,9 @@ export class EditIssuerModalComponent implements OnInit, OnChanges {
     if (!this.issuer) return;
     this.issuerForm.patchValue({
       issuerCode: (this.issuer as any).issuerCode || '',
-      email: this.issuer.email || '',
-      issuerName: (this.issuer as any).issuerName || '',
-      branchId: this.issuer.branchId || null,
-      isActive: this.issuer.isActive ?? true
+      shortName: (this.issuer as any).shortName || '',
+      fullName: (this.issuer as any).fullName || '',
+      comment: (this.issuer as any).comment || ''
     });
   }
 
@@ -91,10 +88,9 @@ export class EditIssuerModalComponent implements OnInit, OnChanges {
     const v = this.issuerForm.value;
     const dto: UpdateIssuerRequest = {
       issuerCode: (v.issuerCode || '').trim(),
-      email: (v.email || '').trim(),
-      issuerName: (v.issuerName || '').trim(),
-      branchId: v.branchId,
-      isActive: v.isActive
+      shortName: (v.shortName || '').trim(),
+      fullName: (v.fullName || '').trim(),
+      comment: (v.comment || '').trim()
     };
     const issuerId = (this.issuer as any)?.issuerCode || (this.issuer as any)?.issuerId || (this.issuer as any)?.id;
     this.issuerService.updateIssuerRequest(issuerId, dto).subscribe({
@@ -125,7 +121,6 @@ export class EditIssuerModalComponent implements OnInit, OnChanges {
     const field = this.issuerForm.get(fieldName);
     if (field?.touched && field?.invalid) {
       if (field.errors?.['required']) return `${this.getFieldLabel(fieldName)} không được để trống`;
-      if (field.errors?.['email']) return 'Email không đúng định dạng';
       if (field.errors?.['pattern']) return `${this.getFieldLabel(fieldName)} chỉ được chứa chữ, số, dấu chấm, gạch dưới và gạch ngang`;
       if (field.errors?.['maxlength']) {
         const maxLength = field.errors['maxlength'].requiredLength;
@@ -136,7 +131,12 @@ export class EditIssuerModalComponent implements OnInit, OnChanges {
   }
 
   private getFieldLabel(fieldName: string): string {
-    const labels: { [key: string]: string } = { issuerCode: 'Mã TCPH', email: 'Email', issuerName: 'Tên TCPH', branchId: 'Chi nhánh', isActive: 'Trạng thái' };
+    const labels: { [key: string]: string } = { 
+      issuerCode: 'Mã tổ chức phát hành', 
+      shortName: 'Tên viết tắt', 
+      fullName: 'Tên đầy đủ', 
+      comment: 'Ghi chú' 
+    };
     return labels[fieldName] || fieldName;
   }
 
@@ -148,6 +148,9 @@ export class EditIssuerModalComponent implements OnInit, OnChanges {
   hasChanges(): boolean {
     if (!this.issuer) return false;
     const v = this.issuerForm.value;
-    return (v.issuerCode !== ((this.issuer as any).issuerCode || '') || v.email !== (this.issuer.email || '') || v.issuerName !== ((this.issuer as any).issuerName || '') || v.branchId !== (this.issuer.branchId || null) || v.isActive !== (this.issuer.isActive ?? true));
+    return (v.issuerCode !== ((this.issuer as any).issuerCode || '') || 
+            v.shortName !== ((this.issuer as any).shortName || '') || 
+            v.fullName !== ((this.issuer as any).fullName || '') || 
+            v.comment !== ((this.issuer as any).comment || ''));
   }
 }
