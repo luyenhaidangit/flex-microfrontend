@@ -174,17 +174,6 @@
 												{{ getIssuerFullName(requestDetailData.newData) }}
 											</td>
 										</tr>
-										<tr>
-											<td class="fw-bold">Trạng thái</td>
-											<td [ngClass]="{'bg-light-warning': hasChanges('status')}">
-												<i [class]="getIssuerStatusIcon(requestDetailData.oldData)" class="me-1"></i>
-												{{ getIssuerStatusText(requestDetailData.oldData) }}
-											</td>
-											<td [ngClass]="{'bg-light-warning': hasChanges('status')}">
-												<i [class]="getIssuerStatusIcon(requestDetailData.newData)" class="me-1"></i>
-												{{ getIssuerStatusText(requestDetailData.newData) }}
-											</td>
-										</tr>
 										<tr *ngIf="getComment(requestDetailData.oldData) || getComment(requestDetailData.newData)">
 											<td class="fw-bold">Ghi chú</td>
 											<td [ngClass]="{'bg-light-warning': hasChanges('comment')}">
@@ -237,13 +226,6 @@
 											<td class="fw-bold">Tên đầy đủ</td>
 											<td class="bg-danger bg-opacity-10">
 												{{ getIssuerFullName(requestDetailData.oldData) | safeField }}
-											</td>
-										</tr>
-										<tr>
-											<td class="fw-bold">Trạng thái</td>
-											<td class="bg-danger bg-opacity-10">
-												<i [class]="getIssuerStatusIcon(requestDetailData.oldData)" class="me-1"></i>
-												{{ getIssuerStatusText(requestDetailData.oldData) }}
 											</td>
 										</tr>
 										<tr *ngIf="getReason(requestDetailData.oldData)">
