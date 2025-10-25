@@ -1,0 +1,96 @@
+// Modal overlay - đảm bảo màu nền ổn định
+.modal {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  
+  &.fade.show {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    opacity: 1 !important;
+  }
+}
+
+// Modal content - đảm bảo màu sắc ổn định
+.modal-content {
+  background-color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+// Modal header - giữ màu trắng
+.modal-header {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #dee2e6 !important;
+  
+  .modal-title {
+    color: #212529 !important;
+  }
+}
+
+// Modal body - giữ màu trắng
+.modal-body {
+  background-color: #ffffff !important;
+}
+
+// Modal footer - giữ màu trắng
+.modal-footer {
+  background-color: #ffffff !important;
+  border-top: 1px solid #dee2e6 !important;
+}
+
+// Card backgrounds - đảm bảo màu sắc ổn định
+.card {
+  &.bg-light {
+    background-color: #f8f9fa !important;
+  }
+}
+
+// Button colors - đảm bảo màu sắc ổn định
+.btn {
+  &.btn-success {
+    background-color: #198754 !important;
+    border-color: #198754 !important;
+    color: #ffffff !important;
+    
+    &:hover:not(:disabled) {
+      background-color: #157347 !important;
+      border-color: #146c43 !important;
+    }
+    
+    &:disabled {
+      background-color: #6c757d !important;
+      border-color: #6c757d !important;
+    }
+  }
+  
+  &.btn-outline-secondary {
+    color: #6c757d !important;
+    border-color: #6c757d !important;
+    
+    &:hover:not(:disabled) {
+      background-color: #6c757d !important;
+      color: #ffffff !important;
+    }
+    
+    &:disabled {
+      opacity: 0.65 !important;
+    }
+  }
+}
+
+// Text colors - đảm bảo màu sắc ổn định
+.text-success {
+  color: #198754 !important;
+}
+
+.text-muted {
+  color: #6c757d !important;
+}
+
+// Loading state - đảm bảo màu sắc ổn định
+.spinner-border {
+  color: #ffffff !important;
+}
+
+// Đảm bảo không có transition gây thay đổi màu sắc
+* {
+  transition: none !important;
+}

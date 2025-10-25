@@ -11,7 +11,7 @@ import { MasterRoutingModule } from './master-routing.module';
 import { DepositMemberComponent } from './deposit-member/deposit-member.component';
 import { SecuritiesDomainListComponent } from './securities-domain/securities-domain-list.component';
 import { IssuersComponent } from './issuer/issuer.component';
-import { ApproveUserModalComponent } from './issuer/approve-user-modal/approve-user-modal.component';
+import { ApproveIssuerModalComponent } from './issuer/approve-issuer-modal/approve-issuer-modal.component';
 import { RejectIssuerModalComponent } from './issuer/reject-user-modal/reject-user-modal.component';
 import { DeleteUserModalComponent } from './issuer/delete-user-modal/delete-user-modal.component';
 import { EditUserModalComponent } from './issuer/edit-user-modal/edit-user-modal.component';
@@ -24,7 +24,7 @@ import { IssuerRequestDetailModalComponent } from './issuer/issuer-request-detai
     DepositMemberComponent,
     SecuritiesDomainListComponent,
     IssuersComponent,
-    ApproveUserModalComponent,
+    ApproveIssuerModalComponent,
     RejectIssuerModalComponent,
     DeleteUserModalComponent,
     EditUserModalComponent,

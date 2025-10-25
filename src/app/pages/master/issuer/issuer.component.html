@@ -147,13 +147,13 @@
 (deleted)="onUserDeleted()">
 </app-delete-user-modal>
 
-<!-- Approve User Modal Component -->
-<app-approve-user-modal 
+<!-- Approve Issuer Modal Component -->
+<app-approve-issuer-modal 
 [isVisible]="modalState.approve"
 [selectedRequest]="selectedRequest"
 (close)="onApproveModalClose()"
 (approved)="onUserApproved($event)">
-</app-approve-user-modal>
+</app-approve-issuer-modal>
 
 <!-- Reject User Modal Component -->
 <app-reject-issuer-modal 

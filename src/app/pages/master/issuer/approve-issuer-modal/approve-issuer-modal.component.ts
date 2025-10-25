@@ -1,9 +1,9 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { ToastService } from 'angular-toastify';
 import { Subject, takeUntil } from 'rxjs';
-import { IssuerService as UserService } from '../issuer.service';
+import { IssuerService } from '../issuer.service';
 
-export interface UserRequestDetail {
+export interface IssuerRequestDetail {
   requestId: number;
   requestedBy: string;
   requestedDate: string;
@@ -11,22 +11,22 @@ export interface UserRequestDetail {
 }
 
 @Component({
-  selector: 'app-approve-user-modal',
-  templateUrl: './approve-user-modal.component.html',
-  styleUrls: ['./approve-user-modal.component.scss']
+  selector: 'app-approve-issuer-modal',
+  templateUrl: './approve-issuer-modal.component.html',
+  styleUrls: ['./approve-issuer-modal.component.scss']
 })
-export class ApproveUserModalComponent implements OnInit, OnDestroy, OnChanges {
+export class ApproveIssuerModalComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isVisible = false;
   @Input() selectedRequest: any;
   @Output() close = new EventEmitter<void>();
   @Output() approved = new EventEmitter<any>();
 
-  requestDetail: UserRequestDetail | null = null;
+  requestDetail: IssuerRequestDetail | null = null;
   isApproving = false;
   private destroy$ = new Subject<void>();
 
   constructor(
-    private userService: UserService,
+    private issuerService: IssuerService,
     private toastService: ToastService
   ) {}
 
@@ -83,9 +83,9 @@ export class ApproveUserModalComponent implements OnInit, OnDestroy, OnChanges {
 
 
   /**
-   * Approve the user request
+   * Approve the issuer request
    */
-  approveUser(): void {
+  approveIssuer(): void {
     // Prevent double submission
     if (this.isApproving) return;
     
@@ -97,12 +97,12 @@ export class ApproveUserModalComponent implements OnInit, OnDestroy, OnChanges {
 
     this.isApproving = true;
     
-    (this.userService as any).approvePendingIssuerRequest(requestId)
+    this.issuerService.approvePendingIssuerRequest(requestId, '')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           if (response && response.isSuccess) {
-            this.toastService.success('Phê duyệt yêu cầu thành công!');
+            this.toastService.success('Phê duyệt yêu cầu tổ chức phát hành thành công!');
             this.approved.emit(response.data);
             // Modal sẽ tự đóng thông qua event handler trong parent component
           } else {

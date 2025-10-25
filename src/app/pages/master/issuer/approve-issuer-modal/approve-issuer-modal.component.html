@@ -1,10 +1,10 @@
-<!-- Modal phê duyệt yêu cầu người dùng -->
+<!-- Modal phê duyệt yêu cầu tổ chức phát hành -->
 <div class="modal fade show d-block" *ngIf="isVisible" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title text-success fw-semibold">
-          <i class="fas fa-check-circle me-2"></i> Xác nhận duyệt yêu cầu
+          <i class="fas fa-check-circle me-2"></i> Xác nhận duyệt yêu cầu tổ chức phát hành
         </h5>
         <button type="button" class="btn-close" aria-label="Close" (click)="onClose()"></button>
       </div>
@@ -41,7 +41,7 @@
         <button type="button" class="btn btn-outline-secondary me-2" (click)="onClose()" [disabled]="isApproving">
           Hủy
         </button>
-        <button type="button" class="btn btn-success" (click)="approveUser()" [disabled]="isApproving">
+        <button type="button" class="btn btn-success" (click)="approveIssuer()" [disabled]="isApproving">
           <span *ngIf="isApproving" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
           <i *ngIf="!isApproving" class="fas fa-check me-1"></i>
           {{ isApproving ? 'Đang xử lý...' : 'Xác nhận' }}
