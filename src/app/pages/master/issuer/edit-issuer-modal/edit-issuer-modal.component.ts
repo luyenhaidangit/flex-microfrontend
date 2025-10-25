@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastService } from 'angular-toastify';
-import { IssuerService as UserService } from '../issuer.service';
+import { IssuerService } from '../issuer.service';
 
 export interface UpdateIssuerRequest {
   issuerCode: string;
@@ -12,39 +12,39 @@ export interface UpdateIssuerRequest {
 }
 
 @Component({
-  selector: 'app-edit-user-modal',
-  templateUrl: './edit-user-modal.component.html',
-  styleUrls: ['./edit-user-modal.component.scss']
+  selector: 'app-edit-issuer-modal',
+  templateUrl: './edit-issuer-modal.component.html',
+  styleUrls: ['./edit-issuer-modal.component.scss']
 })
-export class EditUserModalComponent implements OnInit, OnChanges {
+export class EditIssuerModalComponent implements OnInit, OnChanges {
   @Input() isVisible = false;
-  @Input() user: any = null;
+  @Input() issuer: any = null;
   @Output() close = new EventEmitter<void>();
   @Output() updated = new EventEmitter<void>();
 
-  userForm!: FormGroup;
+  issuerForm!: FormGroup;
   isSubmitting = false;
   isLoadingInitial = false;
   private hasLoadedData = false;
 
   constructor(
     private fb: FormBuilder,
-    private userService: UserService,
+    private issuerService: IssuerService,
     private toast: ToastService
   ) {}
 
   ngOnInit(): void {
     this.initializeForm();
-    if (this.user && !this.hasLoadedData) this.loadInitialData();
+    if (this.issuer && !this.hasLoadedData) this.loadInitialData();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['user'] && this.isVisible && this.user && !this.hasLoadedData) this.loadInitialData();
-    if (changes['isVisible'] && this.isVisible && this.user && !this.hasLoadedData) this.loadInitialData();
+    if (changes['issuer'] && this.isVisible && this.issuer && !this.hasLoadedData) this.loadInitialData();
+    if (changes['isVisible'] && this.isVisible && this.issuer && !this.hasLoadedData) this.loadInitialData();
   }
 
   private initializeForm(): void {
-    this.userForm = this.fb.group({
+    this.issuerForm = this.fb.group({
       issuerCode: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9._-]+'), Validators.maxLength(50)]],
       email: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
       issuerName: ['', [Validators.required, Validators.maxLength(100)]],
@@ -54,13 +54,13 @@ export class EditUserModalComponent implements OnInit, OnChanges {
   }
 
   private populateForm(): void {
-    if (!this.user) return;
-    this.userForm.patchValue({
-      issuerCode: (this.user as any).issuerCode || '',
-      email: this.user.email || '',
-      issuerName: (this.user as any).issuerName || '',
-      branchId: this.user.branchId || null,
-      isActive: this.user.isActive ?? true
+    if (!this.issuer) return;
+    this.issuerForm.patchValue({
+      issuerCode: (this.issuer as any).issuerCode || '',
+      email: this.issuer.email || '',
+      issuerName: (this.issuer as any).issuerName || '',
+      branchId: this.issuer.branchId || null,
+      isActive: this.issuer.isActive ?? true
     });
   }
 
@@ -68,11 +68,11 @@ export class EditUserModalComponent implements OnInit, OnChanges {
     if (this.hasLoadedData) return;
     this.isLoadingInitial = true;
     this.hasLoadedData = true;
-    const id = (this.user as any)?.id;
+    const id = (this.issuer as any)?.id;
     if (id) {
-      (this.userService as any).getIssuerById(id).subscribe({
+      this.issuerService.getIssuerById(id).subscribe({
         next: (res: any) => {
-          if (res?.isSuccess) this.user = res.data;
+          if (res?.isSuccess) this.issuer = res.data;
           this.populateForm();
           this.isLoadingInitial = false;
         },
@@ -85,10 +85,10 @@ export class EditUserModalComponent implements OnInit, OnChanges {
   }
 
   onSubmit(): void {
-    this.userForm.markAllAsTouched();
-    if (this.userForm.invalid || this.isSubmitting || !this.user) return;
+    this.issuerForm.markAllAsTouched();
+    if (this.issuerForm.invalid || this.isSubmitting || !this.issuer) return;
     this.isSubmitting = true;
-    const v = this.userForm.value;
+    const v = this.issuerForm.value;
     const dto: UpdateIssuerRequest = {
       issuerCode: (v.issuerCode || '').trim(),
       email: (v.email || '').trim(),
@@ -96,12 +96,12 @@ export class EditUserModalComponent implements OnInit, OnChanges {
       branchId: v.branchId,
       isActive: v.isActive
     };
-    const issuerId = (this.user as any)?.issuerCode || (this.user as any)?.issuerId || (this.user as any)?.id;
-    (this.userService as any).updateIssuerRequest(issuerId, dto).subscribe({
+    const issuerId = (this.issuer as any)?.issuerCode || (this.issuer as any)?.issuerId || (this.issuer as any)?.id;
+    this.issuerService.updateIssuerRequest(issuerId, dto).subscribe({
       next: (res: any) => {
         this.isSubmitting = false;
         if (res?.isSuccess) {
-          this.toast.success('Cập nhật TCPH thành công');
+          this.toast.success('Cập nhật tổ chức phát hành thành công');
           this.updated.emit();
           this.closeModal();
         } else {
@@ -122,7 +122,7 @@ export class EditUserModalComponent implements OnInit, OnChanges {
   }
 
   getFieldError(fieldName: string): string {
-    const field = this.userForm.get(fieldName);
+    const field = this.issuerForm.get(fieldName);
     if (field?.touched && field?.invalid) {
       if (field.errors?.['required']) return `${this.getFieldLabel(fieldName)} không được để trống`;
       if (field.errors?.['email']) return 'Email không đúng định dạng';
@@ -141,14 +141,13 @@ export class EditUserModalComponent implements OnInit, OnChanges {
   }
 
   isFieldInvalid(fieldName: string): boolean {
-    const field = this.userForm.get(fieldName);
+    const field = this.issuerForm.get(fieldName);
     return !!(field?.touched && field?.invalid);
   }
 
   hasChanges(): boolean {
-    if (!this.user) return false;
-    const v = this.userForm.value;
-    return (v.issuerCode !== ((this.user as any).issuerCode || '') || v.email !== (this.user.email || '') || v.issuerName !== ((this.user as any).issuerName || '') || v.branchId !== (this.user.branchId || null) || v.isActive !== (this.user.isActive ?? true));
+    if (!this.issuer) return false;
+    const v = this.issuerForm.value;
+    return (v.issuerCode !== ((this.issuer as any).issuerCode || '') || v.email !== (this.issuer.email || '') || v.issuerName !== ((this.issuer as any).issuerName || '') || v.branchId !== (this.issuer.branchId || null) || v.isActive !== (this.issuer.isActive ?? true));
   }
 }
-

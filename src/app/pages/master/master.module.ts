@@ -14,7 +14,7 @@ import { IssuersComponent } from './issuer/issuer.component';
 import { ApproveIssuerModalComponent } from './issuer/approve-issuer-modal/approve-issuer-modal.component';
 import { RejectIssuerModalComponent } from './issuer/reject-issuer-modal/reject-issuer-modal.component';
 import { DeleteUserModalComponent } from './issuer/delete-user-modal/delete-user-modal.component';
-import { EditUserModalComponent } from './issuer/edit-user-modal/edit-user-modal.component';
+import { EditIssuerModalComponent } from './issuer/edit-issuer-modal/edit-issuer-modal.component';
 import { CreateIssuerModalComponent } from './issuer/create-issuer-modal/create-issuer-modal.component';
 import { IssuerDetailModalComponent } from './issuer/issuer-detail-modal/issuer-detail-modal.component';
 import { IssuerRequestDetailModalComponent } from './issuer/issuer-request-detail-modal/issuer-request-detail-modal.component';
@@ -27,7 +27,7 @@ import { IssuerRequestDetailModalComponent } from './issuer/issuer-request-detai
     ApproveIssuerModalComponent,
     RejectIssuerModalComponent,
     DeleteUserModalComponent,
-    EditUserModalComponent,
+    EditIssuerModalComponent,
     CreateIssuerModalComponent,
     IssuerDetailModalComponent,
     IssuerRequestDetailModalComponent

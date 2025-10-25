@@ -124,13 +124,13 @@
 (close)="onDetailModalClose()">
 </app-issuer-detail-modal>
 
-<!-- Edit User Modal Component -->
-<app-edit-user-modal 
+<!-- Edit Issuer Modal Component -->
+<app-edit-issuer-modal 
 [isVisible]="modalState.edit"
-[user]="selectedItem"
+[issuer]="selectedItem"
 (close)="onEditModalClose()"
 (updated)="onUserUpdated()">
-</app-edit-user-modal>
+</app-edit-issuer-modal>
 
 <!-- Create User Modal Component -->
 <app-create-issuer-modal

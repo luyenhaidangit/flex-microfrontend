@@ -1,4 +1,4 @@
-<!-- Edit User Modal -->
+<!-- Edit Issuer Modal -->
 <div class="modal fade show d-block" *ngIf="isVisible" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
@@ -9,14 +9,14 @@
         <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
       </div>
 
-      <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="needs-validation">
+      <form [formGroup]="issuerForm" (ngSubmit)="onSubmit()" class="needs-validation">
         <div class="modal-body px-4 py-3">
     <!-- Loading state for initial data -->
     <div *ngIf="isLoadingInitial" class="text-center py-4">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Đang tải...</span>
       </div>
-      <p class="mt-2 text-muted">Đang tải thông tin người dùng...</p>
+      <p class="mt-2 text-muted">Đang tải thông tin tổ chức phát hành...</p>
     </div>
 
     <!-- Form content -->
@@ -111,7 +111,7 @@
     <!-- Changes indicator -->
     <div *ngIf="!isLoadingInitial && hasChanges()" class="alert alert-info mt-3 mb-0">
       <i class="fas fa-exclamation-triangle me-2"></i>
-      <strong>Lưu ý:</strong> Bạn đã thay đổi thông tin người dùng. Những thay đổi này sẽ được gửi để duyệt.
+      <strong>Lưu ý:</strong> Bạn đã thay đổi thông tin tổ chức phát hành. Những thay đổi này sẽ được gửi để duyệt.
     </div>
   </div>
 
@@ -122,7 +122,7 @@
           <button 
             type="submit" 
             class="btn btn-warning" 
-            [disabled]="isSubmitting || isLoadingInitial || userForm.invalid || !hasChanges()">
+            [disabled]="isSubmitting || isLoadingInitial || issuerForm.invalid || !hasChanges()">
             <i class="fas fa-paper-plane me-1" *ngIf="!isSubmitting"></i>
             <span class="spinner-border spinner-border-sm me-1" *ngIf="isSubmitting" role="status" aria-hidden="true"></span>
             {{ isSubmitting ? 'Đang gửi...' : 'Gửi duyệt' }}
