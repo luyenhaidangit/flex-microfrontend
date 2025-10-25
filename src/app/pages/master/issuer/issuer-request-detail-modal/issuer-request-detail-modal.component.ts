@@ -2,10 +2,9 @@ import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, S
 import { ToastService } from 'angular-toastify';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { IssuerService as UserService } from '../issuer.service';
-import { UserItem } from '../issuer.models';
+import { IssuerService } from '../issuer.service';
 
-export interface UserRequestDetailData {
+export interface IssuerRequestDetailData {
 	requestId: string | number;
 	createdBy?: string;
 	createdDate?: string;
@@ -22,23 +21,23 @@ export interface UserRequestDetailData {
 }
 
 @Component({
-	selector: 'app-user-request-detail-modal',
-	templateUrl: './user-request-detail-modal.component.html',
-	styleUrls: ['./user-request-detail-modal.component.scss']
+	selector: 'app-issuer-request-detail-modal',
+	templateUrl: './issuer-request-detail-modal.component.html',
+	styleUrls: ['./issuer-request-detail-modal.component.scss']
 })
-export class UserRequestDetailModalComponent implements OnInit, OnDestroy, OnChanges {
+export class IssuerRequestDetailModalComponent implements OnInit, OnDestroy, OnChanges {
 	@Input() isVisible = false;
 	@Input() selectedRequest: any = null;
 	@Output() close = new EventEmitter<void>();
 
-	requestDetailData: UserRequestDetailData | null = null;
+	requestDetailData: IssuerRequestDetailData | null = null;
 	isLoadingRequestDetail = false;
 	private hasLoadedForCurrentRequest = false;
 
 	private destroy$ = new Subject<void>();
 
 	constructor(
-		private userService: UserService,
+		private issuerService: IssuerService,
 		private toast: ToastService
 	) {}
 
@@ -84,7 +83,7 @@ export class UserRequestDetailModalComponent implements OnInit, OnDestroy, OnCha
 		this.requestDetailData = null;
 		this.hasLoadedForCurrentRequest = true;
 
-  (this.userService as any).getPendingIssuerRequestById(this.selectedRequest.requestId)
+		this.issuerService.getPendingIssuerRequestById(this.selectedRequest.requestId)
 			.pipe(
 				takeUntil(this.destroy$),
 				finalize(() => this.isLoadingRequestDetail = false)
@@ -160,44 +159,61 @@ export class UserRequestDetailModalComponent implements OnInit, OnDestroy, OnCha
 		return this.requestDetailData?.createdDate || this.requestDetailData?.requestedDate || '';
 	}
 
-	// Get user name from data
-	getUserName(data: any): string {
-		return data?.userName || data?.fullName || '';
+	// Get issuer code from data
+	getIssuerCode(data: any): string {
+		return data?.issuerCode || '';
 	}
 
-	// Get user name for display (prioritize fullName over userName)
-	getDisplayName(data: any): string {
-		return data?.fullName || data?.userName || '';
+	// Get issuer short name from data
+	getIssuerShortName(data: any): string {
+		return data?.shortName || '';
 	}
 
-	// Get user email from data
-	getUserEmail(data: any): string {
-		return data?.email || '';
-	}
-
-	// Get user full name from data
-	getUserFullName(data: any): string {
+	// Get issuer full name from data
+	getIssuerFullName(data: any): string {
 		return data?.fullName || '';
 	}
 
-	// Get branch name from data
-	getBranchName(data: any): string {
-		return data?.branchName || '';
+	// Get issuer name for display (prioritize fullName over shortName)
+	getDisplayName(data: any): string {
+		return data?.fullName || data?.shortName || '';
 	}
 
-	// Get user status from data
-	getUserStatus(data: any): boolean {
-		return data?.isActive || false;
+	// Get issuer status from data
+	getIssuerStatus(data: any): string {
+		return data?.status || '';
 	}
 
-	// Get user status text
-	getUserStatusText(data: any): string {
-		return this.getUserStatus(data) ? 'Hoạt động' : 'Không hoạt động';
+	// Get issuer status text
+	getIssuerStatusText(data: any): string {
+		const status = this.getIssuerStatus(data);
+		switch (status) {
+			case 'AUTHORISED': return 'Đã phê duyệt';
+			case 'UNAUTHORISED': return 'Chờ phê duyệt';
+			case 'REJECTED': return 'Đã từ chối';
+			default: return 'Không xác định';
+		}
 	}
 
-	// Get user status icon
-	getUserStatusIcon(data: any): string {
-		return this.getUserStatus(data) ? 'fas fa-check-circle text-success' : 'fas fa-times-circle text-danger';
+	// Get issuer status icon
+	getIssuerStatusIcon(data: any): string {
+		const status = this.getIssuerStatus(data);
+		switch (status) {
+			case 'AUTHORISED': return 'fas fa-check-circle text-success';
+			case 'UNAUTHORISED': return 'fas fa-clock text-warning';
+			case 'REJECTED': return 'fas fa-times-circle text-danger';
+			default: return 'fas fa-question-circle text-muted';
+		}
+	}
+
+	// Get comment from data
+	getComment(data: any): string {
+		return data?.comment || '';
+	}
+
+	// Get reason from data (for delete requests)
+	getReason(data: any): string {
+		return data?.reason || '';
 	}
 
 	// Check if field has changes (for UPDATE requests)

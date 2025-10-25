@@ -1,11 +1,11 @@
-<!-- User Request Detail Modal -->
+<!-- Issuer Request Detail Modal -->
 <div class="modal fade show d-block" *ngIf="isVisible" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
 	<div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title fw-semibold">
 					<i [class]="getRequestTypeIcon(getRequestType())" [ngClass]="getRequestTypeColor(getRequestType())" class="me-2"></i>
-					Chi tiết yêu cầu người dùng
+					Chi tiết yêu cầu tổ chức phát hành
 					<span *ngIf="getRequestType()" [ngClass]="getRequestTypeBadgeClass(getRequestType())" class="badge ms-2">
 						{{ getRequestTypeLabel(getRequestType()) }}
 					</span>
@@ -63,18 +63,18 @@
 									<div class="changes-summary">
 										<div *ngIf="getRequestType() === 'CREATE'" class="text-success">
 											<i class="fas fa-plus-circle me-1"></i>
-											<strong>Tạo mới người dùng:</strong> {{ getDisplayName(requestDetailData.newData) }}
+											<strong>Tạo mới tổ chức phát hành:</strong> {{ getDisplayName(requestDetailData.newData) }}
 										</div>
 										<div *ngIf="getRequestType() === 'UPDATE'" class="text-warning">
 											<i class="fas fa-edit me-1"></i>
-											<strong>Cập nhật người dùng:</strong> {{ getDisplayName(requestDetailData.oldData) }}
+											<strong>Cập nhật tổ chức phát hành:</strong> {{ getDisplayName(requestDetailData.oldData) }}
 											<div class="small text-muted mt-1">
 												<span class="change-count">Có thay đổi</span>
 											</div>
 										</div>
 										<div *ngIf="getRequestType() === 'DELETE'" class="text-danger">
 											<i class="fas fa-trash-alt me-1"></i>
-											<strong>Xóa người dùng:</strong> {{ getDisplayName(requestDetailData.oldData) }}
+											<strong>Xóa tổ chức phát hành:</strong> {{ getDisplayName(requestDetailData.oldData) }}
 										</div>
 									</div>
 								</div>
@@ -100,34 +100,27 @@
 									</thead>
 									<tbody>
 										<tr>
-											<td class="fw-bold">Tên đăng nhập</td>
+											<td class="fw-bold">Mã tổ chức phát hành</td>
 											<td class="bg-success bg-opacity-10">
-												{{ getUserName(requestDetailData.newData) | safeField }}
+												{{ getIssuerCode(requestDetailData.newData) | safeField }}
 											</td>
 										</tr>
 										<tr>
-											<td class="fw-bold">Họ và tên</td>
+											<td class="fw-bold">Tên viết tắt</td>
 											<td class="bg-success bg-opacity-10">
-												{{ getUserFullName(requestDetailData.newData) | safeField }}
+												{{ getIssuerShortName(requestDetailData.newData) | safeField }}
 											</td>
 										</tr>
 										<tr>
-											<td class="fw-bold">Email</td>
+											<td class="fw-bold">Tên đầy đủ</td>
 											<td class="bg-success bg-opacity-10">
-												{{ getUserEmail(requestDetailData.newData) | safeField }}
+												{{ getIssuerFullName(requestDetailData.newData) | safeField }}
 											</td>
 										</tr>
-										<tr>
-											<td class="fw-bold">Chi nhánh</td>
+										<tr *ngIf="getComment(requestDetailData.newData)">
+											<td class="fw-bold">Ghi chú</td>
 											<td class="bg-success bg-opacity-10">
-												{{ getBranchName(requestDetailData.newData) | safeField }}
-											</td>
-										</tr>
-										<tr>
-											<td class="fw-bold">Trạng thái</td>
-											<td class="bg-success bg-opacity-10">
-												<i [class]="getUserStatusIcon(requestDetailData.newData)" class="me-1"></i>
-												{{ getUserStatusText(requestDetailData.newData) }}
+												{{ getComment(requestDetailData.newData) | safeField }}
 											</td>
 										</tr>
 									</tbody>
@@ -155,50 +148,50 @@
 									</thead>
 									<tbody>
 										<tr>
-											<td class="fw-bold">Tên đăng nhập</td>
-											<td [ngClass]="{'bg-light-warning': hasChanges('userName')}">
-												{{ getUserName(requestDetailData.oldData) }}
+											<td class="fw-bold">Mã tổ chức phát hành</td>
+											<td [ngClass]="{'bg-light-warning': hasChanges('issuerCode')}">
+												{{ getIssuerCode(requestDetailData.oldData) }}
 											</td>
-											<td [ngClass]="{'bg-light-warning': hasChanges('userName')}">
-												{{ getUserName(requestDetailData.newData) }}
+											<td [ngClass]="{'bg-light-warning': hasChanges('issuerCode')}">
+												{{ getIssuerCode(requestDetailData.newData) }}
 											</td>
 										</tr>
 										<tr>
-											<td class="fw-bold">Họ và tên</td>
+											<td class="fw-bold">Tên viết tắt</td>
+											<td [ngClass]="{'bg-light-warning': hasChanges('shortName')}">
+												{{ getIssuerShortName(requestDetailData.oldData) }}
+											</td>
+											<td [ngClass]="{'bg-light-warning': hasChanges('shortName')}">
+												{{ getIssuerShortName(requestDetailData.newData) }}
+											</td>
+										</tr>
+										<tr>
+											<td class="fw-bold">Tên đầy đủ</td>
 											<td [ngClass]="{'bg-light-warning': hasChanges('fullName')}">
-												{{ getUserFullName(requestDetailData.oldData) }}
+												{{ getIssuerFullName(requestDetailData.oldData) }}
 											</td>
 											<td [ngClass]="{'bg-light-warning': hasChanges('fullName')}">
-												{{ getUserFullName(requestDetailData.newData) }}
-											</td>
-										</tr>
-										<tr>
-											<td class="fw-bold">Email</td>
-											<td [ngClass]="{'bg-light-warning': hasChanges('email')}">
-												{{ getUserEmail(requestDetailData.oldData) }}
-											</td>
-											<td [ngClass]="{'bg-light-warning': hasChanges('email')}">
-												{{ getUserEmail(requestDetailData.newData) }}
-											</td>
-										</tr>
-										<tr>
-											<td class="fw-bold">Chi nhánh</td>
-											<td [ngClass]="{'bg-light-warning': hasChanges('branchName')}">
-												{{ getBranchName(requestDetailData.oldData) }}
-											</td>
-											<td [ngClass]="{'bg-light-warning': hasChanges('branchName')}">
-												{{ getBranchName(requestDetailData.newData) }}
+												{{ getIssuerFullName(requestDetailData.newData) }}
 											</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Trạng thái</td>
-											<td [ngClass]="{'bg-light-warning': hasChanges('isActive')}">
-												<i [class]="getUserStatusIcon(requestDetailData.oldData)" class="me-1"></i>
-												{{ getUserStatusText(requestDetailData.oldData) }}
+											<td [ngClass]="{'bg-light-warning': hasChanges('status')}">
+												<i [class]="getIssuerStatusIcon(requestDetailData.oldData)" class="me-1"></i>
+												{{ getIssuerStatusText(requestDetailData.oldData) }}
 											</td>
-											<td [ngClass]="{'bg-light-warning': hasChanges('isActive')}">
-												<i [class]="getUserStatusIcon(requestDetailData.newData)" class="me-1"></i>
-												{{ getUserStatusText(requestDetailData.newData) }}
+											<td [ngClass]="{'bg-light-warning': hasChanges('status')}">
+												<i [class]="getIssuerStatusIcon(requestDetailData.newData)" class="me-1"></i>
+												{{ getIssuerStatusText(requestDetailData.newData) }}
+											</td>
+										</tr>
+										<tr *ngIf="getComment(requestDetailData.oldData) || getComment(requestDetailData.newData)">
+											<td class="fw-bold">Ghi chú</td>
+											<td [ngClass]="{'bg-light-warning': hasChanges('comment')}">
+												{{ getComment(requestDetailData.oldData) }}
+											</td>
+											<td [ngClass]="{'bg-light-warning': hasChanges('comment')}">
+												{{ getComment(requestDetailData.newData) }}
 											</td>
 										</tr>
 									</tbody>
@@ -217,7 +210,7 @@
 						<div class="card-body">
 							<div class="alert alert-danger">
 								<i class="fas fa-exclamation-triangle me-2"></i>
-								<strong>Cảnh báo:</strong> Người dùng này sẽ bị xóa vĩnh viễn sau khi được phê duyệt.
+								<strong>Cảnh báo:</strong> Tổ chức phát hành này sẽ bị xóa vĩnh viễn sau khi được phê duyệt.
 							</div>
 							<div class="table-responsive">
 								<table class="table table-bordered comparison-table">
@@ -229,34 +222,34 @@
 									</thead>
 									<tbody>
 										<tr>
-											<td class="fw-bold">Tên đăng nhập</td>
+											<td class="fw-bold">Mã tổ chức phát hành</td>
 											<td class="bg-danger bg-opacity-10">
-												{{ getUserName(requestDetailData.oldData) | safeField }}
+												{{ getIssuerCode(requestDetailData.oldData) | safeField }}
 											</td>
 										</tr>
 										<tr>
-											<td class="fw-bold">Họ và tên</td>
+											<td class="fw-bold">Tên viết tắt</td>
 											<td class="bg-danger bg-opacity-10">
-												{{ getUserFullName(requestDetailData.oldData) | safeField }}
+												{{ getIssuerShortName(requestDetailData.oldData) | safeField }}
 											</td>
 										</tr>
 										<tr>
-											<td class="fw-bold">Email</td>
+											<td class="fw-bold">Tên đầy đủ</td>
 											<td class="bg-danger bg-opacity-10">
-												{{ getUserEmail(requestDetailData.oldData) | safeField }}
-											</td>
-										</tr>
-										<tr>
-											<td class="fw-bold">Chi nhánh</td>
-											<td class="bg-danger bg-opacity-10">
-												{{ getBranchName(requestDetailData.oldData) | safeField }}
+												{{ getIssuerFullName(requestDetailData.oldData) | safeField }}
 											</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Trạng thái</td>
 											<td class="bg-danger bg-opacity-10">
-												<i [class]="getUserStatusIcon(requestDetailData.oldData)" class="me-1"></i>
-												{{ getUserStatusText(requestDetailData.oldData) }}
+												<i [class]="getIssuerStatusIcon(requestDetailData.oldData)" class="me-1"></i>
+												{{ getIssuerStatusText(requestDetailData.oldData) }}
+											</td>
+										</tr>
+										<tr *ngIf="getReason(requestDetailData.oldData)">
+											<td class="fw-bold">Lý do xóa</td>
+											<td class="bg-danger bg-opacity-10">
+												{{ getReason(requestDetailData.oldData) | safeField }}
 											</td>
 										</tr>
 									</tbody>

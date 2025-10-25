@@ -12,12 +12,12 @@ import { DepositMemberComponent } from './deposit-member/deposit-member.componen
 import { SecuritiesDomainListComponent } from './securities-domain/securities-domain-list.component';
 import { IssuersComponent } from './issuer/issuer.component';
 import { ApproveUserModalComponent } from './issuer/approve-user-modal/approve-user-modal.component';
-import { RejectUserModalComponent } from './issuer/reject-user-modal/reject-user-modal.component';
+import { RejectIssuerModalComponent } from './issuer/reject-user-modal/reject-user-modal.component';
 import { DeleteUserModalComponent } from './issuer/delete-user-modal/delete-user-modal.component';
 import { EditUserModalComponent } from './issuer/edit-user-modal/edit-user-modal.component';
 import { CreateIssuerModalComponent } from './issuer/create-issuer-modal/create-issuer-modal.component';
 import { IssuerDetailModalComponent } from './issuer/issuer-detail-modal/issuer-detail-modal.component';
-import { UserRequestDetailModalComponent } from './issuer/user-request-detail-modal/user-request-detail-modal.component';
+import { IssuerRequestDetailModalComponent } from './issuer/issuer-request-detail-modal/issuer-request-detail-modal.component';
 
 @NgModule({
   declarations: [
@@ -25,12 +25,12 @@ import { UserRequestDetailModalComponent } from './issuer/user-request-detail-mo
     SecuritiesDomainListComponent,
     IssuersComponent,
     ApproveUserModalComponent,
-    RejectUserModalComponent,
+    RejectIssuerModalComponent,
     DeleteUserModalComponent,
     EditUserModalComponent,
     CreateIssuerModalComponent,
     IssuerDetailModalComponent,
-    UserRequestDetailModalComponent
+    IssuerRequestDetailModalComponent
   ],
   imports: [
     CommonModule,

@@ -11,11 +11,11 @@ export interface UserRequestDetail {
 }
 
 @Component({
-  selector: 'app-reject-user-modal',
+  selector: 'app-reject-issuer-modal',
   templateUrl: './reject-user-modal.component.html',
   styleUrls: ['./reject-user-modal.component.scss']
 })
-export class RejectUserModalComponent implements OnInit, OnDestroy, OnChanges {
+export class RejectIssuerModalComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isVisible = false;
   @Input() selectedRequest: any;
   @Output() close = new EventEmitter<void>();

@@ -156,16 +156,16 @@
 </app-approve-user-modal>
 
 <!-- Reject User Modal Component -->
-<app-reject-user-modal 
+<app-reject-issuer-modal 
 [isVisible]="modalState.reject"
 [selectedRequest]="selectedRequest"
 (close)="onRejectModalClose()"
 (rejected)="onUserRejected($event)">
-</app-reject-user-modal>
+</app-reject-issuer-modal>
 
-<!-- User Request Detail Modal Component -->
-<app-user-request-detail-modal 
+<!-- Issuer Request Detail Modal Component -->
+<app-issuer-request-detail-modal 
 [isVisible]="showRequestDetailModal"
 [selectedRequest]="selectedRequest"
 (close)="onRequestDetailModalClose()">
-</app-user-request-detail-modal>
+</app-issuer-request-detail-modal>
