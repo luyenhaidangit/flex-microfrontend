@@ -3,7 +3,7 @@
 	<div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title fw-semibold">
+				<h5 class="modal-title fw-semibold" [ngClass]="getRequestTypeColor(getRequestType())">
 					<i [class]="getRequestTypeIcon(getRequestType())" [ngClass]="getRequestTypeColor(getRequestType())" class="me-2"></i>
 					Chi tiết yêu cầu tổ chức phát hành
 					<span *ngIf="getRequestType()" [ngClass]="getRequestTypeBadgeClass(getRequestType())" class="badge ms-2">
