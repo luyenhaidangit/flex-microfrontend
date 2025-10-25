@@ -32,21 +32,17 @@
                   <div class="text-dark ps-1">{{ selectedItem?.issuerCode | safeField }}</div>
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label fw-bold text-muted">Tên TCPH</label>
-                  <div class="text-dark ps-1">{{ selectedItem?.issuerName | safeField }}</div>
+                  <label class="form-label fw-bold text-muted">Tên viết tắt</label>
+                  <div class="text-dark ps-1">{{ selectedItem?.shortName | safeField }}</div>
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label fw-bold text-muted">Email</label>
-                  <div class="text-dark ps-1">{{ selectedItem?.email | safeField }}</div>
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label fw-bold text-muted">Chi nhánh</label>
-                  <div class="text-dark ps-1">{{ selectedItem?.branchName | safeField }}</div>
+                  <label class="form-label fw-bold text-muted">Tên đầy đủ</label>
+                  <div class="text-dark ps-1">{{ selectedItem?.fullName | safeField }}</div>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label fw-bold text-muted">Trạng thái</label>
                   <div class="text-dark ps-1">
-                    <app-badge [value]="selectedItem?.isActive" type="status"></app-badge>
+                    <app-badge [value]="selectedItem?.status" type="status"></app-badge>
                   </div>
                 </div>
               </div>

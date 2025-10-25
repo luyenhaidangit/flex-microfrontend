@@ -6,6 +6,14 @@ import { Subject } from 'rxjs';
 import { IssuerService } from '../issuer.service';
 import { UserItem } from '../issuer.models';
 
+export interface IssuerItem {
+  id: number;
+  issuerCode: string;
+  shortName: string;
+  fullName: string;
+  status: string;
+}
+
 
 @Component({
   selector: 'app-delete-issuer-modal',
@@ -22,7 +30,7 @@ export class DeleteIssuerModalComponent implements OnInit, OnDestroy, OnChanges 
   isLoading = false;
   isSubmitting = false;
   isLoadingIssuerDetail = false;
-  selectedItem: UserItem | null = null;
+  selectedItem: IssuerItem | null = null;
 
   private destroy$ = new Subject<void>();
 
@@ -95,13 +103,13 @@ export class DeleteIssuerModalComponent implements OnInit, OnDestroy, OnChanges 
   }
 
   onSubmit(): void {
-    if (!(this.issuer as any)?.issuerId && !(this.issuer as any)?.issuerCode) {
+    if (!this.issuer?.id && !this.issuer?.issuerCode) {
       return;
     }
 
     this.isSubmitting = true;
 
-    const issuerId = (this.issuer as any)?.issuerId || (this.issuer as any)?.issuerCode;
+    const issuerId = this.issuer?.issuerCode || this.issuer?.id?.toString();
     this.issuerService.createDeleteIssuerRequest(issuerId)
       .pipe(
         finalize(() => {
