@@ -11,10 +11,11 @@ export class IssuerService {
 	// ===== Query APIs =====
 	
 	/**
-	* Get next issuer code from backend
+    * Get next issuer code from backend
 	*/
-	getNextIssuerCode(): Observable<any> {
-		return this.http.get<any>(`${this.apiUrl}/next-code`);
+    getNextIssuerCode(increment: boolean = false): Observable<any> {
+        const params: any = { increment };
+        return this.http.get<any>(`${this.apiUrl}/next-code`, { params });
 	}
 
 	/**

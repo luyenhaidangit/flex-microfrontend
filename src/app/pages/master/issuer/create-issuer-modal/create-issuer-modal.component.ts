@@ -17,6 +17,7 @@ export class CreateIssuerModalComponent implements OnInit {
 
   userForm!: FormGroup;
   isSubmitting = false;
+  isLoadingCode = false;
 
   constructor(
     private fb: FormBuilder,
@@ -39,12 +40,17 @@ export class CreateIssuerModalComponent implements OnInit {
   }
 
   private prefillIssuerCode(): void {
-    (this.userService as any).getNextIssuerCode().subscribe({
+    this.isLoadingCode = true;
+    (this.userService as any).getNextIssuerCode(false).subscribe({
       next: (res: any) => {
+        this.isLoadingCode = false;
         const code = res?.data?.code || res?.code || '';
         if (code) this.userForm.patchValue({ issuerCode: code });
       },
-      error: () => {}
+      error: (err) => {
+        this.isLoadingCode = false;
+        console.error('Error loading issuer code:', err);
+      }
     });
   }
 
@@ -77,6 +83,8 @@ export class CreateIssuerModalComponent implements OnInit {
         },
         error: (err) => {
           this.isSubmitting = false;
+          console.error('Error creating issuer:', err);
+          this.toastService.error('Có lỗi xảy ra khi tạo tổ chức phát hành. Vui lòng thử lại!');
         }
       });
   }
@@ -95,6 +103,7 @@ export class CreateIssuerModalComponent implements OnInit {
   private resetStates(): void {
     this.userForm.reset();
     this.isSubmitting = false;
+    this.isLoadingCode = false;
   }
 
   // Helper methods for form validation
