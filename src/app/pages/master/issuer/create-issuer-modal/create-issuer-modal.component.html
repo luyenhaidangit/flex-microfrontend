@@ -10,28 +10,33 @@
       </div>
 
       <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="needs-validation">
-        <div class="modal-body px-4 py-3">
-    <div class="row gy-3">
-      <!-- Mã TCPH -->
-      <div class="col-md-6 position-relative">
-        <label class="form-label">Mã TCPH <span class="text-danger">*</span></label>
-        <div class="input-group">
-          <input 
-            type="text" 
-            class="form-control non-editable-field" 
-            formControlName="issuerCode" 
-            placeholder="Nhập mã TCPH"
-            [readonly]="true"
-            [ngClass]="{'is-invalid': isFieldInvalid('issuerCode')}"
-            appUpperNoSpace />
-          <span *ngIf="isLoadingCode" class="input-group-text">
-            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          </span>
-        </div>
-        <div *ngIf="isFieldInvalid('issuerCode')" class="invalid-tooltip">
-          {{ getFieldError('issuerCode') }}
-        </div>
-      </div>
+        <div class="modal-body px-4 py-3 position-relative">
+          <!-- Loading Overlay -->
+          <div *ngIf="isLoadingCode" class="loading-overlay d-flex align-items-center justify-content-center">
+            <div class="text-center">
+              <div class="spinner-border text-primary mb-3" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <p class="mb-0 text-muted">Đang tải mã TCPH...</p>
+            </div>
+          </div>
+          
+          <div class="row gy-3" [class.loading-blur]="isLoadingCode">
+            <!-- Mã TCPH -->
+            <div class="col-md-6 position-relative">
+              <label class="form-label">Mã TCPH <span class="text-danger">*</span></label>
+              <input 
+                type="text" 
+                class="form-control non-editable-field" 
+                formControlName="issuerCode" 
+                placeholder="Nhập mã TCPH"
+                [readonly]="true"
+                [ngClass]="{'is-invalid': isFieldInvalid('issuerCode')}"
+                appUpperNoSpace />
+              <div *ngIf="isFieldInvalid('issuerCode')" class="invalid-tooltip">
+                {{ getFieldError('issuerCode') }}
+              </div>
+            </div>
 
       <!-- Tên viết tắt -->
       <div class="col-md-6 position-relative">
