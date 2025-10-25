@@ -74,12 +74,10 @@ export class IssuerDetailModalComponent implements OnInit, OnDestroy, OnChanges 
 				if (res?.isSuccess) {
 					this.selectedItem = res.data;
 				} else {
-					this.toast.error('Không thể lấy thông tin chi tiết TCPH!');
 					this.onClose();
 				}
 			},
 			error: (err) => {
-				this.toast.error('Không thể lấy thông tin chi tiết TCPH!');
 				this.onClose();
 			}
 		});

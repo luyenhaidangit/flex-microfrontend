@@ -85,12 +85,10 @@ export class DeleteUserModalComponent implements OnInit, OnDestroy, OnChanges {
           if (res?.isSuccess) {
             this.selectedItem = res.data;
           } else {
-            this.toastService.error('Không thể lấy thông tin chi tiết TCPH!');
             this.onClose();
           }
         },
         error: (err) => {
-          this.toastService.error('Không thể lấy thông tin chi tiết TCPH!');
           this.onClose();
         }
       });
