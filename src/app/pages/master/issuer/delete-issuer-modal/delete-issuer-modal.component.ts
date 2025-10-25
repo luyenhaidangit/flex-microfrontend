@@ -3,17 +3,17 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastService } from 'angular-toastify';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { IssuerService as UserService } from '../issuer.service';
+import { IssuerService } from '../issuer.service';
 import { UserItem } from '../issuer.models';
 
 
 @Component({
-  selector: 'app-delete-user-modal',
-  templateUrl: './delete-user-modal.component.html',
-  styleUrls: ['./delete-user-modal.component.scss']
+  selector: 'app-delete-issuer-modal',
+  templateUrl: './delete-issuer-modal.component.html',
+  styleUrls: ['./delete-issuer-modal.component.scss']
 })
-export class DeleteUserModalComponent implements OnInit, OnDestroy, OnChanges {
-  @Input() user: UserItem | null = null;
+export class DeleteIssuerModalComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() issuer: UserItem | null = null;
   @Input() isVisible = false;
   @Output() close = new EventEmitter<void>();
   @Output() deleted = new EventEmitter<void>();
@@ -21,14 +21,14 @@ export class DeleteUserModalComponent implements OnInit, OnDestroy, OnChanges {
   deleteForm!: FormGroup;
   isLoading = false;
   isSubmitting = false;
-  isLoadingUserDetail = false;
+  isLoadingIssuerDetail = false;
   selectedItem: UserItem | null = null;
 
   private destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
-    private userService: UserService,
+    private issuerService: IssuerService,
     private toastService: ToastService
   ) {}
 
@@ -37,14 +37,14 @@ export class DeleteUserModalComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // Check if user input changed and modal is visible
-    if (changes['user'] && this.isVisible && this.user) {
-      this.loadUserDetail();
+    // Check if issuer input changed and modal is visible
+    if (changes['issuer'] && this.isVisible && this.issuer) {
+      this.loadIssuerDetail();
     }
     
     // Check if modal visibility changed
-    if (changes['isVisible'] && this.isVisible && this.user) {
-      this.loadUserDetail();
+    if (changes['isVisible'] && this.isVisible && this.issuer) {
+      this.loadIssuerDetail();
     }
   }
 
@@ -64,21 +64,21 @@ export class DeleteUserModalComponent implements OnInit, OnDestroy, OnChanges {
     this.resetStates();
   }
 
-  // Load detailed user information
-  private loadUserDetail(): void {
-    if (!this.user?.id) {
-      this.toastService.error('Không tìm thấy thông tin TCPH!');
+  // Load detailed issuer information
+  private loadIssuerDetail(): void {
+    if (!this.issuer?.id) {
+      this.toastService.error('Không tìm thấy thông tin tổ chức phát hành!');
       this.onClose();
       return;
     }
 
-    this.isLoadingUserDetail = true;
+    this.isLoadingIssuerDetail = true;
     this.selectedItem = null;
 
-    (this.userService as any).getIssuerById(this.user.id)
+    this.issuerService.getIssuerById(this.issuer.id)
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => this.isLoadingUserDetail = false)
+        finalize(() => this.isLoadingIssuerDetail = false)
       )
       .subscribe({
         next: (res) => {
@@ -95,14 +95,14 @@ export class DeleteUserModalComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onSubmit(): void {
-    if (!(this.user as any)?.issuerId && !(this.user as any)?.issuerCode) {
+    if (!(this.issuer as any)?.issuerId && !(this.issuer as any)?.issuerCode) {
       return;
     }
 
     this.isSubmitting = true;
 
-    const issuerId = (this.user as any)?.issuerId || (this.user as any)?.issuerCode;
-    (this.userService as any).createDeleteIssuerRequest(issuerId)
+    const issuerId = (this.issuer as any)?.issuerId || (this.issuer as any)?.issuerCode;
+    this.issuerService.createDeleteIssuerRequest(issuerId)
       .pipe(
         finalize(() => {
           this.isSubmitting = false;
@@ -110,12 +110,12 @@ export class DeleteUserModalComponent implements OnInit, OnDestroy, OnChanges {
       )
       .subscribe({
         next: (response) => {
-          this.toastService.success('Yêu cầu xóa người dùng đã được gửi thành công!');
+          this.toastService.success('Yêu cầu xóa tổ chức phát hành đã được gửi thành công!');
           this.deleted.emit();
           this.onClose();
         },
         error: (error) => {
-          console.error('Error creating delete user request:', error);
+          console.error('Error creating delete issuer request:', error);
           this.toastService.error('Có lỗi xảy ra khi gửi yêu cầu xóa!');
         }
       });
@@ -124,7 +124,7 @@ export class DeleteUserModalComponent implements OnInit, OnDestroy, OnChanges {
   // Reset all states
   private resetStates(): void {
     this.selectedItem = null;
-    this.isLoadingUserDetail = false;
+    this.isLoadingIssuerDetail = false;
   }
 
   get isFormValid(): boolean {

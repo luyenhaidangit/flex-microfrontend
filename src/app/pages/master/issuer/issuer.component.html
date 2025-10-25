@@ -139,13 +139,13 @@
 (created)="onUserCreated()">
 </app-create-issuer-modal>
 
-<!-- Delete User Modal Component -->
-<app-delete-user-modal 
+<!-- Delete Issuer Modal Component -->
+<app-delete-issuer-modal 
 [isVisible]="modalState.delete"
-[user]="selectedItem"
+[issuer]="selectedItem"
 (close)="onDeleteModalClose()"
 (deleted)="onUserDeleted()">
-</app-delete-user-modal>
+</app-delete-issuer-modal>
 
 <!-- Approve Issuer Modal Component -->
 <app-approve-issuer-modal 

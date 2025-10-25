@@ -13,7 +13,7 @@ import { SecuritiesDomainListComponent } from './securities-domain/securities-do
 import { IssuersComponent } from './issuer/issuer.component';
 import { ApproveIssuerModalComponent } from './issuer/approve-issuer-modal/approve-issuer-modal.component';
 import { RejectIssuerModalComponent } from './issuer/reject-issuer-modal/reject-issuer-modal.component';
-import { DeleteUserModalComponent } from './issuer/delete-user-modal/delete-user-modal.component';
+import { DeleteIssuerModalComponent } from './issuer/delete-issuer-modal/delete-issuer-modal.component';
 import { EditIssuerModalComponent } from './issuer/edit-issuer-modal/edit-issuer-modal.component';
 import { CreateIssuerModalComponent } from './issuer/create-issuer-modal/create-issuer-modal.component';
 import { IssuerDetailModalComponent } from './issuer/issuer-detail-modal/issuer-detail-modal.component';
@@ -26,7 +26,7 @@ import { IssuerRequestDetailModalComponent } from './issuer/issuer-request-detai
     IssuersComponent,
     ApproveIssuerModalComponent,
     RejectIssuerModalComponent,
-    DeleteUserModalComponent,
+    DeleteIssuerModalComponent,
     EditIssuerModalComponent,
     CreateIssuerModalComponent,
     IssuerDetailModalComponent,

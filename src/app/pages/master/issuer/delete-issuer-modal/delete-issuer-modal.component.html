@@ -1,39 +1,39 @@
-<!-- Delete User Modal -->
+<!-- Delete Issuer Modal -->
 <div class="modal fade show d-block" *ngIf="isVisible" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title text-danger fw-semibold">
-          <i class="fas fa-trash-alt me-2"></i>Gửi yêu cầu xóa người dùng
+          <i class="fas fa-trash-alt me-2"></i>Gửi yêu cầu xóa tổ chức phát hành
           <app-badge *ngIf="selectedItem?.isActive !== undefined" [value]="selectedItem?.isActive" type="status"></app-badge>
         </h5>
         <button type="button" class="btn-close" aria-label="Close" (click)="onClose()"></button>
       </div>
       <div class="modal-body px-4 py-3">
-        <!-- Loading state for user detail -->
-        <div *ngIf="isLoadingUserDetail" class="text-center py-4">
+        <!-- Loading state for issuer detail -->
+        <div *ngIf="isLoadingIssuerDetail" class="text-center py-4">
           <div class="spinner-border text-danger" role="status">
             <span class="visually-hidden">Đang tải...</span>
           </div>
-          <p class="mt-2 text-muted">Đang tải thông tin chi tiết người dùng...</p>
+          <p class="mt-2 text-muted">Đang tải thông tin chi tiết tổ chức phát hành...</p>
         </div>
 
-        <!-- User detail content -->
-        <div *ngIf="!isLoadingUserDetail">
-          <!-- User Information Card -->
+        <!-- Issuer detail content -->
+        <div *ngIf="!isLoadingIssuerDetail">
+          <!-- Issuer Information Card -->
           <div class="card border-0 bg-light mb-3">
             <div class="card-body">
               <h6 class="card-title text-muted mb-3">
-                <i class="fas fa-info-circle me-2"></i>Thông tin người dùng sẽ xóa
+                <i class="fas fa-info-circle me-2"></i>Thông tin tổ chức phát hành sẽ xóa
               </h6>
               <div class="row gy-2">
                 <div class="col-md-6">
-                  <label class="form-label fw-bold text-muted">Tên đăng nhập</label>
-                  <div class="text-dark ps-1">{{ selectedItem?.userName | safeField }}</div>
+                  <label class="form-label fw-bold text-muted">Mã TCPH</label>
+                  <div class="text-dark ps-1">{{ selectedItem?.issuerCode | safeField }}</div>
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label fw-bold text-muted">Họ và tên</label>
-                  <div class="text-dark ps-1">{{ selectedItem?.fullName | safeField }}</div>
+                  <label class="form-label fw-bold text-muted">Tên TCPH</label>
+                  <div class="text-dark ps-1">{{ selectedItem?.issuerName | safeField }}</div>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label fw-bold text-muted">Email</label>
@@ -57,7 +57,7 @@
           <div class="alert alert-warning d-flex align-items-center" role="alert">
             <i class="fas fa-exclamation-triangle me-2"></i>
             <div>
-              <strong>Cảnh báo:</strong> Bạn đang gửi yêu cầu xóa người dùng này. Yêu cầu sẽ được gửi đến người có quyền duyệt để xem xét.
+              <strong>Cảnh báo:</strong> Bạn đang gửi yêu cầu xóa tổ chức phát hành này. Yêu cầu sẽ được gửi đến người có quyền duyệt để xem xét.
             </div>
           </div>
         </div>
@@ -69,7 +69,7 @@
         <button 
           type="button" 
           class="btn btn-danger"
-          [disabled]="!isFormValid || isLoadingUserDetail"
+          [disabled]="!isFormValid || isLoadingIssuerDetail"
           [class.loading]="isSubmitting"
           (click)="onSubmit()">
           <i class="fas fa-paper-plane me-1" *ngIf="!isSubmitting"></i>

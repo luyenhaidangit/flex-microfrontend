@@ -1,18 +1,68 @@
-- Các file service chuyên xử lý việc kết nối api tới backend
-- Khi code hoặc được yêu cầu refactor service.ts cần kiểm tra các công việc:
-- Kiểm tra apiUrl và dùng lại nó tại các hàm, tránh lặp code
-- Khi tạo component quản lý gì đó, làm theo mẫu của user
-- Khi tạo component như việc sử dụng code dạng .config.ts
----------------------------------------------------------
-Tôi vừa copy toàn bộ code từ module user sang module issuer.
-Nhiệm vụ của bạn là rename toàn bộ nội dung trong module này từ user → issuer, bao gồm:
-Tên class, component, service, module, selector, template, biến, import path.
-Cập nhật lại mọi từ khóa User, Users, user, users → Issuer, Issuers, issuer, issuers tương ứng (đúng chữ hoa/thường).
-Cập nhật selector trong @Component (ví dụ app-user-list → app-issuer-list).
-Cập nhật tên file import và đường dẫn (ví dụ ./user-request-detail-modal/... → ./issuer-request-detail-modal/...).
-Giữ nguyên logic, code xử lý, và style SCSS.
-Format code sạch theo chuẩn Angular.
-Sau khi rename xong, hiển thị kết quả trong dạng code hoàn chỉnh của toàn module issuer, bao gồm tất cả file .ts, .html, .scss, .module.ts, service.ts, config.ts, models.ts.
-Không đổi phần logic xử lý dữ liệu.
-Không xoá decorator, import, hay meta Angular.
-Đảm bảo IssuerModule build được ngay sau khi refactor.
+# Cursor Rules for Flex Microfrontend
+
+## Component Renaming Guidelines
+
+### When renaming components from "user" to "issuer" or similar domain changes:
+
+1. **Create new folder structure**:
+   ```bash
+   mkdir -p "src/app/pages/master/issuer/new-component-name"
+   ```
+
+2. **Update TypeScript Component**:
+   - Change class name: `UserComponent` → `IssuerComponent`
+   - Change selector: `app-user-modal` → `app-issuer-modal`
+   - Update templateUrl and styleUrls paths
+   - Update input properties: `user` → `issuer`
+   - Update form names: `userForm` → `issuerForm`
+   - Update service references: `UserService` → `IssuerService`
+   - Update method names: `updateUser()` → `updateIssuer()`
+   - Update success messages to match domain
+
+3. **Update HTML Template**:
+   - Change modal titles and comments
+   - Update form bindings: `[formGroup]="userForm"` → `[formGroup]="issuerForm"`
+   - Update input properties: `[user]="selectedItem"` → `[issuer]="selectedItem"`
+   - Update loading text and alert messages
+   - Update method calls: `(click)="updateUser()"` → `(click)="updateIssuer()"`
+
+4. **Update SCSS Styling**:
+   - Keep core imports: `@import 'src/assets/scss/core_modal';`
+   - Add domain-specific styling if needed
+
+5. **Update Module Declarations**:
+   - Update import paths: `./old-folder/old-component.component`
+   - Update component declarations in @NgModule
+   - Update import statements
+
+6. **Update Parent Component HTML**:
+   - Change component selectors: `<app-user-modal>` → `<app-issuer-modal>`
+   - Update input properties: `[user]="selectedItem"` → `[issuer]="selectedItem"`
+   - Update comments and descriptions
+
+7. **Clean up old files**:
+   ```bash
+   Remove-Item -Recurse -Force "src/app/pages/master/issuer/old-folder"
+   ```
+
+### Key Patterns:
+- Always maintain consistent naming across all files
+- Update all references in parent components
+- Keep service method signatures consistent
+- Update UI text to match new domain
+- Preserve existing functionality while changing domain context
+
+### Example Renaming Pattern:
+```
+user-modal → issuer-modal
+- Folder: user-modal/ → issuer-modal/
+- Component: UserModalComponent → IssuerModalComponent  
+- Selector: app-user-modal → app-issuer-modal
+- Input: [user] → [issuer]
+- Form: userForm → issuerForm
+- Method: updateUser() → updateIssuer()
+- Service: UserService → IssuerService
+- Text: "người dùng" → "tổ chức phát hành"
+```
+
+This ensures consistent domain modeling and clear separation of concerns.
