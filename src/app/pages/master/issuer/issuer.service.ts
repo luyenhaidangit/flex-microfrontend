@@ -86,8 +86,12 @@ export class IssuerService {
 	/**
 	* Create delete issuer request (alias)
 	*/
-	createDeleteIssuerRequest(issuerId: string): Observable<any> {
-		return this.http.post<any>(`${this.apiUrl}/${issuerId}/requests/delete`, {});
+	createDeleteIssuerRequest(issuerId: number, reason?: string): Observable<any> {
+		const body = {
+			issuerId: issuerId,
+			reason: reason || ''
+		};
+		return this.http.post<any>(`${this.apiUrl}/requests/delete`, body);
 	}
 	
 	/**

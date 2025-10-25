@@ -103,14 +103,16 @@ export class DeleteIssuerModalComponent implements OnInit, OnDestroy, OnChanges 
   }
 
   onSubmit(): void {
-    if (!this.issuer?.id && !this.issuer?.issuerCode) {
+    if (!this.issuer?.id) {
       return;
     }
 
     this.isSubmitting = true;
 
-    const issuerId = this.issuer?.issuerCode || this.issuer?.id?.toString();
-    this.issuerService.createDeleteIssuerRequest(issuerId)
+    const issuerId = this.issuer.id;
+    const reason = 'Yêu cầu xóa tổ chức phát hành';
+    
+    this.issuerService.createDeleteIssuerRequest(issuerId, reason)
       .pipe(
         finalize(() => {
           this.isSubmitting = false;
@@ -124,7 +126,6 @@ export class DeleteIssuerModalComponent implements OnInit, OnDestroy, OnChanges 
         },
         error: (error) => {
           console.error('Error creating delete issuer request:', error);
-          this.toastService.error('Có lỗi xảy ra khi gửi yêu cầu xóa!');
         }
       });
   }
