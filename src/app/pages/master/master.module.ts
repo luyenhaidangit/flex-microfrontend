@@ -12,7 +12,7 @@ import { DepositMemberComponent } from './deposit-member/deposit-member.componen
 import { SecuritiesDomainListComponent } from './securities-domain/securities-domain-list.component';
 import { IssuersComponent } from './issuer/issuer.component';
 import { ApproveIssuerModalComponent } from './issuer/approve-issuer-modal/approve-issuer-modal.component';
-import { RejectIssuerModalComponent } from './issuer/reject-user-modal/reject-user-modal.component';
+import { RejectIssuerModalComponent } from './issuer/reject-issuer-modal/reject-issuer-modal.component';
 import { DeleteUserModalComponent } from './issuer/delete-user-modal/delete-user-modal.component';
 import { EditUserModalComponent } from './issuer/edit-user-modal/edit-user-modal.component';
 import { CreateIssuerModalComponent } from './issuer/create-issuer-modal/create-issuer-modal.component';

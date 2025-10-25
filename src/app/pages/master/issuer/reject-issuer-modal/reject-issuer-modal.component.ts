@@ -1,9 +1,9 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { ToastService } from 'angular-toastify';
 import { Subject, takeUntil } from 'rxjs';
-import { IssuerService as UserService } from '../issuer.service';
+import { IssuerService } from '../issuer.service';
 
-export interface UserRequestDetail {
+export interface IssuerRequestDetail {
   requestId: number;
   requestedBy: string;
   requestedDate: string;
@@ -12,8 +12,8 @@ export interface UserRequestDetail {
 
 @Component({
   selector: 'app-reject-issuer-modal',
-  templateUrl: './reject-user-modal.component.html',
-  styleUrls: ['./reject-user-modal.component.scss']
+  templateUrl: './reject-issuer-modal.component.html',
+  styleUrls: ['./reject-issuer-modal.component.scss']
 })
 export class RejectIssuerModalComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isVisible = false;
@@ -21,14 +21,14 @@ export class RejectIssuerModalComponent implements OnInit, OnDestroy, OnChanges 
   @Output() close = new EventEmitter<void>();
   @Output() rejected = new EventEmitter<any>();
 
-  requestDetail: UserRequestDetail | null = null;
+  requestDetail: IssuerRequestDetail | null = null;
   isRejecting = false;
   rejectionReason = '';
 
   private destroy$ = new Subject<void>();
 
   constructor(
-    private userService: UserService,
+    private issuerService: IssuerService,
     private toastService: ToastService
   ) {}
 
@@ -87,9 +87,9 @@ export class RejectIssuerModalComponent implements OnInit, OnDestroy, OnChanges 
   }
 
   /**
-   * Reject the user request
+   * Reject the issuer request
    */
-  rejectUser(): void {
+  rejectIssuer(): void {
     // Prevent double submission
     if (this.isRejecting) return;
     
@@ -107,12 +107,12 @@ export class RejectIssuerModalComponent implements OnInit, OnDestroy, OnChanges 
 
     this.isRejecting = true;
     
-    (this.userService as any).rejectPendingIssuerRequest(requestId, this.rejectionReason.trim())
+    this.issuerService.rejectPendingIssuerRequest(requestId, this.rejectionReason.trim())
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           if (response && response.isSuccess) {
-            this.toastService.success('Từ chối yêu cầu thành công!');
+            this.toastService.success('Từ chối yêu cầu tổ chức phát hành thành công!');
             this.rejected.emit(response.data);
             // Modal sẽ tự đóng thông qua event handler trong parent component
           } else {
