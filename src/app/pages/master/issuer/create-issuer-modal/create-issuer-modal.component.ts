@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastService } from 'angular-toastify';
 import { UserService } from '../issuer.service';
@@ -10,7 +10,7 @@ interface CreateIssuerRequestDto { issuerCode: string; shortName: string; fullNa
   templateUrl: './create-issuer-modal.component.html',
   styleUrls: ['./create-issuer-modal.component.scss']
 })
-export class CreateIssuerModalComponent implements OnInit {
+export class CreateIssuerModalComponent implements OnInit, OnChanges {
   @Input() isVisible = false;
   @Output() close = new EventEmitter<void>();
   @Output() created = new EventEmitter<void>();
@@ -27,7 +27,12 @@ export class CreateIssuerModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
-    this.prefillIssuerCode();
+  }
+
+  ngOnChanges(): void {
+    if (this.isVisible) {
+      this.prefillIssuerCode();
+    }
   }
 
   private initializeForm(): void {
