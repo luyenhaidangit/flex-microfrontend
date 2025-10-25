@@ -50,7 +50,7 @@ export class IssuerService {
 	* Get pending issuer request detail by ID
 	*/
 	getPendingIssuerRequestById(requestId: number): Observable<any> {
-		return this.http.get<any>(`${this.apiUrl}/requests/${requestId}`);
+		return this.http.get<any>(`${this.apiUrl}/requests/pending/${requestId}`);
 	}
 	
 	// ===== Command APIs =====

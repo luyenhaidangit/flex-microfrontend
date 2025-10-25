@@ -89,7 +89,6 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
         error: (err) => {
           this.isSubmitting = false;
           console.error('Error creating issuer:', err);
-          this.toastService.error('Có lỗi xảy ra khi tạo tổ chức phát hành. Vui lòng thử lại!');
         }
       });
   }
