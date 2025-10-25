@@ -11,13 +11,13 @@ export class IssuerService {
 	// ===== Query APIs =====
 	
 	/**
-    * Get next issuer code from backend
+	* Get next issuer code from backend
 	*/
-    getNextIssuerCode(increment: boolean = false): Observable<any> {
-        const params: any = { increment };
-        return this.http.get<any>(`${this.apiUrl}/next-code`, { params });
+	getNextIssuerCode(increment: boolean = false): Observable<any> {
+		const params: any = { increment };
+		return this.http.get<any>(`${this.apiUrl}/next-code`, { params });
 	}
-
+	
 	/**
 	* Get all approved issuers with pagination
 	*/
@@ -31,7 +31,7 @@ export class IssuerService {
 	getIssuerById(id: number): Observable<any> {
 		return this.http.get<any>(`${this.apiUrl}/approved/${id}`);
 	}
-
+	
 	/**
 	* Get approved issuer change history by id
 	*/
@@ -77,7 +77,7 @@ export class IssuerService {
 	}
 	
 	/**
-	* Create delete issuer request
+	* Create delete issuer request (deprecated - use createDeleteIssuerRequest instead)
 	*/
 	deleteIssuerRequest(issuerId: string): Observable<any> {
 		return this.http.post<any>(`${this.apiUrl}/${issuerId}/requests/delete`, {});
@@ -99,7 +99,7 @@ export class IssuerService {
 	*/
 	approvePendingIssuerRequest(requestId: number, comment?: string): Observable<any> {
 		const body = comment ? { comment } : {};
-		return this.http.post<any>(`${this.apiUrl}/requests/${requestId}/approve`, body);
+		return this.http.post<any>(`${this.apiUrl}/requests/pending/${requestId}/approve`, body);
 	}
 	
 	/**
@@ -107,7 +107,7 @@ export class IssuerService {
 	*/
 	rejectPendingIssuerRequest(requestId: number, reason?: string): Observable<any> {
 		const body = reason ? { reason } : {};
-		return this.http.post<any>(`${this.apiUrl}/requests/${requestId}/reject`, body);
+		return this.http.post<any>(`${this.apiUrl}/requests/pending/${requestId}/reject`, body);
 	}
 }
 
