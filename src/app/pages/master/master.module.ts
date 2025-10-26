@@ -10,6 +10,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { MasterRoutingModule } from './master-routing.module';
 import { DepositMemberComponent } from './deposit-member/deposit-member.component';
 import { SecuritiesDomainListComponent } from './securities-domain/securities-domain-list.component';
+import { SecuritiesComponent } from './securities/securities.component';
 import { IssuersComponent } from './issuer/issuer.component';
 import { ApproveIssuerModalComponent } from './issuer/approve-issuer-modal/approve-issuer-modal.component';
 import { RejectIssuerModalComponent } from './issuer/reject-issuer-modal/reject-issuer-modal.component';
@@ -23,6 +24,7 @@ import { IssuerRequestDetailModalComponent } from './issuer/issuer-request-detai
   declarations: [
     DepositMemberComponent,
     SecuritiesDomainListComponent,
+    SecuritiesComponent,
     IssuersComponent,
     ApproveIssuerModalComponent,
     RejectIssuerModalComponent,

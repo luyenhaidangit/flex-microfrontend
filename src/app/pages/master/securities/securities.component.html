@@ -1,0 +1,79 @@
+<div class="container-fluid">
+	<app-page-title title="{{ CONFIG.breadcrumb.title }}" [breadcrumbItems]="CONFIG.breadcrumb.items"></app-page-title>
+	
+	<div class="bg-white rounded shadow-sm p-3">
+		
+	<!-- Search -->
+	<div class="row gx-3 mb-3 gy-2 align-items-end">
+		<div class="col-md-2">
+			<label class="form-label fw-bold text-muted">Mã chứng khoán</label>
+			<input class="form-control" type="text" placeholder="Nhập mã chứng khoán..." [(ngModel)]="filter.securitiesCode">
+		</div>
+		
+		<div class="col-md-2">
+			<label class="form-label fw-bold text-muted">Mã tổ chức phát hành</label>
+			<input class="form-control" type="text" placeholder="Nhập mã tổ chức..." [(ngModel)]="filter.issuerCode">
+		</div>
+		
+		<div class="col-md-2">
+			<label class="form-label fw-bold text-muted">Mã miền</label>
+			<input class="form-control" type="text" placeholder="Nhập mã miền..." [(ngModel)]="filter.domainCode">
+		</div>
+		
+		<div class="col-md-2">
+			<label class="form-label fw-bold text-muted">Mã giao dịch</label>
+			<input class="form-control" type="text" placeholder="Nhập mã giao dịch..." [(ngModel)]="filter.symbol">
+		</div>
+		
+		<div class="col-md-2">
+			<label class="form-label fw-bold text-muted">Mã ISIN</label>
+			<input class="form-control" type="text" placeholder="Nhập mã ISIN..." [(ngModel)]="filter.isinCode">
+		</div>
+		
+		<div class="col-auto">
+			<button class="btn btn-primary w-100" (click)="onSearch()">
+				<i class="bx bx-search-alt-2"></i> Tìm kiếm
+			</button>
+		</div>
+	</div>
+	
+	<div class="table-responsive table-header-primary">
+		<table class="table align-middle table-nowrap dt-responsive nowrap w-100">
+			<thead>
+				<tr>
+					<th *ngFor="let col of CONFIG.table.columns">{{ col.label }}</th>
+				</tr>
+			</thead>
+			<tbody *ngIf="loading">
+				<tr *ngFor="let _ of [].constructor(CONFIG.table.skeleton.rows)">
+					<td *ngFor="let w of CONFIG.table.skeleton.columns">
+						<app-skeleton [width]="w" height="18px"></app-skeleton>
+					</td>
+				</tr>
+			</tbody>
+			<tbody *ngIf="!loading && rows.length">
+				<tr *ngFor="let item of rows; trackBy: trackByCode">
+					<td>{{ item.securitiesCode | safeField }}</td>
+					<td>{{ item.issuerCode | safeField }}</td>
+					<td>{{ item.domainCode | safeField }}</td>
+					<td>{{ item.symbol | safeField }}</td>
+					<td>{{ item.isinCode | safeField }}</td>
+				</tr>
+			</tbody>
+			<tbody *ngIf="!loading && !rows.length">
+				<tr>
+					<td [attr.colspan]="CONFIG.table.columns.length" class="text-center text-muted">Không có dữ liệu</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<!-- Pagination -->
+	<app-pagination
+		[paginationState]="getPaginationState()"
+		[pageSizeOptions]="[10, 20, 50, 100]"
+		(pageChanged)="onPageChange($event)"
+		(pageSizeChanged)="onPageSizeChange($event)">
+	</app-pagination>
+</div>
+</div>

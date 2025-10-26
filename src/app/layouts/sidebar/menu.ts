@@ -961,6 +961,12 @@ export const MENU: MenuItem[] = [
         link: '/master/issuers',
     },
     {
+        id: 'master-securities',
+        label: 'Thông tin chứng khoán',
+        icon: 'bx bx-trending-up',
+        link: '/master/securities',
+    },
+    {
         id: 'operation-title',
         label: 'Vận hành',
         isTitle: true
