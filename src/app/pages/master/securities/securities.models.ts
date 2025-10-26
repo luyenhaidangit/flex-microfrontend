@@ -9,7 +9,9 @@ export interface SecuritiesFilter {
 export interface SecuritiesItem {
 	securitiesCode: string;
 	issuerCode: string;
+	issuerName: string;
 	domainCode: string;
+	domainName: string;
 	symbol: string;
 	isinCode?: string;
 }

@@ -54,8 +54,8 @@
 			<tbody *ngIf="!loading && rows.length">
 				<tr *ngFor="let item of rows; trackBy: trackByCode">
 					<td>{{ item.securitiesCode | safeField }}</td>
-					<td>{{ item.issuerCode | safeField }}</td>
-					<td>{{ item.domainCode | safeField }}</td>
+					<td>{{ item.issuerName | safeField }}</td>
+					<td>{{ item.domainName | safeField }}</td>
 					<td>{{ item.symbol | safeField }}</td>
 					<td>{{ item.isinCode | safeField }}</td>
 				</tr>

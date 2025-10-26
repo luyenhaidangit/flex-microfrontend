@@ -9,14 +9,14 @@ export const SECURITIES_CONFIG = {
   table: {
     columns: [
       { key: 'securitiesCode', label: 'Mã chứng khoán', width: '140px' },
-      { key: 'issuerCode', label: 'Mã tổ chức phát hành', width: '160px' },
-      { key: 'domainCode', label: 'Mã miền', width: '120px' },
+      { key: 'issuerName', label: 'Tên tổ chức phát hành', width: '200px' },
+      { key: 'domainName', label: 'Tên miền', width: '180px' },
       { key: 'symbol', label: 'Mã giao dịch', width: '120px' },
       { key: 'isinCode', label: 'Mã ISIN', width: '140px' }
     ],
     skeleton: {
       rows: 8,
-      columns: ['140px', '160px', '120px', '120px', '140px']
+      columns: ['140px', '200px', '180px', '120px', '140px']
     }
   },
   pagination: {
