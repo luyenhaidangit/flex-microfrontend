@@ -17,11 +17,7 @@ export class SecuritiesComponent implements OnInit {
 
   // Filters
   filter = {
-    securitiesCode: '',
-    issuerCode: '',
-    domainCode: '',
-    symbol: '',
-    isinCode: ''
+    securitiesCode: ''
   };
 
   // Pagination state
@@ -65,10 +61,6 @@ export class SecuritiesComponent implements OnInit {
       pageIndex: this.paging.index,
       pageSize: this.paging.size,
       securitiesCode: this.filter.securitiesCode?.trim() || null,
-      issuerCode: this.filter.issuerCode?.trim() || null,
-      domainCode: this.filter.domainCode?.trim() || null,
-      symbol: this.filter.symbol?.trim() || null,
-      isinCode: this.filter.isinCode?.trim() || null,
     };
 
     this.loading = true; 

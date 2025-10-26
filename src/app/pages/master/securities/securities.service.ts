@@ -18,10 +18,6 @@ export class SecuritiesService {
 			pageSize: params.pageSize,
 		};
 		if (params.securitiesCode) query.securitiesCode = params.securitiesCode;
-		if (params.issuerCode) query.issuerCode = params.issuerCode;
-		if (params.domainCode) query.domainCode = params.domainCode;
-		if (params.symbol) query.symbol = params.symbol;
-		if (params.isinCode) query.isinCode = params.isinCode;
 		if (params.orderBy) query.orderBy = params.orderBy;
 		if (params.sortBy) query.sortBy = params.sortBy;
 
