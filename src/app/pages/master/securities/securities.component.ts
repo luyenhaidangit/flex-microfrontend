@@ -64,11 +64,11 @@ export class SecuritiesComponent implements OnInit {
     const params: SecuritiesSearchParams = {
       pageIndex: this.paging.index,
       pageSize: this.paging.size,
-      securitiesCode: this.filter.securitiesCode?.trim() || undefined,
-      issuerCode: this.filter.issuerCode?.trim() || undefined,
-      domainCode: this.filter.domainCode?.trim() || undefined,
-      symbol: this.filter.symbol?.trim() || undefined,
-      isinCode: this.filter.isinCode?.trim() || undefined,
+      securitiesCode: this.filter.securitiesCode?.trim() || null,
+      issuerCode: this.filter.issuerCode?.trim() || null,
+      domainCode: this.filter.domainCode?.trim() || null,
+      symbol: this.filter.symbol?.trim() || null,
+      isinCode: this.filter.isinCode?.trim() || null,
     };
 
     this.loading = true; 
