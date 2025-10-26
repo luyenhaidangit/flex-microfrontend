@@ -8,10 +8,10 @@ export const SECURITIES_CONFIG = {
   },
   table: {
     columns: [
-      { key: 'securitiesCode', label: 'Mã chứng khoán', width: '140px' },
+      { key: 'securitiesCode', label: 'Mã nội bộ', width: '140px' },
+      { key: 'symbol', label: 'Mã chứng khoán', width: '120px' },
       { key: 'issuerName', label: 'Tên tổ chức phát hành', width: '200px' },
-      { key: 'domainName', label: 'Tên miền', width: '180px' },
-      { key: 'symbol', label: 'Mã giao dịch', width: '120px' },
+      { key: 'domainName', label: 'Miền thanh toán', width: '180px' },
       { key: 'isinCode', label: 'Mã ISIN', width: '140px' }
     ],
     skeleton: {
