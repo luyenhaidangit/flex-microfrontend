@@ -1,5 +1,4 @@
 export const SECURITIES_CONFIG = {
-  // Breadcrumb configuration
   breadcrumb: {
     title: 'Thông tin chứng khoán',
     items: [
@@ -7,8 +6,6 @@ export const SECURITIES_CONFIG = {
       { label: 'Thông tin chứng khoán', active: true }
     ]
   },
-
-  // Table configuration
   table: {
     columns: [
       { key: 'securitiesCode', label: 'Mã chứng khoán', width: '140px' },
@@ -22,20 +19,12 @@ export const SECURITIES_CONFIG = {
       columns: ['140px', '160px', '120px', '120px', '140px']
     }
   },
-
-  // Messages
-  messages: {
-    success: {
-      load: 'Tải dữ liệu thành công'
-    },
-    error: {
-      load: 'Không lấy được danh sách chứng khoán',
-      general: 'Đã xảy ra lỗi'
-    }
-  },
-
-  // API endpoints
-  api: {
-    securities: '/api/securities'
+  pagination: {
+    pageSizeOptions: [
+      { value: 10, label: '10' },
+      { value: 20, label: '20' },
+      { value: 50, label: '50' },
+      { value: 100, label: '100' }
+    ]
   }
 };
