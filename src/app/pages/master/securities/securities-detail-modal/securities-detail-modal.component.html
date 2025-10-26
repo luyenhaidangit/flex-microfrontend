@@ -1,0 +1,59 @@
+<!-- Securities Detail Modal -->
+<div class="modal fade show d-block" *ngIf="isVisible" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+	<div class="modal-dialog modal-xl" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title text-primary fw-semibold">
+					<i class="fas fa-info-circle me-2"></i>Chi tiết chứng khoán
+				</h5>
+				<button type="button" class="btn-close" aria-label="Close" (click)="onClose()"></button>
+			</div>
+			<div class="modal-body px-4 py-3">
+				<!-- Loading state for securities detail -->
+				<div *ngIf="isLoadingSecuritiesDetail" class="text-center py-4">
+					<div class="spinner-border text-primary" role="status">
+						<span class="visually-hidden">Đang tải...</span>
+					</div>
+					<p class="mt-2 text-muted">Đang tải thông tin chi tiết chứng khoán...</p>
+				</div>
+				
+				<!-- Securities detail content -->
+				<div *ngIf="!isLoadingSecuritiesDetail && selectedItem">
+					<div class="row gy-2 mt-3">
+						<div class="col-md-6">
+							<label class="form-label fw-bold text-muted">Mã nội bộ</label>
+							<div class="text-dark ps-1">{{ selectedItem.securitiesCode | safeField }}</div>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label fw-bold text-muted">Mã chứng khoán</label>
+							<div class="text-dark ps-1">{{ selectedItem.symbol | safeField }}</div>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label fw-bold text-muted">Mã TCPH</label>
+							<div class="text-dark ps-1">{{ selectedItem.issuerCode | safeField }}</div>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label fw-bold text-muted">Tên tổ chức phát hành</label>
+							<div class="text-dark ps-1">{{ selectedItem.issuerName | safeField }}</div>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label fw-bold text-muted">Mã miền thanh toán</label>
+							<div class="text-dark ps-1">{{ selectedItem.domainCode | safeField }}</div>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label fw-bold text-muted">Tên miền thanh toán</label>
+							<div class="text-dark ps-1">{{ selectedItem.domainName | safeField }}</div>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label fw-bold text-muted">Mã ISIN</label>
+							<div class="text-dark ps-1">{{ selectedItem.isinCode | safeField }}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer border-top-0">
+				<button type="button" class="btn btn-outline-secondary" (click)="onClose()">Đóng</button>
+			</div>
+		</div>
+	</div>
+</div>

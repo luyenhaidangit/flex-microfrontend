@@ -38,6 +38,15 @@
 					<td>{{ item.issuerName | safeField }}</td>
 					<td>{{ item.domainName | safeField }}</td>
 					<td>{{ item.isinCode | safeField }}</td>
+					<td>
+						<div class="d-flex gap-1">
+							<button class="btn btn-sm btn-outline-primary" 
+									(click)="onViewDetails(item)"
+									title="Xem chi tiết">
+								<i class="fas fa-eye"></i>
+							</button>
+						</div>
+					</td>
 				</tr>
 			</tbody>
 			<tbody *ngIf="!loading && !rows.length">
@@ -57,3 +66,10 @@
 	</app-pagination>
 </div>
 </div>
+
+<!-- Securities Detail Modal -->
+<app-securities-detail-modal
+	[isVisible]="showDetailModal"
+	[securities]="selectedSecurities"
+	(close)="onCloseDetailModal()">
+</app-securities-detail-modal>

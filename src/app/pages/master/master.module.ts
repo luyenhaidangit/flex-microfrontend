@@ -19,6 +19,7 @@ import { EditIssuerModalComponent } from './issuer/edit-issuer-modal/edit-issuer
 import { CreateIssuerModalComponent } from './issuer/create-issuer-modal/create-issuer-modal.component';
 import { IssuerDetailModalComponent } from './issuer/issuer-detail-modal/issuer-detail-modal.component';
 import { IssuerRequestDetailModalComponent } from './issuer/issuer-request-detail-modal/issuer-request-detail-modal.component';
+import { SecuritiesDetailModalComponent } from './securities/securities-detail-modal/securities-detail-modal.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { IssuerRequestDetailModalComponent } from './issuer/issuer-request-detai
     EditIssuerModalComponent,
     CreateIssuerModalComponent,
     IssuerDetailModalComponent,
-    IssuerRequestDetailModalComponent
+    IssuerRequestDetailModalComponent,
+    SecuritiesDetailModalComponent
   ],
   imports: [
     CommonModule,

@@ -15,6 +15,10 @@ export class SecuritiesComponent implements OnInit {
   error?: string;
   CONFIG = SECURITIES_CONFIG;
 
+  // Modal state
+  showDetailModal = false;
+  selectedSecurities: SecuritiesItem | null = null;
+
   // Filters
   filter = {
     securitiesCode: ''
@@ -84,5 +88,16 @@ export class SecuritiesComponent implements OnInit {
 
   trackByCode(index: number, item: any) { 
     return item.securitiesCode || index; 
+  }
+
+  // Modal methods
+  onViewDetails(item: SecuritiesItem): void {
+    this.selectedSecurities = item;
+    this.showDetailModal = true;
+  }
+
+  onCloseDetailModal(): void {
+    this.showDetailModal = false;
+    this.selectedSecurities = null;
   }
 }

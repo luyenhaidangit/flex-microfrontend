@@ -23,4 +23,11 @@ export class SecuritiesService {
 
 		return this.http.get<any>(`${this.apiUrl}/paging`, { params: query });
 	}
+
+	/**
+	 * Get securities by code
+	 */
+	getByCode(securitiesCode: string): Observable<any> {
+		return this.http.get<any>(`${this.apiUrl}/${securitiesCode}`);
+	}
 }

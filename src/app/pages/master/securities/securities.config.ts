@@ -12,11 +12,12 @@ export const SECURITIES_CONFIG = {
       { key: 'symbol', label: 'Mã chứng khoán', width: '120px' },
       { key: 'issuerName', label: 'Tên tổ chức phát hành', width: '200px' },
       { key: 'domainName', label: 'Miền thanh toán', width: '180px' },
-      { key: 'isinCode', label: 'Mã ISIN', width: '140px' }
+      { key: 'isinCode', label: 'Mã ISIN', width: '140px' },
+      { key: 'actions', label: 'Thao tác', width: '120px' }
     ],
     skeleton: {
       rows: 8,
-      columns: ['140px', '200px', '180px', '120px', '140px']
+      columns: ['140px', '200px', '180px', '120px', '140px', '120px']
     }
   },
   pagination: {
