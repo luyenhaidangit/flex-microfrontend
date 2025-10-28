@@ -3,7 +3,20 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastService } from 'angular-toastify';
 import { UserService } from '../issuer.service';
 
-interface CreateIssuerRequestDto { issuerCode: string; shortName: string; fullName: string; comment?: string; }
+interface CreateIssuerRequestDto { 
+  issuerCode: string; 
+  shortName: string; 
+  fullName: string; 
+  comment?: string;
+  securitiesList?: SecuritiesItem[];
+}
+
+interface SecuritiesItem {
+  securitiesCode: string;
+  symbol: string;
+  isinCode?: string;
+  domainCode: string;
+}
 
 @Component({
   selector: 'app-create-issuer-modal',
@@ -16,8 +29,13 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
   @Output() created = new EventEmitter<void>();
 
   userForm!: FormGroup;
+  securitiesForm!: FormGroup;
   isSubmitting = false;
   isLoadingCode = false;
+  activeTab: 'info' | 'securities' = 'info';
+  securitiesList: SecuritiesItem[] = [];
+  showSecuritiesModal = false;
+  editingSecuritiesIndex = -1;
 
   constructor(
     private fb: FormBuilder,
@@ -27,6 +45,7 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.initializeForm();
+    this.initializeSecuritiesForm();
   }
 
   ngOnChanges(): void {
@@ -41,6 +60,15 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
       shortName: ['', [Validators.required, Validators.maxLength(100)]],
       fullName: ['', [Validators.required, Validators.maxLength(200)]],
       comment: ['',[Validators.maxLength(500)]]
+    });
+  }
+
+  private initializeSecuritiesForm(): void {
+    this.securitiesForm = this.fb.group({
+      securitiesCode: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9._-]+'), Validators.maxLength(50)]],
+      symbol: ['', [Validators.required, Validators.maxLength(20)]],
+      isinCode: ['', [Validators.maxLength(20)]],
+      domainCode: ['', [Validators.required]]
     });
   }
 
@@ -59,6 +87,66 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
     });
   }
 
+  setActiveTab(tab: 'info' | 'securities'): void {
+    this.activeTab = tab;
+  }
+
+  addSecurities(): void {
+    this.editingSecuritiesIndex = -1;
+    this.securitiesForm.reset();
+    this.showSecuritiesModal = true;
+  }
+
+  editSecurities(index: number): void {
+    this.editingSecuritiesIndex = index;
+    const securities = this.securitiesList[index];
+    this.securitiesForm.patchValue({
+      securitiesCode: securities.securitiesCode,
+      symbol: securities.symbol,
+      isinCode: securities.isinCode || '',
+      domainCode: securities.domainCode
+    });
+    this.showSecuritiesModal = true;
+  }
+
+  removeSecurities(index: number): void {
+    this.securitiesList.splice(index, 1);
+  }
+
+  saveSecurities(): void {
+    this.securitiesForm.markAllAsTouched();
+    if (this.securitiesForm.invalid) return;
+
+    const formData = this.securitiesForm.value;
+    const securitiesItem: SecuritiesItem = {
+      securitiesCode: formData.securitiesCode.trim(),
+      symbol: formData.symbol.trim(),
+      isinCode: formData.isinCode?.trim() || undefined,
+      domainCode: formData.domainCode.trim()
+    };
+
+    // Check for duplicate securities code
+    const existingIndex = this.securitiesList.findIndex(s => s.securitiesCode === securitiesItem.securitiesCode);
+    if (existingIndex >= 0 && existingIndex !== this.editingSecuritiesIndex) {
+      this.toastService.error('Mã chứng khoán đã tồn tại trong danh sách!');
+      return;
+    }
+
+    if (this.editingSecuritiesIndex >= 0) {
+      this.securitiesList[this.editingSecuritiesIndex] = securitiesItem;
+    } else {
+      this.securitiesList.push(securitiesItem);
+    }
+
+    this.closeSecuritiesModal();
+  }
+
+  closeSecuritiesModal(): void {
+    this.showSecuritiesModal = false;
+    this.editingSecuritiesIndex = -1;
+    this.securitiesForm.reset();
+  }
+
   onSubmit(): void {
     this.userForm.markAllAsTouched();
     if (this.userForm.invalid || this.isSubmitting) return;
@@ -70,7 +158,8 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
       issuerCode: (formData.issuerCode || '').trim(),
       shortName: (formData.shortName || '').trim(),
       fullName: (formData.fullName || '').trim(),
-      comment: (formData.comment || '').trim() || undefined
+      comment: (formData.comment || '').trim() || undefined,
+      securitiesList: this.securitiesList.length > 0 ? this.securitiesList : undefined
     };
 
     (this.userService as any).createIssuer(createRequest)
@@ -106,6 +195,10 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
   // Reset all states
   private resetStates(): void {
     this.userForm.reset();
+    this.securitiesForm.reset();
+    this.securitiesList = [];
+    this.showSecuritiesModal = false;
+    this.editingSecuritiesIndex = -1;
     this.isSubmitting = false;
     this.isLoadingCode = false;
   }
@@ -139,6 +232,39 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
       comment: 'Ghi chú'
     };
     return labels[fieldName] || fieldName;
+  }
+
+  // Helper methods for securities form validation
+  getSecuritiesFieldError(fieldName: string): string {
+    const field = this.securitiesForm.get(fieldName);
+    if (field?.touched && field?.invalid) {
+      if (field.errors?.['required']) {
+        return `${this.getSecuritiesFieldLabel(fieldName)} không được để trống`;
+      }
+      if (field.errors?.['pattern']) {
+        return `${this.getSecuritiesFieldLabel(fieldName)} chỉ được chứa chữ, số, dấu chấm, gạch dưới và gạch ngang`;
+      }
+      if (field.errors?.['maxlength']) {
+        const maxLength = field.errors['maxlength'].requiredLength;
+        return `${this.getSecuritiesFieldLabel(fieldName)} không được vượt quá ${maxLength} ký tự`;
+      }
+    }
+    return '';
+  }
+
+  private getSecuritiesFieldLabel(fieldName: string): string {
+    const labels: { [key: string]: string } = {
+      securitiesCode: 'Mã chứng khoán',
+      symbol: 'Symbol',
+      isinCode: 'ISIN Code',
+      domainCode: 'Miền thanh toán'
+    };
+    return labels[fieldName] || fieldName;
+  }
+
+  isSecuritiesFieldInvalid(fieldName: string): boolean {
+    const field = this.securitiesForm.get(fieldName);
+    return !!(field?.touched && field?.invalid);
   }
 
   isFieldInvalid(fieldName: string): boolean {

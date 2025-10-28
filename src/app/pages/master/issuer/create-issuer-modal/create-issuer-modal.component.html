@@ -19,8 +19,35 @@
             <p class="mt-2 text-muted">Đang tải mã TCPH...</p>
           </div>
           
-          <!-- Form content -->
-          <div *ngIf="!isLoadingCode" class="row gy-3">
+          <!-- Tab Navigation -->
+          <div *ngIf="!isLoadingCode" class="mb-4">
+            <ul class="nav nav-tabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" 
+                        [class.active]="activeTab === 'info'" 
+                        (click)="setActiveTab('info')"
+                        type="button" 
+                        role="tab">
+                  <i class="fas fa-info-circle me-2"></i>Thông tin
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" 
+                        [class.active]="activeTab === 'securities'" 
+                        (click)="setActiveTab('securities')"
+                        type="button" 
+                        role="tab">
+                  <i class="fas fa-chart-line me-2"></i>Chứng khoán
+                </button>
+              </li>
+            </ul>
+          </div>
+          
+          <!-- Tab Content -->
+          <div *ngIf="!isLoadingCode" class="tab-content">
+            <!-- Thông tin Tab -->
+            <div class="tab-pane" [class.active]="activeTab === 'info'" role="tabpanel">
+              <div class="row gy-3">
             <!-- Mã TCPH -->
             <div class="col-md-6 position-relative">
               <label class="form-label">Mã TCPH <span class="text-danger">*</span></label>
@@ -72,6 +99,57 @@
         <label class="form-label">Ghi chú</label>
         <textarea class="form-control" rows="1" formControlName="comment" placeholder="Ghi chú (không bắt buộc)"></textarea>
       </div>
+              </div>
+            </div>
+            
+            <!-- Chứng khoán Tab -->
+            <div class="tab-pane" [class.active]="activeTab === 'securities'" role="tabpanel">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0">Danh sách chứng khoán</h6>
+                <button type="button" class="btn btn-primary btn-sm" (click)="addSecurities()">
+                  <i class="fas fa-plus me-1"></i>Thêm chứng khoán
+                </button>
+              </div>
+              
+              <!-- Securities List -->
+              <div class="table-responsive" *ngIf="securitiesList.length > 0">
+                <table class="table table-sm table-bordered">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Mã chứng khoán</th>
+                      <th>Symbol</th>
+                      <th>ISIN Code</th>
+                      <th>Miền thanh toán</th>
+                      <th width="100">Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let securities of securitiesList; let i = index">
+                      <td>{{ securities.securitiesCode }}</td>
+                      <td>{{ securities.symbol }}</td>
+                      <td>{{ securities.isinCode || '-' }}</td>
+                      <td>{{ securities.domainCode }}</td>
+                      <td>
+                        <div class="btn-group btn-group-sm">
+                          <button type="button" class="btn btn-outline-primary" (click)="editSecurities(i)" title="Sửa">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button type="button" class="btn btn-outline-danger" (click)="removeSecurities(i)" title="Xóa">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <!-- Empty State -->
+              <div *ngIf="securitiesList.length === 0" class="text-center py-4 text-muted">
+                <i class="fas fa-chart-line fa-2x mb-2"></i>
+                <p>Chưa có chứng khoán nào. Nhấn "Thêm chứng khoán" để bắt đầu.</p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -86,6 +164,98 @@
             <i class="fas fa-paper-plane me-1" *ngIf="!isSubmitting"></i>
             <span class="spinner-border spinner-border-sm me-1" *ngIf="isSubmitting" role="status" aria-hidden="true"></span>
             {{ isSubmitting ? 'Đang gửi...' : 'Gửi duyệt' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Securities Form Modal -->
+<div class="modal fade show d-block" *ngIf="showSecuritiesModal" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-primary fw-semibold">
+          <i class="fas fa-chart-line me-2"></i>{{ editingSecuritiesIndex >= 0 ? 'Sửa chứng khoán' : 'Thêm chứng khoán' }}
+        </h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="closeSecuritiesModal()"></button>
+      </div>
+
+      <form [formGroup]="securitiesForm" (ngSubmit)="saveSecurities()" class="needs-validation">
+        <div class="modal-body px-4 py-3">
+          <div class="row gy-3">
+            <!-- Mã chứng khoán -->
+            <div class="col-md-6 position-relative">
+              <label class="form-label">Mã chứng khoán <span class="text-danger">*</span></label>
+              <input
+                appUpperNoAccent 
+                type="text" 
+                class="form-control" 
+                formControlName="securitiesCode" 
+                placeholder="Nhập mã chứng khoán"
+                [ngClass]="{'is-invalid': isSecuritiesFieldInvalid('securitiesCode')}" />
+              <div *ngIf="isSecuritiesFieldInvalid('securitiesCode')" class="invalid-tooltip">
+                {{ getSecuritiesFieldError('securitiesCode') }}
+              </div>
+            </div>
+
+            <!-- Symbol -->
+            <div class="col-md-6 position-relative">
+              <label class="form-label">Symbol <span class="text-danger">*</span></label>
+              <input
+                appUpperNoAccent 
+                type="text" 
+                class="form-control" 
+                formControlName="symbol" 
+                placeholder="Nhập symbol"
+                [ngClass]="{'is-invalid': isSecuritiesFieldInvalid('symbol')}" />
+              <div *ngIf="isSecuritiesFieldInvalid('symbol')" class="invalid-tooltip">
+                {{ getSecuritiesFieldError('symbol') }}
+              </div>
+            </div>
+
+            <!-- ISIN Code -->
+            <div class="col-md-6 position-relative">
+              <label class="form-label">ISIN Code</label>
+              <input
+                appUpperNoAccent 
+                type="text" 
+                class="form-control" 
+                formControlName="isinCode" 
+                placeholder="Nhập ISIN Code"
+                [ngClass]="{'is-invalid': isSecuritiesFieldInvalid('isinCode')}" />
+              <div *ngIf="isSecuritiesFieldInvalid('isinCode')" class="invalid-tooltip">
+                {{ getSecuritiesFieldError('isinCode') }}
+              </div>
+            </div>
+
+            <!-- Miền thanh toán -->
+            <div class="col-md-6 position-relative">
+              <label class="form-label">Miền thanh toán <span class="text-danger">*</span></label>
+              <select class="form-select" formControlName="domainCode" [ngClass]="{'is-invalid': isSecuritiesFieldInvalid('domainCode')}">
+                <option value="">Chọn miền thanh toán</option>
+                <option value="HOSE">HOSE</option>
+                <option value="HNX">HNX</option>
+                <option value="UPCOM">UPCOM</option>
+              </select>
+              <div *ngIf="isSecuritiesFieldInvalid('domainCode')" class="invalid-tooltip">
+                {{ getSecuritiesFieldError('domainCode') }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer border-top-0">
+          <button type="button" class="btn btn-outline-secondary me-2" (click)="closeSecuritiesModal()">
+            Hủy
+          </button>
+          <button 
+            type="submit" 
+            class="btn btn-primary" 
+            [disabled]="securitiesForm.invalid">
+            <i class="fas fa-save me-1"></i>
+            {{ editingSecuritiesIndex >= 0 ? 'Cập nhật' : 'Thêm' }}
           </button>
         </div>
       </form>
