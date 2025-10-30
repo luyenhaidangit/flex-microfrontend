@@ -87,6 +87,18 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
     });
   }
 
+  private prefillSecuritiesCode(): void {
+    (this.userService as any).getNextSecuritiesCode(false).subscribe({
+      next: (res: any) => {
+        const code = res?.data?.code || res?.code || '';
+        if (code) this.securitiesForm.patchValue({ securitiesCode: code });
+      },
+      error: (err) => {
+        console.error('Error loading securities code:', err);
+      }
+    });
+  }
+
   setActiveTab(tab: 'info' | 'securities'): void {
     this.activeTab = tab;
   }
@@ -94,6 +106,7 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
   addSecurities(): void {
     this.editingSecuritiesIndex = -1;
     this.securitiesForm.reset();
+    this.prefillSecuritiesCode();
     this.showSecuritiesModal = true;
   }
 

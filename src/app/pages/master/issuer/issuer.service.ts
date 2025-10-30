@@ -11,6 +11,14 @@ export class IssuerService {
 	// ===== Query APIs =====
 	
 	/**
+	* Get next securities code from backend
+	*/
+	getNextSecuritiesCode(increment: boolean = false): Observable<any> {
+		const params: any = { increment };
+		return this.http.get<any>(`/api/securities/next-code`, { params });
+	}
+	
+	/**
 	* Get next issuer code from backend
 	*/
 	getNextIssuerCode(increment: boolean = false): Observable<any> {
