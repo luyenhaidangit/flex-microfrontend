@@ -22,10 +22,35 @@ export class IssuersComponent extends EntityListComponent<IssuerFilter, IssuerIt
 	activeTabId: any = this.activeTabId;
 	selectedRequest: any = this.selectedRequest;
 	showRequestDetailModal = false;
+	searchInputValue: string = '';
 
 	// Functions
-	onTabChange(tabId: string): void { super.onTabChange(tabId); }
-	onPageChange(page: number): void { super.onPageChange(page); }
+	onTabChange(tabId: string): void {
+		// Reset giá trị input khi đổi tab
+		this.searchInputValue = '';
+		super.onTabChange(tabId);
+	}
+	onPageChange(page: number): void {
+		if (page < 1 || page > this.state.paging.totalPages || page === this.state.paging.index) return;
+		this.state.paging.index = page;
+		if (this.activeTabId === 'approved') {
+			this.loadData<UserItem>(this.issuerService.getIssuers(this.getCleanSearchParams()));
+		} else {
+			this.loadData<any>(this.issuerService.getPendingIssuerRequests(this.getCleanSearchParams()));
+		}
+	}
+	
+	onPageSizeChange(pageSize?: number): void {
+		if (pageSize !== undefined) {
+			this.state.paging.size = pageSize;
+		}
+		this.state.paging.index = 1;
+		if (this.activeTabId === 'approved') {
+			this.loadData<UserItem>(this.issuerService.getIssuers(this.getCleanSearchParams()));
+		} else {
+			this.loadData<any>(this.issuerService.getPendingIssuerRequests(this.getCleanSearchParams()));
+		}
+	}
 	openCreateModal(): void { super.openCreateModal(); }
 	openDetailModal(issuer: IssuerItem): void { super.openDetailModal(issuer); }
 	openEditModal(issuer: IssuerItem): void { super.openEditModal(issuer); }
@@ -37,19 +62,27 @@ export class IssuersComponent extends EntityListComponent<IssuerFilter, IssuerIt
 	) {
 		var filter = { keyword: '', type: null };
 		super(filter);
+		this.searchInputValue = filter.keyword || '';
 	}
 
 	// Lifecycle
-    ngOnInit(): void { super.ngOnInit(); }
+    ngOnInit(): void {
+		this.searchInputValue = this.state.filter.keyword || '';
+		super.ngOnInit();
+	}
 	ngOnDestroy(): void { this.cleanup(); }
 	
 	// Implement method abstract base
 	public onSearch(): void {
-    	if (this.activeTabId === 'approved') {
-      		this.loadData<UserItem>(this.issuerService.getIssuers(this.getCleanSearchParams()));
-    	} else {
-      		this.loadData<any>(this.issuerService.getPendingIssuerRequests(this.getCleanSearchParams()));
-    	}
+		// Commit giá trị từ input vào filter trước khi tìm kiếm
+		this.state.filter.keyword = this.searchInputValue;
+		// Reset về trang 1 khi tìm kiếm
+		this.state.paging.index = 1;
+		if (this.activeTabId === 'approved') {
+			this.loadData<UserItem>(this.issuerService.getIssuers(this.getCleanSearchParams()));
+		} else {
+			this.loadData<any>(this.issuerService.getPendingIssuerRequests(this.getCleanSearchParams()));
+		}
 	}
 	
 	// Pending request methods

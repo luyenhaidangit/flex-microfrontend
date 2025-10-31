@@ -14,7 +14,7 @@
 	<div class="row gx-3 mb-3 gy-2 align-items-end">
 		<div class="col-md-3">
 			<label class="form-label fw-bold text-muted">Từ khóa</label>
-			<input class="form-control" type="text" placeholder="Nhập từ khóa..." [(ngModel)]="state.filter.keyword">
+			<input class="form-control" type="text" placeholder="Nhập từ khóa..." [(ngModel)]="searchInputValue" (keyup.enter)="onSearch()">
 		</div>
 		
 		<!-- Display only in pending tab -->
