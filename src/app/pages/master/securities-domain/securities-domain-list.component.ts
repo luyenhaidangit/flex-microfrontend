@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SecuritiesDomainService } from './securities-domain.service';
 import { SECURITIES_DOMAIN_CONFIG } from './securities-domain.config';
-import { mapSettleMethodLabel, mapYesNo } from './securities-domain.helper';
+import { mapSettleMethodLabel } from './securities-domain.helper';
 import { SecuritiesDomainItem, SecuritiesDomainSearchParams } from './securities-domain.models';
 
 @Component({
@@ -16,7 +16,6 @@ export class SecuritiesDomainListComponent implements OnInit {
   error?: string;
   CONFIG = SECURITIES_DOMAIN_CONFIG;
   mapSettleMethodLabel = mapSettleMethodLabel;
-  mapYesNo = mapYesNo;
 
   // Filters
   filter = {

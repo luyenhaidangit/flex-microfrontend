@@ -33,13 +33,13 @@
   <div class="bg-white rounded shadow-sm p-3 position-relative">
     <div class="row g-2 align-items-end mb-3">
       <!-- merged inputs into the same row; remove extra wrapper -->
-        <div class="col-md-3">
-          <label class="form-label fw-bold text-muted">Mã domain</label>
-          <input type="text" class="form-control" placeholder="Mã domain" [(ngModel)]="filter.domainCode" (keyup.enter)="onSearch()">
+                <div class="col-md-3">
+          <label class="form-label fw-bold text-muted">Mã miền</label>
+          <input type="text" class="form-control" placeholder="Mã miền" [(ngModel)]="filter.domainCode" (keyup.enter)="onSearch()">
         </div>
         <div class="col-md-4">
-          <label class="form-label fw-bold text-muted">Tên domain</label>
-          <input type="text" class="form-control" placeholder="Tên domain" [(ngModel)]="filter.domainName" (keyup.enter)="onSearch()">
+          <label class="form-label fw-bold text-muted">Tên miền thanh toán</label>
+          <input type="text" class="form-control" placeholder="Tên miền thanh toán" [(ngModel)]="filter.domainName" (keyup.enter)="onSearch()">
         </div>
         
       <div class="col-auto">
@@ -55,12 +55,12 @@
       <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
         <thead>
           <tr>
-            <th style="min-width: 220px">Tên Domain</th>
-            <th style="min-width: 140px">Loại hình TT</th>
-            <th style="min-width: 120px">Chu kỳ TT</th>
-            <th style="min-width: 180px">Phương thức TT CK</th>
-            <th style="min-width: 180px">Phương thức TT Tiền</th>
-            <th style="min-width: 140px">Domain mặc định</th>
+            <th style="min-width: 220px">Tên miền thanh toán</th>
+            <th style="min-width: 140px">Loại hình thanh toán (DVP)</th>
+            <th style="min-width: 120px">Chu kỳ thanh toán (T+x)</th>
+            <th style="min-width: 180px">Phương thức thanh toán chứng khoán</th>
+            <th style="min-width: 180px">Phương thức thanh toán tiền</th>
+            <th style="min-width: 140px">Miền mặc định</th>
           </tr>
         </thead>
 
@@ -79,26 +79,6 @@
             <td>{{ r.settlementCycle }}</td>
             <td>{{ mapSettleMethodLabel(r.secSettlementType) }}</td>
             <td>{{ mapSettleMethodLabel(r.cashSettleType) }}</td>
-            <td>{{ mapYesNo(r.isDefault) }}</td>
+            <td><i class="bx bx-check text-success" *ngIf="r.isDefault" aria-label="Mặc định"></i><span class="text-muted" *ngIf="!r.isDefault">—</span></td>
           </tr>
         </tbody>
-
-        <tbody *ngIf="!loading && !rows.length">
-          <tr>
-            <td colspan="6" class="text-center text-muted">Không có dữ liệu.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <app-pagination
-      [paginationState]="getPaginationState()"
-      [pageSizeOptions]="[{value:10,label:'10'},{value:20,label:'20'},{value:50,label:'50'}]"
-      (pageChanged)="onPageChange($event)"
-      (pageSizeChanged)="onPageSizeChange($event)">
-    </app-pagination>
-
-    
-  </div>
-</div>
-

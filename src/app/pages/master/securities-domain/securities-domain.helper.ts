@@ -10,7 +10,3 @@ export function mapSettleMethodLabel(code: string | null | undefined): string {
   }
 }
 
-export function mapYesNo(value: any): string {
-  return value ? 'Có' : 'Không';
-}
-

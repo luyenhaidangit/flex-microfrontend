@@ -1,8 +1,8 @@
-export const SECURITIES_DOMAIN_CONFIG = {
+﻿﻿export const SECURITIES_DOMAIN_CONFIG = {
   breadcrumb: {
     title: 'Miền thanh toán',
     items: [
-      { label: 'Chứng khoán' },
+      { label: 'Danh mục cơ sở' },
       { label: 'Miền thanh toán', active: true }
     ]
   },
