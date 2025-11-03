@@ -37,16 +37,9 @@ export class SecuritiesDomainListComponent implements OnInit {
 
   ngOnInit(): void { this.load(); }
 
-  getPaginationState() { return { ...this.paging }; }
-
   onPageChange(page: number): void {
     if (page < 1 || (this.paging.totalPages && page > this.paging.totalPages) || page === this.paging.index) return;
     this.paging.index = page; this.load();
-  }
-
-  onPageSizeChange(size: number): void {
-    if (size === this.paging.size) return;
-    this.paging.size = size; this.paging.index = 1; this.load();
   }
 
   onSearch(): void { this.paging.index = 1; this.load(); }
