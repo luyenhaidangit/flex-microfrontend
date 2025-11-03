@@ -24,13 +24,22 @@ export class DepositMemberComponent implements OnInit {
   items: DepositMemberItem[] = [];
   error?: string;
   
-  // Filters
-  filter = {
+  // Applied filter (used for API calls)
+  appliedFilter = {
     depositCode: '',
     shortName: '',
     fullName: '',
     bicCode: ''
   };
+  // Search input (decoupled from applied filter, like Issuer screen)
+  searchInput = {
+    depositCode: '',
+    shortName: '',
+    fullName: '',
+    bicCode: ''
+  };
+  // Expose a getter named `filter` so existing template bindings still work
+  get filter() { return this.searchInput; }
   
   // Pagination state (compatible with app-pagination)
   paging = {
@@ -85,7 +94,11 @@ export class DepositMemberComponent implements OnInit {
     this.bsLocaleService.use('vi');
   }
   
-  ngOnInit(): void { this.load(); }
+  ngOnInit(): void {
+    // initialize input fields from current applied filter
+    this.searchInput = { ...this.appliedFilter };
+    this.load();
+  }
   
   getPaginationState() { return { ...this.paging }; }
   
@@ -102,7 +115,13 @@ export class DepositMemberComponent implements OnInit {
     this.load();
   }
   
-  onSearch(): void { this.paging.index = 1; this.load(); }
+  onSearch(): void {
+    // Commit values from the input model into the actual applied filter
+    this.appliedFilter = { ...this.searchInput };
+    // Reset to first page and load
+    this.paging.index = 1;
+    this.load();
+  }
   
   onSort(column: 'depositCode' | 'shortName' | 'fullName' | 'bicCode'): void {
     if (this.sort.column === column) {
@@ -118,10 +137,10 @@ export class DepositMemberComponent implements OnInit {
     const params: DepositMemberSearchParams = {
       pageIndex: this.paging.index,
       pageSize: this.paging.size,
-      depositCode: this.filter.depositCode?.trim() || undefined,
-      shortName: this.filter.shortName?.trim() || undefined,
-      fullName: this.filter.fullName?.trim() || undefined,
-      bicCode: this.filter.bicCode?.trim() || undefined,
+      depositCode: this.appliedFilter.depositCode?.trim() || undefined,
+      shortName: this.appliedFilter.shortName?.trim() || undefined,
+      fullName: this.appliedFilter.fullName?.trim() || undefined,
+      bicCode: this.appliedFilter.bicCode?.trim() || undefined,
       sortColumn: this.sort.column || undefined,
       sortDirection: this.sort.direction || undefined,
     };
