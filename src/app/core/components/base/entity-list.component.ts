@@ -24,6 +24,7 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
   selectedItem: TItem | null = null;
   state: ListState<TFilter>;
   selectedRequest: any;
+  isDirtyFilter: boolean = false;
 
   // ---------- Contructor and lifecycle ----------
   constructor(filter: any = {}) {
@@ -36,6 +37,37 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
 
   // ---------- Build query ----------
   protected abstract onSearch(): void;
+
+  /**
+   * Set giá trị filter và đánh dấu là dirty (chưa apply)
+   * Child component nên dùng method này thay vì set trực tiếp vào state.filter
+   * @param key Tên field trong filter
+   * @param value Giá trị mới
+   */
+  public setFilterValue(key: keyof TFilter, value: any): void {
+    if (this.state?.filter && this.state.filter[key] !== value) {
+      this.state.filter[key] = value;
+      this.isDirtyFilter = true;
+    }
+  }
+
+  /**
+   * Apply filter - commit filter hiện tại và thực hiện tìm kiếm
+   * Sẽ reset dirty flag, reset về trang 1 và gọi onSearch()
+   */
+  public applyFilter(): void {
+    this.isDirtyFilter = false;
+    this.resetToFirstPage();
+    this.onSearch();
+  }
+
+  /**
+   * Kiểm tra xem có thể thực hiện pagination không
+   * Trả về false nếu filter đang dirty (chưa được apply)
+   */
+  public canPaginate(): boolean {
+    return !this.isDirtyFilter;
+  }
 
   public getSearchParams(): any {
     const { paging, filter } = this.state;
@@ -60,17 +92,26 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
   onTabChange(tabId: string): void {
 		this.activeTabId = tabId;
 		this.resetSearchParams();
+		this.isDirtyFilter = false; // Reset dirty flag khi đổi tab
     this.resetToFirstPage();
 		this.onSearch();
 	}
 
   onPageChange(page: number): void {
+    // Không cho phép phân trang nếu filter đang dirty (chưa được apply)
+    if (this.isDirtyFilter) {
+      return;
+    }
     if (page < 1 || page > this.state.paging.totalPages || page === this.state.paging.index) return;
     this.state.paging.index = page;
     this.onSearch();
   }
 
   onPageSizeChange(pageSize?: number): void {
+    // Không cho phép thay đổi page size nếu filter đang dirty (chưa được apply)
+    if (this.isDirtyFilter) {
+      return;
+    }
     if (pageSize !== undefined) {
       this.state.paging.size = pageSize;
     }
@@ -116,6 +157,7 @@ export abstract class EntityListComponent<TFilter, TItem = any> implements OnIni
         }
       });
     }
+    this.isDirtyFilter = false; // Reset dirty flag khi reset filter
   }
 
   private resetToFirstPage(): void {

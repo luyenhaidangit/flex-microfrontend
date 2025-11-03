@@ -30,27 +30,6 @@ export class IssuersComponent extends EntityListComponent<IssuerFilter, IssuerIt
 		this.searchInputValue = '';
 		super.onTabChange(tabId);
 	}
-	onPageChange(page: number): void {
-		if (page < 1 || page > this.state.paging.totalPages || page === this.state.paging.index) return;
-		this.state.paging.index = page;
-		if (this.activeTabId === 'approved') {
-			this.loadData<UserItem>(this.issuerService.getIssuers(this.getCleanSearchParams()));
-		} else {
-			this.loadData<any>(this.issuerService.getPendingIssuerRequests(this.getCleanSearchParams()));
-		}
-	}
-	
-	onPageSizeChange(pageSize?: number): void {
-		if (pageSize !== undefined) {
-			this.state.paging.size = pageSize;
-		}
-		this.state.paging.index = 1;
-		if (this.activeTabId === 'approved') {
-			this.loadData<UserItem>(this.issuerService.getIssuers(this.getCleanSearchParams()));
-		} else {
-			this.loadData<any>(this.issuerService.getPendingIssuerRequests(this.getCleanSearchParams()));
-		}
-	}
 	openCreateModal(): void { super.openCreateModal(); }
 	openDetailModal(issuer: IssuerItem): void { super.openDetailModal(issuer); }
 	openEditModal(issuer: IssuerItem): void { super.openEditModal(issuer); }
@@ -72,12 +51,35 @@ export class IssuersComponent extends EntityListComponent<IssuerFilter, IssuerIt
 	}
 	ngOnDestroy(): void { this.cleanup(); }
 	
+	/**
+	 * Method được gọi khi user bấm nút "Tìm kiếm" hoặc nhấn Enter
+	 * Commit giá trị từ input vào filter và apply filter
+	 */
+	public onSearchClick(): void {
+		// Chỉ set filter value nếu giá trị thay đổi
+		if (this.state.filter.keyword !== this.searchInputValue) {
+			this.setFilterValue('keyword', this.searchInputValue);
+		}
+		// Apply filter (clear dirty flag, reset page, và gọi onSearch())
+		this.applyFilter();
+	}
+	
+	/**
+	 * Method được gọi khi giá trị input thay đổi (optional - để mark dirty ngay khi user nhập)
+	 * Có thể bind vào (ngModelChange) nếu muốn mark dirty ngay khi nhập
+	 */
+	public onSearchInputChange(): void {
+		// So sánh với filter hiện tại để đánh dấu dirty
+		if (this.state.filter.keyword !== this.searchInputValue) {
+			this.isDirtyFilter = true;
+		} else {
+			this.isDirtyFilter = false;
+		}
+	}
+	
 	// Implement method abstract base
 	public onSearch(): void {
-		// Commit giá trị từ input vào filter trước khi tìm kiếm
-		this.state.filter.keyword = this.searchInputValue;
-		// Reset về trang 1 khi tìm kiếm
-		this.state.paging.index = 1;
+		// Load data với filter hiện tại (đã được apply)
 		if (this.activeTabId === 'approved') {
 			this.loadData<UserItem>(this.issuerService.getIssuers(this.getCleanSearchParams()));
 		} else {
