@@ -76,7 +76,8 @@ export class AppHttpInterceptor implements HttpSystemInterceptor {
         }
 
         // Auto logout when 401
-        if (error.status === 401) {
+        const isLogoutRequest = request.url.includes('/api/auth/logout');
+        if (error.status === 401 && !isLogoutRequest) {
           // Delegate cleanup + navigation to AuthenticationService
           this.injector.get(AuthenticationService).logout();
         }

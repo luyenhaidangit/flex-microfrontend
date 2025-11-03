@@ -1,8 +1,9 @@
 import { Injectable, Injector } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, firstValueFrom } from 'rxjs';
 import { LocalStorage } from '../enums/local-storage.enum';
+import { Header } from '../enums/http.enum';
 
 export interface MeProfile {
   sub?: string;
@@ -31,6 +32,7 @@ export class AuthenticationService {
 
   private accessToken: string | null = null;
   private logoutTimer: any;
+  private isLoggingOut: boolean = false;
 
   constructor(private http: HttpClient, private router: Router, private injector: Injector) {
     this.bootstrapFromStorage();
@@ -54,12 +56,16 @@ export class AuthenticationService {
   }
 
   logout(): void {
+    if (this.isLoggingOut) return;
+    this.isLoggingOut = true;
+    
     // Call logout API first
     this.callLogoutApi().finally(() => {
       // Always clear local state regardless of API call result
       // Ensure all UI overlays are closed (modals/backdrops)
       this.clearTokenFromStorage();
       this.clearTimersAndState();
+      this.isLoggingOut = false; // Reset flag
       this.router.navigate(['/account/login']);
     });
   }
@@ -107,7 +113,10 @@ export class AuthenticationService {
     if (!token) return; // No token to logout
     
     try {
-      await firstValueFrom(this.http.post('/api/auth/logout', {}));
+      const headers = new HttpHeaders().set(Header.SkipAuth, 'true');
+      await firstValueFrom(
+        this.http.post('/api/auth/logout', {}, { headers })
+      );
     } catch (error) {
       // Log error but don't prevent logout
       console.warn('Logout API call failed:', error);
@@ -146,11 +155,15 @@ export class AuthenticationService {
   }
 
   private forceLogout(navigate = true): void {
+    if (this.isLoggingOut) return;
+    this.isLoggingOut = true;
+    
     // Call logout API first
     this.callLogoutApi().finally(() => {
       // Always clear local state regardless of API call result
       this.clearTimersAndState();
       this.clearTokenFromStorage();
+      this.isLoggingOut = false; // Reset flag
       if (navigate) this.router.navigate(['/account/login']);
     });
   }
