@@ -949,12 +949,6 @@ export const MENU: MenuItem[] = [
         icon: 'bx bx-globe'
     },
     {
-        id: 'master.deposit-members',
-        label: 'Thành viên lưu ký',
-        link: '/master/deposit-members',
-        icon: 'bx bx-collection'
-    },
-    {
         id: 'master-issuers',
         label: 'Tổ chức phát hành',
         icon: 'bx bx-id-card',
@@ -965,6 +959,12 @@ export const MENU: MenuItem[] = [
         label: 'Thông tin chứng khoán',
         icon: 'bx bx-trending-up',
         link: '/master/securities',
+    },
+    {
+        id: 'master.deposit-members',
+        label: 'Thành viên lưu ký',
+        link: '/master/deposit-members',
+        icon: 'bx bx-collection'
     },
     {
         id: 'operation-title',
