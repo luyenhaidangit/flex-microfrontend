@@ -48,6 +48,35 @@ export const MENU: MenuItem[] = [
         isLayout: true
     },
     {
+        id: 'master-title',
+        label: 'Danh mục cơ sở',
+        isTitle: true
+    },
+    {
+        id: 'master.securities-domain',
+        label: 'Miền thanh toán',
+        link: '/master/securities-domain',
+        icon: 'bx bx-globe'
+    },
+    {
+        id: 'master-issuers',
+        label: 'Tổ chức phát hành',
+        icon: 'bx bx-id-card',
+        link: '/master/issuers',
+    },
+    {
+        id: 'master-securities',
+        label: 'Thông tin chứng khoán',
+        icon: 'bx bx-trending-up',
+        link: '/master/securities',
+    },
+    {
+        id: 'master.deposit-members',
+        label: 'Thành viên lưu ký',
+        link: '/master/deposit-members',
+        icon: 'bx bx-collection'
+    },
+    {
         id: 9,
         label: 'MENUITEMS.SYSTEM.TEXT',
         isTitle: true
@@ -937,35 +966,6 @@ export const MENU: MenuItem[] = [
     //         },
     //     ]
     // }
-    {
-        id: 'master-title',
-        label: 'Danh mục cơ sở',
-        isTitle: true
-    },
-    {
-        id: 'master.securities-domain',
-        label: 'Miền thanh toán',
-        link: '/master/securities-domain',
-        icon: 'bx bx-globe'
-    },
-    {
-        id: 'master-issuers',
-        label: 'Tổ chức phát hành',
-        icon: 'bx bx-id-card',
-        link: '/master/issuers',
-    },
-    {
-        id: 'master-securities',
-        label: 'Thông tin chứng khoán',
-        icon: 'bx bx-trending-up',
-        link: '/master/securities',
-    },
-    {
-        id: 'master.deposit-members',
-        label: 'Thành viên lưu ký',
-        link: '/master/deposit-members',
-        icon: 'bx bx-collection'
-    },
     {
         id: 'operation-title',
         label: 'Vận hành',
