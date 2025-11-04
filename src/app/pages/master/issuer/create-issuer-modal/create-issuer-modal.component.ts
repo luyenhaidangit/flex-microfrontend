@@ -63,6 +63,7 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
   
   ngOnChanges(): void {
     if (this.isVisible) {
+      this.activeTab = 'info';
       this.prefillIssuerCode();
     }
   }
@@ -258,6 +259,7 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
     this.editingSecuritiesIndex = -1;
     this.isSubmitting = false;
     this.isLoadingCode = false;
+    this.activeTab = 'info';
   }
   
   // Helper methods for form validation
