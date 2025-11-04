@@ -71,7 +71,7 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
 
   private initializeSecuritiesForm(): void {
     this.securitiesForm = this.fb.group({
-      securitiesCode: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9._-]+'), Validators.maxLength(50)]],
+      securitiesCode: [''],
       symbol: ['', [Validators.required, Validators.maxLength(20)]],
       isinCode: ['', [Validators.maxLength(20)]],
       domainCode: ['', [Validators.required]]
@@ -167,7 +167,7 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
 
     const formData = this.securitiesForm.value;
     const securitiesItem: SecuritiesItem = {
-      securitiesCode: formData.securitiesCode.trim(),
+      securitiesCode: formData.securitiesCode?.trim() || '',
       symbol: formData.symbol.trim(),
       isinCode: formData.isinCode?.trim() || undefined,
       domainCode: formData.domainCode.trim()
