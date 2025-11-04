@@ -191,13 +191,10 @@
               <input
                 appUpperNoAccent 
                 type="text" 
-                class="form-control" 
+                class="form-control non-editable-field" 
                 formControlName="securitiesCode" 
-                placeholder="Nhập mã chứng khoán"
-                [ngClass]="{'is-invalid': isSecuritiesFieldInvalid('securitiesCode')}" />
-              <div *ngIf="isSecuritiesFieldInvalid('securitiesCode')" class="invalid-tooltip">
-                {{ getSecuritiesFieldError('securitiesCode') }}
-              </div>
+                placeholder="AUTO"
+                [readonly]="true" />
             </div>
 
             <!-- Symbol -->
@@ -217,23 +214,9 @@
 
             <!-- ISIN Code -->
             <div class="col-md-6 position-relative">
-              <label class="form-label">ISIN Code</label>
-              <input
-                appUpperNoAccent 
-                type="text" 
-                class="form-control" 
-                formControlName="isinCode" 
-                placeholder="Nhập ISIN Code"
-                [ngClass]="{'is-invalid': isSecuritiesFieldInvalid('isinCode')}" />
-              <div *ngIf="isSecuritiesFieldInvalid('isinCode')" class="invalid-tooltip">
-                {{ getSecuritiesFieldError('isinCode') }}
-              </div>
-            </div>
-
-            <!-- Miền thanh toán -->
-            <div class="col-md-6 position-relative">
               <label class="form-label">Miền thanh toán <span class="text-danger">*</span></label>
-              <select class="form-select" formControlName="domainCode" [ngClass]="{'is-invalid': isSecuritiesFieldInvalid('domainCode')}">
+              <select class="form-select" formControlName="domainCode"
+                [ngClass]="{'is-invalid': isSecuritiesFieldInvalid('domainCode')}">
                 <option value="">Chọn miền thanh toán</option>
                 <option value="HOSE">HOSE</option>
                 <option value="HNX">HNX</option>
@@ -241,6 +224,16 @@
               </select>
               <div *ngIf="isSecuritiesFieldInvalid('domainCode')" class="invalid-tooltip">
                 {{ getSecuritiesFieldError('domainCode') }}
+              </div>
+            </div>
+
+            <!-- Miền thanh toán -->
+            <div class="col-md-6 position-relative">
+              <label class="form-label">ISIN Code</label>
+              <input appUpperNoAccent type="text" class="form-control" formControlName="isinCode" placeholder="Nhập ISIN Code"
+                [ngClass]="{'is-invalid': isSecuritiesFieldInvalid('isinCode')}" />
+              <div *ngIf="isSecuritiesFieldInvalid('isinCode')" class="invalid-tooltip">
+                {{ getSecuritiesFieldError('isinCode') }}
               </div>
             </div>
           </div>

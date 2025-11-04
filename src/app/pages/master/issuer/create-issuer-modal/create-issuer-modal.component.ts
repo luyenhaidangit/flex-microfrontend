@@ -106,7 +106,7 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
   addSecurities(): void {
     this.editingSecuritiesIndex = -1;
     this.securitiesForm.reset();
-    this.prefillSecuritiesCode();
+    // Không gọi API để lấy mã chứng khoán vì issuer chưa được duyệt
     this.showSecuritiesModal = true;
   }
 
