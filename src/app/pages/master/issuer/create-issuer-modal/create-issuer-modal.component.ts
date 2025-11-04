@@ -2,6 +2,8 @@ import { Component, EventEmitter, Input, OnInit, Output, OnChanges } from '@angu
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastService } from 'angular-toastify';
 import { UserService } from '../issuer.service';
+import { SecuritiesDomainService } from '../../securities-domain/securities-domain.service';
+import { SecuritiesDomainItem } from '../../securities-domain/securities-domain.models';
 
 interface CreateIssuerRequestDto { 
   issuerCode: string; 
@@ -36,16 +38,20 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
   securitiesList: SecuritiesItem[] = [];
   showSecuritiesModal = false;
   editingSecuritiesIndex = -1;
+  domainList: SecuritiesDomainItem[] = [];
+  isLoadingDomains = false;
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private domainService: SecuritiesDomainService
   ) {}
 
   ngOnInit(): void {
     this.initializeForm();
     this.initializeSecuritiesForm();
+    this.loadDomains();
   }
 
   ngOnChanges(): void {
@@ -105,9 +111,38 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
 
   addSecurities(): void {
     this.editingSecuritiesIndex = -1;
-    this.securitiesForm.reset();
+    this.securitiesForm.reset({
+      securitiesCode: '',
+      symbol: '',
+      isinCode: '',
+      domainCode: '' // Đảm bảo giá trị mặc định là empty string, không phải null
+    });
     // Không gọi API để lấy mã chứng khoán vì issuer chưa được duyệt
+    // Đảm bảo domains đã được load
+    if (this.domainList.length === 0) {
+      this.loadDomains();
+    }
     this.showSecuritiesModal = true;
+  }
+
+  private loadDomains(): void {
+    if (this.isLoadingDomains) return;
+    this.isLoadingDomains = true;
+    this.domainService.getPaging({
+      pageIndex: 1,
+      pageSize: 1000 // Lấy tất cả domains
+    }).subscribe({
+      next: (res) => {
+        this.isLoadingDomains = false;
+        const page = res?.data as any;
+        this.domainList = page?.items ?? [];
+      },
+      error: (err) => {
+        this.isLoadingDomains = false;
+        console.error('Error loading domains:', err);
+        this.toastService.error('Không thể tải danh sách miền thanh toán!');
+      }
+    });
   }
 
   editSecurities(index: number): void {
@@ -157,7 +192,12 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
   closeSecuritiesModal(): void {
     this.showSecuritiesModal = false;
     this.editingSecuritiesIndex = -1;
-    this.securitiesForm.reset();
+    this.securitiesForm.reset({
+      securitiesCode: '',
+      symbol: '',
+      isinCode: '',
+      domainCode: '' // Đảm bảo giá trị mặc định là empty string, không phải null
+    });
   }
 
   onSubmit(): void {

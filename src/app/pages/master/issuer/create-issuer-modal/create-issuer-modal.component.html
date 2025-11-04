@@ -212,22 +212,23 @@
               </div>
             </div>
 
-            <!-- ISIN Code -->
+            <!-- Miền thanh toán -->
             <div class="col-md-6 position-relative">
               <label class="form-label">Miền thanh toán <span class="text-danger">*</span></label>
               <select class="form-select" formControlName="domainCode"
-                [ngClass]="{'is-invalid': isSecuritiesFieldInvalid('domainCode')}">
-                <option value="">Chọn miền thanh toán</option>
-                <option value="HOSE">HOSE</option>
-                <option value="HNX">HNX</option>
-                <option value="UPCOM">UPCOM</option>
+                [ngClass]="{'is-invalid': isSecuritiesFieldInvalid('domainCode')}"
+                [disabled]="isLoadingDomains">
+                <option value="">{{ isLoadingDomains ? 'Đang tải...' : 'Chọn miền thanh toán' }}</option>
+                <option *ngFor="let domain of domainList" [value]="domain.domainCode">
+                  {{ domain.domainCode }} - {{ domain.domainName }}
+                </option>
               </select>
               <div *ngIf="isSecuritiesFieldInvalid('domainCode')" class="invalid-tooltip">
                 {{ getSecuritiesFieldError('domainCode') }}
               </div>
             </div>
 
-            <!-- Miền thanh toán -->
+            <!-- ISIN Code -->
             <div class="col-md-6 position-relative">
               <label class="form-label">ISIN Code</label>
               <input appUpperNoAccent type="text" class="form-control" formControlName="isinCode" placeholder="Nhập ISIN Code"
