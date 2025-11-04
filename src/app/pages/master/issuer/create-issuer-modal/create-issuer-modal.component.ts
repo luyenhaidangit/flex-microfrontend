@@ -10,7 +10,14 @@ interface CreateIssuerRequestDto {
   shortName: string; 
   fullName: string; 
   comment?: string;
-  securities?: SecuritiesItem[];
+  securities?: SecuritiesRequestItem[];
+}
+
+interface SecuritiesRequestItem {
+  securitiesCode?: string; // Optional, chỉ gửi khi edit
+  symbol: string;
+  isinCode?: string;
+  domainCode: string;
 }
 
 interface SecuritiesItem {
@@ -29,7 +36,7 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
   @Input() isVisible = false;
   @Output() close = new EventEmitter<void>();
   @Output() created = new EventEmitter<void>();
-
+  
   userForm!: FormGroup;
   securitiesForm!: FormGroup;
   isSubmitting = false;
@@ -40,26 +47,26 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
   editingSecuritiesIndex = -1;
   domainList: SecuritiesDomainItem[] = [];
   isLoadingDomains = false;
-
+  
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
     private toastService: ToastService,
     private domainService: SecuritiesDomainService
   ) {}
-
+  
   ngOnInit(): void {
     this.initializeForm();
     this.initializeSecuritiesForm();
     this.loadDomains();
   }
-
+  
   ngOnChanges(): void {
     if (this.isVisible) {
       this.prefillIssuerCode();
     }
   }
-
+  
   private initializeForm(): void {
     this.userForm = this.fb.group({
       issuerCode: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9._-]+'), Validators.maxLength(50)]],
@@ -68,7 +75,7 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
       comment: ['',[Validators.maxLength(500)]]
     });
   }
-
+  
   private initializeSecuritiesForm(): void {
     this.securitiesForm = this.fb.group({
       securitiesCode: ['AUTO'],
@@ -77,7 +84,7 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
       domainCode: ['', [Validators.required]]
     });
   }
-
+  
   private prefillIssuerCode(): void {
     this.isLoadingCode = true;
     (this.userService as any).getNextIssuerCode(false).subscribe({
@@ -92,23 +99,12 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
       }
     });
   }
-
-  private prefillSecuritiesCode(): void {
-    (this.userService as any).getNextSecuritiesCode(false).subscribe({
-      next: (res: any) => {
-        const code = res?.data?.code || res?.code || '';
-        if (code) this.securitiesForm.patchValue({ securitiesCode: code });
-      },
-      error: (err) => {
-        console.error('Error loading securities code:', err);
-      }
-    });
-  }
-
+  
+  
   setActiveTab(tab: 'info' | 'securities'): void {
     this.activeTab = tab;
   }
-
+  
   addSecurities(): void {
     this.editingSecuritiesIndex = -1;
     this.securitiesForm.reset({
@@ -124,7 +120,7 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
     }
     this.showSecuritiesModal = true;
   }
-
+  
   private loadDomains(): void {
     if (this.isLoadingDomains) return;
     this.isLoadingDomains = true;
@@ -139,7 +135,7 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
       }
     });
   }
-
+  
   editSecurities(index: number): void {
     this.editingSecuritiesIndex = index;
     const securities = this.securitiesList[index];
@@ -151,39 +147,35 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
     });
     this.showSecuritiesModal = true;
   }
-
+  
   removeSecurities(index: number): void {
     this.securitiesList.splice(index, 1);
   }
-
+  
   saveSecurities(): void {
     this.securitiesForm.markAllAsTouched();
     if (this.securitiesForm.invalid) return;
-
+    
     const formData = this.securitiesForm.value;
+    
     const securitiesItem: SecuritiesItem = {
-      securitiesCode: formData.securitiesCode?.trim() || 'AUTO',
+      securitiesCode: this.editingSecuritiesIndex >= 0 
+      ? (formData.securitiesCode?.trim() || 'AUTO') 
+      : 'AUTO',
       symbol: formData.symbol.trim(),
       isinCode: formData.isinCode?.trim() || undefined,
       domainCode: formData.domainCode.trim()
     };
-
-    // Check for duplicate securities code
-    const existingIndex = this.securitiesList.findIndex(s => s.securitiesCode === securitiesItem.securitiesCode);
-    if (existingIndex >= 0 && existingIndex !== this.editingSecuritiesIndex) {
-      this.toastService.error('Mã chứng khoán đã tồn tại trong danh sách!');
-      return;
-    }
-
+    
     if (this.editingSecuritiesIndex >= 0) {
       this.securitiesList[this.editingSecuritiesIndex] = securitiesItem;
     } else {
       this.securitiesList.push(securitiesItem);
     }
-
+    
     this.closeSecuritiesModal();
   }
-
+  
   closeSecuritiesModal(): void {
     this.showSecuritiesModal = false;
     this.editingSecuritiesIndex = -1;
@@ -194,7 +186,7 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
       domainCode: '' // Đảm bảo giá trị mặc định là empty string, không phải null
     });
   }
-
+  
   getDomainDisplayName(domainCode: string): string {
     if (!domainCode) return '-';
     const domain = this.domainList.find(d => d.domainCode === domainCode);
@@ -203,52 +195,60 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
     }
     return domainCode;
   }
-
+  
   onSubmit(): void {
     this.userForm.markAllAsTouched();
     if (this.userForm.invalid || this.isSubmitting) return;
-
+    
     this.isSubmitting = true;
     const formData = this.userForm.value;
+    
+    const securitiesForRequest: SecuritiesRequestItem[] | undefined = this.securitiesList.length > 0 
+    ? this.securitiesList.map(s => ({
+      symbol: s.symbol,
+      isinCode: s.isinCode,
+      domainCode: s.domainCode
+    }))
+    : undefined;
     
     const createRequest: CreateIssuerRequestDto = {
       issuerCode: (formData.issuerCode || '').trim(),
       shortName: (formData.shortName || '').trim(),
       fullName: (formData.fullName || '').trim(),
       comment: (formData.comment || '').trim() || undefined,
-      securities: this.securitiesList.length > 0 ? this.securitiesList : undefined
+      securities: securitiesForRequest
     };
-
+    
     (this.userService as any).createIssuer(createRequest)
-      .subscribe({
-        next: (res) => {
-          this.isSubmitting = false;
-          if (res?.isSuccess) {
-            this.toastService.success('Gửi yêu cầu tạo tổ chức phát hành thành công!');
-            this.userForm.reset();
-            this.created.emit();
-            this.closeModal();
-          } else {
-            this.toastService.error(res?.message || 'Không thể tạo tổ chức phát hành!');
-          }
-        },
-        error: (err) => {
-          this.isSubmitting = false;
-          console.error('Error creating issuer:', err);
+    .subscribe({
+      next: (res) => {
+        this.isSubmitting = false;
+        if (res?.isSuccess) {
+          this.toastService.success('Gửi yêu cầu tạo tổ chức phát hành thành công!');
+          this.userForm.reset();
+          this.created.emit();
+          this.closeModal();
+        } else {
+          this.toastService.error(res?.message || 'Không thể tạo tổ chức phát hành!');
         }
-      });
+      },
+      error: (err) => {
+        this.isSubmitting = false;
+        console.error('Error creating issuer:', err);
+      }
+    });
   }
-
+  
   onCancel(): void {
     this.userForm.reset();
     this.closeModal();
   }
-
+  
   closeModal(): void {
     this.close.emit();
     this.resetStates();
   }
-
+  
   // Reset all states
   private resetStates(): void {
     this.userForm.reset();
@@ -259,7 +259,7 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
     this.isSubmitting = false;
     this.isLoadingCode = false;
   }
-
+  
   // Helper methods for form validation
   getFieldError(fieldName: string): string {
     const field = this.userForm.get(fieldName);
@@ -280,7 +280,7 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
     }
     return '';
   }
-
+  
   private getFieldLabel(fieldName: string): string {
     const labels: { [key: string]: string } = {
       issuerCode: 'Mã TCPH',
@@ -290,7 +290,7 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
     };
     return labels[fieldName] || fieldName;
   }
-
+  
   // Helper methods for securities form validation
   getSecuritiesFieldError(fieldName: string): string {
     const field = this.securitiesForm.get(fieldName);
@@ -308,7 +308,7 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
     }
     return '';
   }
-
+  
   private getSecuritiesFieldLabel(fieldName: string): string {
     const labels: { [key: string]: string } = {
       securitiesCode: 'Mã chứng khoán',
@@ -318,12 +318,12 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
     };
     return labels[fieldName] || fieldName;
   }
-
+  
   isSecuritiesFieldInvalid(fieldName: string): boolean {
     const field = this.securitiesForm.get(fieldName);
     return !!(field?.touched && field?.invalid);
   }
-
+  
   isFieldInvalid(fieldName: string): boolean {
     const field = this.userForm.get(fieldName);
     return !!(field?.touched && field?.invalid);
