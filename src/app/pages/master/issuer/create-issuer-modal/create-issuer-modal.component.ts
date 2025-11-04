@@ -128,19 +128,14 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
   private loadDomains(): void {
     if (this.isLoadingDomains) return;
     this.isLoadingDomains = true;
-    this.domainService.getPaging({
-      pageIndex: 1,
-      pageSize: 1000 // Lấy tất cả domains
-    }).subscribe({
+    this.domainService.getAll().subscribe({
       next: (res) => {
         this.isLoadingDomains = false;
-        const page = res?.data as any;
-        this.domainList = page?.items ?? [];
+        this.domainList = res?.data ?? [];
       },
       error: (err) => {
         this.isLoadingDomains = false;
         console.error('Error loading domains:', err);
-        this.toastService.error('Không thể tải danh sách miền thanh toán!');
       }
     });
   }

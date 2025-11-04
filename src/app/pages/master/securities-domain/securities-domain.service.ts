@@ -10,6 +10,11 @@ export class SecuritiesDomainService {
 
   constructor(private http: HttpClient) {}
 
+  // Get all securities domains without pagination
+  getAll(): Observable<any> {
+    return this.http.get<any>(this.apiUrl);
+  }
+
   // Get paged securities domains with filters and sorting
   getPaging(params: SecuritiesDomainSearchParams): Observable<PagedResponse<SecuritiesDomainItem>> {
     const query: any = {
