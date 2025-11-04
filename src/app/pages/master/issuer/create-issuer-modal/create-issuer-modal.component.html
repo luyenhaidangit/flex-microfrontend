@@ -118,17 +118,17 @@
                     <tr>
                       <th>Mã chứng khoán</th>
                       <th>Symbol</th>
-                      <th>ISIN Code</th>
                       <th>Miền thanh toán</th>
+                      <th>ISIN Code</th>
                       <th width="100">Thao tác</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr *ngFor="let securities of securitiesList; let i = index">
-                      <td>{{ securities.securitiesCode }}</td>
+                      <td>{{ securities.securitiesCode || 'AUTO' }}</td>
                       <td>{{ securities.symbol }}</td>
+                      <td>{{ getDomainDisplayName(securities.domainCode) }}</td>
                       <td>{{ securities.isinCode || '-' }}</td>
-                      <td>{{ securities.domainCode }}</td>
                       <td>
                         <div class="btn-group btn-group-sm">
                           <button type="button" class="btn btn-outline-primary" (click)="editSecurities(i)" title="Sửa">

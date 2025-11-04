@@ -71,7 +71,7 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
 
   private initializeSecuritiesForm(): void {
     this.securitiesForm = this.fb.group({
-      securitiesCode: [''],
+      securitiesCode: ['AUTO'],
       symbol: ['', [Validators.required, Validators.maxLength(20)]],
       isinCode: ['', [Validators.maxLength(20)]],
       domainCode: ['', [Validators.required]]
@@ -112,7 +112,7 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
   addSecurities(): void {
     this.editingSecuritiesIndex = -1;
     this.securitiesForm.reset({
-      securitiesCode: '',
+      securitiesCode: 'AUTO',
       symbol: '',
       isinCode: '',
       domainCode: '' // Đảm bảo giá trị mặc định là empty string, không phải null
@@ -167,7 +167,7 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
 
     const formData = this.securitiesForm.value;
     const securitiesItem: SecuritiesItem = {
-      securitiesCode: formData.securitiesCode?.trim() || '',
+      securitiesCode: formData.securitiesCode?.trim() || 'AUTO',
       symbol: formData.symbol.trim(),
       isinCode: formData.isinCode?.trim() || undefined,
       domainCode: formData.domainCode.trim()
@@ -193,11 +193,20 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
     this.showSecuritiesModal = false;
     this.editingSecuritiesIndex = -1;
     this.securitiesForm.reset({
-      securitiesCode: '',
+      securitiesCode: 'AUTO',
       symbol: '',
       isinCode: '',
       domainCode: '' // Đảm bảo giá trị mặc định là empty string, không phải null
     });
+  }
+
+  getDomainDisplayName(domainCode: string): string {
+    if (!domainCode) return '-';
+    const domain = this.domainList.find(d => d.domainCode === domainCode);
+    if (domain) {
+      return `${domain.domainCode} - ${domain.domainName}`;
+    }
+    return domainCode;
   }
 
   onSubmit(): void {
