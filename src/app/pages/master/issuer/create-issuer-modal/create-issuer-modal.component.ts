@@ -8,7 +8,7 @@ interface CreateIssuerRequestDto {
   shortName: string; 
   fullName: string; 
   comment?: string;
-  securitiesList?: SecuritiesItem[];
+  securities?: SecuritiesItem[];
 }
 
 interface SecuritiesItem {
@@ -172,7 +172,7 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
       shortName: (formData.shortName || '').trim(),
       fullName: (formData.fullName || '').trim(),
       comment: (formData.comment || '').trim() || undefined,
-      securitiesList: this.securitiesList.length > 0 ? this.securitiesList : undefined
+      securities: this.securitiesList.length > 0 ? this.securitiesList : undefined
     };
 
     (this.userService as any).createIssuer(createRequest)
