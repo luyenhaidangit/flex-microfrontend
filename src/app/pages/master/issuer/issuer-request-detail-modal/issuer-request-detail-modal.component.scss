@@ -1,0 +1,63 @@
+.timeline-horizontal {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	position: relative;
+	width: 100%;
+}
+
+.timeline-item-horizontal {
+	display: flex;
+	align-items: flex-start;
+	flex: 1;
+	position: relative;
+}
+
+.timeline-step-content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	position: relative;
+	z-index: 2;
+}
+
+.timeline-marker-horizontal {
+	position: relative;
+	z-index: 2;
+	background: white;
+	border-radius: 50%;
+	width: 3rem;
+	height: 3rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	margin-bottom: 0.5rem;
+}
+
+.timeline-step-info {
+	width: 100%;
+	min-height: 80px;
+}
+
+.timeline-connector-horizontal {
+	flex: 1;
+	height: 2px;
+	align-self: center;
+	margin: 0 0.5rem;
+	margin-top: -1.5rem;
+	z-index: 1;
+	min-width: 2rem;
+}
+
+.line-completed {
+	background-color: #28a745;
+	opacity: 0.6;
+}
+
+.line-pending {
+	background-color: #dee2e6;
+	opacity: 0.4;
+}
+
