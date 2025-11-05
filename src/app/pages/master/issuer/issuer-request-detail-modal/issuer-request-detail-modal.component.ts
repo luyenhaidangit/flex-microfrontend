@@ -254,7 +254,7 @@ export class IssuerRequestDetailModalComponent implements OnInit, OnDestroy, OnC
 		if (status === 'PENDING') {
 			steps = [
 				{
-					label: 'Tạo yêu cầu',
+					label: 'Yêu cầu tạo',
 					status: 'completed' as const,
 					date: createdDate,
 					user: this.getCreatedBy()
