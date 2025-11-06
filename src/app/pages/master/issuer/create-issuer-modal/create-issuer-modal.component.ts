@@ -212,11 +212,13 @@ export class CreateIssuerModalComponent implements OnInit, OnChanges {
     }))
     : undefined;
     
+    const commentValue = (formData.comment || '').trim();
+    
     const createRequest: CreateIssuerRequestDto = {
       issuerCode: (formData.issuerCode || '').trim(),
       shortName: (formData.shortName || '').trim(),
       fullName: (formData.fullName || '').trim(),
-      comment: (formData.comment || '').trim() || undefined,
+      comment: commentValue || null,
       securities: securitiesForRequest
     };
     
