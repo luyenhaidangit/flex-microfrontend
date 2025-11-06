@@ -20,6 +20,7 @@ export interface IssuerRequestDetailData {
 	rejectedDate?: string;
 	approvedBy?: string;
 	approvedDate?: string;
+	comments?: string;
 }
 
 @Component({
@@ -240,16 +241,35 @@ export class IssuerRequestDetailModalComponent implements OnInit, OnDestroy, OnC
 		}
 	}
 
+	// Parse comment from format [label|comment] or [label|comment][label2|comment2]
+	private parseComment(comments: string | undefined, index: number = 0): string {
+		if (!comments) return '';
+		const regex = /\[(.*?)\|(.*?)\]/g;
+		const matches = Array.from(comments.matchAll(regex));
+		if (matches.length > index) {
+			return matches[index][2]?.trim() || '';
+		}
+		return '';
+	}
+
+	// Get comment by status: UNA = first comment, others = second comment
+	private getCommentByStatus(status: string, comments: string | undefined): string {
+		if (!comments) return '';
+		const isUna = status?.toUpperCase() === 'UNA' || status?.toUpperCase() === 'PENDING' || status?.toUpperCase() === 'UNAUTHORISED';
+		return isUna ? this.parseComment(comments, 0) : this.parseComment(comments, 1);
+	}
+
 	// Get approval workflow steps
-	getWorkflowSteps(): Array<{label: string, status: 'completed' | 'current' | 'pending', date?: string, user?: string}> {
+	getWorkflowSteps(): Array<{label: string, status: 'completed' | 'current' | 'pending', date?: string, user?: string, comment?: string}> {
 		const status = (this.requestDetailData?.status || 'PENDING').toUpperCase();
 		const createdDate = this.getCreatedDate();
 		const approvedDate = this.requestDetailData?.approvedDate || this.requestDetailData?.rejectedDate || '';
 		const rejectedDate = this.requestDetailData?.rejectedDate || '';
 		const approvedBy = this.requestDetailData?.approvedBy || this.requestDetailData?.rejectedBy || '';
 		const rejectedBy = this.requestDetailData?.rejectedBy || '';
+		const comments = this.requestDetailData?.comments || '';
 
-		let steps: Array<{label: string, status: 'completed' | 'current' | 'pending', date?: string, user?: string}>;
+		let steps: Array<{label: string, status: 'completed' | 'current' | 'pending', date?: string, user?: string, comment?: string}>;
 
 		if (status === 'PENDING') {
 			steps = [
@@ -257,7 +277,8 @@ export class IssuerRequestDetailModalComponent implements OnInit, OnDestroy, OnC
 					label: 'Yêu cầu tạo',
 					status: 'completed' as const,
 					date: createdDate,
-					user: this.getCreatedBy()
+					user: this.getCreatedBy(),
+					comment: this.parseComment(comments, 0)
 				},
 				{
 					label: 'Chờ duyệt',
@@ -278,7 +299,8 @@ export class IssuerRequestDetailModalComponent implements OnInit, OnDestroy, OnC
 					label: 'Tạo yêu cầu',
 					status: 'completed' as const,
 					date: createdDate,
-					user: this.getCreatedBy()
+					user: this.getCreatedBy(),
+					comment: this.parseComment(comments, 0)
 				},
 				{
 					label: 'Chờ duyệt',
@@ -290,7 +312,8 @@ export class IssuerRequestDetailModalComponent implements OnInit, OnDestroy, OnC
 					label: 'Đã phê duyệt',
 					status: 'completed' as const,
 					date: approvedDate,
-					user: approvedBy
+					user: approvedBy,
+					comment: this.parseComment(comments, 1)
 				}
 			];
 		} else if (status === 'REJECTED') {
@@ -299,7 +322,8 @@ export class IssuerRequestDetailModalComponent implements OnInit, OnDestroy, OnC
 					label: 'Tạo yêu cầu',
 					status: 'completed' as const,
 					date: createdDate,
-					user: this.getCreatedBy()
+					user: this.getCreatedBy(),
+					comment: this.parseComment(comments, 0)
 				},
 				{
 					label: 'Chờ duyệt',
@@ -311,7 +335,8 @@ export class IssuerRequestDetailModalComponent implements OnInit, OnDestroy, OnC
 					label: 'Đã từ chối',
 					status: 'completed' as const,
 					date: rejectedDate,
-					user: rejectedBy
+					user: rejectedBy,
+					comment: this.parseComment(comments, 1)
 				}
 			];
 		} else {
@@ -320,7 +345,8 @@ export class IssuerRequestDetailModalComponent implements OnInit, OnDestroy, OnC
 					label: 'Tạo yêu cầu',
 					status: 'completed' as const,
 					date: createdDate,
-					user: this.getCreatedBy()
+					user: this.getCreatedBy(),
+					comment: this.parseComment(comments, 0)
 				},
 				{
 					label: 'Chờ duyệt',
