@@ -122,18 +122,6 @@
 											<td class="fw-bold">Tên đầy đủ</td>
 											<td>{{ getIssuerFullName(requestDetailData.newData) | safeField }}</td>
 										</tr>
-										<tr>
-											<td class="fw-bold">Loại tổ chức</td>
-											<td>{{ getOrganizationType(requestDetailData.newData) }}</td>
-										</tr>
-										<tr>
-											<td class="fw-bold">Ngày đăng ký</td>
-											<td>{{ getRegistrationDate(requestDetailData.newData) | date:'dd/MM/yyyy' }}</td>
-										</tr>
-										<tr *ngIf="getComment(requestDetailData.newData)">
-											<td class="fw-bold">Ghi chú</td>
-											<td>{{ getComment(requestDetailData.newData) | safeField }}</td>
-										</tr>
 									</tbody>
 								</table>
 							</div>
