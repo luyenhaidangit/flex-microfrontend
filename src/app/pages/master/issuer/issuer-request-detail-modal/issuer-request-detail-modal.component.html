@@ -93,197 +93,272 @@
 						</div>
 					</div>
 					
-					<!-- CREATE Request - Show new data in table format -->
-					<div *ngIf="getRequestType() === 'CREATE'" class="card border-0 mb-4">
-						<div class="card-header bg-light border-0">
-							<h6 class="mb-0 fw-bold">
-								Thông tin yêu cầu
-							</h6>
-						</div>
-						<div class="card-body">
-							<div class="table-responsive">
-								<table class="table table-bordered mb-0">
-									<thead class="table-light">
-										<tr>
-											<th style="width: 50%">Trường dữ liệu</th>
-											<th style="width: 50%">Giá trị mới</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td class="fw-bold">Mã tổ chức phát hành</td>
-											<td>{{ getIssuerCode(requestDetailData.newData) | safeField }}</td>
-										</tr>
-										<tr>
-											<td class="fw-bold">Tên viết tắt</td>
-											<td>{{ getIssuerShortName(requestDetailData.newData) | safeField }}</td>
-										</tr>
-										<tr>
-											<td class="fw-bold">Tên đầy đủ</td>
-											<td>{{ getIssuerFullName(requestDetailData.newData) | safeField }}</td>
-										</tr>
-									</tbody>
-								</table>
+					<!-- CREATE Request - Show new data -->
+					<div *ngIf="getRequestType() === 'CREATE'">
+						<!-- Thông tin yêu cầu - Container -->
+						<div class="card border-0 mb-4">
+							<div class="card-header bg-light border-0">
+								<h6 class="mb-0 fw-bold">
+									Thông tin yêu cầu
+								</h6>
 							</div>
-						</div>
-					</div>
-					
-					<!-- Securities List for CREATE Request -->
-					<div *ngIf="getRequestType() === 'CREATE' && getSecuritiesList(requestDetailData.newData)?.length > 0" class="card border-0 mb-4">
-						<div class="card-header bg-light border-0">
-							<h6 class="mb-0 fw-bold">
-								📑 Danh sách chứng khoán được tạo cùng ({{ getSecuritiesList(requestDetailData.newData).length }})
-							</h6>
-						</div>
-						<div class="card-body">
-							<div *ngFor="let securities of getSecuritiesList(requestDetailData.newData); let i = index" class="border rounded mb-3">
-								<div class="p-3 bg-light" (click)="toggleSecurities(i)" style="cursor: pointer;">
-									<span class="me-2">{{ isSecuritiesExpanded(i) ? '▼' : '▶' }}</span>
-									<strong>{{ getSecuritiesDisplayName(securities) }}</strong>
+							<div class="card-body">
+								<!-- Thông tin Tổ chức phát hành -->
+								<div class="mb-4">
+									<h6 class="fw-semibold mb-3 text-primary">
+										<i class="fas fa-building me-2"></i>Thông tin Tổ chức phát hành
+									</h6>
+									<div class="table-responsive">
+										<table class="table table-bordered mb-0">
+											<thead class="table-light">
+												<tr>
+													<th style="width: 50%">Trường dữ liệu</th>
+													<th style="width: 50%">Giá trị mới</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td class="fw-bold">Mã tổ chức phát hành</td>
+													<td>{{ getIssuerCode(requestDetailData.newData) | safeField }}</td>
+												</tr>
+												<tr>
+													<td class="fw-bold">Tên viết tắt</td>
+													<td>{{ getIssuerShortName(requestDetailData.newData) | safeField }}</td>
+												</tr>
+												<tr>
+													<td class="fw-bold">Tên đầy đủ</td>
+													<td>{{ getIssuerFullName(requestDetailData.newData) | safeField }}</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
 								</div>
-								<div *ngIf="isSecuritiesExpanded(i)" class="p-3">
-									<table class="table table-sm table-bordered mb-0">
-										<thead class="table-light">
-											<tr>
-												<th style="width: 50%">Trường</th>
-												<th style="width: 50%">Giá trị mới</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td class="fw-bold">ISIN Code</td>
-												<td>{{ getSecuritiesIsinCode(securities) | safeField }}</td>
-											</tr>
-											<tr>
-												<td class="fw-bold">Tên chứng khoán</td>
-												<td>{{ getSecuritiesSymbol(securities) | safeField }}</td>
-											</tr>
-											<tr>
-												<td class="fw-bold">Loại chứng khoán</td>
-												<td>{{ getSecuritiesType(securities) }}</td>
-											</tr>
-											<tr *ngIf="getSecuritiesFaceValue(securities) !== '—'">
-												<td class="fw-bold">Mệnh giá</td>
-												<td>{{ getSecuritiesFaceValue(securities) }}</td>
-											</tr>
-											<tr *ngIf="getSecuritiesListingDate(securities)">
-												<td class="fw-bold">Ngày niêm yết</td>
-												<td>{{ getSecuritiesListingDate(securities) | date:'dd/MM/yyyy' }}</td>
-											</tr>
-										</tbody>
-									</table>
+								
+								<!-- Thông tin Chứng khoán -->
+								<div *ngIf="getSecuritiesList(requestDetailData.newData)?.length > 0" class="border-top pt-4">
+									<h6 class="fw-semibold mb-3 text-primary">
+										<i class="fas fa-chart-line me-2"></i>Thông tin Chứng khoán ({{ getSecuritiesList(requestDetailData.newData).length }})
+									</h6>
+									<div *ngFor="let securities of getSecuritiesList(requestDetailData.newData); let i = index" class="border rounded mb-3">
+										<div class="p-3 bg-light" (click)="toggleSecurities(i)" style="cursor: pointer;">
+											<span class="me-2">{{ isSecuritiesExpanded(i) ? '▼' : '▶' }}</span>
+											<strong>{{ getSecuritiesDisplayName(securities) }}</strong>
+										</div>
+										<div *ngIf="isSecuritiesExpanded(i)" class="p-3">
+											<table class="table table-sm table-bordered mb-0">
+												<thead class="table-light">
+													<tr>
+														<th style="width: 50%">Trường</th>
+														<th style="width: 50%">Giá trị mới</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<td class="fw-bold">ISIN Code</td>
+														<td>{{ getSecuritiesIsinCode(securities) | safeField }}</td>
+													</tr>
+													<tr>
+														<td class="fw-bold">Tên chứng khoán</td>
+														<td>{{ getSecuritiesSymbol(securities) | safeField }}</td>
+													</tr>
+													<tr>
+														<td class="fw-bold">Loại chứng khoán</td>
+														<td>{{ getSecuritiesType(securities) }}</td>
+													</tr>
+													<tr *ngIf="getSecuritiesFaceValue(securities) !== '—'">
+														<td class="fw-bold">Mệnh giá</td>
+														<td>{{ getSecuritiesFaceValue(securities) }}</td>
+													</tr>
+													<tr *ngIf="getSecuritiesListingDate(securities)">
+														<td class="fw-bold">Ngày niêm yết</td>
+														<td>{{ getSecuritiesListingDate(securities) | date:'dd/MM/yyyy' }}</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 					
 					<!-- UPDATE Request - Show comparison -->
-					<div *ngIf="getRequestType() === 'UPDATE'" class="card border-0">
-						<div class="card-header bg-warning bg-opacity-10 border-0">
-							<h6 class="mb-0 text-warning">
-								<i class="fas fa-edit me-2"></i>So sánh thay đổi
-							</h6>
-						</div>
-						<div class="card-body">
-							<div class="table-responsive">
-								<table class="table table-bordered comparison-table">
-									<thead class="table-light">
-										<tr>
-											<th style="width: 25%">Trường dữ liệu</th>
-											<th style="width: 37.5%">Giá trị cũ</th>
-											<th style="width: 37.5%">Giá trị mới</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td class="fw-bold">Mã tổ chức phát hành</td>
-											<td [ngClass]="{'bg-light-warning': hasChanges('issuerCode')}">
-												{{ getIssuerCode(requestDetailData.oldData) }}
-											</td>
-											<td [ngClass]="{'bg-light-warning': hasChanges('issuerCode')}">
-												{{ getIssuerCode(requestDetailData.newData) }}
-											</td>
-										</tr>
-										<tr>
-											<td class="fw-bold">Tên viết tắt</td>
-											<td [ngClass]="{'bg-light-warning': hasChanges('shortName')}">
-												{{ getIssuerShortName(requestDetailData.oldData) }}
-											</td>
-											<td [ngClass]="{'bg-light-warning': hasChanges('shortName')}">
-												{{ getIssuerShortName(requestDetailData.newData) }}
-											</td>
-										</tr>
-										<tr>
-											<td class="fw-bold">Tên đầy đủ</td>
-											<td [ngClass]="{'bg-light-warning': hasChanges('fullName')}">
-												{{ getIssuerFullName(requestDetailData.oldData) }}
-											</td>
-											<td [ngClass]="{'bg-light-warning': hasChanges('fullName')}">
-												{{ getIssuerFullName(requestDetailData.newData) }}
-											</td>
-										</tr>
-										<tr *ngIf="getComment(requestDetailData.oldData) || getComment(requestDetailData.newData)">
-											<td class="fw-bold">Ghi chú</td>
-											<td [ngClass]="{'bg-light-warning': hasChanges('comment')}">
-												{{ getComment(requestDetailData.oldData) }}
-											</td>
-											<td [ngClass]="{'bg-light-warning': hasChanges('comment')}">
-												{{ getComment(requestDetailData.newData) }}
-											</td>
-										</tr>
-									</tbody>
-								</table>
+					<div *ngIf="getRequestType() === 'UPDATE'">
+						<!-- Thông tin yêu cầu - Container -->
+						<div class="card border-0 mb-4">
+							<div class="card-header bg-light border-0">
+								<h6 class="mb-0 fw-bold">
+									Thông tin yêu cầu
+								</h6>
+							</div>
+							<div class="card-body">
+								<!-- Thông tin Tổ chức phát hành -->
+								<div class="mb-4">
+									<h6 class="fw-semibold mb-3 text-primary">
+										<i class="fas fa-building me-2"></i>Thông tin Tổ chức phát hành
+									</h6>
+									<div class="table-responsive">
+										<table class="table table-bordered comparison-table">
+											<thead class="table-light">
+												<tr>
+													<th style="width: 25%">Trường dữ liệu</th>
+													<th style="width: 37.5%">Giá trị cũ</th>
+													<th style="width: 37.5%">Giá trị mới</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td class="fw-bold">Mã tổ chức phát hành</td>
+													<td [ngClass]="{'bg-light-warning': hasChanges('issuerCode')}">
+														{{ getIssuerCode(requestDetailData.oldData) }}
+													</td>
+													<td [ngClass]="{'bg-light-warning': hasChanges('issuerCode')}">
+														{{ getIssuerCode(requestDetailData.newData) }}
+													</td>
+												</tr>
+												<tr>
+													<td class="fw-bold">Tên viết tắt</td>
+													<td [ngClass]="{'bg-light-warning': hasChanges('shortName')}">
+														{{ getIssuerShortName(requestDetailData.oldData) }}
+													</td>
+													<td [ngClass]="{'bg-light-warning': hasChanges('shortName')}">
+														{{ getIssuerShortName(requestDetailData.newData) }}
+													</td>
+												</tr>
+												<tr>
+													<td class="fw-bold">Tên đầy đủ</td>
+													<td [ngClass]="{'bg-light-warning': hasChanges('fullName')}">
+														{{ getIssuerFullName(requestDetailData.oldData) }}
+													</td>
+													<td [ngClass]="{'bg-light-warning': hasChanges('fullName')}">
+														{{ getIssuerFullName(requestDetailData.newData) }}
+													</td>
+												</tr>
+												<tr>
+													<td class="fw-bold">Loại tổ chức</td>
+													<td [ngClass]="{'bg-light-warning': hasChanges('organizationType')}">
+														{{ getOrganizationType(requestDetailData.oldData) }}
+													</td>
+													<td [ngClass]="{'bg-light-warning': hasChanges('organizationType')}">
+														{{ getOrganizationType(requestDetailData.newData) }}
+													</td>
+												</tr>
+												<tr>
+													<td class="fw-bold">Ngày đăng ký</td>
+													<td [ngClass]="{'bg-light-warning': hasChanges('registrationDate')}">
+														{{ getRegistrationDate(requestDetailData.oldData) | date:'dd/MM/yyyy' }}
+													</td>
+													<td [ngClass]="{'bg-light-warning': hasChanges('registrationDate')}">
+														{{ getRegistrationDate(requestDetailData.newData) | date:'dd/MM/yyyy' }}
+													</td>
+												</tr>
+												<tr *ngIf="getComment(requestDetailData.oldData) || getComment(requestDetailData.newData)">
+													<td class="fw-bold">Ghi chú</td>
+													<td [ngClass]="{'bg-light-warning': hasChanges('comment')}">
+														{{ getComment(requestDetailData.oldData) }}
+													</td>
+													<td [ngClass]="{'bg-light-warning': hasChanges('comment')}">
+														{{ getComment(requestDetailData.newData) }}
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+								
+								<!-- Thông tin Chứng khoán (nếu có thay đổi) -->
+								<div *ngIf="getSecuritiesList(requestDetailData.newData)?.length > 0 || getSecuritiesList(requestDetailData.oldData)?.length > 0" class="border-top pt-4">
+									<h6 class="fw-semibold mb-3 text-primary">
+										<i class="fas fa-chart-line me-2"></i>Thông tin Chứng khoán
+									</h6>
+									<div class="alert alert-info">
+										<i class="fas fa-info-circle me-2"></i>
+										Thông tin chứng khoán sẽ được hiển thị tại đây khi có thay đổi.
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
 					
 					<!-- DELETE Request - Show data to be deleted -->
-					<div *ngIf="getRequestType() === 'DELETE'" class="card border-0">
-						<div class="card-header bg-danger bg-opacity-10 border-0">
-							<h6 class="mb-0 text-danger">
-								<i class="fas fa-trash-alt me-2"></i>Dữ liệu sẽ bị xóa
-							</h6>
-						</div>
-						<div class="card-body">
-							<div class="alert alert-danger">
-								<i class="fas fa-exclamation-triangle me-2"></i>
-								<strong>Cảnh báo:</strong> Tổ chức phát hành này sẽ bị xóa vĩnh viễn sau khi được phê duyệt.
+					<div *ngIf="getRequestType() === 'DELETE'">
+						<!-- Thông tin yêu cầu - Container -->
+						<div class="card border-0 mb-4">
+							<div class="card-header bg-light border-0">
+								<h6 class="mb-0 fw-bold">
+									Thông tin yêu cầu
+								</h6>
 							</div>
-							<div class="table-responsive">
-								<table class="table table-bordered comparison-table">
-									<thead class="table-light">
-										<tr>
-											<th style="width: 50%">Trường dữ liệu</th>
-											<th style="width: 50%">Giá trị hiện tại</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td class="fw-bold">Mã tổ chức phát hành</td>
-											<td class="bg-danger bg-opacity-10">
-												{{ getIssuerCode(requestDetailData.oldData) | safeField }}
-											</td>
-										</tr>
-										<tr>
-											<td class="fw-bold">Tên viết tắt</td>
-											<td class="bg-danger bg-opacity-10">
-												{{ getIssuerShortName(requestDetailData.oldData) | safeField }}
-											</td>
-										</tr>
-										<tr>
-											<td class="fw-bold">Tên đầy đủ</td>
-											<td class="bg-danger bg-opacity-10">
-												{{ getIssuerFullName(requestDetailData.oldData) | safeField }}
-											</td>
-										</tr>
-										<tr *ngIf="getReason(requestDetailData.oldData)">
-											<td class="fw-bold">Lý do xóa</td>
-											<td class="bg-danger bg-opacity-10">
-												{{ getReason(requestDetailData.oldData) | safeField }}
-											</td>
-										</tr>
-									</tbody>
-								</table>
+							<div class="card-body">
+								<!-- Thông tin Tổ chức phát hành -->
+								<div class="mb-4">
+									<h6 class="fw-semibold mb-3 text-primary">
+										<i class="fas fa-building me-2"></i>Thông tin Tổ chức phát hành
+									</h6>
+									<div class="alert alert-danger">
+										<i class="fas fa-exclamation-triangle me-2"></i>
+										<strong>Cảnh báo:</strong> Tổ chức phát hành này sẽ bị xóa vĩnh viễn sau khi được phê duyệt.
+									</div>
+									<div class="table-responsive">
+										<table class="table table-bordered comparison-table">
+											<thead class="table-light">
+												<tr>
+													<th style="width: 50%">Trường dữ liệu</th>
+													<th style="width: 50%">Giá trị hiện tại</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td class="fw-bold">Mã tổ chức phát hành</td>
+													<td class="bg-danger bg-opacity-10">
+														{{ getIssuerCode(requestDetailData.oldData) | safeField }}
+													</td>
+												</tr>
+												<tr>
+													<td class="fw-bold">Tên viết tắt</td>
+													<td class="bg-danger bg-opacity-10">
+														{{ getIssuerShortName(requestDetailData.oldData) | safeField }}
+													</td>
+												</tr>
+												<tr>
+													<td class="fw-bold">Tên đầy đủ</td>
+													<td class="bg-danger bg-opacity-10">
+														{{ getIssuerFullName(requestDetailData.oldData) | safeField }}
+													</td>
+												</tr>
+												<tr>
+													<td class="fw-bold">Loại tổ chức</td>
+													<td class="bg-danger bg-opacity-10">
+														{{ getOrganizationType(requestDetailData.oldData) }}
+													</td>
+												</tr>
+												<tr>
+													<td class="fw-bold">Ngày đăng ký</td>
+													<td class="bg-danger bg-opacity-10">
+														{{ getRegistrationDate(requestDetailData.oldData) | date:'dd/MM/yyyy' }}
+													</td>
+												</tr>
+												<tr *ngIf="getReason(requestDetailData.oldData)">
+													<td class="fw-bold">Lý do xóa</td>
+													<td class="bg-danger bg-opacity-10">
+														{{ getReason(requestDetailData.oldData) | safeField }}
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+								
+								<!-- Thông tin Chứng khoán (nếu có) -->
+								<div *ngIf="getSecuritiesList(requestDetailData.oldData)?.length > 0" class="border-top pt-4">
+									<h6 class="fw-semibold mb-3 text-primary">
+										<i class="fas fa-chart-line me-2"></i>Thông tin Chứng khoán ({{ getSecuritiesList(requestDetailData.oldData).length }})
+									</h6>
+									<div class="alert alert-warning">
+										<i class="fas fa-exclamation-triangle me-2"></i>
+										<strong>Lưu ý:</strong> Các chứng khoán liên quan đến tổ chức phát hành này cũng sẽ bị ảnh hưởng.
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>

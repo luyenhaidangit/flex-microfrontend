@@ -95,7 +95,7 @@ export class IssuerRequestDetailModalComponent implements OnInit, OnDestroy, OnC
 			.subscribe({
 				next: (res) => {
 					if (res?.isSuccess) {
-						this.requestDetailData = res.data;
+						this.requestDetailData = this.convertCreateIssuerRequestData(res.data);
 					} else {
 						this.toast.error('Không thể lấy thông tin chi tiết yêu cầu!');
 						this.onClose();
@@ -106,6 +106,72 @@ export class IssuerRequestDetailModalComponent implements OnInit, OnDestroy, OnC
 					this.onClose();
 				}
 			});
+	}
+
+	// Convert data from PascalCase to camelCase format
+	private convertCreateIssuerRequestData(data: any): any {
+		if (!data) return data;
+
+		const converted: any = { ...data };
+
+		// Convert newData if exists
+		if (data.newData) {
+			converted.newData = this.convertIssuerData(data.newData);
+		}
+
+		// Convert oldData if exists
+		if (data.oldData) {
+			converted.oldData = this.convertIssuerData(data.oldData);
+		}
+
+		return converted;
+	}
+
+	// Convert issuer data from PascalCase to camelCase
+	private convertIssuerData(data: any): any {
+		if (!data) return data;
+
+		const converted: any = {};
+
+		// Convert issuer fields (support both PascalCase and camelCase)
+		converted.issuerCode = data.IssuerCode || data.issuerCode || '';
+		converted.shortName = data.ShortName || data.shortName || '';
+		converted.fullName = data.FullName || data.fullName || '';
+		converted.comment = data.Comment || data.comment || '';
+		converted.organizationType = data.OrganizationType || data.organizationType || data.orgType || '';
+		converted.registrationDate = data.RegistrationDate || data.registrationDate || data.registeredDate || '';
+		converted.status = data.Status || data.status || '';
+		converted.reason = data.Reason || data.reason || '';
+
+		// Convert Securities array
+		if (data.Securities || data.securities) {
+			const securitiesArray = data.Securities || data.securities || [];
+			converted.securities = securitiesArray.map((sec: any) => this.convertSecuritiesData(sec));
+		}
+
+		// Preserve other fields
+		Object.keys(data).forEach(key => {
+			if (!converted.hasOwnProperty(key) && !['IssuerCode', 'ShortName', 'FullName', 'Comment', 'Securities', 'OrganizationType', 'RegistrationDate', 'Status', 'Reason'].includes(key)) {
+				converted[key] = data[key];
+			}
+		});
+
+		return converted;
+	}
+
+	// Convert securities data from PascalCase to camelCase
+	private convertSecuritiesData(data: any): any {
+		if (!data) return data;
+
+		return {
+			securitiesCode: data.SecuritiesCode || data.securitiesCode || data.code || '',
+			symbol: data.Symbol || data.symbol || data.name || '',
+			isinCode: data.IsinCode || data.isinCode || '',
+			domainCode: data.DomainCode || data.domainCode || '',
+			faceValue: data.FaceValue || data.faceValue || null,
+			listingDate: data.ListingDate || data.listingDate || data.issueDate || '',
+			...data // Preserve other fields
+		};
 	}
 
 	// Get request type from data
@@ -163,24 +229,24 @@ export class IssuerRequestDetailModalComponent implements OnInit, OnDestroy, OnC
 		return this.requestDetailData?.createdDate || this.requestDetailData?.requestedDate || '';
 	}
 
-	// Get issuer code from data
+	// Get issuer code from data (support both PascalCase and camelCase)
 	getIssuerCode(data: any): string {
-		return data?.issuerCode || '';
+		return data?.IssuerCode || data?.issuerCode || '';
 	}
 
-	// Get issuer short name from data
+	// Get issuer short name from data (support both PascalCase and camelCase)
 	getIssuerShortName(data: any): string {
-		return data?.shortName || '';
+		return data?.ShortName || data?.shortName || '';
 	}
 
-	// Get issuer full name from data
+	// Get issuer full name from data (support both PascalCase and camelCase)
 	getIssuerFullName(data: any): string {
-		return data?.fullName || '';
+		return data?.FullName || data?.fullName || '';
 	}
 
 	// Get issuer name for display (prioritize fullName over shortName)
 	getDisplayName(data: any): string {
-		return data?.fullName || data?.shortName || '';
+		return data?.FullName || data?.fullName || data?.ShortName || data?.shortName || '';
 	}
 
 	// Get issuer status from data
@@ -210,9 +276,9 @@ export class IssuerRequestDetailModalComponent implements OnInit, OnDestroy, OnC
 		}
 	}
 
-	// Get comment from data
+	// Get comment from data (support both PascalCase and camelCase)
 	getComment(data: any): string {
-		return data?.comment || '';
+		return data?.Comment || data?.comment || '';
 	}
 
 	// Get reason from data (for delete requests)
@@ -388,30 +454,30 @@ export class IssuerRequestDetailModalComponent implements OnInit, OnDestroy, OnC
 
 	// Get securities list from data
 	getSecuritiesList(data: any): any[] {
-		return data?.securities || [];
+		return data?.Securities || data?.securities || [];
 	}
 
-	// Get securities code
+	// Get securities code (support both PascalCase and camelCase)
 	getSecuritiesCode(securities: any): string {
-		return securities?.securitiesCode || securities?.code || '';
+		return securities?.SecuritiesCode || securities?.securitiesCode || securities?.code || '';
 	}
 
-	// Get securities symbol/name
+	// Get securities symbol/name (support both PascalCase and camelCase)
 	getSecuritiesSymbol(securities: any): string {
-		return securities?.symbol || securities?.name || '';
+		return securities?.Symbol || securities?.symbol || securities?.name || '';
 	}
 
-	// Get securities ISIN code
+	// Get securities ISIN code (support both PascalCase and camelCase)
 	getSecuritiesIsinCode(securities: any): string {
-		return securities?.isinCode || '';
+		return securities?.IsinCode || securities?.isinCode || '';
 	}
 
-	// Get securities type/domain display name
+	// Get securities type/domain display name (support both PascalCase and camelCase)
 	getSecuritiesType(securities: any): string {
-		const domainCode = securities?.domainCode || '';
+		const domainCode = (securities?.DomainCode || securities?.domainCode || '').toUpperCase();
 		// Map domain codes to securities types if needed
 		if (domainCode.includes('BOND') || domainCode.includes('TP')) return 'Trái phiếu';
-		if (domainCode.includes('STOCK') || domainCode.includes('CP')) return 'Cổ phiếu';
+		if (domainCode.includes('STOCK') || domainCode.includes('STCK') || domainCode.includes('CP')) return 'Cổ phiếu';
 		if (domainCode.includes('FUND') || domainCode.includes('CCQ')) return 'Chứng chỉ quỹ';
 		return domainCode || '—';
 	}
