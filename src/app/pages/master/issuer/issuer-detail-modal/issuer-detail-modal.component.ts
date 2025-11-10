@@ -4,6 +4,8 @@ import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { IssuerService as UserService } from '../issuer.service';
 import { IssuerItem } from '../issuer.models';
+import { SecuritiesService } from '../../securities/securities.service';
+import { SecuritiesItem } from '../../securities/securities.models';
 
 @Component({
 	selector: 'app-issuer-detail-modal',
@@ -19,12 +21,17 @@ export class IssuerDetailModalComponent implements OnInit, OnDestroy, OnChanges 
 	changeHistory: any[] = [];
 	isLoadingHistory = false;
 	isLoadingUserDetail = false;
+
+	// Securities list under issuer detail
+	securitiesRows: SecuritiesItem[] = [];
+	securitiesLoading = false;
 	
 	private destroy$ = new Subject<void>();
 	
 	constructor(
 		private userService: UserService,
-		private toast: ToastService
+		private toast: ToastService,
+		private securitiesService: SecuritiesService,
 	) {}
 	
 	ngOnInit(): void {
@@ -73,6 +80,15 @@ export class IssuerDetailModalComponent implements OnInit, OnDestroy, OnChanges 
 			next: (res) => {
 				if (res?.isSuccess) {
 					this.selectedItem = res.data;
+					// Prefer embedded securities from detail response
+					const embedded = (res.data && (res.data as any).securities) || [];
+					if (Array.isArray(embedded) && embedded.length) {
+						this.securitiesRows = embedded;
+						this.securitiesLoading = false;
+					} else {
+						// Fallback: try fetching by issuer if backend supports it
+						this.loadIssuerSecurities();
+					}
 				} else {
 					this.onClose();
 				}
@@ -81,6 +97,32 @@ export class IssuerDetailModalComponent implements OnInit, OnDestroy, OnChanges 
 				this.onClose();
 			}
 		});
+	}
+
+	// Load securities list belonging to issuer
+	private loadIssuerSecurities(): void {
+		if (!this.selectedItem?.id) {
+			this.securitiesRows = [];
+			return;
+		}
+		this.securitiesLoading = true;
+		this.securitiesRows = [];
+		this.securitiesService
+			.getPaging({ pageIndex: 1, pageSize: 10, issuerId: this.selectedItem.id })
+			.pipe(
+				takeUntil(this.destroy$),
+				finalize(() => (this.securitiesLoading = false))
+			)
+			.subscribe({
+				next: (res: any) => {
+					if (res?.isSuccess) {
+						this.securitiesRows = res.data?.items || res.data || [];
+					} else {
+						this.securitiesRows = [];
+					}
+				},
+				error: () => (this.securitiesRows = [])
+			});
 	}
 	
 	// Load change history when history tab is opened
@@ -121,5 +163,7 @@ export class IssuerDetailModalComponent implements OnInit, OnDestroy, OnChanges 
 		this.changeHistory = [];
 		this.isLoadingUserDetail = false;
 		this.isLoadingHistory = false;
+		this.securitiesRows = [];
+		this.securitiesLoading = false;
 	}
 }

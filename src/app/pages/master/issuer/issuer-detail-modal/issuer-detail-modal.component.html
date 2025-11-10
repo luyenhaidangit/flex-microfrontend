@@ -21,7 +21,9 @@
 				<div *ngIf="!isLoadingUserDetail">
 					<tabset>
 						<tab heading="Thông tin">
-							<div class="row gy-2 mt-3">
+							<!-- Issuer info -->
+							<h6 class="fw-semibold mb-2 mt-2">Tổ chức phát hành</h6>
+							<div class="row gy-2 mt-1">
 								<div class="col-md-6">
 									<label class="form-label fw-bold text-muted">Mã TCPH</label>
 									<div class="text-dark ps-1">{{ selectedItem?.issuerCode | safeField }}</div>
@@ -37,6 +39,45 @@
 								<div class="col-md-6">
 									<label class="form-label fw-bold text-muted">Trạng thái</label>
 									<div class="text-dark ps-1"><app-badge [value]="selectedItem?.status" type="status"></app-badge></div>
+								</div>
+							</div>
+
+							<!-- Securities list for this issuer -->
+							<div class="mt-4">
+								<h6 class="fw-semibold mb-2">Danh sách chứng khoán</h6>
+								<div class="table-responsive table-header-primary">
+									<table class="table align-middle table-nowrap dt-responsive nowrap w-100">
+										<thead>
+											<tr>
+												<th>Mã nội bộ</th>
+												<th>Mã chứng khoán</th>
+												<th>Lĩnh vực</th>
+												<th>Mã ISIN</th>
+											</tr>
+										</thead>
+										<tbody *ngIf="securitiesLoading">
+											<tr>
+												<td colspan="4" class="text-center text-muted py-3">
+													<div class="spinner-border text-primary" role="status">
+														<span class="visually-hidden">Đang tải...</span>
+													</div>
+												</td>
+											</tr>
+										</tbody>
+										<tbody *ngIf="!securitiesLoading && securitiesRows.length">
+											<tr *ngFor="let s of securitiesRows">
+												<td>{{ s.securitiesCode | safeField }}</td>
+												<td>{{ s.symbol | safeField }}</td>
+												<td>{{ s.domainName | safeField }}</td>
+												<td>{{ s.isinCode | safeField }}</td>
+											</tr>
+										</tbody>
+										<tbody *ngIf="!securitiesLoading && !securitiesRows.length">
+											<tr>
+												<td colspan="4" class="text-center text-muted">Không có dữ liệu</td>
+											</tr>
+										</tbody>
+									</table>
 								</div>
 							</div>
 						</tab>

@@ -20,6 +20,8 @@ export class SecuritiesService {
 		if (params.securitiesCode) query.securitiesCode = params.securitiesCode;
 		if (params.orderBy) query.orderBy = params.orderBy;
 		if (params.sortBy) query.sortBy = params.sortBy;
+		// pass-through optional issuer filter if provided
+		if ((params as any).issuerId) (query as any).issuerId = (params as any).issuerId;
 
 		return this.http.get<any>(`${this.apiUrl}/paging`, { params: query });
 	}
