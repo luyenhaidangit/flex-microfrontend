@@ -36,17 +36,8 @@ export class IssuerDetailModalComponent implements OnInit, OnDestroy, OnChanges 
 	
 	ngOnInit(): void {
 	}
-
+	
 	ngOnChanges(changes: SimpleChanges): void {		
-		// Lock/unlock page scroll when modal visibility changes
-		if (changes['isVisible']) {
-			if (this.isVisible) {
-				document.body.classList.add('modal-open');
-			} else {
-				document.body.classList.remove('modal-open');
-			}
-		}
-
 		// Check if user input changed and modal is visible
 		if (changes['user'] && this.isVisible && this.user) {
 			this.loadUserDetail();
@@ -59,7 +50,6 @@ export class IssuerDetailModalComponent implements OnInit, OnDestroy, OnChanges 
 	}
 	
 	ngOnDestroy(): void {
-		document.body.classList.remove('modal-open');
 		this.destroy$.next();
 		this.destroy$.complete();
 	}
@@ -67,7 +57,6 @@ export class IssuerDetailModalComponent implements OnInit, OnDestroy, OnChanges 
 	onClose(): void {
 		this.close.emit();
 		this.resetStates();
-		document.body.classList.remove('modal-open');
 	}
 	
 	// Load detailed user information
