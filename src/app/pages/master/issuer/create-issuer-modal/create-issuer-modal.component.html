@@ -68,13 +68,13 @@
       <div class="col-md-6 position-relative">
         <label class="form-label">Tên viết tắt <span class="text-danger">*</span></label>
         <input
-          appUpperNoAccent 
+          appUpperNoAccent
+          [noSpace]="true"
           type="text" 
           class="form-control" 
           formControlName="shortName" 
           placeholder="Nhập tên viết tắt"
-          [ngClass]="{'is-invalid': isFieldInvalid('shortName')}"
-          input />
+          [ngClass]="{'is-invalid': isFieldInvalid('shortName')}" />
         <div *ngIf="isFieldInvalid('shortName')" class="invalid-tooltip">
           {{ getFieldError('shortName') }}
         </div>
