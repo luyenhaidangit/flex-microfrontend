@@ -107,4 +107,9 @@ html body .angular-toastify__toast-body .angular-toastify-icon-container[style*=
   opacity: 1 !important;
 }
 
+// Lock page scroll when a modal is open
+body.modal-open {
+  overflow: hidden !important;
+}
+
 

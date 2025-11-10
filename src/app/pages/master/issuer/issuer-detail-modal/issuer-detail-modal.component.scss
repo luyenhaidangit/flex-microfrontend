@@ -1,1 +1,20 @@
 @import 'src/assets/scss/core_modal';
+
+// Prevent background scroll and allow overlay scroll
+.custom-modal-overlay {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  z-index: 1050; // above page content
+}
+
+// Make body unscrollable when modal is open
+:host-context(body.modal-open) {
+  overflow: hidden;
+}
+
+// Ensure modal body can scroll if content exceeds viewport
+.modal-body {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
