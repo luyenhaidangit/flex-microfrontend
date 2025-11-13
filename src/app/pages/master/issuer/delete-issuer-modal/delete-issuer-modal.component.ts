@@ -5,6 +5,8 @@ import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { IssuerService } from '../issuer.service';
 import { UserItem } from '../issuer.models';
+import { SecuritiesService } from '../../securities/securities.service';
+import { SecuritiesItem } from '../../securities/securities.models';
 
 export interface IssuerItem {
   id: number;
@@ -31,12 +33,16 @@ export class DeleteIssuerModalComponent implements OnInit, OnDestroy, OnChanges 
   isSubmitting = false;
   isLoadingIssuerDetail = false;
   selectedItem: IssuerItem | null = null;
+  // Securities under issuer
+  securitiesRows: SecuritiesItem[] = [];
+  securitiesLoading = false;
 
   private destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
     private issuerService: IssuerService,
+    private securitiesService: SecuritiesService,
     private toastService: ToastService
   ) {}
 
@@ -82,6 +88,8 @@ export class DeleteIssuerModalComponent implements OnInit, OnDestroy, OnChanges 
 
     this.isLoadingIssuerDetail = true;
     this.selectedItem = null;
+    this.securitiesRows = [];
+    this.securitiesLoading = false;
 
     this.issuerService.getIssuerById(this.issuer.id)
       .pipe(
@@ -92,6 +100,15 @@ export class DeleteIssuerModalComponent implements OnInit, OnDestroy, OnChanges 
         next: (res) => {
           if (res?.isSuccess) {
             this.selectedItem = res.data;
+            // Prefer embedded securities from detail response
+            const embedded = (res.data && (res.data as any).securities) || [];
+            if (Array.isArray(embedded) && embedded.length) {
+              this.securitiesRows = embedded;
+              this.securitiesLoading = false;
+            } else {
+              // Fallback: fetch by issuer id
+              this.loadIssuerSecurities();
+            }
           } else {
             this.onClose();
           }
@@ -99,6 +116,32 @@ export class DeleteIssuerModalComponent implements OnInit, OnDestroy, OnChanges 
         error: (err) => {
           this.onClose();
         }
+      });
+  }
+
+  // Load securities list belonging to issuer
+  private loadIssuerSecurities(): void {
+    if (!this.issuer?.id) {
+      this.securitiesRows = [];
+      return;
+    }
+    this.securitiesLoading = true;
+    this.securitiesRows = [];
+    this.securitiesService
+      .getPaging({ pageIndex: 1, pageSize: 10, issuerId: this.issuer.id })
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => (this.securitiesLoading = false))
+      )
+      .subscribe({
+        next: (res: any) => {
+          if (res?.isSuccess) {
+            this.securitiesRows = res.data?.items || res.data || [];
+          } else {
+            this.securitiesRows = [];
+          }
+        },
+        error: () => (this.securitiesRows = [])
       });
   }
 
