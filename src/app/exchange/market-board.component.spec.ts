@@ -12,7 +12,7 @@ describe('MarketBoardComponent', () => {
   let realtime: jasmine.SpyObj<ExchangeRealtimeService>;
 
   beforeEach(async () => {
-    api = jasmine.createSpyObj('ExchangeApiService', ['getOrderBook', 'getTrades', 'placeOrder', 'cancelOrder']);
+    api = jasmine.createSpyObj('ExchangeApiService', ['getOrderBook', 'getTrades', 'placeOrder', 'cancelOrder', 'startTradingSession']);
     realtime = jasmine.createSpyObj('ExchangeRealtimeService', ['connect', 'disconnect'], { events$: of() });
     api.getOrderBook.and.returnValue(of({ symbol: 'FXS', asOfEventSequence: 1, bids: [], asks: [] }));
     api.getTrades.and.returnValue(of([]));
@@ -32,6 +32,13 @@ describe('MarketBoardComponent', () => {
     expect(component.board.symbol).toBe('FXS');
     expect(fixture.nativeElement.textContent).toContain('Chưa có lệnh mua');
   }));
+
+  it('starts a trading session from the board', () => {
+    api.startTradingSession.and.returnValue(of({ sessionId: 'session-1', symbol: 'FXS', state: 'open', startedAt: new Date().toISOString() }));
+    component.startSession();
+    expect(api.startTradingSession).toHaveBeenCalledTimes(1);
+    expect(component.sessionState).toBe('open');
+  });
 
   it('validates required order fields and prevents duplicate submit', () => {
     component.submitOrder();

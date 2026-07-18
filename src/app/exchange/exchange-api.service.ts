@@ -12,6 +12,15 @@ import {
   TradeTapeEntry
 } from './exchange.models';
 
+export interface TradingSessionView {
+  sessionId: string;
+  symbol: string;
+  state: string;
+  startedAt: string;
+  continuousStartedAt?: string;
+  closedAt?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ExchangeApiService {
   private readonly baseUrl = environment.exchangeApiBaseUrl.replace(/\/+$/, '');
@@ -24,6 +33,12 @@ export class ExchangeApiService {
 
   getTrades(): Observable<TradeTapeEntry[]> {
     return this.http.get<TradeTapeEntry[]>(`${this.baseUrl}/api/trades`);
+  }
+
+  startTradingSession(): Observable<TradingSessionView> {
+    return this.http.post<TradingSessionView>(`${this.baseUrl}/api/trading-session/start`, null, {
+      headers: this.commandHeaders()
+    });
   }
 
   placeOrder(request: PlaceOrderRequest): Observable<PlaceOrderResponse> {

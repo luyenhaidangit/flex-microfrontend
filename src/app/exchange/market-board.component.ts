@@ -34,6 +34,7 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
   pendingOrders: OrderStatusView[] = [];
   loading = false;
   commandInProgress = false;
+  sessionStarting = false;
   errorMessage = '';
   commandMessage = '';
   commandSuccess = false;
@@ -58,6 +59,23 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
     this.realtime.disconnect();
+  }
+
+  startSession(): void {
+    if (this.sessionStarting || this.sessionState === 'open' || this.sessionState === 'continuous') return;
+    this.sessionStarting = true;
+    this.errorMessage = '';
+    this.exchangeApi.startTradingSession().pipe(takeUntil(this.destroy$)).subscribe({
+      next: session => {
+        this.sessionState = session.state;
+        this.sessionStarting = false;
+        this.loadMarket().pipe(takeUntil(this.destroy$)).subscribe();
+      },
+      error: error => {
+        this.sessionStarting = false;
+        this.errorMessage = this.errorText(error, 'Không thể khởi động phiên giao dịch.');
+      }
+    });
   }
 
   submitOrder(): void {

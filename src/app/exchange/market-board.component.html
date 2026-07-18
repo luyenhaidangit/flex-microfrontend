@@ -9,6 +9,9 @@
     <div class="last-price" aria-live="polite">
       <span>Giá gần nhất</span>
       <strong>{{ board.latestPrice === null ? '—' : board.latestPrice | number }}</strong>
+      <button type="button" (click)="startSession()" [disabled]="sessionStarting || sessionState === 'open' || sessionState === 'continuous'">
+        {{ sessionStarting ? 'Đang khởi động…' : 'Khởi động phiên' }}
+      </button>
     </div>
   </header>
 
