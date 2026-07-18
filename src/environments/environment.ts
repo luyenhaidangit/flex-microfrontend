@@ -6,6 +6,12 @@ export const environment = {
   production: false,
   defaultauth: 'database',
   apiBaseUrl: 'https://localhost:7000',
+  exchangeApiBaseUrl: 'http://localhost:5266',
+  marketBoardPollingIntervalMs: 2000,
+  demoBrokers: [
+    { id: 'DEMO-BUYER', name: 'Demo Buyer' },
+    { id: 'DEMO-SELLER', name: 'Demo Seller' }
+  ],
   externalService: {
     translateServiceUrl: "http://localhost:4200/assets/i18n/",
     configServiceUrl: "http://localhost:4200/assets/dashboard.json"

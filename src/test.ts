@@ -1,4 +1,4 @@
-// This file is required by karma.conf.js and loads recursively all the .spec and framework files
+// This file is required by karma.conf.js and loads the Jasmine specs for the application.
 
 import 'zone.js/testing';
 import { getTestBed } from '@angular/core/testing';
@@ -7,8 +7,6 @@ import {
   platformBrowserDynamicTesting
 } from '@angular/platform-browser-dynamic/testing';
 
-declare const require: any;
-
 // First, initialize the Angular testing environment.
 getTestBed().initTestEnvironment(
   BrowserDynamicTestingModule,
@@ -16,7 +14,141 @@ getTestBed().initTestEnvironment(
     teardown: { destroyAfterEach: false }
 }
 );
-// Then we find all the tests.
-const context = require.context('./', true, /\.spec\.ts$/);
-// And load the modules.
-context.keys().map(context);
+// Load the test modules explicitly because the current Karma/Webpack runtime
+// does not expose require.context.
+import './app/app.component.spec';
+import './app/account/auth/login/login.component.spec';
+import './app/account/auth/passwordreset/passwordreset.component.spec';
+import './app/account/auth/recoverpwd2/recoverpwd2.component.spec';
+import './app/account/auth/register2/register2.component.spec';
+import './app/account/auth/signup/signup.component.spec';
+import './app/core/services/config.service.spec';
+import './app/cyptolanding/cyptolanding.component.spec';
+import './app/exchange/exchange-api.service.spec';
+import './app/exchange/market-board.component.spec';
+import './app/extrapages/comingsoon/comingsoon.component.spec';
+import './app/extrapages/confirmmail/confirmmail.component.spec';
+import './app/extrapages/confirmmail2/confirmmail2.component.spec';
+import './app/extrapages/errorpage/errorpage.component.spec';
+import './app/extrapages/lockscreen/lockscreen.component.spec';
+import './app/extrapages/lockscreen2/lockscreen2.component.spec';
+import './app/extrapages/maintenance/maintenance.component.spec';
+import './app/extrapages/page404/page404.component.spec';
+import './app/extrapages/steptwoverification/steptwoverification.component.spec';
+import './app/extrapages/steptwoverification2/steptwoverification2.component.spec';
+import './app/extrapages/verification/verification.component.spec';
+import './app/extrapages/verification2/verification2.component.spec';
+import './app/layouts/layout.component.spec';
+import './app/layouts/footer/footer.component.spec';
+import './app/layouts/horizontal/horizontal.component.spec';
+import './app/layouts/horizontaltopbar/horizontaltopbar.component.spec';
+import './app/layouts/rightsidebar/rightsidebar.component.spec';
+import './app/layouts/sidebar/sidebar.component.spec';
+import './app/layouts/topbar/topbar.component.spec';
+import './app/layouts/vertical/vertical.component.spec';
+import './app/pages/blog/bloggrid/bloggrid.component.spec';
+import './app/pages/blog/bloglist/bloglist.component.spec';
+import './app/pages/blog/detail/detail.component.spec';
+import './app/pages/branch/branch.component.spec';
+import './app/pages/calendar/calendar.component.spec';
+import './app/pages/chart/apex/apex.component.spec';
+import './app/pages/chart/chartist/chartist.component.spec';
+import './app/pages/chart/chartjs/chartjs.component.spec';
+import './app/pages/chart/echart/echart.component.spec';
+import './app/pages/chat/chat.component.spec';
+import './app/pages/contacts/profile/profile.component.spec';
+import './app/pages/contacts/usergrid/usergrid.component.spec';
+import './app/pages/contacts/userlist/userlist.component.spec';
+import './app/pages/crypto/buysell/buysell.component.spec';
+import './app/pages/crypto/exchange/exchange.component.spec';
+import './app/pages/crypto/kycapplication/kycapplication.component.spec';
+import './app/pages/crypto/lending/lending.component.spec';
+import './app/pages/crypto/orders/orders.component.spec';
+import './app/pages/crypto/wallet/wallet.component.spec';
+import './app/pages/dashboards/blog/blog.component.spec';
+import './app/pages/dashboards/crypto/crypto.component.spec';
+import './app/pages/dashboards/default/default.component.spec';
+import './app/pages/dashboards/jobs/jobs.component.spec';
+import './app/pages/dashboards/saas/saas.component.spec';
+import './app/pages/dashboards/saas/shared/sellingchart/sellingchart.component.spec';
+import './app/pages/ecommerce/addproduct/addproduct.component.spec';
+import './app/pages/ecommerce/cart/cart.component.spec';
+import './app/pages/ecommerce/checkout/checkout.component.spec';
+import './app/pages/ecommerce/customers/customers.component.spec';
+import './app/pages/ecommerce/orders/orders.component.spec';
+import './app/pages/ecommerce/productdetail/productdetail.component.spec';
+import './app/pages/ecommerce/products/products.component.spec';
+import './app/pages/ecommerce/shops/shops.component.spec';
+import './app/pages/email/alert/alert.component.spec';
+import './app/pages/email/basic/basic.component.spec';
+import './app/pages/email/billing/billing.component.spec';
+import './app/pages/email/emailread/emailread.component.spec';
+import './app/pages/email/inbox/inbox.component.spec';
+import './app/pages/filemanager/filemanager.component.spec';
+import './app/pages/form/advancedform/advancedform.component.spec';
+import './app/pages/form/editor/editor.component.spec';
+import './app/pages/form/elements/elements.component.spec';
+import './app/pages/form/layouts/layouts.component.spec';
+import './app/pages/form/mask/mask.component.spec';
+import './app/pages/form/repeater/repeater.component.spec';
+import './app/pages/form/uploads/uploads.component.spec';
+import './app/pages/form/validation/validation.component.spec';
+import './app/pages/form/wizard/wizard.component.spec';
+import './app/pages/icons/boxicons/boxicons.component.spec';
+import './app/pages/icons/dripicons/dripicons.component.spec';
+import './app/pages/icons/fontawesome/fontawesome.component.spec';
+import './app/pages/icons/materialdesign/materialdesign.component.spec';
+import './app/pages/invoices/detail/detail.component.spec';
+import './app/pages/invoices/list/list.component.spec';
+import './app/pages/jobs/apply/apply.component.spec';
+import './app/pages/jobs/candidate-list/candidate-list.component.spec';
+import './app/pages/jobs/candidate-overview/candidate-overview.component.spec';
+import './app/pages/jobs/categories/categories.component.spec';
+import './app/pages/jobs/details/details.component.spec';
+import './app/pages/jobs/grid/grid.component.spec';
+import './app/pages/jobs/list/list.component.spec';
+import './app/pages/maps/google/google.component.spec';
+import './app/pages/maps/leaflet/leaflet.component.spec';
+import './app/pages/projects/create/create.component.spec';
+import './app/pages/projects/overview/overview.component.spec';
+import './app/pages/projects/projectgrid/projectgrid.component.spec';
+import './app/pages/projects/projectlist/projectlist.component.spec';
+import './app/pages/system/branch/branch.component.spec';
+import './app/pages/tables/advancedtable/advancedtable.component.spec';
+import './app/pages/tables/basic/basic.component.spec';
+import './app/pages/tasks/createtask/createtask.component.spec';
+import './app/pages/tasks/kanbanboard/kanbanboard.component.spec';
+import './app/pages/tasks/list/list.component.spec';
+import './app/pages/ui/alerts/alerts.component.spec';
+import './app/pages/ui/buttons/buttons.component.spec';
+import './app/pages/ui/cards/cards.component.spec';
+import './app/pages/ui/carousel/carousel.component.spec';
+import './app/pages/ui/colors/colors.component.spec';
+import './app/pages/ui/dropdowns/dropdowns.component.spec';
+import './app/pages/ui/general/general.component.spec';
+import './app/pages/ui/grid/grid.component.spec';
+import './app/pages/ui/imagecropper/imagecropper.component.spec';
+import './app/pages/ui/images/images.component.spec';
+import './app/pages/ui/lightbox/lightbox.component.spec';
+import './app/pages/ui/modals/modals.component.spec';
+import './app/pages/ui/notification/notification.component.spec';
+import './app/pages/ui/placeholder/placeholder.component.spec';
+import './app/pages/ui/progressbar/progressbar.component.spec';
+import './app/pages/ui/rangeslider/rangeslider.component.spec';
+import './app/pages/ui/rating/rating.component.spec';
+import './app/pages/ui/sweetalert/sweetalert.component.spec';
+import './app/pages/ui/tabs/tabs.component.spec';
+import './app/pages/ui/toasts/toasts.component.spec';
+import './app/pages/ui/typography/typography.component.spec';
+import './app/pages/ui/utilities/utilities.component.spec';
+import './app/pages/ui/video/video.component.spec';
+import './app/pages/utility/faqs/faqs.component.spec';
+import './app/pages/utility/pricing/pricing.component.spec';
+import './app/pages/utility/starter/starter.component.spec';
+import './app/pages/utility/timeline/timeline.component.spec';
+import './app/shared/ui/loader/loader.component.spec';
+import './app/shared/ui/loading/loading.component.spec';
+import './app/shared/ui/pagetitle/pagetitle.component.spec';
+import './app/shared/ui/tab/tabs.component.spec';
+import './app/shared/widget/stat/stat.component.spec';
+import './app/shared/widget/transaction/transaction.component.spec';

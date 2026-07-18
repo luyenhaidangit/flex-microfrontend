@@ -1,0 +1,77 @@
+<main class="market-board" aria-labelledby="market-board-title">
+  <header class="board-header">
+    <div>
+      <p class="eyebrow">Exchange demo</p>
+      <h1 id="market-board-title">Bảng điện {{ board.symbol }}</h1>
+      <p class="updated">{{ board.updatedAt ? (board.updatedAt | date:'HH:mm:ss') : 'Chưa có dữ liệu' }}</p>
+    </div>
+    <div class="last-price" aria-live="polite">
+      <span>Giá gần nhất</span>
+      <strong>{{ board.latestPrice === null ? '—' : board.latestPrice | number }}</strong>
+    </div>
+  </header>
+
+  <p *ngIf="loading" class="status loading">Đang tải dữ liệu thị trường…</p>
+  <p *ngIf="errorMessage" class="status error" role="alert">{{ errorMessage }}</p>
+  <p *ngIf="commandMessage" class="status" [class.success]="commandSuccess" [class.error]="!commandSuccess" role="status">
+    {{ commandMessage }}
+  </p>
+
+  <section class="market-grid">
+    <article class="card order-book">
+      <div class="card-title"><h2>Order book</h2><span>Khối lượng chờ: {{ board.pendingVolume | number }}</span></div>
+      <div class="book-columns">
+        <div>
+          <h3 class="buy">Mua</h3>
+          <p *ngIf="!board.bids.length" class="empty">Chưa có lệnh mua</p>
+          <div *ngFor="let level of board.bids; trackBy: trackByPrice" class="book-row buy-row">
+            <span>{{ level.price | number }}</span><strong>{{ level.totalQuantity | number }}</strong>
+          </div>
+        </div>
+        <div>
+          <h3 class="sell">Bán</h3>
+          <p *ngIf="!board.asks.length" class="empty">Chưa có lệnh bán</p>
+          <div *ngFor="let level of board.asks; trackBy: trackByPrice" class="book-row sell-row">
+            <span>{{ level.price | number }}</span><strong>{{ level.totalQuantity | number }}</strong>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="card trade-tape">
+      <div class="card-title"><h2>Trade tape</h2><span>{{ board.trades.length }} giao dịch</span></div>
+      <p *ngIf="!board.trades.length" class="empty">Chưa có giao dịch</p>
+      <div *ngFor="let trade of board.trades; trackBy: trackByTrade" class="trade-row">
+        <span>#{{ trade.tradeId }}</span><strong>{{ trade.price | number }}</strong><span>{{ trade.quantity | number }}</span>
+      </div>
+    </article>
+  </section>
+
+  <section class="card order-entry">
+    <div class="card-title"><h2>Đặt lệnh demo</h2><span>Chỉ dành cho môi trường demo</span></div>
+    <form [formGroup]="orderForm" (ngSubmit)="submitOrder()">
+      <label>Tài khoản demo
+        <select formControlName="brokerId">
+          <option value="">Chọn tài khoản</option>
+          <option *ngFor="let broker of brokers" [value]="broker.id">{{ broker.name }}</option>
+        </select>
+      </label>
+      <label>Chiều lệnh
+        <select formControlName="side"><option value="Buy">Mua</option><option value="Sell">Bán</option></select>
+      </label>
+      <label>Giá<input type="number" min="1" formControlName="price"></label>
+      <label>Khối lượng<input type="number" min="1" formControlName="quantity"></label>
+      <button type="submit" [disabled]="commandInProgress">{{ commandInProgress ? 'Đang xử lý…' : 'Đặt lệnh' }}</button>
+    </form>
+    <p *ngIf="orderForm.invalid && orderForm.touched" class="field-error">Vui lòng chọn tài khoản và nhập giá, khối lượng hợp lệ.</p>
+  </section>
+
+  <section class="card pending-orders">
+    <div class="card-title"><h2>Lệnh đang chờ</h2><span>{{ pendingOrders.length }}</span></div>
+    <p *ngIf="!pendingOrders.length" class="empty">Chưa có lệnh demo đang chờ</p>
+    <div *ngFor="let order of pendingOrders" class="pending-row">
+      <span>#{{ order.orderId }} · {{ order.brokerId }}</span><span>{{ order.side === 'Buy' ? 'Mua' : 'Bán' }} {{ order.quantity | number }} @ {{ order.price | number }}</span>
+      <button type="button" (click)="cancelOrder(order)" [disabled]="commandInProgress">Hủy</button>
+    </div>
+  </section>
+</main>

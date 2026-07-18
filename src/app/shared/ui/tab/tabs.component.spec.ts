@@ -34,7 +34,7 @@ describe('TabsComponent', () => {
 
   it('should emit activeIdChange when tab is selected', () => {
     const mockTab = { id: 'test', label: 'Test Tab', icon: 'test-icon' };
-    const spy = jest.spyOn(component.activeIdChange, 'emit');
+    const spy = spyOn(component.activeIdChange, 'emit');
     
     component.onSelect(mockTab);
     
@@ -43,7 +43,7 @@ describe('TabsComponent', () => {
 
   it('should emit changed event when tab is selected', () => {
     const mockTab = { id: 'test', label: 'Test Tab', icon: 'test-icon' };
-    const spy = jest.spyOn(component.changed, 'emit');
+    const spy = spyOn(component.changed, 'emit');
     
     component.onSelect(mockTab);
     
@@ -52,8 +52,8 @@ describe('TabsComponent', () => {
 
   it('should not emit events when tab is disabled', () => {
     const mockTab = { id: 'test', label: 'Test Tab', icon: 'test-icon', disabled: true };
-    const activeIdSpy = jest.spyOn(component.activeIdChange, 'emit');
-    const changedSpy = jest.spyOn(component.changed, 'emit');
+    const activeIdSpy = spyOn(component.activeIdChange, 'emit');
+    const changedSpy = spyOn(component.changed, 'emit');
     
     component.onSelect(mockTab);
     
