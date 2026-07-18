@@ -12,10 +12,11 @@ describe('MarketBoardComponent', () => {
   let realtime: jasmine.SpyObj<ExchangeRealtimeService>;
 
   beforeEach(async () => {
-    api = jasmine.createSpyObj('ExchangeApiService', ['getOrderBook', 'getTrades', 'placeOrder', 'cancelOrder', 'startTradingSession']);
+    api = jasmine.createSpyObj('ExchangeApiService', ['getOrderBook', 'getTrades', 'placeOrder', 'cancelOrder', 'startTradingSession', 'getTradingSession']);
     realtime = jasmine.createSpyObj('ExchangeRealtimeService', ['connect', 'disconnect'], { events$: of() });
     api.getOrderBook.and.returnValue(of({ symbol: 'FXS', asOfEventSequence: 1, bids: [], asks: [] }));
     api.getTrades.and.returnValue(of([]));
+    api.getTradingSession.and.returnValue(of(null));
     await TestBed.configureTestingModule({
       declarations: [MarketBoardComponent],
       imports: [ReactiveFormsModule],

@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { EMPTY, Observable, Subject, forkJoin } from 'rxjs';
-import { catchError, takeUntil, tap } from 'rxjs/operators';
+import { EMPTY, Observable, Subject, forkJoin, of, timer } from 'rxjs';
+import { catchError, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { ExchangeApiService } from './exchange-api.service';
 import { ExchangeRealtimeService, MarketEventMessage } from './exchange-realtime.service';
@@ -53,6 +53,12 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
     this.loadMarket().pipe(takeUntil(this.destroy$)).subscribe();
     this.realtime.events$.pipe(takeUntil(this.destroy$)).subscribe(event => this.applyRealtimeEvent(event));
     this.realtime.connect();
+    timer(0, 2000).pipe(
+      takeUntil(this.destroy$),
+      switchMap(() => this.exchangeApi.getTradingSession().pipe(catchError(() => of(null))))
+    ).subscribe(session => {
+      if (session?.state) this.sessionState = session.state;
+    });
   }
 
   ngOnDestroy(): void {

@@ -41,6 +41,10 @@ export class ExchangeApiService {
     });
   }
 
+  getTradingSession(): Observable<TradingSessionView | null> {
+    return this.http.get<TradingSessionView>(`${this.baseUrl}/api/trading-session`);
+  }
+
   placeOrder(request: PlaceOrderRequest): Observable<PlaceOrderResponse> {
     return this.http.post<PlaceOrderResponse>(`${this.baseUrl}/api/orders`, request, {
       headers: this.commandHeaders()
