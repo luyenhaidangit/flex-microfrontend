@@ -1,9 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { EMPTY, Observable, Subject, forkJoin, timer } from 'rxjs';
-import { catchError, exhaustMap, takeUntil, tap } from 'rxjs/operators';
+import { EMPTY, Observable, Subject, forkJoin } from 'rxjs';
+import { catchError, takeUntil, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { ExchangeApiService } from './exchange-api.service';
+import { ExchangeRealtimeService, MarketEventMessage } from './exchange-realtime.service';
 import {
   CancelOrderResponse,
   DemoBrokerOption,
@@ -22,7 +23,6 @@ import {
 export class MarketBoardComponent implements OnInit, OnDestroy {
   readonly symbol = 'FXS';
   readonly brokers: DemoBrokerOption[] = environment.demoBrokers;
-  readonly pollingIntervalMs = environment.marketBoardPollingIntervalMs;
   readonly orderForm = this.formBuilder.group({
     brokerId: ['', Validators.required],
     side: ['Buy', Validators.required],
@@ -37,24 +37,27 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
   errorMessage = '';
   commandMessage = '';
   commandSuccess = false;
+  sessionState = 'Chưa khởi động';
+  realtimeConnected = false;
 
   private readonly destroy$ = new Subject<void>();
 
   constructor(
     private readonly formBuilder: FormBuilder,
-    private readonly exchangeApi: ExchangeApiService
+    private readonly exchangeApi: ExchangeApiService,
+    private readonly realtime: ExchangeRealtimeService
   ) {}
 
   ngOnInit(): void {
-    timer(0, this.pollingIntervalMs).pipe(
-      takeUntil(this.destroy$),
-      exhaustMap(() => this.loadMarket())
-    ).subscribe();
+    this.loadMarket().pipe(takeUntil(this.destroy$)).subscribe();
+    this.realtime.events$.pipe(takeUntil(this.destroy$)).subscribe(event => this.applyRealtimeEvent(event));
+    this.realtime.connect();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.realtime.disconnect();
   }
 
   submitOrder(): void {
@@ -171,6 +174,22 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
 
   private refreshAfterCommand(): void {
     this.loadMarket().pipe(takeUntil(this.destroy$)).subscribe();
+  }
+
+  private applyRealtimeEvent(event: MarketEventMessage): void {
+    this.realtimeConnected = true;
+    if (event.sessionState) this.sessionState = event.sessionState;
+    if (event.type === 'MARKET_SNAPSHOT' && event.orderBook) {
+      this.board = this.toBoard(event.orderBook, event.trades || []);
+      return;
+    }
+    if (event.type === 'ORDER_BOOK_CHANGED' && event.payload?.symbol) {
+      this.board = this.toBoard(event.payload, this.board.trades);
+    }
+    if (event.type === 'TRADE_EXECUTED' && event.payload?.tradeId) {
+      const trades = [event.payload, ...this.board.trades.filter(item => item.tradeId !== event.payload.tradeId)];
+      this.board = this.toBoard({ ...this.board, bids: this.board.bids, asks: this.board.asks, symbol: this.board.symbol, asOfEventSequence: event.eventSequence }, trades);
+    }
   }
 
   private handleCommandError(error: any): void {

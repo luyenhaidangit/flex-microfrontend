@@ -3,20 +3,23 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { of, throwError } from 'rxjs';
 import { MarketBoardComponent } from './market-board.component';
 import { ExchangeApiService } from './exchange-api.service';
+import { ExchangeRealtimeService } from './exchange-realtime.service';
 
 describe('MarketBoardComponent', () => {
   let component: MarketBoardComponent;
   let fixture: ComponentFixture<MarketBoardComponent>;
   let api: jasmine.SpyObj<ExchangeApiService>;
+  let realtime: jasmine.SpyObj<ExchangeRealtimeService>;
 
   beforeEach(async () => {
     api = jasmine.createSpyObj('ExchangeApiService', ['getOrderBook', 'getTrades', 'placeOrder', 'cancelOrder']);
+    realtime = jasmine.createSpyObj('ExchangeRealtimeService', ['connect', 'disconnect'], { events$: of() });
     api.getOrderBook.and.returnValue(of({ symbol: 'FXS', asOfEventSequence: 1, bids: [], asks: [] }));
     api.getTrades.and.returnValue(of([]));
     await TestBed.configureTestingModule({
       declarations: [MarketBoardComponent],
       imports: [ReactiveFormsModule],
-      providers: [{ provide: ExchangeApiService, useValue: api }]
+      providers: [{ provide: ExchangeApiService, useValue: api }, { provide: ExchangeRealtimeService, useValue: realtime }]
     }).compileComponents();
     fixture = TestBed.createComponent(MarketBoardComponent);
     component = fixture.componentInstance;

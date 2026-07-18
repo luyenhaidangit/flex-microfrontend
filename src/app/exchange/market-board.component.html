@@ -4,6 +4,7 @@
       <p class="eyebrow">Exchange demo</p>
       <h1 id="market-board-title">Bảng điện {{ board.symbol }}</h1>
       <p class="updated">{{ board.updatedAt ? (board.updatedAt | date:'HH:mm:ss') : 'Chưa có dữ liệu' }}</p>
+      <p class="updated">Phiên: {{ sessionState }} · {{ realtimeConnected ? 'Realtime' : 'Đang kết nối' }}</p>
     </div>
     <div class="last-price" aria-live="polite">
       <span>Giá gần nhất</span>
