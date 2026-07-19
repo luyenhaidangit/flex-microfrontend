@@ -1,18 +1,25 @@
 :host { display: block; }
 .market-board { max-width: 1200px; margin: 0 auto; padding: 2rem; color: #24324a; }
 .board-header, .card-title, .pending-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.board-header { align-items: flex-start; }
 .eyebrow { margin: 0; color: #687792; text-transform: uppercase; font-size: .75rem; letter-spacing: .12em; }
 h1, h2, h3 { margin: 0; }
 h1 { font-size: 2rem; }
 h2 { font-size: 1.1rem; }
 .updated, .card-title span, .empty { color: #71809a; font-size: .85rem; }
-.last-price { text-align: right; }.last-price span { display: block; color: #71809a; }.last-price strong { font-size: 2rem; }
+.market-status { display: flex; flex-wrap: wrap; gap: .5rem; margin: .6rem 0; }
+.status-badge, .connection-status { display: inline-flex; align-items: center; gap: .35rem; border-radius: 999px; padding: .25rem .55rem; background: #fff3e5; color: #9a5a00; font-size: .78rem; font-weight: 600; }
+.status-badge.open, .connection-status.connected { background: #edf9f0; color: #18743a; }
+.connection-status::before { content: ''; width: .5rem; height: .5rem; border-radius: 50%; background: currentColor; }.connection-status.reconnecting { background: #eef3ff; color: #3454d1; }
+.market-summary { display: flex; align-items: center; gap: 1rem; }.last-price { min-width: 12rem; text-align: right; }.last-price span, .last-price small { display: block; color: #71809a; }.last-price strong { display: block; font-size: 2rem; line-height: 1.15; }
 .status { padding: .75rem 1rem; border-radius: .4rem; background: #eef3ff; }.status.error { background: #fff0f0; color: #a32424; }.status.success { background: #edf9f0; color: #18743a; }
 .market-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 1rem; margin: 1.5rem 0; }
 .card { background: #fff; border: 1px solid #e3e8f0; border-radius: .65rem; padding: 1rem; box-shadow: 0 4px 14px rgba(36, 50, 74, .05); }
 .book-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }.buy { color: #18743a; }.sell { color: #a32424; }
+.book-head, .trade-head { display: grid; color: #71809a; font-size: .75rem; font-weight: 600; margin-top: .6rem; padding-bottom: .35rem; border-bottom: 1px solid #e3e8f0; }.book-head { grid-template-columns: 1fr 1fr; }.book-head span:last-child, .trade-head span:not(:first-child) { text-align: right; }.trade-head { grid-template-columns: 1fr 1fr 1fr; }
 .book-row, .trade-row { display: grid; grid-template-columns: 1fr 1fr; padding: .55rem 0; border-bottom: 1px solid #eef1f5; }.trade-row { grid-template-columns: 1fr 1fr 1fr; }.buy-row strong { color: #18743a; }.sell-row strong { color: #a32424; }
-.order-entry { margin-bottom: 1rem; }.order-entry form { display: grid; grid-template-columns: repeat(4, 1fr) auto; gap: .75rem; align-items: end; margin-top: 1rem; }
+.order-entry { margin-bottom: 1rem; }.order-entry form { display: grid; grid-template-columns: repeat(4, 1fr) auto; gap: .75rem; align-items: end; margin-top: 1rem; }.session-notice { margin: 1rem 0 0; padding: .65rem .8rem; border-left: 3px solid #d98b1c; background: #fff8ed; color: #765000; font-size: .85rem; }.form-disabled { opacity: .65; }
 label { display: flex; flex-direction: column; gap: .35rem; color: #687792; font-size: .85rem; }input, select, button { min-height: 2.35rem; border: 1px solid #ccd5e2; border-radius: .35rem; padding: .35rem .55rem; background: #fff; }button { cursor: pointer; background: #3454d1; color: #fff; border: 0; padding: .35rem 1rem; }button:disabled { cursor: not-allowed; opacity: .55; }.field-error { color: #a32424; font-size: .85rem; }
 .pending-row { padding: .6rem 0; border-bottom: 1px solid #eef1f5; }.pending-row button { background: #a32424; }
 @media (max-width: 900px) { .market-grid { grid-template-columns: 1fr; }.order-entry form { grid-template-columns: 1fr 1fr; }.order-entry form button { grid-column: span 2; } }
+@media (max-width: 640px) { .market-board { padding: 1rem; }.board-header, .market-summary { align-items: stretch; flex-direction: column; }.last-price { min-width: 0; text-align: left; }.market-summary button { width: 100%; }.book-columns { grid-template-columns: 1fr; }.order-entry form { grid-template-columns: 1fr; }.order-entry form button { grid-column: auto; }.pending-row { align-items: flex-start; flex-direction: column; }.pending-row button { width: 100%; } }

@@ -3,13 +3,19 @@
     <div>
       <p class="eyebrow">Exchange demo</p>
       <h1 id="market-board-title">Bảng điện {{ board.symbol }}</h1>
-      <p class="updated">{{ board.updatedAt ? (board.updatedAt | date:'HH:mm:ss') : 'Chưa có dữ liệu' }}</p>
-      <p class="updated">Phiên: {{ sessionState }} · {{ realtimeConnected ? 'Realtime' : 'Đang kết nối' }}</p>
+      <div class="market-status" aria-live="polite">
+        <span class="status-badge" [class.open]="isTradingActive">Phiên {{ sessionLabel }}</span>
+        <span class="connection-status" [class.connected]="realtimeState === 'connected'" [class.reconnecting]="realtimeState === 'reconnecting'">{{ realtimeLabel }}</span>
+      </div>
+      <p class="updated">Cập nhật thị trường: {{ board.updatedAt ? (board.updatedAt | date:'HH:mm:ss') : 'Chưa có dữ liệu' }}</p>
     </div>
-    <div class="last-price" aria-live="polite">
-      <span>Giá gần nhất</span>
-      <strong>{{ board.latestPrice === null ? '—' : board.latestPrice | number }}</strong>
-      <button type="button" (click)="startSession()" [disabled]="sessionStarting || sessionState === 'open' || sessionState === 'continuous'">
+    <div class="market-summary" aria-live="polite">
+      <div class="last-price">
+        <span>Giá khớp gần nhất</span>
+        <strong>{{ board.latestPrice === null ? '—' : board.latestPrice | number }}</strong>
+        <small>{{ board.latestPrice === null ? 'Chưa có giao dịch trong phiên' : 'FXS' }}</small>
+      </div>
+      <button *ngIf="!isTradingActive" type="button" (click)="startSession()" [disabled]="sessionStarting">
         {{ sessionStarting ? 'Đang khởi động…' : 'Khởi động phiên' }}
       </button>
     </div>
@@ -23,18 +29,20 @@
 
   <section class="market-grid">
     <article class="card order-book">
-      <div class="card-title"><h2>Order book</h2><span>Khối lượng chờ: {{ board.pendingVolume | number }}</span></div>
+      <div class="card-title"><h2>Sổ lệnh</h2><span>Khối lượng chờ: {{ board.pendingVolume | number }}</span></div>
       <div class="book-columns">
         <div>
           <h3 class="buy">Mua</h3>
-          <p *ngIf="!board.bids.length" class="empty">Chưa có lệnh mua</p>
+          <div class="book-head"><span>Giá</span><span>KL chờ</span></div>
+          <p *ngIf="!board.bids.length" class="empty">Chưa có lệnh mua chờ khớp</p>
           <div *ngFor="let level of board.bids; trackBy: trackByPrice" class="book-row buy-row">
             <span>{{ level.price | number }}</span><strong>{{ level.totalQuantity | number }}</strong>
           </div>
         </div>
         <div>
           <h3 class="sell">Bán</h3>
-          <p *ngIf="!board.asks.length" class="empty">Chưa có lệnh bán</p>
+          <div class="book-head"><span>Giá</span><span>KL chờ</span></div>
+          <p *ngIf="!board.asks.length" class="empty">Chưa có lệnh bán chờ khớp</p>
           <div *ngFor="let level of board.asks; trackBy: trackByPrice" class="book-row sell-row">
             <span>{{ level.price | number }}</span><strong>{{ level.totalQuantity | number }}</strong>
           </div>
@@ -43,8 +51,9 @@
     </article>
 
     <article class="card trade-tape">
-      <div class="card-title"><h2>Trade tape</h2><span>{{ board.trades.length }} giao dịch</span></div>
-      <p *ngIf="!board.trades.length" class="empty">Chưa có giao dịch</p>
+      <div class="card-title"><h2>Bảng khớp lệnh</h2><span>{{ board.trades.length }} giao dịch</span></div>
+      <div class="trade-head"><span>Mã GD</span><span>Giá</span><span>Khối lượng</span></div>
+      <p *ngIf="!board.trades.length" class="empty">Chưa có giao dịch khớp trong phiên</p>
       <div *ngFor="let trade of board.trades; trackBy: trackByTrade" class="trade-row">
         <span>#{{ trade.tradeId }}</span><strong>{{ trade.price | number }}</strong><span>{{ trade.quantity | number }}</span>
       </div>
@@ -53,19 +62,20 @@
 
   <section class="card order-entry">
     <div class="card-title"><h2>Đặt lệnh demo</h2><span>Chỉ dành cho môi trường demo</span></div>
-    <form [formGroup]="orderForm" (ngSubmit)="submitOrder()">
+    <p *ngIf="!isTradingActive" class="session-notice" role="status">Phiên giao dịch đang đóng. Khởi động phiên để đặt hoặc hủy lệnh.</p>
+    <form [formGroup]="orderForm" (ngSubmit)="submitOrder()" [class.form-disabled]="!isTradingActive">
       <label>Tài khoản demo
-        <select formControlName="brokerId">
+        <select formControlName="brokerId" required [disabled]="!isTradingActive">
           <option value="">Chọn tài khoản</option>
           <option *ngFor="let broker of brokers" [value]="broker.id">{{ broker.name }}</option>
         </select>
       </label>
       <label>Chiều lệnh
-        <select formControlName="side"><option value="Buy">Mua</option><option value="Sell">Bán</option></select>
+        <select formControlName="side" [disabled]="!isTradingActive"><option value="Buy">Mua</option><option value="Sell">Bán</option></select>
       </label>
-      <label>Giá<input type="number" min="1" formControlName="price"></label>
-      <label>Khối lượng<input type="number" min="1" formControlName="quantity"></label>
-      <button type="submit" [disabled]="commandInProgress">{{ commandInProgress ? 'Đang xử lý…' : 'Đặt lệnh' }}</button>
+      <label>Giá<input type="number" min="1" formControlName="price" required placeholder="Ví dụ: 100" [disabled]="!isTradingActive"></label>
+      <label>Khối lượng<input type="number" min="1" formControlName="quantity" required placeholder="Ví dụ: 10" [disabled]="!isTradingActive"></label>
+      <button type="submit" [disabled]="!isTradingActive || commandInProgress || orderForm.invalid">{{ commandInProgress ? 'Đang xử lý…' : 'Đặt lệnh' }}</button>
     </form>
     <p *ngIf="orderForm.invalid && orderForm.touched" class="field-error">Vui lòng chọn tài khoản và nhập giá, khối lượng hợp lệ.</p>
   </section>
@@ -75,7 +85,7 @@
     <p *ngIf="!pendingOrders.length" class="empty">Chưa có lệnh demo đang chờ</p>
     <div *ngFor="let order of pendingOrders" class="pending-row">
       <span>#{{ order.orderId }} · {{ order.brokerId }}</span><span>{{ order.side === 'Buy' ? 'Mua' : 'Bán' }} {{ order.quantity | number }} @ {{ order.price | number }}</span>
-      <button type="button" (click)="cancelOrder(order)" [disabled]="commandInProgress">Hủy</button>
+      <button type="button" (click)="cancelOrder(order)" [disabled]="!isTradingActive || commandInProgress">Hủy</button>
     </div>
   </section>
 </main>

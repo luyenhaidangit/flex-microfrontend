@@ -4,7 +4,7 @@ import { EMPTY, Observable, Subject, forkJoin, of, timer } from 'rxjs';
 import { catchError, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { ExchangeApiService } from './exchange-api.service';
-import { ExchangeRealtimeService, MarketEventMessage } from './exchange-realtime.service';
+import { ExchangeRealtimeService, MarketEventMessage, RealtimeConnectionState } from './exchange-realtime.service';
 import {
   CancelOrderResponse,
   DemoBrokerOption,
@@ -39,7 +39,7 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
   commandMessage = '';
   commandSuccess = false;
   sessionState = 'Chưa khởi động';
-  realtimeConnected = false;
+  realtimeState: RealtimeConnectionState = 'disconnected';
 
   private readonly destroy$ = new Subject<void>();
 
@@ -52,6 +52,7 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadMarket().pipe(takeUntil(this.destroy$)).subscribe();
     this.realtime.events$.pipe(takeUntil(this.destroy$)).subscribe(event => this.applyRealtimeEvent(event));
+    this.realtime.connectionState$.pipe(takeUntil(this.destroy$)).subscribe(state => this.realtimeState = state);
     this.realtime.connect();
     timer(0, 2000).pipe(
       takeUntil(this.destroy$),
@@ -68,7 +69,7 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
   }
 
   startSession(): void {
-    if (this.sessionStarting || this.sessionState === 'open' || this.sessionState === 'continuous') return;
+    if (this.sessionStarting || this.isTradingActive) return;
     this.sessionStarting = true;
     this.errorMessage = '';
     this.exchangeApi.startTradingSession().pipe(takeUntil(this.destroy$)).subscribe({
@@ -87,6 +88,11 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
   submitOrder(): void {
     this.commandMessage = '';
     this.errorMessage = '';
+    if (!this.isTradingActive) {
+      this.commandSuccess = false;
+      this.commandMessage = 'Hãy khởi động phiên giao dịch trước khi đặt lệnh.';
+      return;
+    }
     if (this.orderForm.invalid || this.commandInProgress) {
       this.orderForm.markAllAsTouched();
       return;
@@ -108,7 +114,7 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
   }
 
   cancelOrder(order: OrderStatusView): void {
-    if (this.commandInProgress) return;
+    if (!this.isTradingActive || this.commandInProgress) return;
     this.commandInProgress = true;
     this.commandMessage = '';
     this.exchangeApi.cancelOrder(order.orderId, order.brokerId)
@@ -126,6 +132,24 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
 
   trackByTrade(_: number, trade: TradeTapeEntry): number {
     return trade.tradeId;
+  }
+
+  get isTradingActive(): boolean {
+    const state = this.sessionState.toLowerCase();
+    return state === 'open' || state === 'continuous';
+  }
+
+  get sessionLabel(): string {
+    return this.isTradingActive ? 'Đang mở' : 'Đang đóng';
+  }
+
+  get realtimeLabel(): string {
+    switch (this.realtimeState) {
+      case 'connected': return 'Đã kết nối realtime';
+      case 'connecting': return 'Đang kết nối realtime';
+      case 'reconnecting': return 'Đang kết nối lại';
+      default: return 'Mất kết nối realtime';
+    }
   }
 
   private loadMarket(): Observable<unknown> {
@@ -201,7 +225,6 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
   }
 
   private applyRealtimeEvent(event: MarketEventMessage): void {
-    this.realtimeConnected = true;
     if (event.sessionState) this.sessionState = event.sessionState;
     if (event.type === 'MARKET_SNAPSHOT' && event.orderBook) {
       this.board = this.toBoard(event.orderBook, event.trades || []);
