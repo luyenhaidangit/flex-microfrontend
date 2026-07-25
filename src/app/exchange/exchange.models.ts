@@ -5,6 +5,13 @@ export interface DemoBrokerOption {
   name: string;
 }
 
+export interface InstrumentItemView {
+  instrumentId: string;
+  symbol: string;
+  market: string;
+  status: string;
+}
+
 export interface OrderLevel {
   orderId: number;
   remainingQuantity: number;

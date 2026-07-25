@@ -3,6 +3,12 @@
     <div>
       <p class="eyebrow">Exchange demo</p>
       <h1 id="market-board-title">Bảng điện {{ board.symbol }}</h1>
+      <div class="symbol-selector" style="margin: 8px 0;">
+        <label for="symbol-select" style="font-weight: bold; margin-right: 8px;">Mã chứng khoán:</label>
+        <select id="symbol-select" [value]="selectedSymbol" (change)="onSymbolChange($event)" style="padding: 4px 8px; font-size: 1rem;">
+          <option *ngFor="let inst of availableInstruments" [value]="inst.symbol">{{ inst.symbol }} ({{ inst.market }})</option>
+        </select>
+      </div>
       <div class="market-status" aria-live="polite">
         <span class="status-badge" [class.open]="isTradingActive">Phiên {{ sessionLabel }}</span>
         <span class="connection-status" [class.connected]="realtimeState === 'connected'" [class.reconnecting]="realtimeState === 'reconnecting'">{{ realtimeLabel }}</span>

@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EMPTY, Observable, Subject, forkJoin, of, timer } from 'rxjs';
 import { catchError, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
@@ -8,6 +9,7 @@ import { ExchangeRealtimeService, MarketEventMessage, RealtimeConnectionState } 
 import {
   CancelOrderResponse,
   DemoBrokerOption,
+  InstrumentItemView,
   MarketBoardViewModel,
   OrderStatusView,
   PlaceOrderResponse,
@@ -15,13 +17,16 @@ import {
   TradeTapeEntry
 } from './exchange.models';
 
+const STORAGE_KEY = 'flex_selected_symbol';
+
 @Component({
   selector: 'app-market-board',
   templateUrl: './market-board.component.html',
   styleUrls: ['./market-board.component.scss']
 })
 export class MarketBoardComponent implements OnInit, OnDestroy {
-  readonly symbol = 'FXS';
+  availableInstruments: InstrumentItemView[] = [];
+  selectedSymbol = 'FXS';
   readonly brokers: DemoBrokerOption[] = environment.demoBrokers;
   readonly orderForm = this.formBuilder.group({
     brokerId: ['', Validators.required],
@@ -46,20 +51,73 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
   constructor(
     private readonly formBuilder: FormBuilder,
     private readonly exchangeApi: ExchangeApiService,
-    private readonly realtime: ExchangeRealtimeService
+    private readonly realtime: ExchangeRealtimeService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
-    this.loadMarket().pipe(takeUntil(this.destroy$)).subscribe();
+    this.exchangeApi.getInstruments().pipe(
+      catchError(() => {
+        this.errorMessage = 'Không tải được danh sách instrument.';
+        return of(null);
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe(response => {
+      this.availableInstruments = response?.isSuccess ? (response.data ?? []) : [];
+      this.initSelectedSymbol();
+      this.loadMarket().pipe(takeUntil(this.destroy$)).subscribe();
+    });
+
     this.realtime.events$.pipe(takeUntil(this.destroy$)).subscribe(event => this.applyRealtimeEvent(event));
     this.realtime.connectionState$.pipe(takeUntil(this.destroy$)).subscribe(state => this.realtimeState = state);
     this.realtime.connect();
     timer(0, 2000).pipe(
       takeUntil(this.destroy$),
       switchMap(() => this.exchangeApi.getTradingSession().pipe(catchError(() => of(null))))
-    ).subscribe(session => {
-      if (session?.state) this.sessionState = session.state;
+    ).subscribe(response => {
+      if (response?.isSuccess && response.data?.state) this.sessionState = response.data.state;
     });
+  }
+
+  private initSelectedSymbol(): void {
+    const urlParamSymbol = this.route.snapshot.queryParams['symbol'];
+    const storedSymbol = localStorage.getItem(STORAGE_KEY);
+
+    let symbolToUse = '';
+    if (urlParamSymbol && this.isValidSymbol(urlParamSymbol)) {
+      symbolToUse = urlParamSymbol.toUpperCase();
+    } else if (storedSymbol && this.isValidSymbol(storedSymbol)) {
+      symbolToUse = storedSymbol.toUpperCase();
+    } else if (this.availableInstruments.length > 0) {
+      symbolToUse = this.availableInstruments[0].symbol;
+    } else {
+      symbolToUse = 'FXS';
+    }
+
+    this.selectedSymbol = symbolToUse;
+    localStorage.setItem(STORAGE_KEY, symbolToUse);
+  }
+
+  private isValidSymbol(symbol: string): boolean {
+    if (!symbol) return false;
+    if (this.availableInstruments.length === 0) return true;
+    const upper = symbol.toUpperCase();
+    return this.availableInstruments.some(item => item.symbol.toUpperCase() === upper);
+  }
+
+  onSymbolChange(event: Event): void {
+    const newSymbol = (event.target as HTMLSelectElement).value;
+    if (!newSymbol || newSymbol === this.selectedSymbol) return;
+
+    this.selectedSymbol = newSymbol;
+    localStorage.setItem(STORAGE_KEY, newSymbol);
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { symbol: newSymbol },
+      queryParamsHandling: 'merge'
+    });
+    this.loadMarket().pipe(takeUntil(this.destroy$)).subscribe();
   }
 
   ngOnDestroy(): void {
@@ -73,10 +131,14 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
     this.sessionStarting = true;
     this.errorMessage = '';
     this.exchangeApi.startTradingSession().pipe(takeUntil(this.destroy$)).subscribe({
-      next: session => {
-        this.sessionState = session.state;
+      next: response => {
         this.sessionStarting = false;
-        this.loadMarket().pipe(takeUntil(this.destroy$)).subscribe();
+        if (response?.isSuccess && response.data) {
+          this.sessionState = response.data.state;
+          this.loadMarket().pipe(takeUntil(this.destroy$)).subscribe();
+        } else {
+          this.errorMessage = response?.message || 'Không thể khởi động phiên giao dịch.';
+        }
       },
       error: error => {
         this.sessionStarting = false;
@@ -102,12 +164,19 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
     const value = this.orderForm.getRawValue();
     this.exchangeApi.placeOrder({
       brokerId: value.brokerId as string,
-      symbol: this.symbol,
+      symbol: this.selectedSymbol,
       side: value.side as 'Buy' | 'Sell',
       price: Number(value.price),
       quantity: Number(value.quantity)
     }).pipe(takeUntil(this.destroy$)).subscribe({
-      next: response => this.handlePlaceOrder(response),
+      next: response => {
+        if (response?.isSuccess && response.data) {
+          this.handlePlaceOrder(response.data);
+        } else {
+          this.commandSuccess = false;
+          this.commandMessage = response?.message || 'Đặt lệnh không thành công.';
+        }
+      },
       error: error => this.handleCommandError(error),
       complete: () => this.commandInProgress = false
     });
@@ -120,7 +189,14 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
     this.exchangeApi.cancelOrder(order.orderId, order.brokerId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: response => this.handleCancelOrder(response, order),
+        next: response => {
+          if (response?.isSuccess && response.data) {
+            this.handleCancelOrder(response.data, order);
+          } else {
+            this.commandSuccess = false;
+            this.commandMessage = response?.message || 'Hủy lệnh không thành công.';
+          }
+        },
         error: error => this.handleCommandError(error),
         complete: () => this.commandInProgress = false
       });
@@ -155,8 +231,8 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
   private loadMarket(): Observable<unknown> {
     this.loading = this.board.updatedAt === null;
     return forkJoin({
-      orderBook: this.exchangeApi.getOrderBook(),
-      trades: this.exchangeApi.getTrades()
+      orderBook: this.exchangeApi.getOrderBook(this.selectedSymbol),
+      trades: this.exchangeApi.getTrades(this.selectedSymbol)
     }).pipe(
       catchError(error => {
         this.errorMessage = this.errorText(error, 'Không thể lấy dữ liệu thị trường mới.');
@@ -164,7 +240,7 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
         return EMPTY;
       }),
       tap((data: any) => {
-        this.board = this.toBoard(data.orderBook, data.trades);
+        this.board = this.toBoard(data.orderBook?.data ?? {}, data.trades?.data ?? []);
         this.errorMessage = '';
         this.loading = false;
       })
@@ -174,7 +250,7 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
   private toBoard(orderBook: any, trades: TradeTapeEntry[]): MarketBoardViewModel {
     const orderedTrades = [...(trades || [])].sort((a, b) => b.executedSequence - a.executedSequence);
     return {
-      symbol: orderBook.symbol,
+      symbol: orderBook.symbol || this.selectedSymbol,
       latestPrice: orderedTrades.length > 0 ? orderedTrades[0].price : null,
       bids: (orderBook.bids || []).slice(0, 5),
       asks: (orderBook.asks || []).slice(0, 5),
@@ -196,7 +272,7 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
       this.pendingOrders = [{
         orderId: response.orderId,
         brokerId: value.brokerId as string,
-        symbol: this.symbol,
+        symbol: this.selectedSymbol,
         side: value.side as 'Buy' | 'Sell',
         price: Number(value.price),
         quantity: Number(value.quantity),
@@ -251,7 +327,7 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
 
   private emptyBoard(): MarketBoardViewModel {
     return {
-      symbol: this.symbol,
+      symbol: this.selectedSymbol || 'FXS',
       latestPrice: null,
       bids: [],
       asks: [],

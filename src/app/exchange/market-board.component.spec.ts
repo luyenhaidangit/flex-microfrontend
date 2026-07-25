@@ -13,12 +13,13 @@ describe('MarketBoardComponent', () => {
   let connectionState$: BehaviorSubject<'connecting' | 'connected' | 'reconnecting' | 'disconnected'>;
 
   beforeEach(async () => {
-    api = jasmine.createSpyObj('ExchangeApiService', ['getOrderBook', 'getTrades', 'placeOrder', 'cancelOrder', 'startTradingSession', 'getTradingSession']);
+    api = jasmine.createSpyObj('ExchangeApiService', ['getInstruments', 'getOrderBook', 'getTrades', 'placeOrder', 'cancelOrder', 'startTradingSession', 'getTradingSession']);
     connectionState$ = new BehaviorSubject<'connecting' | 'connected' | 'reconnecting' | 'disconnected'>('disconnected');
     realtime = jasmine.createSpyObj('ExchangeRealtimeService', ['connect', 'disconnect'], { events$: of(), connectionState$: connectionState$.asObservable() });
-    api.getOrderBook.and.returnValue(of({ symbol: 'FXS', asOfEventSequence: 1, bids: [], asks: [] }));
-    api.getTrades.and.returnValue(of([]));
-    api.getTradingSession.and.returnValue(of(null));
+    api.getInstruments.and.returnValue(of({ isSuccess: true, data: [] }));
+    api.getOrderBook.and.returnValue(of({ isSuccess: true, data: { symbol: 'FXS', asOfEventSequence: 1, bids: [], asks: [] } }));
+    api.getTrades.and.returnValue(of({ isSuccess: true, data: [] }));
+    api.getTradingSession.and.returnValue(of({ isSuccess: true, data: null }));
     await TestBed.configureTestingModule({
       declarations: [MarketBoardComponent],
       imports: [ReactiveFormsModule],
@@ -38,7 +39,7 @@ describe('MarketBoardComponent', () => {
   }));
 
   it('starts a trading session from the board', () => {
-    api.startTradingSession.and.returnValue(of({ sessionId: 'session-1', symbol: 'FXS', state: 'open', startedAt: new Date().toISOString() }));
+    api.startTradingSession.and.returnValue(of({ isSuccess: true, data: { sessionId: 'session-1', symbol: 'FXS', state: 'open', startedAt: new Date().toISOString() } }));
     component.startSession();
     expect(api.startTradingSession).toHaveBeenCalledTimes(1);
     expect(component.sessionState).toBe('open');
@@ -49,7 +50,7 @@ describe('MarketBoardComponent', () => {
     component.submitOrder();
     expect(api.placeOrder).not.toHaveBeenCalled();
     component.orderForm.patchValue({ brokerId: 'DEMO-BUYER', side: 'Buy', price: 100, quantity: 10 });
-    api.placeOrder.and.returnValue(of({ accepted: true, orderId: 1, events: [] }));
+    api.placeOrder.and.returnValue(of({ isSuccess: true, data: { accepted: true, orderId: 1, events: [] } }));
     component.submitOrder();
     expect(api.placeOrder).toHaveBeenCalledTimes(1);
   });
@@ -62,7 +63,7 @@ describe('MarketBoardComponent', () => {
 
   it('keeps the last market snapshot when refresh fails', fakeAsync(() => {
     api.getOrderBook.and.returnValues(
-      of({ symbol: 'FXS', asOfEventSequence: 2, bids: [{ price: 100, totalQuantity: 5, orders: [] }], asks: [] }),
+      of({ isSuccess: true, data: { symbol: 'FXS', asOfEventSequence: 2, bids: [{ price: 100, totalQuantity: 5, orders: [] }], asks: [] } }),
       throwError(() => new Error('offline'))
     );
     fixture.detectChanges();
