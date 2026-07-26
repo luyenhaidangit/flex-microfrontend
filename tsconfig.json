@@ -1,7 +1,9 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
+    "paths": {
+      "*": ["./*"]
+    },
     "outDir": "./dist/out-tsc",
     "rootDir": "./src",
     "sourceMap": true,
@@ -9,7 +11,7 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "module": "es2020",
-    "moduleResolution": "node10",
+    "moduleResolution": "bundler",
     "importHelpers": true,
     "target": "ES2022",
     "lib": [
