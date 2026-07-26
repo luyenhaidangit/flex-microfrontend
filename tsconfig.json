@@ -3,12 +3,14 @@
   "compilerOptions": {
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
+    "rootDir": "./src",
     "sourceMap": true,
     "declaration": false,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "module": "es2020",
     "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "importHelpers": true,
     "target": "ES2022",
     "lib": [
