@@ -1,5 +1,13 @@
 export type OrderSide = 'Buy' | 'Sell';
 
+export interface MarketView {
+  marketCode: string;
+  marketName: string;
+  status: string;
+  hasAto: boolean;
+  hasPlo: boolean;
+}
+
 export interface DemoBrokerOption {
   id: string;
   name: string;

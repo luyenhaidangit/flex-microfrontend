@@ -16,7 +16,10 @@
     </thead>
     <tbody>
       <tr *ngFor="let row of rows">
-        <td>{{ row.market }}</td>
+        <td>
+          <span>{{ row.market.marketName }}</span>
+          <small class="market-code">{{ row.market.marketCode }}</small>
+        </td>
         <td><span class="status-badge" [class.open]="isOpen(row.state)">{{ row.state }}</span></td>
         <td>
           <button type="button" *ngIf="canStart(row.state)" (click)="startSession(row)" [disabled]="row.starting">

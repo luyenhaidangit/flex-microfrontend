@@ -7,6 +7,7 @@ import { ApiResponse } from '../core/models/api.models';
 import {
   CancelOrderResponse,
   InstrumentItemView,
+  MarketView,
   OrderBookSnapshot,
   OrderStatusView,
   PlaceOrderRequest,
@@ -23,6 +24,10 @@ export class ExchangeApiService {
 
   getInstruments(): Observable<ApiResponse<InstrumentItemView[]>> {
     return this.http.get<ApiResponse<InstrumentItemView[]>>(`${this.baseUrl}/api/instruments`);
+  }
+
+  getMarkets(): Observable<ApiResponse<MarketView[]>> {
+    return this.http.get<ApiResponse<MarketView[]>>(`${this.baseUrl}/api/v1/markets`);
   }
 
   getOrderBook(symbol?: string): Observable<ApiResponse<OrderBookSnapshot>> {

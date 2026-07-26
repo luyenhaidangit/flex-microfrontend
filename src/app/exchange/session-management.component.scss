@@ -8,6 +8,8 @@ h1 { margin: 0; font-size: 2rem; }
 .empty { color: #71809a; font-size: .85rem; margin-top: 1rem; }
 .session-table { width: 100%; margin-top: 1.5rem; border-collapse: collapse; background: #fff; border: 1px solid #e3e8f0; border-radius: .65rem; overflow: hidden; }
 .session-table th, .session-table td { text-align: left; padding: .75rem 1rem; border-bottom: 1px solid #eef1f5; }
+.session-table td { vertical-align: middle; }
+.market-code { display: block; font-size: .7rem; color: #71809a; letter-spacing: .05em; text-transform: uppercase; margin-top: .1rem; }
 .session-table th { color: #71809a; font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; }
 .status-badge { display: inline-flex; align-items: center; gap: .35rem; border-radius: 999px; padding: .25rem .55rem; background: #fff3e5; color: #9a5a00; font-size: .78rem; font-weight: 600; }
 .status-badge.open { background: #edf9f0; color: #18743a; }
