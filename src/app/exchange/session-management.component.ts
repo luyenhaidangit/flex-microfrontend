@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject, forkJoin, of, timer } from 'rxjs';
-import { catchError, switchMap, takeUntil } from 'rxjs/operators';
+import { Subject, of } from 'rxjs';
+import { catchError, takeUntil } from 'rxjs/operators';
 import { ExchangeApiService } from './exchange-api.service';
+import { ExchangeRealtimeService } from './exchange-realtime.service';
 import { MarketView } from './exchange.models';
 
 interface MarketSessionRow {
@@ -24,10 +25,12 @@ export class SessionManagementComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly exchangeApi: ExchangeApiService,
+    private readonly realtime: ExchangeRealtimeService,
     private readonly router: Router
   ) {}
 
   ngOnInit(): void {
+    // 1. Lấy danh sách market và trạng thái ban đầu
     this.exchangeApi.getMarkets().pipe(
       catchError(() => {
         this.errorMessage = 'Không tải được danh sách thị trường.';
@@ -37,8 +40,20 @@ export class SessionManagementComponent implements OnInit, OnDestroy {
     ).subscribe(response => {
       const markets = response?.isSuccess ? (response.data ?? []) : [];
       this.rows = markets.map(market => ({ market, state: 'Chưa khởi động', starting: false }));
-      this.pollSessions();
+      this.loadInitialSessionStates();
     });
+
+    // 2. Lắng nghe SESSION_STATE_CHANGED realtime — không poll
+    this.realtime.sessionState$.pipe(takeUntil(this.destroy$)).subscribe(event => {
+      const row = this.rows.find(r =>
+        r.market.marketCode.toUpperCase() === event.market.toUpperCase()
+      );
+      if (row) {
+        row.state = event.state;
+      }
+    });
+
+    this.realtime.connect();
   }
 
   ngOnDestroy(): void {
@@ -81,17 +96,16 @@ export class SessionManagementComponent implements OnInit, OnDestroy {
     return normalized === 'ato' || normalized === 'continuous' || normalized === 'intermission' || normalized === 'atc';
   }
 
-  private pollSessions(): void {
+  // Lấy trạng thái hiện tại một lần duy nhất lúc load — không lặp
+  private loadInitialSessionStates(): void {
     if (!this.rows.length) return;
-    timer(0, 2000).pipe(
-      takeUntil(this.destroy$),
-      switchMap(() => forkJoin(
-        this.rows.map(row => this.exchangeApi.getSession(row.market.marketCode).pipe(catchError(() => of(null))))
-      ))
-    ).subscribe(responses => {
-      responses.forEach((response, index) => {
+    this.rows.forEach(row => {
+      this.exchangeApi.getSession(row.market.marketCode).pipe(
+        catchError(() => of(null)),
+        takeUntil(this.destroy$)
+      ).subscribe(response => {
         if (response?.isSuccess && response.data?.state) {
-          this.rows[index].state = response.data.state;
+          row.state = response.data.state;
         }
       });
     });

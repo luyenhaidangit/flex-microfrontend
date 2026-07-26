@@ -4,14 +4,17 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { SessionManagementComponent } from './session-management.component';
 import { ExchangeApiService } from './exchange-api.service';
+import { ExchangeRealtimeService } from './exchange-realtime.service';
 
 describe('SessionManagementComponent', () => {
   let component: SessionManagementComponent;
   let fixture: ComponentFixture<SessionManagementComponent>;
   let api: jasmine.SpyObj<ExchangeApiService>;
+  let realtime: jasmine.SpyObj<ExchangeRealtimeService>;
 
   beforeEach(async () => {
     api = jasmine.createSpyObj('ExchangeApiService', ['getMarkets', 'getSession', 'startSession']);
+    realtime = jasmine.createSpyObj('ExchangeRealtimeService', ['connect'], { sessionState$: of() });
     api.getMarkets.and.returnValue(of({
       isSuccess: true,
       data: [
@@ -24,7 +27,10 @@ describe('SessionManagementComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [SessionManagementComponent],
       imports: [RouterTestingModule],
-      providers: [{ provide: ExchangeApiService, useValue: api }]
+      providers: [
+        { provide: ExchangeApiService, useValue: api },
+        { provide: ExchangeRealtimeService, useValue: realtime }
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(SessionManagementComponent);
