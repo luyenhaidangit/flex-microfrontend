@@ -128,7 +128,7 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
   }
 
   startSession(): void {
-    if (this.sessionStarting || this.isTradingActive) return;
+    if (this.sessionStarting || !this.canStartSession) return;
     this.sessionStarting = true;
     this.errorMessage = '';
     this.exchangeApi.startSession(this.market).pipe(takeUntil(this.destroy$)).subscribe({
@@ -151,7 +151,7 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
   submitOrder(): void {
     this.commandMessage = '';
     this.errorMessage = '';
-    if (!this.isTradingActive) {
+    if (!this.canPlaceOrder) {
       this.commandSuccess = false;
       this.commandMessage = 'Hãy khởi động phiên giao dịch trước khi đặt lệnh.';
       return;
@@ -184,7 +184,7 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
   }
 
   cancelOrder(order: OrderStatusView): void {
-    if (!this.isTradingActive || this.commandInProgress) return;
+    if (!this.canCancelOrder || this.commandInProgress) return;
     this.commandInProgress = true;
     this.commandMessage = '';
     this.exchangeApi.cancelOrder(order.orderId, order.brokerId)
@@ -211,13 +211,23 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
     return trade.tradeId;
   }
 
-  get isTradingActive(): boolean {
+  get canStartSession(): boolean {
     const state = this.sessionState.toLowerCase();
-    return state === 'open' || state === 'continuous';
+    return state !== 'preopen' && state !== 'ato' && state !== 'continuous' &&
+      state !== 'intermission' && state !== 'atc' && state !== 'plo';
+  }
+
+  get canPlaceOrder(): boolean {
+    const state = this.sessionState.toLowerCase();
+    return state === 'ato' || state === 'continuous' || state === 'intermission' || state === 'atc';
+  }
+
+  get canCancelOrder(): boolean {
+    return this.sessionState.toLowerCase() === 'continuous';
   }
 
   get sessionLabel(): string {
-    return this.isTradingActive ? 'Đang mở' : 'Đang đóng';
+    return this.canPlaceOrder ? 'Đang mở' : 'Đang đóng';
   }
 
   get realtimeLabel(): string {

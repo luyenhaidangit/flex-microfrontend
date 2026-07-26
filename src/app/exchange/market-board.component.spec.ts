@@ -40,14 +40,14 @@ describe('MarketBoardComponent', () => {
   }));
 
   it('starts a trading session from the board', () => {
-    api.startSession.and.returnValue(of({ isSuccess: true, data: { sessionId: 'session-1', symbol: 'FXS', state: 'open', startedAt: new Date().toISOString() } }));
+    api.startSession.and.returnValue(of({ isSuccess: true, data: { sessionId: 'session-1', symbol: 'FXS', state: 'preopen', startedAt: new Date().toISOString() } }));
     component.startSession();
     expect(api.startSession).toHaveBeenCalledTimes(1);
-    expect(component.sessionState).toBe('open');
+    expect(component.sessionState).toBe('preopen');
   });
 
   it('validates required order fields and prevents duplicate submit', () => {
-    component.sessionState = 'open';
+    component.sessionState = 'continuous';
     component.submitOrder();
     expect(api.placeOrder).not.toHaveBeenCalled();
     component.orderForm.patchValue({ brokerId: 'DEMO-BUYER', side: 'Buy', price: 100, quantity: 10 });
@@ -77,5 +77,34 @@ describe('MarketBoardComponent', () => {
     expect(component.brokers.map(broker => broker.id)).toEqual(['DEMO-BUYER', 'DEMO-SELLER']);
     expect(fixture.nativeElement.textContent).not.toContain('Authorization');
     expect(fixture.nativeElement.textContent).not.toContain('secret');
+  });
+
+  describe('session state gates', () => {
+    for (const state of ['preopen', 'plo', 'close']) {
+      it(`canStartSession is true and canPlaceOrder/canCancelOrder are false for ${state}`, () => {
+        component.sessionState = state;
+        expect(component.canStartSession).toBeTrue();
+        expect(component.canPlaceOrder).toBeFalse();
+        expect(component.canCancelOrder).toBeFalse();
+      });
+    }
+
+    for (const state of ['ato', 'continuous', 'intermission', 'atc']) {
+      it(`canStartSession is false and canPlaceOrder is true for ${state}`, () => {
+        component.sessionState = state;
+        expect(component.canStartSession).toBeFalse();
+        expect(component.canPlaceOrder).toBeTrue();
+      });
+    }
+
+    it('canCancelOrder is true only for continuous', () => {
+      component.sessionState = 'continuous';
+      expect(component.canCancelOrder).toBeTrue();
+
+      for (const state of ['ato', 'atc', 'intermission', 'preopen', 'plo', 'close']) {
+        component.sessionState = state;
+        expect(component.canCancelOrder).withContext(state).toBeFalse();
+      }
+    });
   });
 });

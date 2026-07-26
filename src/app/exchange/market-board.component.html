@@ -10,7 +10,7 @@
         </select>
       </div>
       <div class="market-status" aria-live="polite">
-        <span class="status-badge" [class.open]="isTradingActive">Phiên {{ sessionLabel }}</span>
+        <span class="status-badge" [class.open]="canPlaceOrder">Phiên {{ sessionLabel }}</span>
         <span class="connection-status" [class.connected]="realtimeState === 'connected'" [class.reconnecting]="realtimeState === 'reconnecting'">{{ realtimeLabel }}</span>
       </div>
       <p class="updated">Cập nhật thị trường: {{ board.updatedAt ? (board.updatedAt | date:'HH:mm:ss') : 'Chưa có dữ liệu' }}</p>
@@ -21,7 +21,7 @@
         <strong>{{ board.latestPrice === null ? '—' : board.latestPrice | number }}</strong>
         <small>{{ board.latestPrice === null ? 'Chưa có giao dịch trong phiên' : 'FXS' }}</small>
       </div>
-      <button *ngIf="!isTradingActive" type="button" (click)="startSession()" [disabled]="sessionStarting">
+      <button *ngIf="canStartSession" type="button" (click)="startSession()" [disabled]="sessionStarting">
         {{ sessionStarting ? 'Đang khởi động…' : 'Khởi động phiên' }}
       </button>
     </div>
@@ -68,20 +68,20 @@
 
   <section class="card order-entry">
     <div class="card-title"><h2>Đặt lệnh demo</h2><span>Chỉ dành cho môi trường demo</span></div>
-    <p *ngIf="!isTradingActive" class="session-notice" role="status">Phiên giao dịch đang đóng. Khởi động phiên để đặt hoặc hủy lệnh.</p>
-    <form [formGroup]="orderForm" (ngSubmit)="submitOrder()" [class.form-disabled]="!isTradingActive">
+    <p *ngIf="!canPlaceOrder" class="session-notice" role="status">Phiên giao dịch đang đóng. Khởi động phiên để đặt hoặc hủy lệnh.</p>
+    <form [formGroup]="orderForm" (ngSubmit)="submitOrder()" [class.form-disabled]="!canPlaceOrder">
       <label>Tài khoản demo
-        <select formControlName="brokerId" required [disabled]="!isTradingActive">
+        <select formControlName="brokerId" required [disabled]="!canPlaceOrder">
           <option value="">Chọn tài khoản</option>
           <option *ngFor="let broker of brokers" [value]="broker.id">{{ broker.name }}</option>
         </select>
       </label>
       <label>Chiều lệnh
-        <select formControlName="side" [disabled]="!isTradingActive"><option value="Buy">Mua</option><option value="Sell">Bán</option></select>
+        <select formControlName="side" [disabled]="!canPlaceOrder"><option value="Buy">Mua</option><option value="Sell">Bán</option></select>
       </label>
-      <label>Giá<input type="number" min="1" formControlName="price" required placeholder="Ví dụ: 100" [disabled]="!isTradingActive"></label>
-      <label>Khối lượng<input type="number" min="1" formControlName="quantity" required placeholder="Ví dụ: 10" [disabled]="!isTradingActive"></label>
-      <button type="submit" [disabled]="!isTradingActive || commandInProgress || orderForm.invalid">{{ commandInProgress ? 'Đang xử lý…' : 'Đặt lệnh' }}</button>
+      <label>Giá<input type="number" min="1" formControlName="price" required placeholder="Ví dụ: 100" [disabled]="!canPlaceOrder"></label>
+      <label>Khối lượng<input type="number" min="1" formControlName="quantity" required placeholder="Ví dụ: 10" [disabled]="!canPlaceOrder"></label>
+      <button type="submit" [disabled]="!canPlaceOrder || commandInProgress || orderForm.invalid">{{ commandInProgress ? 'Đang xử lý…' : 'Đặt lệnh' }}</button>
     </form>
     <p *ngIf="orderForm.invalid && orderForm.touched" class="field-error">Vui lòng chọn tài khoản và nhập giá, khối lượng hợp lệ.</p>
   </section>
@@ -91,7 +91,7 @@
     <p *ngIf="!pendingOrders.length" class="empty">Chưa có lệnh demo đang chờ</p>
     <div *ngFor="let order of pendingOrders" class="pending-row">
       <span>#{{ order.orderId }} · {{ order.brokerId }}</span><span>{{ order.side === 'Buy' ? 'Mua' : 'Bán' }} {{ order.quantity | number }} @ {{ order.price | number }}</span>
-      <button type="button" (click)="cancelOrder(order)" [disabled]="!isTradingActive || commandInProgress">Hủy</button>
+      <button type="button" (click)="cancelOrder(order)" [disabled]="!canCancelOrder || commandInProgress">Hủy</button>
     </div>
   </section>
 </main>
