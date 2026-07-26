@@ -1,0 +1,16 @@
+:host { display: block; }
+.session-management { max-width: 900px; margin: 0 auto; padding: 2rem; color: #24324a; }
+.board-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.eyebrow { margin: 0; color: #687792; text-transform: uppercase; font-size: .75rem; letter-spacing: .12em; }
+h1 { margin: 0; font-size: 2rem; }
+.status { margin-top: 1rem; padding: .75rem 1rem; border-radius: .4rem; background: #eef3ff; }
+.status.error { background: #fff0f0; color: #a32424; }
+.empty { color: #71809a; font-size: .85rem; margin-top: 1rem; }
+.session-table { width: 100%; margin-top: 1.5rem; border-collapse: collapse; background: #fff; border: 1px solid #e3e8f0; border-radius: .65rem; overflow: hidden; }
+.session-table th, .session-table td { text-align: left; padding: .75rem 1rem; border-bottom: 1px solid #eef1f5; }
+.session-table th { color: #71809a; font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; }
+.status-badge { display: inline-flex; align-items: center; gap: .35rem; border-radius: 999px; padding: .25rem .55rem; background: #fff3e5; color: #9a5a00; font-size: .78rem; font-weight: 600; }
+.status-badge.open { background: #edf9f0; color: #18743a; }
+button { cursor: pointer; background: #3454d1; color: #fff; border: 0; border-radius: .35rem; padding: .35rem 1rem; min-height: 2.35rem; }
+button:disabled { cursor: not-allowed; opacity: .55; }
+@media (max-width: 640px) { .session-management { padding: 1rem; } .board-header { flex-direction: column; align-items: stretch; } }

@@ -39,13 +39,11 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
   pendingOrders: OrderStatusView[] = [];
   loading = false;
   commandInProgress = false;
-  sessionStarting = false;
   errorMessage = '';
   commandMessage = '';
   commandSuccess = false;
   sessionState = 'Chưa khởi động';
   realtimeState: RealtimeConnectionState = 'disconnected';
-  readonly market = 'HNX';
 
   private readonly destroy$ = new Subject<void>();
 
@@ -76,6 +74,15 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
     timer(0, 2000).pipe(
       takeUntil(this.destroy$),
       switchMap(() => this.exchangeApi.getSession(this.market).pipe(catchError(() => of(null))))
+    ).subscribe(response => {
+      if (response?.isSuccess && response.data?.state) this.sessionState = response.data.state;
+    });
+  }
+
+  private refreshSessionState(): void {
+    this.exchangeApi.getSession(this.market).pipe(
+      catchError(() => of(null)),
+      takeUntil(this.destroy$)
     ).subscribe(response => {
       if (response?.isSuccess && response.data?.state) this.sessionState = response.data.state;
     });
@@ -119,6 +126,7 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
       queryParamsHandling: 'merge'
     });
     this.loadMarket().pipe(takeUntil(this.destroy$)).subscribe();
+    this.refreshSessionState();
   }
 
   ngOnDestroy(): void {
@@ -127,25 +135,8 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
     this.realtime.disconnect();
   }
 
-  startSession(): void {
-    if (this.sessionStarting || !this.canStartSession) return;
-    this.sessionStarting = true;
-    this.errorMessage = '';
-    this.exchangeApi.startSession(this.market).pipe(takeUntil(this.destroy$)).subscribe({
-      next: response => {
-        this.sessionStarting = false;
-        if (response?.isSuccess && response.data) {
-          this.sessionState = response.data.state;
-          this.loadMarket().pipe(takeUntil(this.destroy$)).subscribe();
-        } else {
-          this.errorMessage = response?.message || 'Không thể khởi động phiên giao dịch.';
-        }
-      },
-      error: error => {
-        this.sessionStarting = false;
-        this.errorMessage = this.errorText(error, 'Không thể khởi động phiên giao dịch.');
-      }
-    });
+  goToSessionManagement(): void {
+    this.router.navigate(['/exchange/session']);
   }
 
   submitOrder(): void {
@@ -211,10 +202,11 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
     return trade.tradeId;
   }
 
-  get canStartSession(): boolean {
-    const state = this.sessionState.toLowerCase();
-    return state !== 'preopen' && state !== 'ato' && state !== 'continuous' &&
-      state !== 'intermission' && state !== 'atc' && state !== 'plo';
+  get market(): string {
+    const instrument = this.availableInstruments.find(
+      item => item.symbol.toUpperCase() === this.selectedSymbol.toUpperCase()
+    );
+    return instrument?.market ?? 'HNX';
   }
 
   get canPlaceOrder(): boolean {

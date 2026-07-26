@@ -1,0 +1,29 @@
+<main class="session-management" aria-labelledby="session-management-title">
+  <header class="board-header">
+    <div>
+      <p class="eyebrow">Exchange demo</p>
+      <h1 id="session-management-title">Quản lý phiên giao dịch</h1>
+    </div>
+    <button type="button" (click)="goBack()">← Quay lại bảng điện</button>
+  </header>
+
+  <p *ngIf="errorMessage" class="status error" role="alert">{{ errorMessage }}</p>
+  <p *ngIf="!rows.length" class="empty">Không có thị trường nào để quản lý.</p>
+
+  <table *ngIf="rows.length" class="session-table">
+    <thead>
+      <tr><th>Thị trường</th><th>Trạng thái</th><th></th></tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of rows">
+        <td>{{ row.market }}</td>
+        <td><span class="status-badge" [class.open]="isOpen(row.state)">{{ row.state }}</span></td>
+        <td>
+          <button type="button" *ngIf="canStart(row.state)" (click)="startSession(row)" [disabled]="row.starting">
+            {{ row.starting ? 'Đang khởi động…' : 'Khởi động phiên' }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</main>

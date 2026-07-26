@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { MarketBoardComponent } from './market-board.component';
 import { ExchangeApiService } from './exchange-api.service';
@@ -23,7 +25,7 @@ describe('MarketBoardComponent', () => {
     api.getTradingSession.and.returnValue(of({ isSuccess: true, data: null }));
     await TestBed.configureTestingModule({
       declarations: [MarketBoardComponent],
-      imports: [ReactiveFormsModule],
+      imports: [ReactiveFormsModule, RouterTestingModule],
       providers: [{ provide: ExchangeApiService, useValue: api }, { provide: ExchangeRealtimeService, useValue: realtime }]
     }).compileComponents();
     fixture = TestBed.createComponent(MarketBoardComponent);
@@ -39,11 +41,11 @@ describe('MarketBoardComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Phiên Đang đóng');
   }));
 
-  it('starts a trading session from the board', () => {
-    api.startSession.and.returnValue(of({ isSuccess: true, data: { sessionId: 'session-1', symbol: 'FXS', state: 'preopen', startedAt: new Date().toISOString() } }));
-    component.startSession();
-    expect(api.startSession).toHaveBeenCalledTimes(1);
-    expect(component.sessionState).toBe('preopen');
+  it('navigates to the session management screen', () => {
+    const router = TestBed.inject(Router);
+    const navigateSpy = spyOn(router, 'navigate');
+    component.goToSessionManagement();
+    expect(navigateSpy).toHaveBeenCalledWith(['/exchange/session']);
   });
 
   it('validates required order fields and prevents duplicate submit', () => {
@@ -81,18 +83,16 @@ describe('MarketBoardComponent', () => {
 
   describe('session state gates', () => {
     for (const state of ['preopen', 'plo', 'close']) {
-      it(`canStartSession is true and canPlaceOrder/canCancelOrder are false for ${state}`, () => {
+      it(`canPlaceOrder/canCancelOrder are false for ${state}`, () => {
         component.sessionState = state;
-        expect(component.canStartSession).toBeTrue();
         expect(component.canPlaceOrder).toBeFalse();
         expect(component.canCancelOrder).toBeFalse();
       });
     }
 
     for (const state of ['ato', 'continuous', 'intermission', 'atc']) {
-      it(`canStartSession is false and canPlaceOrder is true for ${state}`, () => {
+      it(`canPlaceOrder is true for ${state}`, () => {
         component.sessionState = state;
-        expect(component.canStartSession).toBeFalse();
         expect(component.canPlaceOrder).toBeTrue();
       });
     }
