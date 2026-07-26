@@ -9,7 +9,7 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "module": "es2020",
-    "moduleResolution": "node",
+    "moduleResolution": "node16",
     "importHelpers": true,
     "target": "ES2022",
     "lib": [
