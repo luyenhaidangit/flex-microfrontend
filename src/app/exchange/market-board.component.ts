@@ -45,6 +45,7 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
   commandSuccess = false;
   sessionState = 'Chưa khởi động';
   realtimeState: RealtimeConnectionState = 'disconnected';
+  readonly market = 'HNX';
 
   private readonly destroy$ = new Subject<void>();
 
@@ -74,7 +75,7 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
     this.realtime.connect();
     timer(0, 2000).pipe(
       takeUntil(this.destroy$),
-      switchMap(() => this.exchangeApi.getTradingSession().pipe(catchError(() => of(null))))
+      switchMap(() => this.exchangeApi.getSession(this.market).pipe(catchError(() => of(null))))
     ).subscribe(response => {
       if (response?.isSuccess && response.data?.state) this.sessionState = response.data.state;
     });
@@ -130,7 +131,7 @@ export class MarketBoardComponent implements OnInit, OnDestroy {
     if (this.sessionStarting || this.isTradingActive) return;
     this.sessionStarting = true;
     this.errorMessage = '';
-    this.exchangeApi.startTradingSession().pipe(takeUntil(this.destroy$)).subscribe({
+    this.exchangeApi.startSession(this.market).pipe(takeUntil(this.destroy$)).subscribe({
       next: response => {
         this.sessionStarting = false;
         if (response?.isSuccess && response.data) {

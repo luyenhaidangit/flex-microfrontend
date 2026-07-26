@@ -13,12 +13,13 @@ describe('MarketBoardComponent', () => {
   let connectionState$: BehaviorSubject<'connecting' | 'connected' | 'reconnecting' | 'disconnected'>;
 
   beforeEach(async () => {
-    api = jasmine.createSpyObj('ExchangeApiService', ['getInstruments', 'getOrderBook', 'getTrades', 'placeOrder', 'cancelOrder', 'startTradingSession', 'getTradingSession']);
+    api = jasmine.createSpyObj('ExchangeApiService', ['getInstruments', 'getOrderBook', 'getTrades', 'placeOrder', 'cancelOrder', 'startSession', 'getSession', 'startTradingSession', 'getTradingSession']);
     connectionState$ = new BehaviorSubject<'connecting' | 'connected' | 'reconnecting' | 'disconnected'>('disconnected');
     realtime = jasmine.createSpyObj('ExchangeRealtimeService', ['connect', 'disconnect'], { events$: of(), connectionState$: connectionState$.asObservable() });
     api.getInstruments.and.returnValue(of({ isSuccess: true, data: [] }));
     api.getOrderBook.and.returnValue(of({ isSuccess: true, data: { symbol: 'FXS', asOfEventSequence: 1, bids: [], asks: [] } }));
     api.getTrades.and.returnValue(of({ isSuccess: true, data: [] }));
+    api.getSession.and.returnValue(of({ isSuccess: true, data: null }));
     api.getTradingSession.and.returnValue(of({ isSuccess: true, data: null }));
     await TestBed.configureTestingModule({
       declarations: [MarketBoardComponent],
@@ -39,9 +40,9 @@ describe('MarketBoardComponent', () => {
   }));
 
   it('starts a trading session from the board', () => {
-    api.startTradingSession.and.returnValue(of({ isSuccess: true, data: { sessionId: 'session-1', symbol: 'FXS', state: 'open', startedAt: new Date().toISOString() } }));
+    api.startSession.and.returnValue(of({ isSuccess: true, data: { sessionId: 'session-1', symbol: 'FXS', state: 'open', startedAt: new Date().toISOString() } }));
     component.startSession();
-    expect(api.startTradingSession).toHaveBeenCalledTimes(1);
+    expect(api.startSession).toHaveBeenCalledTimes(1);
     expect(component.sessionState).toBe('open');
   });
 

@@ -91,6 +91,19 @@ export interface PlaceOrderFormModel {
   quantity: number | null;
 }
 
+export interface SessionView {
+  sessionId: string;
+  market: string;
+  state: string;
+  startedAt: string;
+  continuousStartedAt?: string;
+  closedAt?: string;
+  openDurationSeconds: number;
+  continuousDurationSeconds: number;
+}
+
+export type TradingSessionView = SessionView;
+
 export interface MarketBoardViewModel {
   symbol: string;
   latestPrice: number | null;

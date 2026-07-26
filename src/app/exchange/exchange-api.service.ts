@@ -11,17 +11,9 @@ import {
   OrderStatusView,
   PlaceOrderRequest,
   PlaceOrderResponse,
-  TradeTapeEntry
+  TradeTapeEntry,
+  SessionView,
 } from './exchange.models';
-
-export interface TradingSessionView {
-  sessionId: string;
-  symbol: string;
-  state: string;
-  startedAt: string;
-  continuousStartedAt?: string;
-  closedAt?: string;
-}
 
 @Injectable({ providedIn: 'root' })
 export class ExchangeApiService {
@@ -43,14 +35,23 @@ export class ExchangeApiService {
     return this.http.get<ApiResponse<TradeTapeEntry[]>>(`${this.baseUrl}/api/trades`, { params });
   }
 
-  startTradingSession(): Observable<ApiResponse<TradingSessionView>> {
-    return this.http.post<ApiResponse<TradingSessionView>>(`${this.baseUrl}/api/trading-session/start`, null, {
+  startSession(market: string): Observable<ApiResponse<SessionView>> {
+    return this.http.post<ApiResponse<SessionView>>(`${this.baseUrl}/api/session/start`, null, {
+      params: { market },
       headers: this.commandHeaders()
     });
   }
 
-  getTradingSession(): Observable<ApiResponse<TradingSessionView>> {
-    return this.http.get<ApiResponse<TradingSessionView>>(`${this.baseUrl}/api/trading-session`);
+  getSession(market: string): Observable<ApiResponse<SessionView>> {
+    return this.http.get<ApiResponse<SessionView>>(`${this.baseUrl}/api/session`, { params: { market } });
+  }
+
+  startTradingSession(market: string): Observable<ApiResponse<SessionView>> {
+    return this.startSession(market);
+  }
+
+  getTradingSession(market: string): Observable<ApiResponse<SessionView>> {
+    return this.getSession(market);
   }
 
   placeOrder(request: PlaceOrderRequest): Observable<ApiResponse<PlaceOrderResponse>> {
