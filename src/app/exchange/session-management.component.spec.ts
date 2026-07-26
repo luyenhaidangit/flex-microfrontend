@@ -11,12 +11,12 @@ describe('SessionManagementComponent', () => {
   let api: jasmine.SpyObj<ExchangeApiService>;
 
   beforeEach(async () => {
-    api = jasmine.createSpyObj('ExchangeApiService', ['getInstruments', 'getSession', 'startSession']);
-    api.getInstruments.and.returnValue(of({
+    api = jasmine.createSpyObj('ExchangeApiService', ['getMarkets', 'getSession', 'startSession']);
+    api.getMarkets.and.returnValue(of({
       isSuccess: true,
       data: [
-        { instrumentId: '1', symbol: 'FXS', market: 'HNX', status: 'Active' },
-        { instrumentId: '2', symbol: 'AAV', market: 'HOSE', status: 'Active' }
+        { marketCode: 'HNX', marketName: 'HNX', status: 'Active', hasAto: true, hasPlo: true },
+        { marketCode: 'HOSE', marketName: 'HOSE', status: 'Active', hasAto: true, hasPlo: true }
       ]
     }));
     api.getSession.and.returnValue(of({ isSuccess: true, data: { sessionId: 's', market: 'HNX', state: 'close', startedAt: '', openDurationSeconds: 0, continuousDurationSeconds: 0 } }));
@@ -34,7 +34,7 @@ describe('SessionManagementComponent', () => {
   it('derives the market rows from available instruments', fakeAsync(() => {
     fixture.detectChanges();
     tick();
-    expect(component.rows.map(row => row.market)).toEqual(['HNX', 'HOSE']);
+    expect(component.rows.map(row => row.market.marketCode)).toEqual(['HNX', 'HOSE']);
     component.ngOnDestroy();
   }));
 
