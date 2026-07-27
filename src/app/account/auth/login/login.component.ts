@@ -57,15 +57,16 @@ export class LoginComponent implements OnInit {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
 
     // Get auth mode from config
-    this.configService.getAuthConfig().subscribe({
-      next: (response: any) => {
-        const mode = response?.data?.authMode || response?.authMode;
-        if (mode) this.authMode = mode;
-      },
-      error: () => {
-        this.authMode = AUTH_MODE.DB;
-      }
-    });
+    // TODO: tạm comment do backend chưa có endpoint /api/config/get-auth-mode
+    // this.configService.getAuthConfig().subscribe({
+    //   next: (response: any) => {
+    //     const mode = response?.data?.authMode || response?.authMode;
+    //     if (mode) this.authMode = mode;
+    //   },
+    //   error: () => {
+    //     this.authMode = AUTH_MODE.DB;
+    //   }
+    // });
   }
 
   // Convenience getter for easy access to form fields
