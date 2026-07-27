@@ -12,6 +12,7 @@
     "resolveJsonModule": true,
     "module": "es2020",
     "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "importHelpers": true,
     "target": "ES2022",
     "lib": [
