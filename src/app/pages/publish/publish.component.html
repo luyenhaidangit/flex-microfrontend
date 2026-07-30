@@ -1,0 +1,235 @@
+<div class="publish-page-container">
+  <!-- Top Navigation / Header -->
+  <header class="publish-header">
+    <div class="header-brand">
+      <div class="ig-logo-icon">
+        <i class="bx bxl-instagram-alt"></i>
+      </div>
+      <div>
+        <h1 class="header-title">Instagram Publish Suite</h1>
+        <p class="header-subtitle">Trang kiểm thử xuất bản nội dung & OAuth Direct Login for Business</p>
+      </div>
+    </div>
+    
+    <div class="header-actions">
+      <!-- Mode Toggle Switcher -->
+      <div class="mode-toggle-group">
+        <span class="mode-label" [class.active]="state.mode === 'MOCK'">Mock Test Mode</span>
+        <label class="switch">
+          <input type="checkbox" [checked]="state.mode === 'LIVE'" (change)="toggleMode()">
+          <span class="slider round"></span>
+        </label>
+        <span class="mode-label" [class.active]="state.mode === 'LIVE'">Live API Mode</span>
+      </div>
+
+      <!-- Auth Status / Login Button -->
+      <div class="auth-status-box d-flex gap-2">
+        <button class="btn btn-instagram-oauth" (click)="openOAuthWindow()">
+          <i class="bx bxl-instagram font-size-18"></i>
+          <span>Mở trang OAuth Instagram</span>
+        </button>
+
+        <ng-container *if="state.auth.accessToken">
+          <div class="user-badge d-flex align-items-center">
+            <i class="bx bx-check-shield text-success me-1"></i>
+            <small>{{ state.auth.username || 'IG Connected' }}</small>
+            <button class="btn btn-sm btn-outline-danger ms-2 py-0 px-2" (click)="logout()">Thoát</button>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </header>
+
+  <!-- OAuth Callback Code Alert -->
+  <div *ngIf="oauthCodeDetected" class="alert alert-info-glass alert-dismissible fade show" role="alert">
+    <i class="bx bx-info-circle me-2"></i>
+    <strong>Đã nhận OAuth Code từ Instagram Redirect:</strong>
+    <code class="ms-2 me-2">{{ oauthCodeDetected }}</code>
+    <button class="btn btn-sm btn-success ms-2" (click)="exchangeToken()">Trao đổi Token (Simulate Token Exchange)</button>
+  </div>
+
+  <!-- Main Grid Content -->
+  <main class="publish-content-grid">
+    
+    <!-- Column 1: Editor Form Panel -->
+    <section class="panel-card editor-panel">
+      <div class="panel-header">
+        <h2><i class="bx bx-edit-alt"></i> Soạn Thảo Bài Đăng</h2>
+        <span class="badge bg-soft-primary text-primary">Post Editor</span>
+      </div>
+
+      <div class="panel-body">
+        <!-- OAuth Direct Launch Box -->
+        <div class="oauth-config-card mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="mb-0 text-white"><i class="bx bxl-instagram text-gradient me-1"></i> Instagram OAuth Config</h6>
+            <span class="badge bg-soft-info text-info">Direct OAuth 2.0</span>
+          </div>
+          <div class="row g-2 mb-2">
+            <div class="col-6">
+              <small class="text-muted d-block">App ID:</small>
+              <input type="text" class="form-control custom-input form-control-sm" [(ngModel)]="state.auth.appId">
+            </div>
+            <div class="col-6">
+              <small class="text-muted d-block">Redirect URI:</small>
+              <input type="text" class="form-control custom-input form-control-sm" [(ngModel)]="state.auth.redirectUri">
+            </div>
+          </div>
+          <button class="btn btn-instagram-oauth w-100 py-2 justify-content-center" (click)="openOAuthWindow()">
+            <i class="bx bxl-instagram font-size-18 me-1"></i>
+            <span>Mở trang OAuth Instagram Authorization</span>
+          </button>
+        </div>
+
+        <!-- Media Selector / Upload -->
+        <div class="form-group mb-3">
+          <label class="form-label">Tệp Hình Ảnh / Media</label>
+          <div class="media-input-tabs">
+            <div class="tab-options">
+              <button class="tab-btn" [class.active]="mediaInputType === 'FILE'" (click)="mediaInputType = 'FILE'">Tải từ máy tính</button>
+              <button class="tab-btn" [class.active]="mediaInputType === 'URL'" (click)="mediaInputType = 'URL'">URL Hình ảnh</button>
+            </div>
+            
+            <div *ngIf="mediaInputType === 'FILE'" class="dropzone-area" (click)="fileInput.click()">
+              <input #fileInput type="file" accept="image/*,video/*" hidden (change)="onFileSelected($event)">
+              <i class="bx bx-cloud-upload upload-icon"></i>
+              <p class="dropzone-text" *ngIf="!state.draft.previewUrl">Kéo thả file vào đây hoặc bấm để chọn ảnh/video</p>
+              <p class="dropzone-text text-success fw-bold" *ngIf="state.draft.previewUrl">Đã chọn: {{ selectedFileName }}</p>
+            </div>
+
+            <div *ngIf="mediaInputType === 'URL'" class="mt-2">
+              <input type="text" class="form-control custom-input" placeholder="https://images.unsplash.com/photo-..." 
+                     [(ngModel)]="state.draft.mediaUrl" (input)="onUrlInput()">
+            </div>
+          </div>
+        </div>
+
+        <!-- Caption Input -->
+        <div class="form-group mb-3">
+          <div class="d-flex justify-content-between">
+            <label class="form-label">Nội Dụng Caption</label>
+            <small class="text-muted">{{ state.draft.caption.length }} / 2200 ký tự</small>
+          </div>
+          <textarea class="form-control custom-textarea" rows="5" 
+                    placeholder="Viết dòng trạng thái, thêm hashtag #instagram #publish..." 
+                    [(ngModel)]="state.draft.caption"></textarea>
+        </div>
+
+        <!-- Quick Hashtags Suggestion -->
+        <div class="quick-hashtags mb-3">
+          <small class="text-muted d-block mb-1">Gợi ý Hashtag nhanh:</small>
+          <span class="badge hashtag-pill" (click)="appendHashtag('#instagram')">+ #instagram</span>
+          <span class="badge hashtag-pill" (click)="appendHashtag('#business')">+ #business</span>
+          <span class="badge hashtag-pill" (click)="appendHashtag('#flexworkstation')">+ #flexworkstation</span>
+          <span class="badge hashtag-pill" (click)="appendHashtag('#testing')">+ #testing</span>
+        </div>
+
+        <!-- Publish Action Button -->
+        <div class="action-footer mt-4">
+          <button class="btn btn-primary-gradient w-100 py-3" 
+                  [disabled]="state.isPublishing || (!state.draft.mediaUrl && !state.draft.previewUrl)"
+                  (click)="publishPost()">
+            <i class="bx" [ngClass]="state.isPublishing ? 'bx-loader-alt bx-spin' : 'bx-paper-plane'"></i>
+            <span class="ms-2 fw-bold">{{ state.isPublishing ? 'Đang xuất bản bài đăng...' : 'Đăng Bài Lên Instagram' }}</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Column 2: Instagram Live Preview Card -->
+    <section class="panel-card preview-panel">
+      <div class="panel-header">
+        <h2><i class="bx bx-show"></i> Xem Trước Giao Diện (Preview)</h2>
+        <span class="badge bg-soft-info text-info">Live Mockup</span>
+      </div>
+
+      <div class="panel-body d-flex justify-content-center align-items-start pt-2">
+        <!-- Instagram Card Mockup -->
+        <div class="instagram-post-card">
+          <!-- Card Header -->
+          <div class="ig-card-header">
+            <div class="user-info">
+              <div class="avatar-ring">
+                <img [src]="userAvatarUrl" alt="Avatar" class="user-avatar">
+              </div>
+              <div class="user-details">
+                <span class="username">{{ state.auth.username || 'your_business_account' }}</span>
+                <span class="location">Original Audio</span>
+              </div>
+            </div>
+            <i class="bx bx-dots-horizontal-rounded more-icon"></i>
+          </div>
+
+          <!-- Card Media View -->
+          <div class="ig-card-media">
+            <ng-container *if="state.draft.previewUrl || state.draft.mediaUrl; else placeholderMedia">
+              <img [src]="state.draft.previewUrl || state.draft.mediaUrl" alt="Post media preview" class="post-image">
+            </ng-container>
+            <ng-template #placeholderMedia>
+              <div class="media-placeholder">
+                <i class="bx bx-image-add"></i>
+                <span>Chưa chọn ảnh/video</span>
+              </div>
+            </ng-template>
+          </div>
+
+          <!-- Card Action Bar -->
+          <div class="ig-card-actions">
+            <div class="left-actions">
+              <i class="bx bx-heart action-icon"></i>
+              <i class="bx bx-comment action-icon"></i>
+              <i class="bx bx-paper-plane action-icon"></i>
+            </div>
+            <i class="bx bx-bookmark action-icon"></i>
+          </div>
+
+          <!-- Likes Count -->
+          <div class="ig-card-likes">
+            <span>Được thích bởi <strong>flex_dev</strong> và <strong>những người khác</strong></span>
+          </div>
+
+          <!-- Caption Section -->
+          <div class="ig-card-caption">
+            <span class="username me-1">{{ state.auth.username || 'your_business_account' }}</span>
+            <span class="caption-text">{{ state.draft.caption || 'Nội dung caption sẽ hiển thị trực quan tại đây...' }}</span>
+          </div>
+
+          <!-- Post Footer Time -->
+          <div class="ig-card-time">
+            <span>VỪA XONG</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Column 3: Log Monitor & Terminal Panel -->
+    <section class="panel-card log-panel">
+      <div class="panel-header d-flex justify-content-between">
+        <h2><i class="bx bx-terminal"></i> Nhật Ký & Trạng Thái (Logs)</h2>
+        <button class="btn btn-sm btn-outline-secondary" (click)="clearLogs()">Xóa log</button>
+      </div>
+
+      <div class="panel-body">
+        <div class="log-terminal">
+          <div *ngIf="state.logs.length === 0" class="empty-logs">
+            <span>Chưa có dữ liệu nhật ký. Hãy bấm Đăng bài hoặc Đăng nhập để xem log.</span>
+          </div>
+
+          <div *ngFor="let log of state.logs" class="log-item" [ngClass]="log.type.toLowerCase()">
+            <div class="log-meta">
+              <span class="log-time">{{ log.timestamp | date:'HH:mm:ss' }}</span>
+              <span class="log-badge" [class.badge-success]="log.type==='SUCCESS'" [class.badge-danger]="log.type==='ERROR'" [class.badge-info]="log.type==='INFO'">
+                {{ log.type }}
+              </span>
+              <span class="log-action">{{ log.action }}</span>
+            </div>
+            <div class="log-details">
+              <pre>{{ log.details }}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>

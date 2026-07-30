@@ -8,6 +8,7 @@ import { Page404Component } from './extrapages/page404/page404.component';
 import { ErrorPageComponent } from './extrapages/errorpage/errorpage.component';
 
 const routes: Routes = [
+  { path: 'publish', loadChildren: () => import('./pages/publish/publish.module').then(m => m.PublishModule) },
   { path: 'account', loadChildren: () => import('./account/account.module').then(m => m.AccountModule) },
   { path: 'exchange', loadChildren: () => import('./exchange/exchange.module').then(m => m.ExchangeModule) },
   // tslint:disable-next-line: max-line-length
