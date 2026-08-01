@@ -53,6 +53,18 @@ export const MENU: MenuItem[] = [
         isTitle: true
     },
     {
+        id: 'agent-catalog-module',
+        label: 'Quản lý Agent',
+        icon: 'bx bx-bot',
+        subItems: [
+            {
+                id: 'agent-catalog-module.agents',
+                label: 'Danh mục Agent',
+                link: '/agents',
+            },
+        ]
+    },
+    {
         id: 'master.securities-domain',
         label: 'Miền thanh toán',
         link: '/master/securities-domain',
@@ -75,18 +87,6 @@ export const MENU: MenuItem[] = [
         label: 'Thành viên lưu ký',
         link: '/master/deposit-members',
         icon: 'bx bx-collection'
-    },
-    {
-        id: 'agent-catalog-module',
-        label: 'Quản lý Agent',
-        icon: 'bx bx-bot',
-        subItems: [
-            {
-                id: 'agent-catalog-module.agents',
-                label: 'Danh mục Agent',
-                link: '/agents',
-            },
-        ]
     },
     {
         id: 9,
