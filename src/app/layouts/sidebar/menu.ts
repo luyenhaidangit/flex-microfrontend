@@ -77,6 +77,18 @@ export const MENU: MenuItem[] = [
         icon: 'bx bx-collection'
     },
     {
+        id: 'agent-catalog-module',
+        label: 'Quản lý Agent',
+        icon: 'bx bx-bot',
+        subItems: [
+            {
+                id: 'agent-catalog-module.agents',
+                label: 'Danh mục Agent',
+                link: '/agents',
+            },
+        ]
+    },
+    {
         id: 9,
         label: 'MENUITEMS.SYSTEM.TEXT',
         isTitle: true

@@ -32,6 +32,7 @@ const routes: Routes = [
   { path: 'form', loadChildren: () => import('./form/form.module').then(m => m.FormModule) },
   { path: 'operation', loadChildren: () => import('src/app/pages/operation/operation.module').then(m => m.OperationModule) },
   { path: 'master', loadChildren: () => import('./master/master.module').then(m => m.MasterModule) },
+  { path: 'agents', loadChildren: () => import('src/app/features/agent-catalog/agent-catalog.module').then(m => m.AgentCatalogModule) },
   { path: 'tables', loadChildren: () => import('./tables/tables.module').then(m => m.TablesModule) },
   { path: 'icons', loadChildren: () => import('./icons/icons.module').then(m => m.IconsModule) },
   { path: 'charts', loadChildren: () => import('./chart/chart.module').then(m => m.ChartModule) },

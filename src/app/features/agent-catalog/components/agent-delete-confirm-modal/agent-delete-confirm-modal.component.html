@@ -1,0 +1,30 @@
+<div class="modal fade show d-block" *ngIf="isVisible" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-danger fw-semibold">
+          <i class="fas fa-trash-alt me-2"></i>Xóa Agent
+        </h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+      </div>
+      <div class="modal-body px-4 py-3">
+        <div class="alert alert-warning d-flex align-items-center" role="alert">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          <div>
+            Bạn có chắc chắn muốn xóa Agent <strong>{{ agent?.name }}</strong>? Thao tác này không thể hoàn tác.
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-top-0">
+        <button type="button" class="btn btn-outline-secondary me-2" (click)="onCancel()" [disabled]="isSubmitting">
+          Hủy
+        </button>
+        <button type="button" class="btn btn-danger" [disabled]="isSubmitting" (click)="onConfirm()">
+          <i class="fas fa-trash me-1" *ngIf="!isSubmitting"></i>
+          <span class="spinner-border spinner-border-sm me-1" *ngIf="isSubmitting" role="status" aria-hidden="true"></span>
+          {{ isSubmitting ? 'Đang xóa...' : 'Xác nhận xóa' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
