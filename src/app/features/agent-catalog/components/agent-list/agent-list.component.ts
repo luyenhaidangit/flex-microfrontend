@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastService } from 'angular-toastify';
 import { finalize } from 'rxjs/operators';
+import { BadgeTypeConfig } from 'src/app/shared/ui/badge/badge.component';
 import { Agent } from '../../models/agent.model';
 import { AgentService } from '../../services/agent.service';
 
@@ -12,6 +13,11 @@ import { AgentService } from '../../services/agent.service';
 export class AgentListComponent implements OnInit {
   agents: Agent[] = [];
   isLoading = false;
+
+  readonly agentStatusConfigs: BadgeTypeConfig = {
+    active:   { label: 'Hoạt động',     class: 'badge-soft-success',   value: 'active' },
+    inactive: { label: 'Không hoạt động', class: 'badge-soft-danger',    value: 'inactive' },
+  };
 
   showFormModal = false;
   showDeleteModal = false;
