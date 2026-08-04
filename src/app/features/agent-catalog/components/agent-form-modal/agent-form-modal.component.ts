@@ -49,6 +49,27 @@ export class AgentFormModalComponent implements OnChanges {
     return !!control && control.invalid && (control.dirty || control.touched);
   }
 
+  getFieldError(fieldName: string): string {
+    const field = this.form.get(fieldName);
+    if (field?.touched && field?.invalid) {
+      if (field.errors?.['required']) return `${this.getFieldLabel(fieldName)} không được để trống`;
+      if (field.errors?.['maxlength']) {
+        const maxLength = field.errors['maxlength'].requiredLength;
+        return `${this.getFieldLabel(fieldName)} không được vượt quá ${maxLength} ký tự`;
+      }
+    }
+    return '';
+  }
+
+  private getFieldLabel(fieldName: string): string {
+    const labels: Record<string, string> = {
+      name: 'Tên Agent',
+      description: 'Mô tả'
+    };
+    return labels[fieldName] || fieldName;
+  }
+
+
   onCancel(): void {
     this.close.emit();
   }

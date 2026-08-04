@@ -2,7 +2,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title fw-semibold">
+        <h5 class="modal-title fw-semibold" [ngClass]="isEditMode ? 'text-warning' : 'text-success'">
           <i class="fas fa-robot me-2"></i>{{ isEditMode ? 'Sửa Agent' : 'Thêm Agent mới' }}
         </h5>
         <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
@@ -10,7 +10,7 @@
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="modal-body px-4 py-3">
-          <div class="mb-3">
+          <div class="mb-3 position-relative">
             <label class="form-label">Tên Agent <span class="text-danger">*</span></label>
             <input
               type="text"
@@ -19,13 +19,10 @@
               placeholder="Nhập tên Agent"
               maxlength="100"
               [ngClass]="{ 'is-invalid': isFieldInvalid('name') }" />
-            <div *ngIf="isFieldInvalid('name')" class="invalid-feedback">
-              <span *ngIf="form.get('name')?.errors?.['required']">Tên Agent không được để trống.</span>
-              <span *ngIf="form.get('name')?.errors?.['maxlength']">Tên Agent tối đa 100 ký tự.</span>
-            </div>
+            <div *ngIf="isFieldInvalid('name')" class="invalid-tooltip">{{ getFieldError('name') }}</div>
           </div>
 
-          <div class="mb-3">
+          <div class="mb-3 position-relative">
             <label class="form-label">Mô tả</label>
             <textarea
               class="form-control"
@@ -34,9 +31,7 @@
               placeholder="Mô tả (không bắt buộc)"
               maxlength="500"
               [ngClass]="{ 'is-invalid': isFieldInvalid('description') }"></textarea>
-            <div *ngIf="isFieldInvalid('description')" class="invalid-feedback">
-              Mô tả tối đa 500 ký tự.
-            </div>
+            <div *ngIf="isFieldInvalid('description')" class="invalid-tooltip">{{ getFieldError('description') }}</div>
           </div>
         </div>
 
@@ -44,7 +39,7 @@
           <button type="button" class="btn btn-outline-secondary me-2" (click)="onCancel()" [disabled]="isSubmitting">
             Hủy
           </button>
-          <button type="submit" class="btn btn-success" [disabled]="isSubmitting || form.invalid">
+          <button type="submit" [ngClass]="isEditMode ? 'btn btn-warning' : 'btn btn-success'" [disabled]="isSubmitting || form.invalid">
             <i class="fas fa-save me-1" *ngIf="!isSubmitting"></i>
             <span class="spinner-border spinner-border-sm me-1" *ngIf="isSubmitting" role="status" aria-hidden="true"></span>
             {{ isSubmitting ? 'Đang lưu...' : (isEditMode ? 'Cập nhật' : 'Tạo mới') }}

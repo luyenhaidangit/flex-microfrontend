@@ -29,8 +29,8 @@
         <tbody *ngIf="!isLoading && agents.length">
           <tr *ngFor="let agent of agents">
             <td>{{ agent.name }}</td>
-            <td>{{ agent.description || '—' }}</td>
-            <td><span class="badge bg-success-subtle text-success">{{ agent.status }}</span></td>
+            <td>{{ agent.description | safeField }}</td>
+            <td><app-badge [value]="agent.status" type="status"></app-badge></td>
             <td>{{ agent.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
             <td class="action-column">
               <button class="btn btn-link p-0 text-warning" (click)="openEditModal(agent)" title="Sửa">
