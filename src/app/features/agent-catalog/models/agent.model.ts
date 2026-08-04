@@ -10,9 +10,11 @@ export interface Agent {
 export interface CreateAgentRequest {
   name: string;
   description?: string | null;
+  status?: string;
 }
 
 export interface UpdateAgentRequest {
   name: string;
   description?: string | null;
+  status?: string;
 }

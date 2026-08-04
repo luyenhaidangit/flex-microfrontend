@@ -1,37 +1,54 @@
 <div class="modal fade show d-block" *ngIf="isVisible" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title fw-semibold" [ngClass]="isEditMode ? 'text-warning' : 'text-success'">
-          <i class="fas fa-robot me-2"></i>{{ isEditMode ? 'Sửa Agent' : 'Thêm Agent mới' }}
+          <i class="fas me-2" [ngClass]="isEditMode ? 'fa-edit' : 'fa-plus-circle'"></i>{{ isEditMode ? 'Chỉnh sửa Agent' : 'Thêm mới Agent' }}
         </h5>
         <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
       </div>
 
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="needs-validation">
         <div class="modal-body px-4 py-3">
-          <div class="mb-3 position-relative">
-            <label class="form-label">Tên Agent <span class="text-danger">*</span></label>
-            <input
-              type="text"
-              class="form-control"
-              formControlName="name"
-              placeholder="Nhập tên Agent"
-              maxlength="100"
-              [ngClass]="{ 'is-invalid': isFieldInvalid('name') }" />
-            <div *ngIf="isFieldInvalid('name')" class="invalid-tooltip">{{ getFieldError('name') }}</div>
-          </div>
+          <div class="row gy-3">
+            <!-- Tên Agent -->
+            <div class="col-md-6 position-relative">
+              <label class="form-label">Tên Agent <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="name"
+                placeholder="Nhập tên Agent"
+                maxlength="100"
+                [ngClass]="{ 'is-invalid': isFieldInvalid('name') }" />
+              <div *ngIf="isFieldInvalid('name')" class="invalid-tooltip">{{ getFieldError('name') }}</div>
+            </div>
 
-          <div class="mb-3 position-relative">
-            <label class="form-label">Mô tả</label>
-            <textarea
-              class="form-control"
-              rows="3"
-              formControlName="description"
-              placeholder="Mô tả (không bắt buộc)"
-              maxlength="500"
-              [ngClass]="{ 'is-invalid': isFieldInvalid('description') }"></textarea>
-            <div *ngIf="isFieldInvalid('description')" class="invalid-tooltip">{{ getFieldError('description') }}</div>
+            <!-- Trạng thái -->
+            <div class="col-md-6 position-relative">
+              <label class="form-label">Trạng thái <span class="text-danger">*</span></label>
+              <select
+                class="form-select"
+                formControlName="status"
+                [ngClass]="{ 'is-invalid': isFieldInvalid('status') }">
+                <option value="active">Hoạt động</option>
+                <option value="inactive">Không hoạt động</option>
+              </select>
+              <div *ngIf="isFieldInvalid('status')" class="invalid-tooltip">{{ getFieldError('status') }}</div>
+            </div>
+
+            <!-- Mô tả -->
+            <div class="col-md-12 position-relative">
+              <label class="form-label">Mô tả</label>
+              <textarea
+                class="form-control"
+                rows="3"
+                formControlName="description"
+                placeholder="Nhập mô tả (không bắt buộc)"
+                maxlength="500"
+                [ngClass]="{ 'is-invalid': isFieldInvalid('description') }"></textarea>
+              <div *ngIf="isFieldInvalid('description')" class="invalid-tooltip">{{ getFieldError('description') }}</div>
+            </div>
           </div>
         </div>
 

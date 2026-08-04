@@ -31,6 +31,7 @@ export class AgentFormModalComponent implements OnChanges {
   ) {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(100)]],
+      status: ['active', [Validators.required]],
       description: ['', [Validators.maxLength(500)]]
     });
   }
@@ -39,6 +40,7 @@ export class AgentFormModalComponent implements OnChanges {
     if (changes['isVisible'] && this.isVisible) {
       this.form.reset({
         name: this.agent?.name ?? '',
+        status: this.agent?.status ?? 'active',
         description: this.agent?.description ?? ''
       });
     }
@@ -64,11 +66,11 @@ export class AgentFormModalComponent implements OnChanges {
   private getFieldLabel(fieldName: string): string {
     const labels: Record<string, string> = {
       name: 'Tên Agent',
+      status: 'Trạng thái',
       description: 'Mô tả'
     };
     return labels[fieldName] || fieldName;
   }
-
 
   onCancel(): void {
     this.close.emit();
@@ -82,6 +84,7 @@ export class AgentFormModalComponent implements OnChanges {
 
     const request = {
       name: (this.form.value.name as string).trim(),
+      status: this.form.value.status || 'active',
       description: this.form.value.description || null
     };
 

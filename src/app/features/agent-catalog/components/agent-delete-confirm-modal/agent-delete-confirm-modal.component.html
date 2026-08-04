@@ -1,5 +1,5 @@
 <div class="modal fade show d-block" *ngIf="isVisible" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title text-danger fw-semibold">
@@ -7,14 +7,42 @@
         </h5>
         <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
       </div>
+
       <div class="modal-body px-4 py-3">
-        <div class="alert alert-warning d-flex align-items-center" role="alert">
+        <!-- Agent Detail Card -->
+        <div class="card border-0 bg-light mb-3">
+          <div class="card-body">
+            <h6 class="card-title text-muted mb-3">
+              <i class="fas fa-info-circle me-2"></i>Thông tin Agent sẽ xóa
+            </h6>
+            <div class="row gy-2">
+              <div class="col-md-6">
+                <label class="form-label fw-bold text-muted mb-0">Tên Agent</label>
+                <div class="text-dark">{{ agent?.name | safeField }}</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold text-muted mb-0">Trạng thái</label>
+                <div>
+                  <app-badge [value]="agent?.status" [customConfigs]="agentStatusConfigs"></app-badge>
+                </div>
+              </div>
+              <div class="col-md-12 mt-2">
+                <label class="form-label fw-bold text-muted mb-0">Mô tả</label>
+                <div class="text-dark">{{ agent?.description | safeField }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Warning Message -->
+        <div class="alert alert-warning d-flex align-items-center mb-0" role="alert">
           <i class="fas fa-exclamation-triangle me-2"></i>
           <div>
-            Bạn có chắc chắn muốn xóa Agent <strong>{{ agent?.name }}</strong>? Thao tác này không thể hoàn tác.
+            <strong>Cảnh báo:</strong> Bạn có chắc chắn muốn xóa Agent <strong>{{ agent?.name }}</strong>? Thao tác này không thể hoàn tác.
           </div>
         </div>
       </div>
+
       <div class="modal-footer border-top-0">
         <button type="button" class="btn btn-outline-secondary me-2" (click)="onCancel()" [disabled]="isSubmitting">
           Hủy
