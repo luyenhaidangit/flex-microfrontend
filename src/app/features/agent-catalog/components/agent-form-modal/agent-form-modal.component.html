@@ -1,19 +1,48 @@
 <div class="modal fade show d-block" *ngIf="isVisible" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title fw-semibold" [ngClass]="isEditMode ? 'text-warning' : 'text-success'">
-          <i class="fas me-2" [ngClass]="isEditMode ? 'fa-edit' : 'fa-plus-circle'"></i>{{ isEditMode ? 'Chỉnh sửa Agent' : 'Thêm mới Agent' }}
-        </h5>
-        <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+      <div class="modal-header pb-0 border-bottom-0 flex-column align-items-stretch">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="modal-title fw-semibold" [ngClass]="isEditMode ? 'text-warning' : 'text-success'">
+            <i class="fas me-2" [ngClass]="isEditMode ? 'fa-edit' : 'fa-plus-circle'"></i>{{ isEditMode ? 'Chỉnh sửa Agent' : 'Thêm mới Agent' }}
+          </h5>
+          <button type="button" class="btn-close" aria-label="Close" (click)="onCancel()"></button>
+        </div>
+
+        <!-- Tab Navigation Bar -->
+        <ul class="nav nav-tabs card-header-tabs">
+          <li class="nav-item">
+            <button
+              type="button"
+              class="nav-link"
+              [class.active]="activeTab === 'general'"
+              (click)="selectTab('general')">
+              <i class="bx bx-slider-alt me-1 fs-5 align-middle"></i> Thiết lập thông tin chung
+            </button>
+          </li>
+          <li class="nav-item">
+            <button
+              type="button"
+              class="nav-link"
+              [class.active]="activeTab === 'publish'"
+              [class.disabled]="!isEditMode"
+              [attr.disabled]="!isEditMode ? true : null"
+              [title]="!isEditMode ? 'Cần lưu khởi tạo Agent trước khi cấu hình kênh phát hành' : ''"
+              (click)="selectTab('publish')">
+              <i class="bx bx-broadcast me-1 fs-5 align-middle"></i> Phát hành
+              <span *ngIf="!isEditMode" class="badge bg-secondary ms-1 fw-normal text-white" style="font-size: 0.7rem;">Khóa</span>
+            </button>
+          </li>
+        </ul>
       </div>
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="needs-validation">
         <div class="modal-body px-4 py-3">
-          <div class="row gy-3">
+          <!-- Tab 1: Thiết lập thông tin chung -->
+          <div *ngIf="activeTab === 'general'" class="row gy-3">
             <!-- Tên Agent -->
             <div class="col-md-6 position-relative">
-              <label class="form-label">Tên Agent <span class="text-danger">*</span></label>
+              <label class="form-label fw-medium">Tên Agent <span class="text-danger">*</span></label>
               <input
                 type="text"
                 class="form-control"
@@ -26,7 +55,7 @@
 
             <!-- Trạng thái -->
             <div class="col-md-6 position-relative">
-              <label class="form-label">Trạng thái <span class="text-danger">*</span></label>
+              <label class="form-label fw-medium">Trạng thái <span class="text-danger">*</span></label>
               <select
                 class="form-select"
                 formControlName="status"
@@ -39,7 +68,7 @@
 
             <!-- Mô tả -->
             <div class="col-md-12 position-relative">
-              <label class="form-label">Mô tả</label>
+              <label class="form-label fw-medium">Mô tả</label>
               <textarea
                 class="form-control"
                 rows="3"
@@ -50,9 +79,68 @@
               <div *ngIf="isFieldInvalid('description')" class="invalid-tooltip">{{ getFieldError('description') }}</div>
             </div>
           </div>
+
+          <!-- Tab 2: Phát hành -->
+          <div *ngIf="activeTab === 'publish'" class="publish-channels-container py-2">
+            <div class="alert alert-info py-2 px-3 mb-3 d-flex align-items-center" style="font-size: 0.875rem;">
+              <i class="bx bx-info-circle me-2 fs-5"></i>
+              <span>Chọn các kênh bạn muốn Agent này phục vụ chat. Thay đổi bật/tắt chỉ có hiệu lực khi bấm nút <strong>Lưu</strong> bên dưới.</span>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+              <div *ngFor="let channel of catalogLocations" class="col">
+                <div
+                  class="card h-100 channel-card shadow-sm border"
+                  [class.border-primary]="channel.code === 'website' && form.value.websiteEnabled"
+                  [class.opacity-65]="!channel.isAvailable">
+                  <div class="card-body d-flex flex-column justify-content-between p-3">
+                    <div>
+                      <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div class="d-flex align-items-center">
+                          <i [class]="channel.iconClass + ' fs-3 me-2 text-primary'"></i>
+                          <h6 class="card-title mb-0 fw-bold">{{ channel.name }}</h6>
+                        </div>
+                        <span *ngIf="!channel.isAvailable" class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">
+                          Chưa khả dụng
+                        </span>
+                        <span *ngIf="channel.code === 'website' && form.value.websiteEnabled" class="badge bg-success-subtle text-success border border-success-subtle">
+                          Đã bật
+                        </span>
+                        <span *ngIf="channel.code === 'website' && !form.value.websiteEnabled" class="badge bg-light text-muted border">
+                          Đã tắt
+                        </span>
+                      </div>
+                      <p class="card-text text-muted small mb-3">{{ channel.description }}</p>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between pt-2 border-top">
+                      <span class="small fw-semibold text-secondary">
+                        {{ channel.isAvailable ? (form.value.websiteEnabled ? 'Trạng thái: Bật' : 'Trạng thái: Tắt') : 'Chưa khả dụng' }}
+                      </span>
+                      <div class="form-check form-switch mb-0">
+                        <input
+                          *ngIf="channel.code === 'website'"
+                          type="checkbox"
+                          class="form-check-input channel-toggle-switch cursor-pointer"
+                          formControlName="websiteEnabled"
+                          id="switch-website" />
+                        <input
+                          *ngIf="channel.code !== 'website'"
+                          type="checkbox"
+                          class="form-check-input channel-toggle-switch"
+                          disabled
+                          [checked]="false" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="modal-footer border-top-0">
+        <!-- Footer chung cho cả 2 tab -->
+        <div class="modal-footer border-top pt-2">
           <button type="button" class="btn btn-outline-secondary me-2" (click)="onCancel()" [disabled]="isSubmitting">
             Hủy
           </button>

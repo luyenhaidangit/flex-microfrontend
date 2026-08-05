@@ -1,1 +1,97 @@
 @import 'src/assets/scss/core_modal';
+
+.nav-tabs {
+  border-bottom: 1px solid #dee2e6;
+
+  .nav-link {
+    font-weight: 500;
+    color: #6c757d;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease-in-out;
+
+    &:hover:not(.disabled) {
+      color: #556ee6;
+      border-color: transparent;
+    }
+
+    &.active {
+      color: #556ee6;
+      background-color: transparent;
+      border-bottom: 2px solid #556ee6;
+    }
+
+    &.disabled {
+      color: #adb5bd;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+  }
+}
+
+.publish-channels-container {
+  .channel-card {
+    transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+    &:hover:not(.opacity-65) {
+      transform: translateY(-2px);
+      box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08) !important;
+    }
+
+    &.opacity-65 {
+      opacity: 0.65;
+      background-color: #f8f9fa;
+    }
+  }
+
+  /* Custom Toggle Switch Styling - Compact Size & Solid Hover */
+  .channel-toggle-switch {
+    width: 2.1rem !important;
+    height: 1.15rem !important;
+    border-radius: 2rem !important;
+    cursor: pointer !important;
+    background-color: #e9ecef !important;
+    border: 1px solid #ced4da !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%236c757d'/%3e%3c/svg%3e") !important;
+    background-position: left center !important;
+    background-repeat: no-repeat !important;
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, background-position 0.2s ease-in-out, box-shadow 0.2s ease-in-out !important;
+
+    &:hover:not(:disabled) {
+      border-color: #adb5bd !important;
+      box-shadow: 0 0 0 0.15rem rgba(85, 110, 230, 0.15) !important;
+    }
+
+    &:focus {
+      outline: none !important;
+      box-shadow: 0 0 0 0.15rem rgba(85, 110, 230, 0.25) !important;
+    }
+
+    &:checked {
+      background-color: #34c38f !important;
+      border-color: #34c38f !important;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23ffffff'/%3e%3c/svg%3e") !important;
+      background-position: right center !important;
+
+      &:hover:not(:disabled) {
+        background-color: #2ca579 !important;
+        border-color: #2ca579 !important;
+        box-shadow: 0 0 0 0.15rem rgba(52, 195, 143, 0.25) !important;
+      }
+
+      &:focus {
+        background-color: #34c38f !important;
+        border-color: #34c38f !important;
+        box-shadow: 0 0 0 0.15rem rgba(52, 195, 143, 0.25) !important;
+      }
+    }
+
+    &:disabled {
+      opacity: 0.55 !important;
+      cursor: not-allowed !important;
+      background-color: #e9ecef !important;
+      border-color: #dee2e6 !important;
+    }
+  }
+}

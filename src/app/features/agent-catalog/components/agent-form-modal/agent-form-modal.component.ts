@@ -3,8 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ToastService } from 'angular-toastify';
 import { finalize } from 'rxjs/operators';
-import { Agent } from '../../models/agent.model';
+import { Agent, PublishLocation } from '../../models/agent.model';
 import { AgentService } from '../../services/agent.service';
+import { PUBLISH_LOCATIONS_CATALOG } from '../../publish-locations.catalog';
 
 @Component({
   selector: 'app-agent-form-modal',
@@ -19,6 +20,8 @@ export class AgentFormModalComponent implements OnChanges {
 
   form: FormGroup;
   isSubmitting = false;
+  activeTab: 'general' | 'publish' = 'general';
+  catalogLocations = PUBLISH_LOCATIONS_CATALOG;
 
   get isEditMode(): boolean {
     return !!this.agent;
@@ -32,18 +35,33 @@ export class AgentFormModalComponent implements OnChanges {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(100)]],
       status: ['active', [Validators.required]],
-      description: ['', [Validators.maxLength(500)]]
+      description: ['', [Validators.maxLength(500)]],
+      websiteEnabled: [false]
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['isVisible'] && this.isVisible) {
+      this.activeTab = 'general';
+      const websiteLoc = this.agent?.publishLocations?.find(
+        l => l.locationCode.toLowerCase() === 'website'
+      );
+      const isWebsiteEnabled = websiteLoc ? websiteLoc.isEnabled : false;
+
       this.form.reset({
         name: this.agent?.name ?? '',
         status: this.agent?.status ?? 'active',
-        description: this.agent?.description ?? ''
+        description: this.agent?.description ?? '',
+        websiteEnabled: isWebsiteEnabled
       });
     }
+  }
+
+  selectTab(tab: 'general' | 'publish'): void {
+    if (tab === 'publish' && !this.isEditMode) {
+      return;
+    }
+    this.activeTab = tab;
   }
 
   isFieldInvalid(field: string): boolean {
@@ -82,10 +100,18 @@ export class AgentFormModalComponent implements OnChanges {
       return;
     }
 
+    const publishLocations: PublishLocation[] = [
+      {
+        locationCode: 'website',
+        isEnabled: !!this.form.value.websiteEnabled
+      }
+    ];
+
     const request = {
       name: (this.form.value.name as string).trim(),
       status: this.form.value.status || 'active',
-      description: this.form.value.description || null
+      description: this.form.value.description || null,
+      publishLocations: publishLocations
     };
 
     this.isSubmitting = true;
