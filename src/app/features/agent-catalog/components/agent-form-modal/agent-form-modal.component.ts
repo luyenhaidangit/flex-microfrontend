@@ -36,23 +36,23 @@ export class AgentFormModalComponent implements OnChanges {
       name: ['', [Validators.required, Validators.maxLength(100)]],
       status: ['active', [Validators.required]],
       description: ['', [Validators.maxLength(500)]],
-      websiteEnabled: [false]
+      instagramEnabled: [false]
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['isVisible'] && this.isVisible) {
       this.activeTab = 'general';
-      const websiteLoc = this.agent?.publishLocations?.find(
-        l => l.locationCode.toLowerCase() === 'website'
+      const instagramLoc = this.agent?.publishLocations?.find(
+        l => l.locationCode.toLowerCase() === 'instagram'
       );
-      const isWebsiteEnabled = websiteLoc ? websiteLoc.isEnabled : false;
+      const isInstagramEnabled = instagramLoc ? instagramLoc.isEnabled : false;
 
       this.form.reset({
         name: this.agent?.name ?? '',
         status: this.agent?.status ?? 'active',
         description: this.agent?.description ?? '',
-        websiteEnabled: isWebsiteEnabled
+        instagramEnabled: isInstagramEnabled
       });
     }
   }
@@ -102,8 +102,8 @@ export class AgentFormModalComponent implements OnChanges {
 
     const publishLocations: PublishLocation[] = [
       {
-        locationCode: 'website',
-        isEnabled: !!this.form.value.websiteEnabled
+        locationCode: 'instagram',
+        isEnabled: !!this.form.value.instagramEnabled
       }
     ];
 

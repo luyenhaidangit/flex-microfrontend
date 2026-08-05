@@ -8,10 +8,17 @@ export interface CatalogPublishLocation {
 
 export const PUBLISH_LOCATIONS_CATALOG: CatalogPublishLocation[] = [
   {
+    code: 'instagram',
+    name: 'Instagram Business',
+    description: 'Bật/tắt kênh Instagram Business cho agent phục vụ chat tự động qua Instagram Direct.',
+    isAvailable: true,
+    iconClass: 'bx bxl-instagram'
+  },
+  {
     code: 'website',
     name: 'Tạo trang web',
     description: 'Bật/tắt kênh Website cho agent phục vụ chat trực tiếp trên trang web.',
-    isAvailable: true,
+    isAvailable: false,
     iconClass: 'bx bx-globe'
   },
   {

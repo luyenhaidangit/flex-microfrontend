@@ -91,7 +91,7 @@
               <div *ngFor="let channel of catalogLocations" class="col">
                 <div
                   class="card h-100 channel-card shadow-sm border"
-                  [class.border-primary]="channel.code === 'website' && form.value.websiteEnabled"
+                  [class.border-primary]="channel.code === 'instagram' && form.value.instagramEnabled"
                   [class.opacity-65]="!channel.isAvailable">
                   <div class="card-body d-flex flex-column justify-content-between p-3">
                     <div>
@@ -103,10 +103,10 @@
                         <span *ngIf="!channel.isAvailable" class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">
                           Chưa khả dụng
                         </span>
-                        <span *ngIf="channel.code === 'website' && form.value.websiteEnabled" class="badge bg-success-subtle text-success border border-success-subtle">
+                        <span *ngIf="channel.code === 'instagram' && form.value.instagramEnabled" class="badge bg-success-subtle text-success border border-success-subtle">
                           Đã bật
                         </span>
-                        <span *ngIf="channel.code === 'website' && !form.value.websiteEnabled" class="badge bg-light text-muted border">
+                        <span *ngIf="channel.code === 'instagram' && !form.value.instagramEnabled" class="badge bg-light text-muted border">
                           Đã tắt
                         </span>
                       </div>
@@ -115,17 +115,17 @@
 
                     <div class="d-flex align-items-center justify-content-between pt-2 border-top">
                       <span class="small fw-semibold text-secondary">
-                        {{ channel.isAvailable ? (form.value.websiteEnabled ? 'Trạng thái: Bật' : 'Trạng thái: Tắt') : 'Chưa khả dụng' }}
+                        {{ channel.isAvailable ? (form.value.instagramEnabled ? 'Trạng thái: Bật' : 'Trạng thái: Tắt') : 'Chưa khả dụng' }}
                       </span>
                       <div class="form-check form-switch mb-0">
                         <input
-                          *ngIf="channel.code === 'website'"
+                          *ngIf="channel.code === 'instagram'"
                           type="checkbox"
                           class="form-check-input channel-toggle-switch cursor-pointer"
-                          formControlName="websiteEnabled"
-                          id="switch-website" />
+                          formControlName="instagramEnabled"
+                          id="switch-instagram" />
                         <input
-                          *ngIf="channel.code !== 'website'"
+                          *ngIf="channel.code !== 'instagram'"
                           type="checkbox"
                           class="form-check-input channel-toggle-switch"
                           disabled
