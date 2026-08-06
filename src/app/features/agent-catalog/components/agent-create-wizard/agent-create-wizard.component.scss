@@ -4,54 +4,81 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 99999; // Phủ toàn màn hình trên Skote layout
-  background-color: #f4f6f9;
-  overflow: hidden !important; // Triệt tiêu hoàn toàn scrollbar dọc của trình duyệt
+  z-index: 99999;
+  background-color: #f8f9fa;
+  overflow: hidden !important;
   display: flex;
   flex-direction: column;
+  // Kế thừa đồng bộ 100% font family chuẩn của Skote theme hiện tại
+  font-family: inherit;
+  font-size: 13px;
+  color: #495057;
+  -webkit-font-smoothing: antialiased;
 }
 
+/* TOP HEADER BAR */
 .misa-header {
-  height: 56px;
+  height: 54px;
   flex-shrink: 0;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid #eff2f7;
+  background-color: #ffffff;
 
   .header-agent-avatar {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     object-fit: cover;
+  }
+
+  h6 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #343a40;
+  }
+
+  span {
+    font-size: 12px;
+    color: #74788d;
   }
 
   .header-center-tabs {
     .nav-pills {
-      background-color: #eff2f7;
+      background-color: #f3f6f9;
+      padding: 3px;
 
       .nav-link {
-        color: #6c757d;
+        color: #74788d;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 4px 14px;
+        transition: all 0.15s ease-in-out;
 
         &.active {
           background-color: #ffffff;
           color: #556ee6;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+          font-weight: 600;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
       }
     }
   }
 }
 
+/* BODY AREA */
 .misa-body {
-  height: calc(100vh - 56px - 54px);
+  height: calc(100vh - 54px - 52px);
   flex-grow: 1;
   overflow: hidden;
   padding: 12px 16px !important;
 }
 
+/* SIDEBAR STEPPER */
 .misa-sidebar-card {
   height: 100% !important;
-  border-color: #e9ecef !important;
-  overflow-y: auto;
+  border-color: #eff2f7 !important;
+  background-color: #ffffff;
 
   .stepper-nav-item {
+    padding: 8px 10px !important;
     transition: all 0.15s ease-in-out;
 
     &:hover {
@@ -61,7 +88,10 @@
     &.active {
       background-color: #ebf3fe;
 
-      .step-icon,
+      .step-icon {
+        color: #556ee6 !important;
+      }
+
       .step-label {
         color: #556ee6 !important;
         font-weight: 600 !important;
@@ -69,22 +99,25 @@
     }
 
     .step-icon {
+      font-size: 16px !important;
       color: #74788d;
     }
 
     .step-label {
+      font-size: 13px !important;
+      font-weight: 500;
       color: #495057;
     }
   }
 }
 
-/* Cột giữa (Form content): Cuộn nội dung riêng nếu quá dài */
+/* CENTER FORM CARD */
 .misa-form-card {
   height: 100% !important;
-  border-color: #e9ecef !important;
+  border-color: #eff2f7 !important;
+  background-color: #ffffff;
   overflow-y: auto !important;
 
-  /* Custom scrollbar mượt mà cho cột form */
   &::-webkit-scrollbar {
     width: 6px;
   }
@@ -92,8 +125,52 @@
     background: #ced4da;
     border-radius: 4px;
   }
-  &::-webkit-scrollbar-track {
-    background: transparent;
+
+  .pane-title-area {
+    h4 {
+      font-size: 16px !important;
+      font-weight: 600;
+      color: #343a40;
+    }
+    p {
+      font-size: 13px !important;
+      color: #74788d;
+    }
+  }
+
+  .card-header {
+    font-size: 14px !important;
+    font-weight: 600;
+    color: #343a40;
+  }
+
+  .form-label {
+    font-size: 13px !important;
+    font-weight: 500;
+    color: #495057;
+  }
+
+  .form-control,
+  .form-select {
+    font-size: 13px !important;
+    font-weight: 400;
+    padding: 7px 12px;
+    color: #495057;
+    border-color: #ced4da;
+
+    &:focus {
+      border-color: #556ee6;
+      box-shadow: 0 0 0 2px rgba(85, 110, 230, 0.1);
+    }
+  }
+
+  /* Textarea Chỉ dẫn cho Agent đồng bộ 100% font với Skote theme */
+  .instructions-textarea {
+    font-family: inherit !important;
+    font-size: 13px !important;
+    line-height: 1.6 !important;
+    color: #495057 !important;
+    background-color: #ffffff !important;
   }
 }
 
@@ -127,24 +204,44 @@
   }
 }
 
-/* Cột xem trước chat (Cột phải): Không có scrollbar ngoài, cuộn lịch sử chat bên trong */
+/* RIGHT CHAT PREVIEW CARD */
 .misa-preview-card {
   height: 100% !important;
-  border-color: #e9ecef !important;
+  border-color: #eff2f7 !important;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
   overflow: hidden !important;
 
+  .preview-header {
+    span {
+      font-size: 14px !important;
+      font-weight: 600;
+      color: #343a40;
+    }
+  }
+
   .preview-chat-body {
     flex-grow: 1;
     overflow-y: auto !important;
+
+    h6 {
+      font-size: 14px !important;
+      font-weight: 600;
+      color: #343a40;
+      line-height: 1.45;
+    }
+
+    p {
+      font-size: 13px !important;
+      color: #74788d;
+    }
 
     &::-webkit-scrollbar {
       width: 4px;
     }
     &::-webkit-scrollbar-thumb {
-      background: #e2e8f0;
+      background: #ced4da;
       border-radius: 4px;
     }
   }
@@ -152,18 +249,21 @@
   .max-w-85 {
     max-width: 85%;
   }
-
-  .extra-small {
-    font-size: 0.7rem;
-  }
 }
 
-/* Footer cố định ở đáy flex container (Height: 54px) */
+/* FOOTER ACTION BAR */
 .misa-footer-bar {
-  height: 54px;
+  height: 52px;
   flex-shrink: 0;
+  background-color: #ffffff;
+  border-top: 1px solid #eff2f7;
   z-index: 1000;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+
+  .btn {
+    font-size: 13px !important;
+    font-weight: 500;
+    padding: 6px 16px;
+  }
 }
 
 .transition-all {
