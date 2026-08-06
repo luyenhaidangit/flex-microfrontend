@@ -13,9 +13,10 @@ import { LoaderComponent } from './loader/loader.component';
 import { LoadingComponent } from './loading/loading.component';
 import { SkeletonComponent } from './skeleton/skeleton.component';
 import { TabsComponent } from './tab/tabs.component';
+import { ViewToggleComponent } from './view-toggle/view-toggle.component';
 
 @NgModule({
-  declarations: [PagetitleComponent,  LoaderComponent, LoadingComponent, SkeletonComponent, TabsComponent],
+  declarations: [PagetitleComponent, LoaderComponent, LoadingComponent, SkeletonComponent, TabsComponent, ViewToggleComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -24,6 +25,6 @@ import { TabsComponent } from './tab/tabs.component';
     BsDropdownModule.forRoot(),
     TabsModule.forRoot()
   ],
-  exports: [PagetitleComponent, LoaderComponent, LoadingComponent, SkeletonComponent, TabsComponent, TabsModule]
+  exports: [PagetitleComponent, LoaderComponent, LoadingComponent, SkeletonComponent, TabsComponent, TabsModule, ViewToggleComponent]
 })
 export class UIModule { }

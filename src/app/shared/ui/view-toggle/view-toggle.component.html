@@ -1,0 +1,13 @@
+<div class="btn-group view-toggle-group" [class.btn-group-sm]="size === 'sm'" [class.btn-group-lg]="size === 'lg'" role="group" aria-label="Tùy chỉnh giao diện">
+  <button
+    *ngFor="let opt of options"
+    type="button"
+    class="btn view-toggle-btn"
+    [class.active]="viewMode === opt.value"
+    (click)="setViewMode(opt.value)"
+    [attr.title]="opt.title"
+  >
+    <i [class]="opt.icon"></i>
+    <span *ngIf="opt.label" class="ms-1">{{ opt.label }}</span>
+  </button>
+</div>

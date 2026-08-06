@@ -3,6 +3,7 @@ import { ToastService } from 'angular-toastify';
 import { finalize } from 'rxjs/operators';
 import { BadgeTypeConfig } from 'src/app/shared/ui/badge/badge.component';
 import { PaginationState } from 'src/app/core/components/pagination/pagination/pagination.component';
+import { ViewMode } from 'src/app/shared/ui/view-toggle/view-toggle.component';
 import { Agent } from '../../models/agent.model';
 import { AgentService } from '../../services/agent.service';
 import { AGENT_LIST_CONFIG } from './agent-list.config';
@@ -15,6 +16,8 @@ import { AGENT_LIST_CONFIG } from './agent-list.config';
 export class AgentListComponent implements OnInit {
   CONFIG = AGENT_LIST_CONFIG;
 
+  viewMode: ViewMode = 'card';
+
   agents: Agent[] = [];
   filteredAgents: Agent[] = [];
   isLoading = false;
@@ -22,12 +25,15 @@ export class AgentListComponent implements OnInit {
   searchInputValue: string = '';
   searchKeyword: string = '';
 
+  categories: string[] = ['Tất cả', 'Nội bộ', 'Tài chính - Kế toán', 'Marketing'];
+  selectedCategory: string = 'Tất cả';
+
   currentPage = 1;
-  pageSize = 10;
+  pageSize = 9;
 
   readonly agentStatusConfigs: BadgeTypeConfig = {
-    active:   { label: 'Hoạt động',     class: 'badge-soft-success',   value: 'active' },
-    inactive: { label: 'Không hoạt động', class: 'badge-soft-danger',    value: 'inactive' },
+    active:   { label: 'Đã phát hành',     class: 'badge-soft-success',   value: 'active' },
+    inactive: { label: 'Chưa phát hành',   class: 'badge-soft-secondary', value: 'inactive' },
   };
 
   showFormModal = false;
@@ -63,17 +69,52 @@ export class AgentListComponent implements OnInit {
     this.applyFilter();
   }
 
+  onCategorySelect(category: string): void {
+    this.selectedCategory = category;
+    this.currentPage = 1;
+    this.applyFilter();
+  }
+
   applyFilter(): void {
-    if (!this.searchKeyword) {
-      this.filteredAgents = [...this.agents];
-    } else {
+    let result = [...this.agents];
+
+    if (this.searchKeyword) {
       const kw = this.searchKeyword.toLowerCase();
-      this.filteredAgents = this.agents.filter(
+      result = result.filter(
         (a) =>
           (a.name && a.name.toLowerCase().includes(kw)) ||
           (a.description && a.description.toLowerCase().includes(kw))
       );
     }
+
+    if (this.selectedCategory !== 'Tất cả') {
+      result = result.filter((a) => this.getAgentCategory(a) === this.selectedCategory);
+    }
+
+    this.filteredAgents = result;
+  }
+
+  getAgentCategory(agent: Agent): string {
+    const text = ((agent.name || '') + ' ' + (agent.description || '')).toLowerCase();
+    if (text.includes('kế toán') || text.includes('tài chính') || text.includes('thu chi') || text.includes('111')) {
+      return 'Tài chính - Kế toán';
+    }
+    if (text.includes('marketing') || text.includes('truyền thông') || text.includes('bài')) {
+      return 'Marketing';
+    }
+    return 'Nội bộ';
+  }
+
+  getAvatarInitials(name: string): string {
+    if (!name) return 'AG';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+
+  getAvatarColorClass(index: number): string {
+    const colors = ['bg-primary', 'bg-success', 'bg-info', 'bg-purple', 'bg-warning', 'bg-danger'];
+    return colors[index % colors.length];
   }
 
   get paginatedAgents(): Agent[] {

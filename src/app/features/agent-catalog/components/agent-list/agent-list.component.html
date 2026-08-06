@@ -1,67 +1,166 @@
 <div class="container-fluid">
   <app-page-title [title]="CONFIG.breadcrumb.title" [breadcrumbItems]="CONFIG.breadcrumb.items"></app-page-title>
 
-  <div class="bg-white rounded shadow-sm p-3">
-    <!-- Search bar -->
-    <div class="row gx-3 mb-3 gy-2 align-items-end">
-      <div class="col-md-3">
-        <label class="form-label fw-bold text-muted">Từ khóa</label>
-        <input class="form-control" type="text" placeholder="Nhập từ khóa..." [(ngModel)]="searchInputValue" (keyup.enter)="onSearchClick()">
+  <div class="bg-white rounded shadow-sm p-4">
+    <!-- Header Title & Filter Bar -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+      <!-- Section Title & Category Filter Chips -->
+      <div>
+        <h4 class="mb-3 fw-bold text-dark">Nhân viên AI</h4>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <button
+            *ngFor="let cat of categories"
+            type="button"
+            class="btn category-chip"
+            [class.active]="selectedCategory === cat"
+            (click)="onCategorySelect(cat)"
+          >
+            <span class="chip-dot" *ngIf="cat !== 'Tất cả'"></span>
+            {{ cat }}
+          </button>
+        </div>
       </div>
 
-      <div class="col-auto">
-        <button class="btn btn-primary w-100" (click)="onSearchClick()">
-          <i class="bx bx-search-alt-2"></i> Tìm kiếm
-        </button>
-      </div>
+      <!-- Search Box, View Toggle & Add Button -->
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        <div class="position-relative search-input-group">
+          <input
+            class="form-control ps-5 search-control"
+            type="text"
+            placeholder="Tìm kiếm agent..."
+            [(ngModel)]="searchInputValue"
+            (keyup.enter)="onSearchClick()"
+          />
+          <i class="bx bx-search-alt-2 position-absolute search-icon"></i>
+        </div>
 
-      <div class="col-auto text-md-end">
-        <button type="button" class="btn btn-success fw-bold" (click)="openCreateModal()">
+        <!-- Reusable View Mode Toggle Component -->
+        <app-view-toggle [(viewMode)]="viewMode"></app-view-toggle>
+
+        <button type="button" class="btn btn-primary fw-semibold rounded-pill px-3 shadow-sm" (click)="openCreateModal()">
           <i class="fas fa-plus me-1"></i> Thêm mới
         </button>
       </div>
     </div>
 
-    <!-- Table -->
-    <div class="table-responsive table-header-primary">
-      <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
-        <thead>
-          <tr>
-            <th *ngFor="let col of CONFIG.table.columns" [style.width]="col.width">{{ col.label }}</th>
-          </tr>
-        </thead>
-        <tbody *ngIf="isLoading">
-          <tr *ngFor="let _ of [].constructor(CONFIG.table.skeleton.rows)">
-            <td *ngFor="let w of CONFIG.table.skeleton.columns">
-              <app-skeleton [width]="w" height="18px"></app-skeleton>
-            </td>
-          </tr>
-        </tbody>
-        <tbody *ngIf="!isLoading && paginatedAgents.length">
-          <tr *ngFor="let agent of paginatedAgents">
-            <td>{{ agent.name | safeField }}</td>
-            <td>{{ agent.description | safeField }}</td>
-            <td><app-badge [value]="agent.status" [customConfigs]="agentStatusConfigs"></app-badge></td>
-            <td>{{ agent.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
-            <td class="action-column">
-              <button class="btn btn-link p-0 text-warning" (click)="openEditModal(agent)" title="Sửa">
-                <i class="fas fa-edit"></i>
-              </button>
-              <button class="btn btn-link p-0 ms-2 text-danger" (click)="openDeleteModal(agent)" title="Xóa">
-                <i class="fas fa-trash"></i>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-        <tbody *ngIf="!isLoading && !paginatedAgents.length">
-          <tr>
-            <td [attr.colspan]="CONFIG.table.columns.length" class="text-center text-muted">Không có dữ liệu</td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- ================= CARD VIEW ================= -->
+    <div *ngIf="viewMode === 'card'">
+      <!-- Loading Skeleton for Cards -->
+      <div *ngIf="isLoading" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3 mb-4">
+        <div *ngFor="let _ of [1,2,3,4,5,6]" class="col">
+          <div class="card h-100 border rounded-3 p-3 shadow-sm skeleton-card">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div class="d-flex align-items-center gap-2">
+                <app-skeleton width="42px" height="42px" borderRadius="50%"></app-skeleton>
+                <app-skeleton width="120px" height="20px"></app-skeleton>
+              </div>
+              <app-skeleton width="90px" height="24px" borderRadius="12px"></app-skeleton>
+            </div>
+            <app-skeleton width="100%" height="16px" class="mb-2"></app-skeleton>
+            <app-skeleton width="70%" height="16px" class="mb-3"></app-skeleton>
+            <div class="d-flex justify-content-between align-items-center mt-auto">
+              <app-skeleton width="60px" height="22px" borderRadius="10px"></app-skeleton>
+              <app-skeleton width="50px" height="20px"></app-skeleton>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agent Cards Grid -->
+      <div *ngIf="!isLoading && paginatedAgents.length" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3 mb-4">
+        <div *ngFor="let agent of paginatedAgents; let i = index" class="col">
+          <div class="card h-100 border rounded-3 p-3 shadow-sm agent-card position-relative">
+            <!-- Header: Avatar + Title + Status -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div class="d-flex align-items-center gap-2 me-2 overflow-hidden">
+                <div class="avatar-circle flex-shrink-0" [ngClass]="getAvatarColorClass(i)">
+                  {{ getAvatarInitials(agent.name) }}
+                </div>
+                <h5 class="card-title mb-0 text-truncate fw-bold text-dark" title="{{ agent.name }}">
+                  {{ agent.name }}
+                  <i *ngIf="agent.status === 'active'" class="bx bxs-badge-check text-primary ms-1" title="Đã xác thực"></i>
+                </h5>
+              </div>
+
+              <!-- Status Badge -->
+              <div class="flex-shrink-0">
+                <app-badge [value]="agent.status" [customConfigs]="agentStatusConfigs"></app-badge>
+              </div>
+            </div>
+
+            <!-- Body: Description -->
+            <p class="card-text text-muted small mb-3 description-clamp flex-grow-1">
+              {{ agent.description || 'Chưa có mô tả cho nhân viên AI này' }}
+            </p>
+
+            <!-- Footer: Category Pill + Action Buttons -->
+            <div class="d-flex align-items-center justify-content-between pt-2 border-top border-light mt-auto">
+              <span class="badge category-tag">
+                {{ getAgentCategory(agent) }}
+              </span>
+
+              <div class="action-buttons">
+                <button class="btn btn-light btn-sm rounded-circle me-1 text-warning" (click)="openEditModal(agent)" title="Chỉnh sửa">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-light btn-sm rounded-circle text-danger" (click)="openDeleteModal(agent)" title="Xóa">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State Card View -->
+      <div *ngIf="!isLoading && !paginatedAgents.length" class="text-center py-5 text-muted">
+        <i class="bx bx-bot fs-1 text-secondary mb-2 d-block"></i>
+        <span>Không tìm thấy nhân viên AI nào phù hợp</span>
+      </div>
     </div>
 
-    <!-- Pagination -->
+    <!-- ================= TABLE VIEW ================= -->
+    <div *ngIf="viewMode === 'table'">
+      <div class="table-responsive table-header-primary">
+        <table class="table align-middle table-nowrap dt-responsive nowrap w-100">
+          <thead>
+            <tr>
+              <th *ngFor="let col of CONFIG.table.columns" [style.width]="col.width">{{ col.label }}</th>
+            </tr>
+          </thead>
+          <tbody *ngIf="isLoading">
+            <tr *ngFor="let _ of [].constructor(CONFIG.table.skeleton.rows)">
+              <td *ngFor="let w of CONFIG.table.skeleton.columns">
+                <app-skeleton [width]="w" height="18px"></app-skeleton>
+              </td>
+            </tr>
+          </tbody>
+          <tbody *ngIf="!isLoading && paginatedAgents.length">
+            <tr *ngFor="let agent of paginatedAgents">
+              <td class="fw-medium text-dark">{{ agent.name | safeField }}</td>
+              <td>{{ agent.description | safeField }}</td>
+              <td><app-badge [value]="agent.status" [customConfigs]="agentStatusConfigs"></app-badge></td>
+              <td>{{ agent.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td class="action-column">
+                <button class="btn btn-link p-0 text-warning" (click)="openEditModal(agent)" title="Sửa">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-link p-0 ms-2 text-danger" (click)="openDeleteModal(agent)" title="Xóa">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+          <tbody *ngIf="!isLoading && !paginatedAgents.length">
+            <tr>
+              <td [attr.colspan]="CONFIG.table.columns.length" class="text-center text-muted">Không có dữ liệu</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Pagination Component -->
     <app-pagination
       [paginationState]="getPaginationState()"
       [pageSizeOptions]="CONFIG.pagination.pageSizeOptions"
