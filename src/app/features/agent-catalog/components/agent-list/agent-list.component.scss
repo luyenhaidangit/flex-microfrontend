@@ -95,8 +95,10 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  font-size: 0.84rem;
   line-height: 1.45;
-  min-height: 2.9em;
+  color: #6c757d;
+  min-height: 2.5em;
 }
 
 .category-tag {
