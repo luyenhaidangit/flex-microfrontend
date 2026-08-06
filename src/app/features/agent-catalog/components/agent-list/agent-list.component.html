@@ -68,15 +68,13 @@
         <div *ngFor="let agent of paginatedAgents; let i = index" class="col">
           <div class="card h-100 border rounded p-3 shadow-sm agent-card position-relative">
             <!-- Header: Avatar + Title + Status -->
-            <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="d-flex align-items-center justify-content-between mb-2">
               <div class="d-flex align-items-center gap-2 me-2 overflow-hidden">
-                <div class="avatar-circle flex-shrink-0" [ngClass]="getAvatarColorClass(i)">
-                  {{ getAvatarInitials(agent.name) }}
-                </div>
-                <h5 class="card-title mb-0 text-truncate fw-bold text-dark" title="{{ agent.name }}">
+                <img src="assets/images/default-agent-avatar.png" alt="Agent Avatar" class="avatar-img flex-shrink-0 rounded-circle" />
+                <span class="card-name-title mb-0 text-truncate fw-medium text-dark" title="{{ agent.name }}">
                   {{ agent.name }}
                   <i *ngIf="agent.status === 'active'" class="bx bxs-badge-check text-primary ms-1" title="Đã xác thực"></i>
-                </h5>
+                </span>
               </div>
 
               <!-- Status Badge -->
@@ -86,7 +84,7 @@
             </div>
 
             <!-- Body: Description -->
-            <p class="card-text text-muted small mb-3 description-clamp flex-grow-1">
+            <p class="card-text mb-2 description-clamp">
               {{ agent.description || 'Chưa có mô tả cho nhân viên AI này' }}
             </p>
 
