@@ -264,19 +264,38 @@
               </div>
             </div>
 
-            <!-- Chat Input Footer -->
-            <div class="preview-chat-footer border-top pt-3">
-              <div class="input-group">
-                <input
-                  type="text"
-                  class="form-control form-control-sm border-end-0 bg-light"
-                  placeholder="+ Nhập nội dung bạn muốn hỏi..."
+            <!-- Modern AI Prompt Input Box Footer -->
+            <div class="preview-chat-footer border-top pt-2 mt-auto">
+              <div class="modern-ai-input-container rounded-4 border p-2 bg-light shadow-sm">
+                <textarea
+                  class="form-control border-0 bg-transparent shadow-none text-dark small"
+                  rows="2"
+                  placeholder="Nhập nội dung bạn muốn hỏi..."
                   [(ngModel)]="chatInputText"
-                  (keyup.enter)="onSendMessage()"
-                />
-                <button type="button" class="btn btn-primary btn-sm px-3" (click)="onSendMessage()">
-                  <i class="bx bx-send"></i>
-                </button>
+                  (keydown.enter)="$event.preventDefault(); onSendMessage()"
+                ></textarea>
+
+                <div class="d-flex align-items-center justify-content-between pt-1 px-1">
+                  <!-- Left Utility Actions -->
+                  <div class="d-flex align-items-center gap-1">
+                    <button type="button" class="btn btn-sm btn-light rounded-circle p-1.5 text-secondary d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Thêm đính kèm">
+                      <i class="bx bx-plus fs-5"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-light rounded-3 p-1.5 text-secondary d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Chọn tệp">
+                      <i class="bx bx-folder fs-5"></i>
+                    </button>
+                  </div>
+
+                  <!-- Right Actions: Voice & Send Button -->
+                  <div class="d-flex align-items-center gap-1">
+                    <button type="button" class="btn btn-sm btn-light rounded-circle p-1.5 text-secondary d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Nhập bằng giọng nói">
+                      <i class="bx bx-microphone fs-5"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary rounded-circle p-1.5 text-white d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;" (click)="onSendMessage()" title="Gửi tin nhắn">
+                      <i class="bx bx-send fs-5"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

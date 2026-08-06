@@ -41,13 +41,14 @@ export class AgentCreateWizardComponent implements OnInit {
     { id: 5, title: 'Phát hành', icon: 'bx-send', isCompleted: false, isActive: false }
   ];
 
+  // Danh sách Avatar Presets - Đặt default-agent-avatar.png lên đầu tiên chuẩn màn list
   avatarPresets = [
+    { id: 'default', url: 'assets/images/default-agent-avatar.png' },
     { id: '1', url: 'assets/images/users/avatar-1.jpg' },
     { id: '2', url: 'assets/images/users/avatar-2.jpg' },
     { id: '3', url: 'assets/images/users/avatar-3.jpg' },
     { id: '4', url: 'assets/images/users/avatar-4.jpg' },
-    { id: '5', url: 'assets/images/users/avatar-5.jpg' },
-    { id: '6', url: 'assets/images/users/avatar-6.jpg' }
+    { id: '5', url: 'assets/images/users/avatar-5.jpg' }
   ];
 
   // Test Chat Messages
@@ -78,7 +79,7 @@ export class AgentCreateWizardComponent implements OnInit {
 
   initForm(): void {
     this.wizardForm = this.fb.group({
-      avatarUrl: ['assets/images/users/avatar-1.jpg'],
+      avatarUrl: ['assets/images/default-agent-avatar.png'], // Mặc định là avatar như ở màn list
       name: ['Thảo CSKH', [Validators.required]],
       role: ['Nhân viên AI chăm sóc khách hàng', [Validators.required]],
       instructions: [this.defaultInstructions, [Validators.required]]

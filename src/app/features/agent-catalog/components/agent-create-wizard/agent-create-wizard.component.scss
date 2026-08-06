@@ -246,6 +246,43 @@
     }
   }
 
+  /* Modern AI Input Box Container */
+  .modern-ai-input-container {
+    background-color: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+    border-radius: 16px !important;
+    transition: all 0.15s ease-in-out;
+
+    &:focus-within {
+      border-color: #556ee6 !important;
+      background-color: #ffffff !important;
+      box-shadow: 0 0 0 3px rgba(85, 110, 230, 0.1) !important;
+    }
+
+    textarea {
+      resize: none;
+      font-family: inherit;
+      font-size: 13px !important;
+      line-height: 1.5;
+      color: #495057;
+
+      &::placeholder {
+        color: #94a3b8;
+      }
+    }
+
+    .btn-light {
+      background-color: #eff2f7;
+      border-color: transparent;
+      color: #64748b;
+
+      &:hover {
+        background-color: #e2e8f0;
+        color: #334155;
+      }
+    }
+  }
+
   .max-w-85 {
     max-width: 85%;
   }
