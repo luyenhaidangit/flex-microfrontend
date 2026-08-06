@@ -29,6 +29,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { AngularToastifyModule } from 'angular-toastify';
 import { AppInitializerService } from './core/services/app-initializer.service';
 
+import { AgentCatalogModule } from './features/agent-catalog/agent-catalog.module';
+
 export function initFactory(initService: AppInitializerService) {
   return () => initService.init();
 }
@@ -64,7 +66,8 @@ export function createTranslateLoader(http: HttpClient): any {
     SharedModule,
     ScrollToModule.forRoot(),
     ToastrModule.forRoot(),
-    AngularToastifyModule
+    AngularToastifyModule,
+    AgentCatalogModule
   ],
   bootstrap: [AppComponent],
   providers: [

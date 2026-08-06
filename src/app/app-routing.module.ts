@@ -6,8 +6,10 @@ import { LayoutComponent } from './layouts/layout.component';
 import { CyptolandingComponent } from './cyptolanding/cyptolanding.component';
 import { Page404Component } from './extrapages/page404/page404.component';
 import { ErrorPageComponent } from './extrapages/errorpage/errorpage.component';
+import { AgentCreateWizardComponent } from './features/agent-catalog/components/agent-create-wizard/agent-create-wizard.component';
 
 const routes: Routes = [
+  { path: 'agents/create', component: AgentCreateWizardComponent, canActivate: [AuthGuard] },
   { path: 'publish', loadChildren: () => import('./pages/publish/publish.module').then(m => m.PublishModule) },
   { path: 'account', loadChildren: () => import('./account/account.module').then(m => m.AccountModule) },
   { path: 'exchange', loadChildren: () => import('./exchange/exchange.module').then(m => m.ExchangeModule) },
@@ -23,5 +25,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes, { scrollPositionRestoration: 'top' })],
   exports: [RouterModule]
 })
-
 export class AppRoutingModule { }

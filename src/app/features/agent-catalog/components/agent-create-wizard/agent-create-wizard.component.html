@@ -1,218 +1,284 @@
-<div class="create-wizard-wrapper bg-light min-vh-100 d-flex flex-column">
-  <!-- Top Navigation Header -->
-  <header class="wizard-header bg-white border-bottom px-4 py-2 d-flex align-items-center justify-content-between">
-    <div class="d-flex align-items-center gap-2">
-      <span class="fs-6 text-muted">Tạo nhân viên AI</span>
-    </div>
+<div class="misa-agent-editor-fullscreen bg-light min-vh-100 d-flex flex-column">
+
+  <!-- TOP HEADER BAR -->
+  <header class="misa-header bg-white border-bottom px-3 py-2 d-flex align-items-center justify-content-between flex-shrink-0 shadow-sm">
+    <!-- Left: Agent Identity Summary -->
     <div class="d-flex align-items-center gap-3">
+      <img
+        [src]="f['avatarUrl'].value || 'assets/images/users/avatar-1.jpg'"
+        alt="Agent Avatar"
+        class="header-agent-avatar rounded-circle border shadow-sm"
+      />
+      <div>
+        <h6 class="fw-bold text-dark mb-0 fs-6">{{ f['name'].value || 'Chưa đặt tên Agent' }}</h6>
+        <span class="text-muted small">{{ f['role'].value || 'Chưa thiết lập vai trò' }}</span>
+      </div>
+    </div>
+
+    <!-- Center: Main Navigation Tabs -->
+    <div class="header-center-tabs">
+      <div class="nav nav-pills bg-light rounded-pill p-1">
+        <button
+          type="button"
+          class="nav-link rounded-pill px-3 py-1 small fw-medium"
+          [class.active]="activeTab === 'info'"
+          (click)="activeTab = 'info'"
+        >
+          Thông tin
+        </button>
+        <button
+          type="button"
+          class="nav-link rounded-pill px-3 py-1 small fw-medium text-secondary"
+          [class.active]="activeTab === 'chat'"
+          (click)="activeTab = 'chat'"
+        >
+          Hội thoại
+        </button>
+        <button
+          type="button"
+          class="nav-link rounded-pill px-3 py-1 small fw-medium text-secondary"
+          [class.active]="activeTab === 'report'"
+          (click)="activeTab = 'report'"
+        >
+          Báo cáo hoạt động
+        </button>
+      </div>
+    </div>
+
+    <!-- Right: Status, Actions & Close Button -->
+    <div class="d-flex align-items-center gap-3">
+      <span class="text-muted small d-none d-md-inline">Cập nhật lúc {{ currentTimeFormatted }}</span>
+      <button type="button" class="btn btn-link text-secondary p-0 fs-5" title="Tùy chọn khác">
+        <i class="bx bx-dots-horizontal-rounded"></i>
+      </button>
       <button type="button" class="btn btn-link text-secondary p-0 fs-5" title="Trợ giúp">
         <i class="bx bx-help-circle"></i>
       </button>
-      <button type="button" class="btn btn-link text-secondary p-0 fs-5" (click)="onCancel()" title="Đóng">
+      <button type="button" class="btn btn-link text-secondary p-0 fs-4" (click)="onCancel()" title="Đóng">
         <i class="bx bx-x"></i>
       </button>
     </div>
   </header>
 
-  <!-- Main Wizard Container -->
-  <div class="wizard-body flex-grow-1 p-3 p-md-4">
-    <div class="container-fluid">
-      <div class="row g-4">
+  <!-- BODY CONTENT AREA (3 Columns) -->
+  <div class="misa-body flex-grow-1 p-3 overflow-auto">
+    <div class="container-fluid h-100 p-0">
+      <div class="row g-3 h-100">
 
-        <!-- Sidebar Stepper (Left Column) -->
-        <div class="col-12 col-lg-3 col-xl-3">
-          <div class="wizard-sidebar bg-white rounded shadow-sm p-3">
-            <!-- Agent Summary Profile Card -->
-            <div class="agent-profile-summary text-left mb-4 p-2 pb-3 border-bottom">
-              <div class="d-flex align-items-center gap-3">
-                <img
-                  [src]="f.avatarUrl.value || 'assets/images/default-agent-avatar.png'"
-                  alt="Agent Preview"
-                  class="profile-avatar rounded-circle shadow-sm"
-                />
-                <div class="profile-info overflow-hidden">
-                  <h6 class="fw-bold mb-1 text-truncate text-dark" [title]="f.name.value">
-                    {{ f.name.value || 'Tên Agent' }}
-                  </h6>
-                  <p class="text-muted small mb-0 text-truncate" [title]="f.role.value">
-                    {{ f.role.value || 'Chưa chọn vai trò' }}
-                  </p>
-                </div>
+        <!-- COLUMN 1: LEFT SIDEBAR STEPPER -->
+        <div [class]="isSidebarCollapsed ? 'col-auto' : 'col-12 col-md-3 col-lg-2'" class="transition-all">
+          <div class="misa-sidebar-card bg-white rounded-3 border p-2 h-100 d-flex flex-column justify-content-between shadow-sm">
+            <div class="stepper-menu">
+              <div
+                *ngFor="let step of steps"
+                class="stepper-nav-item d-flex align-items-center gap-2 p-2.5 rounded-3 mb-1 cursor-pointer"
+                [class.active]="step.isActive"
+                (click)="onStepClick(step.id)"
+              >
+                <i [class]="'bx ' + step.icon + ' fs-5 step-icon'"></i>
+                <span *ngIf="!isSidebarCollapsed" class="step-label text-truncate small fw-medium">
+                  {{ step.title }}
+                </span>
               </div>
             </div>
 
-            <!-- Stepper List -->
-            <div class="stepper-navigation">
-              <div
-                *ngFor="let step of steps"
-                class="stepper-item d-flex align-items-start gap-3 py-2 px-2 rounded cursor-pointer mb-2"
-                [class.active]="step.isActive"
-                [class.completed]="step.isCompleted"
-                (click)="onStepClick(step.id)"
-              >
-                <div class="step-badge-wrapper flex-shrink-0">
-                  <span class="step-badge d-flex align-items-center justify-content-center rounded-circle fw-medium">
-                    <i *ngIf="step.isCompleted" class="bx bx-check fs-6 text-white"></i>
-                    <span *ngIf="!step.isCompleted">{{ step.id }}</span>
-                  </span>
-                </div>
-                <div class="step-title-wrapper flex-grow-1 align-self-center">
-                  <span class="step-title fw-medium small">{{ step.title }}</span>
-                </div>
-              </div>
+            <!-- Collapse Toggle Button -->
+            <div class="sidebar-collapse-btn pt-2 border-top">
+              <button type="button" class="btn btn-light w-100 btn-sm text-secondary d-flex align-items-center justify-content-center gap-1" (click)="toggleSidebar()">
+                <i class="bx bx-sidebar fs-5"></i>
+                <span *ngIf="!isSidebarCollapsed" class="small">Thu gọn</span>
+              </button>
             </div>
           </div>
         </div>
 
-        <!-- Wizard Main Content Form (Right Column) -->
-        <div class="col-12 col-lg-9 col-xl-9">
-          <div class="wizard-content-card bg-white rounded shadow-sm p-4 mb-5" [formGroup]="wizardForm">
+        <!-- COLUMN 2: CENTER FORM CONTENT -->
+        <div [class]="isSidebarCollapsed ? 'col' : 'col-12 col-md-5 col-lg-6'" class="transition-all">
+          <div class="misa-form-card bg-white rounded-3 border p-4 shadow-sm h-100 overflow-auto" [formGroup]="wizardForm">
 
-            <!-- STEP 1: Thiết lập thông tin chung -->
-            <div *ngIf="currentStep === 1" class="step-panel">
-              <div class="step-header mb-4 pb-2 border-bottom">
-                <h4 class="fw-bold text-dark mb-1">Thiết lập thông tin chung</h4>
+            <!-- STEP 1 CONTENT -->
+            <div *ngIf="currentStep === 1" class="form-pane">
+              <!-- Title & Header -->
+              <div class="pane-title-area mb-4">
+                <div class="d-flex align-items-center justify-content-between">
+                  <h4 class="fw-bold text-dark mb-1 fs-5">Thông tin chung</h4>
+                  <button type="button" class="btn btn-link text-secondary p-0" title="Tùy chọn">
+                    <i class="bx bx-sidebar"></i>
+                  </button>
+                </div>
                 <p class="text-muted small mb-0">
                   Thiết lập thông tin cơ bản và chỉ dẫn để định danh và định hình cách tương tác cho Nhân viên AI
                 </p>
               </div>
 
-              <!-- Collapsible Block: Thông tin cơ bản -->
-              <div class="card border rounded mb-4 shadow-none">
-                <div class="card-header bg-transparent fw-bold d-flex align-items-center gap-2">
+              <!-- Accordion Card 1: Thông tin cơ bản -->
+              <div class="card border rounded-3 mb-4 shadow-none">
+                <div class="card-header bg-transparent py-2 px-3 fw-semibold border-bottom-0 d-flex align-items-center gap-2 cursor-pointer">
                   <i class="bx bx-chevron-down text-secondary"></i> Thông tin cơ bản
                 </div>
-                <div class="card-body">
-                  <!-- Hình đại diện -->
-                  <div class="mb-4">
-                    <label class="form-label fw-medium">Hình đại diện <span class="text-danger">*</span></label>
-                    <div class="d-flex align-items-center gap-3 flex-wrap">
-                      <div class="current-avatar-preview">
-                        <img [src]="f.avatarUrl.value" alt="Selected Avatar" class="rounded-circle border shadow-sm avatar-lg" />
-                      </div>
-                      <div class="avatar-presets-list d-flex align-items-center gap-2 flex-wrap">
-                        <div
-                          *ngFor="let preset of avatarPresets"
-                          class="preset-item rounded-circle cursor-pointer border p-1"
-                          [class.selected]="f.avatarUrl.value === preset.url"
-                          (click)="onSelectAvatar(preset.url)"
-                        >
-                          <img [src]="preset.url" alt="Avatar option" class="rounded-circle avatar-sm" />
-                          <i *ngIf="f.avatarUrl.value === preset.url" class="bx bxs-check-circle text-success check-overlay"></i>
-                        </div>
+                <div class="card-body pt-1 px-3 pb-3">
+                  <!-- Avatar Picker -->
+                  <div class="mb-3">
+                    <label class="form-label small fw-medium text-secondary mb-2">Hình đại diện <span class="text-danger">*</span></label>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                      <div
+                        *ngFor="let preset of avatarPresets"
+                        class="avatar-select-item rounded-circle position-relative cursor-pointer border p-0.5"
+                        [class.selected]="f['avatarUrl'].value === preset.url"
+                        (click)="onSelectAvatar(preset.url)"
+                      >
+                        <img [src]="preset.url" alt="Avatar option" class="rounded-circle avatar-md" />
+                        <i *ngIf="f['avatarUrl'].value === preset.url" class="bx bxs-check-circle text-success select-check-icon"></i>
                       </div>
                     </div>
                   </div>
 
-                  <!-- Tên & Vai trò (2 Column Row) -->
-                  <div class="row g-3 mb-3">
+                  <!-- Form Fields: Tên & Vai trò -->
+                  <div class="row g-3">
                     <div class="col-md-6">
-                      <label class="form-label fw-medium">Tên <span class="text-danger">*</span></label>
+                      <label class="form-label small fw-medium text-dark mb-1">Tên <span class="text-danger">*</span></label>
                       <input
                         type="text"
                         class="form-control"
-                        placeholder="Nhập tên nhân viên AI"
+                        placeholder="Nhập tên Agent"
                         formControlName="name"
-                        [class.is-invalid]="f.name.touched && f.name.invalid"
+                        [class.is-invalid]="f['name'].touched && f['name'].invalid"
                       />
-                      <div *ngIf="f.name.touched && f.name.invalid" class="invalid-feedback">
+                      <div *ngIf="f['name'].touched && f['name'].invalid" class="invalid-feedback small">
                         Tên Agent là bắt buộc.
                       </div>
                     </div>
 
                     <div class="col-md-6">
-                      <label class="form-label fw-medium">Vai trò <span class="text-danger">*</span></label>
+                      <label class="form-label small fw-medium text-dark mb-1">Vai trò <span class="text-danger">*</span></label>
                       <input
                         type="text"
                         class="form-control"
                         placeholder="Nhập vai trò"
                         formControlName="role"
-                        [class.is-invalid]="f.role.touched && f.role.invalid"
+                        [class.is-invalid]="f['role'].touched && f['role'].invalid"
                       />
-                      <div *ngIf="f.role.touched && f.role.invalid" class="invalid-feedback">
+                      <div *ngIf="f['role'].touched && f['role'].invalid" class="invalid-feedback small">
                         Vai trò là bắt buộc.
                       </div>
                     </div>
                   </div>
-
-                  <!-- Cấp thực hiện & Cơ quan thực hiện -->
-                  <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                      <label class="form-label fw-medium d-block">Cấp thực hiện <span class="text-danger">*</span></label>
-                      <div class="d-flex align-items-center gap-4 mt-2">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="radio"
-                            id="levelProvince"
-                            value="province"
-                            formControlName="executionLevel"
-                          />
-                          <label class="form-check-label" for="levelProvince">Cấp tỉnh</label>
-                        </div>
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="radio"
-                            id="levelCommune"
-                            value="commune"
-                            formControlName="executionLevel"
-                          />
-                          <label class="form-check-label" for="levelCommune">Cấp xã</label>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col-md-6">
-                      <label class="form-label fw-medium">Cơ quan thực hiện <span class="text-danger">*</span></label>
-                      <select
-                        class="form-select"
-                        formControlName="organization"
-                        [class.is-invalid]="f.organization.touched && f.organization.invalid"
-                      >
-                        <option value="">Chọn cơ quan thực hiện</option>
-                        <option *ngFor="let org of organizations" [value]="org">{{ org }}</option>
-                      </select>
-                      <div *ngIf="f.organization.touched && f.organization.invalid" class="invalid-feedback">
-                        Vui lòng chọn cơ quan thực hiện.
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
 
-              <!-- Collapsible Block: Chỉ dẫn cho Agent -->
-              <div class="card border rounded mb-4 shadow-none">
-                <div class="card-header bg-transparent fw-bold d-flex align-items-center gap-2">
+              <!-- Accordion Card 2: Chỉ dẫn cho Agent -->
+              <div class="card border rounded-3 mb-4 shadow-none">
+                <div class="card-header bg-transparent py-2 px-3 fw-semibold border-bottom-0 d-flex align-items-center gap-2 cursor-pointer">
                   <i class="bx bx-chevron-down text-secondary"></i> Chỉ dẫn cho Agent
                 </div>
-                <div class="card-body">
-                  <div class="mb-3">
-                    <label class="form-label fw-medium">Chỉ dẫn cho Agent <span class="text-danger">*</span></label>
-                    <textarea
-                      class="form-control"
-                      rows="4"
-                      placeholder="Nhập chỉ dẫn chi tiết cho Agent (Ví dụ: Bạn là nhân viên AI tư vấn các thủ tục hành chính thuộc cơ quan công an...)"
-                      formControlName="instructions"
-                      [class.is-invalid]="f.instructions.touched && f.instructions.invalid"
-                    ></textarea>
-                    <div *ngIf="f.instructions.touched && f.instructions.invalid" class="invalid-feedback">
-                      Chỉ dẫn cho Agent là bắt buộc.
+                <div class="card-body pt-1 px-3 pb-3">
+                  <div class="mb-2 d-flex align-items-center justify-content-between">
+                    <label class="form-label small fw-medium text-dark mb-0">
+                      Chỉ dẫn cho Agent <span class="text-danger">*</span> <i class="bx bx-info-circle text-muted" title="Mô tả kỹ vai trò và nguyên tắc ứng xử của Agent"></i>
+                    </label>
+                  </div>
+
+                  <!-- Rich Text Fake Toolbar -->
+                  <div class="rich-toolbar border rounded-top bg-light p-2 d-flex align-items-center justify-content-between flex-wrap gap-2 small border-bottom-0">
+                    <div class="d-flex align-items-center gap-2">
+                      <select class="form-select form-select-sm border-0 bg-transparent fw-medium py-0" style="width: auto;">
+                        <option>Đoạn văn</option>
+                      </select>
+                      <div class="vr"></div>
+                      <button type="button" class="btn btn-sm btn-link text-secondary p-0 fw-bold">B</button>
+                      <button type="button" class="btn btn-sm btn-link text-secondary p-0 fst-italic">I</button>
+                      <button type="button" class="btn btn-sm btn-link text-secondary p-0 text-decoration-underline">U</button>
+                      <div class="vr"></div>
+                      <button type="button" class="btn btn-sm btn-link text-secondary p-0"><i class="bx bx-list-ul"></i></button>
+                      <button type="button" class="btn btn-sm btn-link text-secondary p-0"><i class="bx bx-list-ol"></i></button>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="text-muted small">Dạng hiển thị:</span>
+                      <select class="form-select form-select-sm border-0 bg-transparent fw-medium py-0" style="width: auto;">
+                        <option>Văn bản</option>
+                      </select>
                     </div>
                   </div>
+
+                  <textarea
+                    class="form-control rounded-bottom rounded-top-0 font-monospace text-secondary small"
+                    rows="8"
+                    placeholder="Nhập nội dung chỉ dẫn cho Agent..."
+                    formControlName="instructions"
+                  ></textarea>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- STEPS 2 - 5 PLACEHOLDERS -->
+            <div *ngIf="currentStep > 1" class="form-pane py-5 text-center">
+              <i class="bx bx-layer fs-1 text-primary mb-2"></i>
+              <h5 class="fw-bold text-dark">{{ steps[currentStep - 1].title }}</h5>
+              <p class="text-muted small">Cấu hình tính năng {{ steps[currentStep - 1].title }} đang sẵn sàng.</p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- COLUMN 3: RIGHT LIVE PREVIEW CHAT WIDGET -->
+        <div class="col-12 col-md-4 col-lg-4">
+          <div class="misa-preview-card bg-white rounded-3 border p-3 shadow-sm h-100 d-flex flex-column justify-content-between">
+            <!-- Preview Header -->
+            <div class="preview-header border-bottom pb-2 mb-3 d-flex align-items-center justify-content-between">
+              <span class="fw-bold text-dark fs-6">Xem trước và kiểm tra</span>
+              <button type="button" class="btn btn-link text-secondary p-0 fs-5" (click)="chatMessages = []" title="Tải lại đoạn chat">
+                <i class="bx bx-refresh"></i>
+              </button>
+            </div>
+
+            <!-- Chat Conversation Area -->
+            <div class="preview-chat-body flex-grow-1 overflow-auto d-flex flex-column align-items-center justify-content-center text-center p-3">
+              <div *ngIf="!chatMessages.length" class="empty-chat-welcome">
+                <img
+                  [src]="f['avatarUrl'].value || 'assets/images/users/avatar-1.jpg'"
+                  alt="Agent Preview"
+                  class="preview-agent-avatar rounded-circle border shadow-sm mb-3"
+                  style="width: 72px; height: 72px; object-fit: cover;"
+                />
+                <h6 class="fw-bold text-dark mb-2">Chào anh/chị. Em có thể giúp gì cho anh/chị?</h6>
+                <p class="text-muted small">Nhập câu hỏi ở ô bên dưới để thử nghiệm phản hồi của Agent.</p>
+              </div>
+
+              <!-- Message History -->
+              <div *ngIf="chatMessages.length" class="w-100 text-start">
+                <div
+                  *ngFor="let msg of chatMessages"
+                  class="mb-3 d-flex flex-column"
+                  [class.align-items-end]="msg.sender === 'user'"
+                  [class.align-items-start]="msg.sender === 'agent'"
+                >
+                  <div
+                    class="p-2.5 px-3 rounded-3 max-w-85 small"
+                    [ngClass]="msg.sender === 'user' ? 'bg-primary text-white' : 'bg-light text-dark border'"
+                  >
+                    {{ msg.text }}
+                  </div>
+                  <span class="text-muted extra-small mt-1">{{ msg.time }}</span>
                 </div>
               </div>
             </div>
 
-            <!-- STEP 2 - 7 Placeholders -->
-            <div *ngIf="currentStep > 1" class="step-panel py-4 text-center">
-              <div class="mb-3">
-                <i class="bx bx-cog fs-1 text-primary spin-slow"></i>
+            <!-- Chat Input Footer -->
+            <div class="preview-chat-footer border-top pt-3">
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control form-control-sm border-end-0 bg-light"
+                  placeholder="+ Nhập nội dung bạn muốn hỏi..."
+                  [(ngModel)]="chatInputText"
+                  (keyup.enter)="onSendMessage()"
+                />
+                <button type="button" class="btn btn-primary btn-sm px-3" (click)="onSendMessage()">
+                  <i class="bx bx-send"></i>
+                </button>
               </div>
-              <h5 class="fw-bold text-dark">{{ steps[currentStep - 1].title }}</h5>
-              <p class="text-muted small">Tính năng cấu hình bước {{ currentStep }} đang được chuẩn bị dữ liệu.</p>
             </div>
-
           </div>
         </div>
 
@@ -220,32 +286,36 @@
     </div>
   </div>
 
-  <!-- Sticky Footer Action Bar -->
-  <footer class="wizard-footer bg-white border-top px-4 py-3 fixed-bottom d-flex align-items-center justify-content-end gap-3 shadow-lg">
-    <button type="button" class="btn btn-outline-secondary px-4 fw-medium" (click)="onCancel()">
+  <!-- FIXED FOOTER ACTION BAR (Bottom Right) -->
+  <footer class="misa-footer-bar bg-white border-top px-4 py-2 fixed-bottom d-flex align-items-center justify-content-end gap-2 shadow-lg">
+    <button type="button" class="btn btn-outline-secondary px-3 btn-sm fw-medium" (click)="onCancel()">
       Hủy
     </button>
-    <button type="button" class="btn btn-primary px-4 fw-medium" (click)="onNextStep()" [disabled]="isSubmitting">
+    <button type="button" class="btn btn-outline-primary px-3 btn-sm fw-medium" (click)="onSaveDraft()">
+      Lưu nháp
+    </button>
+    <button type="button" class="btn btn-primary px-3 btn-sm fw-medium" (click)="onPublish()" [disabled]="isSubmitting">
       <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-      {{ currentStep === 7 ? 'Phát hành' : 'Tiếp tục' }}
+      Lưu và phát hành lại
     </button>
   </footer>
+
 </div>
 
 <!-- Modal confirm cancel exit -->
 <div *ngIf="showConfirmCancelModal" class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header border-0">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header border-0 pb-0">
         <h5 class="modal-title fw-bold text-dark">Xác nhận rời khỏi trang</h5>
         <button type="button" class="btn-close" (click)="closeCancelModal()"></button>
       </div>
-      <div class="modal-body text-muted">
+      <div class="modal-body text-secondary">
         Bạn có chắc chắn muốn rời khỏi trang? Dữ liệu vừa nhập chưa được lưu.
       </div>
-      <div class="modal-footer border-0">
-        <button type="button" class="btn btn-light" (click)="closeCancelModal()">Quay lại</button>
-        <button type="button" class="btn btn-danger" (click)="confirmExit()">Đồng ý rời đi</button>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-light px-3" (click)="closeCancelModal()">Quay lại</button>
+        <button type="button" class="btn btn-danger px-3" (click)="confirmExit()">Đồng ý rời đi</button>
       </div>
     </div>
   </div>

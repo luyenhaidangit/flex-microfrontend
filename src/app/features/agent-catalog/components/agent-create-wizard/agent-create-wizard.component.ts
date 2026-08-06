@@ -7,13 +7,15 @@ import { AgentService } from '../../services/agent.service';
 export interface WizardStepItem {
   id: number;
   title: string;
+  icon: string;
   isCompleted: boolean;
   isActive: boolean;
 }
 
-export interface AvatarPresetItem {
-  id: string;
-  url: string;
+export interface ChatMessage {
+  sender: 'user' | 'agent';
+  text: string;
+  time: string;
 }
 
 @Component({
@@ -22,38 +24,43 @@ export interface AvatarPresetItem {
   styleUrls: ['./agent-create-wizard.component.scss']
 })
 export class AgentCreateWizardComponent implements OnInit {
+  activeTab: 'info' | 'chat' | 'report' = 'info';
   currentStep = 1;
+  isSidebarCollapsed = false;
+
   isSubmitting = false;
   showConfirmCancelModal = false;
 
   wizardForm!: FormGroup;
 
   steps: WizardStepItem[] = [
-    { id: 1, title: 'Thiết lập thông tin chung', isCompleted: false, isActive: true },
-    { id: 2, title: 'Thêm thủ tục hành chính Công an', isCompleted: false, isActive: false },
-    { id: 3, title: 'Thêm thông tin Cơ quan Công an', isCompleted: false, isActive: false },
-    { id: 4, title: 'Thêm văn bản khác', isCompleted: false, isActive: false },
-    { id: 5, title: 'Thiết lập kỹ năng', isCompleted: false, isActive: false },
-    { id: 6, title: 'Kiểm tra nhân viên AI', isCompleted: false, isActive: false },
-    { id: 7, title: 'Phát hành', isCompleted: false, isActive: false }
+    { id: 1, title: 'Thiết lập thông tin chung', icon: 'bx-slider-alt', isCompleted: false, isActive: true },
+    { id: 2, title: 'Thêm tri thức', icon: 'bx-book-open', isCompleted: false, isActive: false },
+    { id: 3, title: 'Thiết lập kỹ năng', icon: 'bx-extension', isCompleted: false, isActive: false },
+    { id: 4, title: 'Đào tạo Agent', icon: 'bx-bulb', isCompleted: false, isActive: false },
+    { id: 5, title: 'Phát hành', icon: 'bx-send', isCompleted: false, isActive: false }
   ];
 
-  avatarPresets: AvatarPresetItem[] = [
-    { id: '1', url: 'assets/images/default-agent-avatar.png' },
-    { id: '2', url: 'assets/images/users/avatar-1.jpg' },
-    { id: '3', url: 'assets/images/users/avatar-2.jpg' },
-    { id: '4', url: 'assets/images/users/avatar-3.jpg' },
-    { id: '5', url: 'assets/images/users/avatar-4.jpg' },
-    { id: '6', url: 'assets/images/users/avatar-5.jpg' }
+  avatarPresets = [
+    { id: '1', url: 'assets/images/users/avatar-1.jpg' },
+    { id: '2', url: 'assets/images/users/avatar-2.jpg' },
+    { id: '3', url: 'assets/images/users/avatar-3.jpg' },
+    { id: '4', url: 'assets/images/users/avatar-4.jpg' },
+    { id: '5', url: 'assets/images/users/avatar-5.jpg' },
+    { id: '6', url: 'assets/images/users/avatar-6.jpg' }
   ];
 
-  organizations: string[] = [
-    'Công an Tỉnh Đồng Nai',
-    'Công an Thành phố Hồ Chí Minh',
-    'Công an Thành phố Hà Nội',
-    'Công an Tỉnh Bình Dương',
-    'Công an Xã Hưng Lộc'
-  ];
+  // Test Chat Messages
+  chatMessages: ChatMessage[] = [];
+  chatInputText: string = '';
+
+  defaultInstructions = `I. Vai trò
+- Là Nhân viên AI Chăm sóc Khách hàng sau bán của doanh nghiệp.
+- Hỗ trợ khách hàng trong quá trình sử dụng sản phẩm hoặc dịch vụ.
+- Giải đáp thắc mắc, hướng dẫn thao tác, tiếp nhận và xử lý vấn đề phát sinh.
+- Cung cấp thông tin liên quan đến: Chính sách bảo hành, Hướng dẫn thanh toán...`;
+
+  currentTimeFormatted: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -63,17 +70,18 @@ export class AgentCreateWizardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const now = new Date();
+    this.currentTimeFormatted = `${now.toLocaleDateString('vi-VN')} ${now.getHours()}:${now.getMinutes() < 10 ? '0' : ''}${now.getMinutes()}`;
+
     this.initForm();
   }
 
   initForm(): void {
     this.wizardForm = this.fb.group({
-      avatarUrl: ['assets/images/default-agent-avatar.png'],
-      name: ['Mai Hương', [Validators.required]],
-      role: ['Nhân viên AI tư vấn tại cơ quan Công an', [Validators.required]],
-      executionLevel: ['province', [Validators.required]],
-      organization: ['', [Validators.required]],
-      instructions: ['', [Validators.required]]
+      avatarUrl: ['assets/images/users/avatar-1.jpg'],
+      name: ['Thảo CSKH', [Validators.required]],
+      role: ['Nhân viên AI chăm sóc khách hàng', [Validators.required]],
+      instructions: [this.defaultInstructions, [Validators.required]]
     });
   }
 
@@ -85,43 +93,34 @@ export class AgentCreateWizardComponent implements OnInit {
     this.wizardForm.patchValue({ avatarUrl: url });
   }
 
+  toggleSidebar(): void {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
+  }
+
   onStepClick(stepId: number): void {
-    // Chỉ cho phép chuyển lại các bước đã đi qua hoặc bước kế tiếp khi bước hiện tại valid
-    if (stepId < this.currentStep) {
-      this.goToStep(stepId);
-    } else if (stepId === this.currentStep + 1) {
-      this.onNextStep();
-    }
-  }
-
-  goToStep(stepId: number): void {
     this.currentStep = stepId;
-    this.steps.forEach((s) => {
-      s.isActive = s.id === stepId;
+    this.steps.forEach((s) => (s.isActive = s.id === stepId));
+  }
+
+  onSendMessage(): void {
+    if (!this.chatInputText.trim()) return;
+
+    const userText = this.chatInputText.trim();
+    this.chatMessages.push({
+      sender: 'user',
+      text: userText,
+      time: 'Vừa xong'
     });
-  }
+    this.chatInputText = '';
 
-  onNextStep(): void {
-    if (this.currentStep === 1) {
-      if (this.wizardForm.invalid) {
-        this.wizardForm.markAllAsTouched();
-        this.toastService.error('Vui lòng điền đầy đủ các thông tin bắt buộc (*).');
-        return;
-      }
-      this.steps[0].isCompleted = true;
-      this.goToStep(2);
-    } else if (this.currentStep < 7) {
-      this.steps[this.currentStep - 1].isCompleted = true;
-      this.goToStep(this.currentStep + 1);
-    } else if (this.currentStep === 7) {
-      this.onPublish();
-    }
-  }
-
-  onPrevStep(): void {
-    if (this.currentStep > 1) {
-      this.goToStep(this.currentStep - 1);
-    }
+    // Auto bot response
+    setTimeout(() => {
+      this.chatMessages.push({
+        sender: 'agent',
+        text: `Cảm ơn anh/chị. Em (${this.f['name'].value}) đã nhận được câu hỏi "${userText}". Em có thể hỗ trợ thông tin chi tiết gì cho anh/chị ạ?`,
+        time: 'Vừa xong'
+      });
+    }, 600);
   }
 
   onCancel(): void {
@@ -141,10 +140,14 @@ export class AgentCreateWizardComponent implements OnInit {
     this.showConfirmCancelModal = false;
   }
 
+  onSaveDraft(): void {
+    this.toastService.info('Đã lưu bản nháp thông tin Agent.');
+  }
+
   onPublish(): void {
     if (this.wizardForm.invalid) {
       this.wizardForm.markAllAsTouched();
-      this.toastService.error('Vui lòng kiểm tra lại thông tin.');
+      this.toastService.error('Vui lòng điền đầy đủ các thông tin bắt buộc (*).');
       return;
     }
 
@@ -152,19 +155,19 @@ export class AgentCreateWizardComponent implements OnInit {
     const formVal = this.wizardForm.value;
     const payload = {
       name: formVal.name,
-      description: `${formVal.role} - ${formVal.organization}`,
+      description: formVal.role,
       status: 'active'
     };
 
     this.agentService.createAgent(payload).subscribe({
       next: () => {
         this.isSubmitting = false;
-        this.toastService.success('Tạo mới Agent thành công!');
+        this.toastService.success('Khởi tạo và phát hành Agent thành công!');
         this.router.navigate(['/agents']);
       },
       error: () => {
         this.isSubmitting = false;
-        this.toastService.error('Không thể tạo mới Agent. Vui lòng thử lại.');
+        this.toastService.error('Có lỗi xảy ra. Vui lòng thử lại.');
       }
     });
   }

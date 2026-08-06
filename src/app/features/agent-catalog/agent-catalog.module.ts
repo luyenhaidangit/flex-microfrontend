@@ -14,6 +14,7 @@ import { AgentCreateWizardComponent } from './components/agent-create-wizard/age
 
 @NgModule({
   declarations: [AgentListComponent, AgentFormModalComponent, AgentDeleteConfirmModalComponent, AgentCreateWizardComponent],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, UIModule, SharedModule, PaginationModule, AgentCatalogRoutingModule]
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, UIModule, SharedModule, PaginationModule, AgentCatalogRoutingModule],
+  exports: [AgentCreateWizardComponent, AgentListComponent]
 })
 export class AgentCatalogModule {}
