@@ -4,24 +4,27 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 99999; // Đè hoàn toàn lên trên Skote Admin layout
+  z-index: 99999; // Phủ toàn màn hình trên Skote layout
   background-color: #f4f6f9;
-  padding-bottom: 56px; // Dành chỗ cho fixed-bottom footer
+  overflow: hidden !important; // Triệt tiêu hoàn toàn scrollbar dọc của trình duyệt
+  display: flex;
+  flex-direction: column;
 }
 
 .misa-header {
   height: 56px;
-  z-index: 1000;
+  flex-shrink: 0;
+  border-bottom: 1px solid #e9ecef;
 
   .header-agent-avatar {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     object-fit: cover;
   }
 
   .header-center-tabs {
     .nav-pills {
-      background-color: #f1f3f7;
+      background-color: #eff2f7;
 
       .nav-link {
         color: #6c757d;
@@ -37,11 +40,16 @@
 }
 
 .misa-body {
-  height: calc(100vh - 56px - 56px);
+  height: calc(100vh - 56px - 54px);
+  flex-grow: 1;
+  overflow: hidden;
+  padding: 12px 16px !important;
 }
 
 .misa-sidebar-card {
+  height: 100% !important;
   border-color: #e9ecef !important;
+  overflow-y: auto;
 
   .stepper-nav-item {
     transition: all 0.15s ease-in-out;
@@ -70,13 +78,28 @@
   }
 }
 
+/* Cột giữa (Form content): Cuộn nội dung riêng nếu quá dài */
 .misa-form-card {
+  height: 100% !important;
   border-color: #e9ecef !important;
+  overflow-y: auto !important;
+
+  /* Custom scrollbar mượt mà cho cột form */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #ced4da;
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
 }
 
 .avatar-select-item {
-  width: 46px;
-  height: 46px;
+  width: 42px;
+  height: 42px;
   transition: transform 0.15s ease-in-out;
 
   &:hover {
@@ -98,15 +121,33 @@
     position: absolute;
     top: -4px;
     right: -4px;
-    font-size: 16px;
+    font-size: 14px;
     background: #ffffff;
     border-radius: 50%;
   }
 }
 
+/* Cột xem trước chat (Cột phải): Không có scrollbar ngoài, cuộn lịch sử chat bên trong */
 .misa-preview-card {
+  height: 100% !important;
   border-color: #e9ecef !important;
   background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden !important;
+
+  .preview-chat-body {
+    flex-grow: 1;
+    overflow-y: auto !important;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #e2e8f0;
+      border-radius: 4px;
+    }
+  }
 
   .max-w-85 {
     max-width: 85%;
@@ -117,9 +158,11 @@
   }
 }
 
+/* Footer cố định ở đáy flex container (Height: 54px) */
 .misa-footer-bar {
   height: 54px;
-  z-index: 100000;
+  flex-shrink: 0;
+  z-index: 1000;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
 }
 

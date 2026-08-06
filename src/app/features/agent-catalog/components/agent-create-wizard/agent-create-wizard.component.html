@@ -61,7 +61,7 @@
   </header>
 
   <!-- BODY CONTENT AREA (3 Columns) -->
-  <div class="misa-body flex-grow-1 p-3 overflow-auto">
+  <div class="misa-body flex-grow-1 p-3 overflow-hidden">
     <div class="container-fluid h-100 p-0">
       <div class="row g-3 h-100">
 
@@ -93,7 +93,7 @@
         </div>
 
         <!-- COLUMN 2: CENTER FORM CONTENT -->
-        <div [class]="isSidebarCollapsed ? 'col' : 'col-12 col-md-5 col-lg-6'" class="transition-all">
+        <div [class]="isSidebarCollapsed ? 'col' : 'col-12 col-md-5 col-lg-6'" class="transition-all h-100">
           <div class="misa-form-card bg-white rounded-3 border p-4 shadow-sm h-100 overflow-auto" [formGroup]="wizardForm">
 
             <!-- STEP 1 CONTENT -->
@@ -287,7 +287,7 @@
   </div>
 
   <!-- FIXED FOOTER ACTION BAR (Bottom Right) -->
-  <footer class="misa-footer-bar bg-white border-top px-4 py-2 fixed-bottom d-flex align-items-center justify-content-end gap-2 shadow-lg">
+  <footer class="misa-footer-bar bg-white border-top px-4 py-2 d-flex align-items-center justify-content-end gap-2 shadow-sm">
     <button type="button" class="btn btn-outline-secondary px-3 btn-sm fw-medium" (click)="onCancel()">
       Hủy
     </button>
