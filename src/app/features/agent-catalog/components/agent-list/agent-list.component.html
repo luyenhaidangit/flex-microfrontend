@@ -1,36 +1,39 @@
 <div class="container-fluid pt-0">
   <div class="bg-white rounded shadow-sm p-3">
-    <!-- Category Filter Chips -->
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-      <button
-        *ngFor="let cat of categories"
-        type="button"
-        class="btn category-chip"
-        [class.active]="selectedCategory === cat"
-        (click)="onCategorySelect(cat)"
-      >
-        <span class="chip-dot" *ngIf="cat !== 'Tất cả'"></span>
-        {{ cat }}
-      </button>
-    </div>
-
-    <!-- Search bar, View Toggle & Add Button -->
-    <div class="row gx-3 mb-3 gy-2 align-items-end">
-      <div class="col-md-3">
-        <label class="form-label fw-bold text-muted">Từ khóa</label>
-        <input class="form-control" type="text" placeholder="Nhập từ khóa..." [(ngModel)]="searchInputValue" (keyup.enter)="onSearchClick()">
-      </div>
-
-      <div class="col-auto">
-        <button class="btn btn-primary" (click)="onSearchClick()">
-          <i class="bx bx-search-alt-2 me-1"></i> Tìm kiếm
+    <!-- Compact Single-Row Toolbar -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+      <!-- Left side: Category Filter Chips -->
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <button
+          *ngFor="let cat of categories"
+          type="button"
+          class="btn category-chip"
+          [class.active]="selectedCategory === cat"
+          (click)="onCategorySelect(cat)"
+        >
+          <span class="chip-dot" *ngIf="cat !== 'Tất cả'"></span>
+          {{ cat }}
         </button>
       </div>
 
-      <div class="col-auto ms-auto d-flex align-items-center gap-2">
+      <!-- Right side: Search Box, View Toggle & Add Button -->
+      <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
+        <!-- Search Input Box with Icon -->
+        <div class="position-relative search-input-box">
+          <input
+            class="form-control ps-4 search-input-control"
+            type="text"
+            placeholder="Tìm kiếm agent..."
+            [(ngModel)]="searchInputValue"
+            (keyup.enter)="onSearchClick()"
+          />
+          <i class="bx bx-search-alt-2 position-absolute search-input-icon"></i>
+        </div>
+
         <!-- Reusable View Mode Toggle Component -->
         <app-view-toggle [(viewMode)]="viewMode"></app-view-toggle>
 
+        <!-- Add Button -->
         <button type="button" class="btn btn-success fw-bold" (click)="openCreateModal()">
           <i class="fas fa-plus me-1"></i> Thêm mới
         </button>

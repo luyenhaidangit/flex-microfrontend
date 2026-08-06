@@ -1,11 +1,11 @@
 @import 'src/assets/scss/core_table';
 
-/* Category Filter Chips */
+/* Compact Single-Row Toolbar Styles */
 .category-chip {
   background-color: #f3f3f9;
   color: #495057;
   border-radius: 50rem;
-  padding: 0.3rem 0.85rem;
+  padding: 0.35rem 0.85rem;
   font-size: 0.82rem;
   font-weight: 500;
   border: 1px solid transparent;
@@ -32,6 +32,30 @@
     .chip-dot {
       background-color: #34c38f;
     }
+  }
+}
+
+.search-input-box {
+  width: 210px;
+
+  .search-input-control {
+    padding-left: 2.2rem !important;
+    font-size: 0.85rem;
+    height: 38px;
+
+    &:focus {
+      border-color: #556ee6;
+      box-shadow: 0 0 0 0.15rem rgba(85, 110, 230, 0.15);
+    }
+  }
+
+  .search-input-icon {
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #74788d;
+    font-size: 1.1rem;
+    pointer-events: none;
   }
 }
 
