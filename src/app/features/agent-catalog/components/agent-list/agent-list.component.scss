@@ -5,8 +5,8 @@
   background-color: #f3f3f9;
   color: #495057;
   border-radius: 50rem;
-  padding: 0.35rem 0.9rem;
-  font-size: 0.85rem;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.82rem;
   font-weight: 500;
   border: 1px solid transparent;
   transition: all 0.2s ease-in-out;
@@ -35,34 +35,6 @@
   }
 }
 
-/* Search input group */
-.search-input-group {
-  min-width: 220px;
-
-  .search-control {
-    border-radius: 50rem;
-    font-size: 0.875rem;
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
-    padding-top: 0.45rem;
-    padding-bottom: 0.45rem;
-
-    &:focus {
-      background-color: #ffffff;
-      border-color: #556ee6;
-      box-shadow: 0 0 0 0.15rem rgba(85, 110, 230, 0.15);
-    }
-  }
-
-  .search-icon {
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #74788d;
-    font-size: 1.1rem;
-  }
-}
-
 /* Agent Card Styles */
 .agent-card {
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
@@ -70,18 +42,18 @@
   border-color: #eff2f7 !important;
 
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.06) !important;
   }
 }
 
 .avatar-circle {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   color: #ffffff;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -107,24 +79,7 @@
   background-color: #f0f4ff;
   color: #556ee6;
   font-weight: 500;
-  padding: 0.35rem 0.75rem;
-  border-radius: 0.375rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 0.25rem;
   font-size: 0.78rem;
-}
-
-.action-buttons {
-  .btn-light {
-    width: 28px;
-    height: 28px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f8f9fa;
-    border: none;
-
-    &:hover {
-      background-color: #eff2f7;
-    }
-  }
 }
