@@ -1,0 +1,252 @@
+<div class="create-wizard-wrapper bg-light min-vh-100 d-flex flex-column">
+  <!-- Top Navigation Header -->
+  <header class="wizard-header bg-white border-bottom px-4 py-2 d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center gap-2">
+      <span class="fs-6 text-muted">Tạo nhân viên AI</span>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+      <button type="button" class="btn btn-link text-secondary p-0 fs-5" title="Trợ giúp">
+        <i class="bx bx-help-circle"></i>
+      </button>
+      <button type="button" class="btn btn-link text-secondary p-0 fs-5" (click)="onCancel()" title="Đóng">
+        <i class="bx bx-x"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Wizard Container -->
+  <div class="wizard-body flex-grow-1 p-3 p-md-4">
+    <div class="container-fluid">
+      <div class="row g-4">
+
+        <!-- Sidebar Stepper (Left Column) -->
+        <div class="col-12 col-lg-3 col-xl-3">
+          <div class="wizard-sidebar bg-white rounded shadow-sm p-3">
+            <!-- Agent Summary Profile Card -->
+            <div class="agent-profile-summary text-left mb-4 p-2 pb-3 border-bottom">
+              <div class="d-flex align-items-center gap-3">
+                <img
+                  [src]="f.avatarUrl.value || 'assets/images/default-agent-avatar.png'"
+                  alt="Agent Preview"
+                  class="profile-avatar rounded-circle shadow-sm"
+                />
+                <div class="profile-info overflow-hidden">
+                  <h6 class="fw-bold mb-1 text-truncate text-dark" [title]="f.name.value">
+                    {{ f.name.value || 'Tên Agent' }}
+                  </h6>
+                  <p class="text-muted small mb-0 text-truncate" [title]="f.role.value">
+                    {{ f.role.value || 'Chưa chọn vai trò' }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stepper List -->
+            <div class="stepper-navigation">
+              <div
+                *ngFor="let step of steps"
+                class="stepper-item d-flex align-items-start gap-3 py-2 px-2 rounded cursor-pointer mb-2"
+                [class.active]="step.isActive"
+                [class.completed]="step.isCompleted"
+                (click)="onStepClick(step.id)"
+              >
+                <div class="step-badge-wrapper flex-shrink-0">
+                  <span class="step-badge d-flex align-items-center justify-content-center rounded-circle fw-medium">
+                    <i *ngIf="step.isCompleted" class="bx bx-check fs-6 text-white"></i>
+                    <span *ngIf="!step.isCompleted">{{ step.id }}</span>
+                  </span>
+                </div>
+                <div class="step-title-wrapper flex-grow-1 align-self-center">
+                  <span class="step-title fw-medium small">{{ step.title }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wizard Main Content Form (Right Column) -->
+        <div class="col-12 col-lg-9 col-xl-9">
+          <div class="wizard-content-card bg-white rounded shadow-sm p-4 mb-5" [formGroup]="wizardForm">
+
+            <!-- STEP 1: Thiết lập thông tin chung -->
+            <div *ngIf="currentStep === 1" class="step-panel">
+              <div class="step-header mb-4 pb-2 border-bottom">
+                <h4 class="fw-bold text-dark mb-1">Thiết lập thông tin chung</h4>
+                <p class="text-muted small mb-0">
+                  Thiết lập thông tin cơ bản và chỉ dẫn để định danh và định hình cách tương tác cho Nhân viên AI
+                </p>
+              </div>
+
+              <!-- Collapsible Block: Thông tin cơ bản -->
+              <div class="card border rounded mb-4 shadow-none">
+                <div class="card-header bg-transparent fw-bold d-flex align-items-center gap-2">
+                  <i class="bx bx-chevron-down text-secondary"></i> Thông tin cơ bản
+                </div>
+                <div class="card-body">
+                  <!-- Hình đại diện -->
+                  <div class="mb-4">
+                    <label class="form-label fw-medium">Hình đại diện <span class="text-danger">*</span></label>
+                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                      <div class="current-avatar-preview">
+                        <img [src]="f.avatarUrl.value" alt="Selected Avatar" class="rounded-circle border shadow-sm avatar-lg" />
+                      </div>
+                      <div class="avatar-presets-list d-flex align-items-center gap-2 flex-wrap">
+                        <div
+                          *ngFor="let preset of avatarPresets"
+                          class="preset-item rounded-circle cursor-pointer border p-1"
+                          [class.selected]="f.avatarUrl.value === preset.url"
+                          (click)="onSelectAvatar(preset.url)"
+                        >
+                          <img [src]="preset.url" alt="Avatar option" class="rounded-circle avatar-sm" />
+                          <i *ngIf="f.avatarUrl.value === preset.url" class="bx bxs-check-circle text-success check-overlay"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Tên & Vai trò (2 Column Row) -->
+                  <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                      <label class="form-label fw-medium">Tên <span class="text-danger">*</span></label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Nhập tên nhân viên AI"
+                        formControlName="name"
+                        [class.is-invalid]="f.name.touched && f.name.invalid"
+                      />
+                      <div *ngIf="f.name.touched && f.name.invalid" class="invalid-feedback">
+                        Tên Agent là bắt buộc.
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label class="form-label fw-medium">Vai trò <span class="text-danger">*</span></label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Nhập vai trò"
+                        formControlName="role"
+                        [class.is-invalid]="f.role.touched && f.role.invalid"
+                      />
+                      <div *ngIf="f.role.touched && f.role.invalid" class="invalid-feedback">
+                        Vai trò là bắt buộc.
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Cấp thực hiện & Cơ quan thực hiện -->
+                  <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                      <label class="form-label fw-medium d-block">Cấp thực hiện <span class="text-danger">*</span></label>
+                      <div class="d-flex align-items-center gap-4 mt-2">
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            id="levelProvince"
+                            value="province"
+                            formControlName="executionLevel"
+                          />
+                          <label class="form-check-label" for="levelProvince">Cấp tỉnh</label>
+                        </div>
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            id="levelCommune"
+                            value="commune"
+                            formControlName="executionLevel"
+                          />
+                          <label class="form-check-label" for="levelCommune">Cấp xã</label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label class="form-label fw-medium">Cơ quan thực hiện <span class="text-danger">*</span></label>
+                      <select
+                        class="form-select"
+                        formControlName="organization"
+                        [class.is-invalid]="f.organization.touched && f.organization.invalid"
+                      >
+                        <option value="">Chọn cơ quan thực hiện</option>
+                        <option *ngFor="let org of organizations" [value]="org">{{ org }}</option>
+                      </select>
+                      <div *ngIf="f.organization.touched && f.organization.invalid" class="invalid-feedback">
+                        Vui lòng chọn cơ quan thực hiện.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Collapsible Block: Chỉ dẫn cho Agent -->
+              <div class="card border rounded mb-4 shadow-none">
+                <div class="card-header bg-transparent fw-bold d-flex align-items-center gap-2">
+                  <i class="bx bx-chevron-down text-secondary"></i> Chỉ dẫn cho Agent
+                </div>
+                <div class="card-body">
+                  <div class="mb-3">
+                    <label class="form-label fw-medium">Chỉ dẫn cho Agent <span class="text-danger">*</span></label>
+                    <textarea
+                      class="form-control"
+                      rows="4"
+                      placeholder="Nhập chỉ dẫn chi tiết cho Agent (Ví dụ: Bạn là nhân viên AI tư vấn các thủ tục hành chính thuộc cơ quan công an...)"
+                      formControlName="instructions"
+                      [class.is-invalid]="f.instructions.touched && f.instructions.invalid"
+                    ></textarea>
+                    <div *ngIf="f.instructions.touched && f.instructions.invalid" class="invalid-feedback">
+                      Chỉ dẫn cho Agent là bắt buộc.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- STEP 2 - 7 Placeholders -->
+            <div *ngIf="currentStep > 1" class="step-panel py-4 text-center">
+              <div class="mb-3">
+                <i class="bx bx-cog fs-1 text-primary spin-slow"></i>
+              </div>
+              <h5 class="fw-bold text-dark">{{ steps[currentStep - 1].title }}</h5>
+              <p class="text-muted small">Tính năng cấu hình bước {{ currentStep }} đang được chuẩn bị dữ liệu.</p>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticky Footer Action Bar -->
+  <footer class="wizard-footer bg-white border-top px-4 py-3 fixed-bottom d-flex align-items-center justify-content-end gap-3 shadow-lg">
+    <button type="button" class="btn btn-outline-secondary px-4 fw-medium" (click)="onCancel()">
+      Hủy
+    </button>
+    <button type="button" class="btn btn-primary px-4 fw-medium" (click)="onNextStep()" [disabled]="isSubmitting">
+      <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+      {{ currentStep === 7 ? 'Phát hành' : 'Tiếp tục' }}
+    </button>
+  </footer>
+</div>
+
+<!-- Modal confirm cancel exit -->
+<div *ngIf="showConfirmCancelModal" class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title fw-bold text-dark">Xác nhận rời khỏi trang</h5>
+        <button type="button" class="btn-close" (click)="closeCancelModal()"></button>
+      </div>
+      <div class="modal-body text-muted">
+        Bạn có chắc chắn muốn rời khỏi trang? Dữ liệu vừa nhập chưa được lưu.
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-light" (click)="closeCancelModal()">Quay lại</button>
+        <button type="button" class="btn btn-danger" (click)="confirmExit()">Đồng ý rời đi</button>
+      </div>
+    </div>
+  </div>
+</div>

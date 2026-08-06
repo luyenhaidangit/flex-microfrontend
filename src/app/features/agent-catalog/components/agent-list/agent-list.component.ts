@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { ToastService } from 'angular-toastify';
 import { finalize } from 'rxjs/operators';
@@ -42,7 +43,8 @@ export class AgentListComponent implements OnInit {
 
   constructor(
     private agentService: AgentService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -145,8 +147,7 @@ export class AgentListComponent implements OnInit {
   }
 
   openCreateModal(): void {
-    this.selectedAgent = null;
-    this.showFormModal = true;
+    this.router.navigate(['/agents/create']);
   }
 
   openEditModal(agent: Agent): void {
