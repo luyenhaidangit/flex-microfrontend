@@ -266,8 +266,12 @@
 
             <!-- Modern AI Prompt Input Box Footer -->
             <div class="preview-chat-footer border-top pt-2 mt-auto">
-              <div class="modern-ai-input-container rounded-4 border p-2 bg-light shadow-sm">
+              <div
+                class="modern-ai-input-container rounded-4 border p-2 bg-light shadow-sm"
+                (click)="chatTextarea.focus()"
+              >
                 <textarea
+                  #chatTextarea
                   class="form-control border-0 bg-transparent shadow-none text-dark small"
                   rows="2"
                   placeholder="Nhập nội dung bạn muốn hỏi..."

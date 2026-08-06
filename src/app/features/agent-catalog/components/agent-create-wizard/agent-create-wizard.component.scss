@@ -251,6 +251,7 @@
     background-color: #f8fafc !important;
     border-color: #e2e8f0 !important;
     border-radius: 16px !important;
+    cursor: text !important; // Con trỏ I-beam gõ chữ khi rê chuột vào ô nhắn
     transition: all 0.15s ease-in-out;
 
     &:focus-within {
@@ -261,6 +262,7 @@
 
     textarea {
       resize: none;
+      cursor: text !important;
       font-family: inherit;
       font-size: 13px !important;
       line-height: 1.5;
@@ -269,6 +271,10 @@
       &::placeholder {
         color: #94a3b8;
       }
+    }
+
+    .btn {
+      cursor: pointer !important; // Các nút bấm đính kèm/gửi giữ nguyên con trỏ pointer
     }
 
     .btn-light {
