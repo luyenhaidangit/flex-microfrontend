@@ -4,7 +4,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastService } from 'angular-toastify';
 import { AgentService } from '../../services/agent.service';
-import { ApplicationRealtimeService, RealtimeConnectionState } from '../../../../core/services/application-realtime.service';
+import { ApplicationRealtimeService } from '../../../../core/realtime/application-realtime.service';
+import { RealtimeConnectionState } from '../../../../core/realtime/realtime-event.model';
 
 export interface WizardStepItem {
   id: number;
@@ -95,12 +96,10 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
     this.realtimeSubscriptions.add(this.applicationRealtimeService.notifications$.subscribe(notification => {
       if (notification.message) window.alert(notification.message);
     }));
-    this.applicationRealtimeService.connect();
   }
 
   ngOnDestroy(): void {
     this.realtimeSubscriptions.unsubscribe();
-    this.applicationRealtimeService.disconnect();
   }
 
   initForm(): void {

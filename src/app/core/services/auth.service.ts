@@ -1,9 +1,11 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, firstValueFrom } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, firstValueFrom } from 'rxjs';
 import { LocalStorage } from '../enums/local-storage.enum';
 import { Header } from '../enums/http.enum';
+
+export type AuthenticationLifecycleEvent = 'authenticated' | 'loggedOut';
 
 export interface MeProfile {
   sub?: string;
@@ -29,12 +31,14 @@ export class AuthenticationService {
 
   private meSubject = new BehaviorSubject<MeProfile | null>(null);
   public readonly me$ = this.meSubject.asObservable();
+  private readonly authenticationLifecycleSubject = new Subject<AuthenticationLifecycleEvent>();
+  public readonly authenticationLifecycle$ = this.authenticationLifecycleSubject.asObservable();
 
   private accessToken: string | null = null;
   private logoutTimer: any;
   private isLoggingOut: boolean = false;
 
-  constructor(private http: HttpClient, private router: Router, private injector: Injector) {
+  constructor(private http: HttpClient, private router: Router) {
     this.bootstrapFromStorage();
 
     // Sync multi-tab
@@ -58,6 +62,7 @@ export class AuthenticationService {
   logout(): void {
     if (this.isLoggingOut) return;
     this.isLoggingOut = true;
+    this.authenticationLifecycleSubject.next('loggedOut');
     
     // Call logout API first
     this.callLogoutApi().finally(() => {
@@ -91,6 +96,7 @@ export class AuthenticationService {
     const token = this.getToken();
     if (!token) { this.meSubject.next(null); return; }
     this.scheduleAutoLogoutFromToken(token);
+    this.authenticationLifecycleSubject.next('authenticated');
     await this.refreshProfile();
   }
 
@@ -104,6 +110,7 @@ export class AuthenticationService {
       localStorage.removeItem(AuthenticationService.TOKEN_KEY);
     }
     this.bootstrapFromStorage();
+    this.authenticationLifecycleSubject.next('authenticated');
     this.refreshProfile();
   }
 
@@ -157,6 +164,7 @@ export class AuthenticationService {
   private forceLogout(navigate = true): void {
     if (this.isLoggingOut) return;
     this.isLoggingOut = true;
+    this.authenticationLifecycleSubject.next('loggedOut');
     
     // Call logout API first
     this.callLogoutApi().finally(() => {
