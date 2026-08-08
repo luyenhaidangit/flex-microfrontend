@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { AuthenticationLifecycleEvents } from '../auth/auth.model';
 import { AuthenticationService } from '../auth/auth.service';
 import { RealtimeConnection } from './realtime-connection';
 import {
@@ -35,7 +36,7 @@ export class ApplicationRealtimeService implements OnDestroy {
     if (this.authenticationSubscription) return;
 
     this.authenticationSubscription = this.authenticationService.authenticationLifecycle$.subscribe(event => {
-      if (event === 'authenticated') {
+      if (event === AuthenticationLifecycleEvents.Authenticated) {
         this.refreshAuthentication();
       } else {
         this.disconnect();

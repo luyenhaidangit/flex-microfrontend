@@ -2,37 +2,17 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, Subject, firstValueFrom } from 'rxjs';
-import { LocalStorage } from '../enums/local-storage.enum';
 import { Header } from '../enums/http.enum';
-
-export const AuthenticationLifecycleEvents = {
-  Authenticated: 'authenticated',
-  LoggedOut: 'loggedOut',
-} as const;
-
-export type AuthenticationLifecycleEvent = typeof AuthenticationLifecycleEvents[keyof typeof AuthenticationLifecycleEvents];
-
-export interface MeProfile {
-  sub?: string;
-  username?: string;
-  roles?: string[];
-  permissions?: string[];
-  id?: number | string;
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-}
-
-export interface LoginResponse {
-  isSuccess: boolean;
-  message?: string;
-  data?: { accessToken: string } | null;
-}
+import { AUTH_LOGOUT_LEEWAY_MS, AUTH_TOKEN_STORAGE_KEY } from './auth.constants';
+import {
+  AuthenticationLifecycleEvent,
+  AuthenticationLifecycleEvents,
+  LoginResponse,
+  MeProfile,
+} from './auth.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
-  private static readonly TOKEN_KEY = LocalStorage.AuthToken;
-  private static readonly LOGOUT_LEEWAY_MS = 30_000;
   private meSubject = new BehaviorSubject<MeProfile | null>(null);
   public readonly me$ = this.meSubject.asObservable();
   private readonly authenticationLifecycleSubject = new Subject<AuthenticationLifecycleEvent>();
@@ -45,7 +25,7 @@ export class AuthenticationService {
     this.bootstrapFromStorage();
     if (typeof window !== 'undefined') {
       window.addEventListener('storage', (e: StorageEvent) => {
-        if (e.key !== AuthenticationService.TOKEN_KEY) return;
+        if (e.key !== AUTH_TOKEN_STORAGE_KEY) return;
         if (e.newValue === null) this.forceLogout(false);
         else this.bootstrapFromStorage(true);
       });
@@ -86,11 +66,11 @@ export class AuthenticationService {
 
   setAuthToken(accessToken: string, rememberMe: boolean): void {
     if (rememberMe) {
-      localStorage.setItem(AuthenticationService.TOKEN_KEY, accessToken);
-      sessionStorage.removeItem(AuthenticationService.TOKEN_KEY);
+      localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, accessToken);
+      sessionStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
     } else {
-      sessionStorage.setItem(AuthenticationService.TOKEN_KEY, accessToken);
-      localStorage.removeItem(AuthenticationService.TOKEN_KEY);
+      sessionStorage.setItem(AUTH_TOKEN_STORAGE_KEY, accessToken);
+      localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
     }
     this.bootstrapFromStorage();
     this.authenticationLifecycleSubject.next(AuthenticationLifecycleEvents.Authenticated);
@@ -126,7 +106,7 @@ export class AuthenticationService {
 
   private schedule(msUntilExp: number): void {
     if (this.logoutTimer) clearTimeout(this.logoutTimer);
-    const fireIn = Math.max(0, msUntilExp - AuthenticationService.LOGOUT_LEEWAY_MS);
+    const fireIn = Math.max(0, msUntilExp - AUTH_LOGOUT_LEEWAY_MS);
     this.logoutTimer = setTimeout(() => this.forceLogout(true), fireIn);
   }
 
@@ -149,8 +129,8 @@ export class AuthenticationService {
   }
 
   private clearTokenFromStorage(): void {
-    localStorage.removeItem(AuthenticationService.TOKEN_KEY);
-    sessionStorage.removeItem(AuthenticationService.TOKEN_KEY);
+    localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
+    sessionStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
   }
 
   private async refreshProfile(): Promise<void> {
@@ -165,8 +145,8 @@ export class AuthenticationService {
   }
 
   private readRawToken(): string | null {
-    return localStorage.getItem(AuthenticationService.TOKEN_KEY)
-      ?? sessionStorage.getItem(AuthenticationService.TOKEN_KEY);
+    return localStorage.getItem(AUTH_TOKEN_STORAGE_KEY)
+      ?? sessionStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
   }
 
   private safeDecodeJwt(token: string): any | null {
