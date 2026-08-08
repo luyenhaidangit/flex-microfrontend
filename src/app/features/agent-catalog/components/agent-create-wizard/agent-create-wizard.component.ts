@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastService } from 'angular-toastify';
 import { AgentService } from '../../services/agent.service';
+import { ApplicationRealtimeService, RealtimeConnectionState } from '../../../../core/services/application-realtime.service';
 
 export interface WizardStepItem {
   id: number;
@@ -23,7 +25,7 @@ export interface ChatMessage {
   templateUrl: './agent-create-wizard.component.html',
   styleUrls: ['./agent-create-wizard.component.scss']
 })
-export class AgentCreateWizardComponent implements OnInit {
+export class AgentCreateWizardComponent implements OnInit, OnDestroy {
   activeTab: 'info' | 'chat' | 'report' = 'info';
   currentStep = 1;
   isSidebarCollapsed = false;
@@ -54,6 +56,9 @@ export class AgentCreateWizardComponent implements OnInit {
   // Test Chat Messages
   chatMessages: ChatMessage[] = [];
   chatInputText: string = '';
+  connectionState: RealtimeConnectionState = 'disconnected';
+  realtimeError = '';
+  private readonly realtimeSubscriptions = new Subscription();
 
   defaultInstructions = `I. Vai trò
 - Là Nhân viên AI Chăm sóc Khách hàng sau bán của doanh nghiệp.
@@ -67,7 +72,8 @@ export class AgentCreateWizardComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private agentService: AgentService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private readonly applicationRealtimeService: ApplicationRealtimeService,
   ) {}
 
   ngOnInit(): void {
@@ -75,6 +81,26 @@ export class AgentCreateWizardComponent implements OnInit {
     this.currentTimeFormatted = `${now.toLocaleDateString('vi-VN')} ${now.getHours()}:${now.getMinutes() < 10 ? '0' : ''}${now.getMinutes()}`;
 
     this.initForm();
+    this.realtimeSubscriptions.add(this.applicationRealtimeService.connectionState$.subscribe(state => {
+      this.connectionState = state;
+      if (state === 'connected') this.realtimeError = '';
+    }));
+    this.realtimeSubscriptions.add(this.applicationRealtimeService.messages$.subscribe(message => {
+      this.chatMessages.push({
+        sender: 'agent',
+        text: `Agent Service đã nhận: ${message.message}`,
+        time: this.formatTime(new Date(message.occurredAt))
+      });
+    }));
+    this.realtimeSubscriptions.add(this.applicationRealtimeService.notifications$.subscribe(notification => {
+      if (notification.message) window.alert(notification.message);
+    }));
+    this.applicationRealtimeService.connect();
+  }
+
+  ngOnDestroy(): void {
+    this.realtimeSubscriptions.unsubscribe();
+    this.applicationRealtimeService.disconnect();
   }
 
   initForm(): void {
@@ -103,10 +129,14 @@ export class AgentCreateWizardComponent implements OnInit {
     this.steps.forEach((s) => (s.isActive = s.id === stepId));
   }
 
-  onSendMessage(): void {
-    if (!this.chatInputText.trim()) return;
-
+  async onSendMessage(): Promise<void> {
     const userText = this.chatInputText.trim();
+    if (!userText) return;
+    if (this.connectionState !== 'connected') {
+      this.realtimeError = 'Chưa kết nối Agent Service, vui lòng thử lại.';
+      return;
+    }
+
     this.chatMessages.push({
       sender: 'user',
       text: userText,
@@ -114,14 +144,15 @@ export class AgentCreateWizardComponent implements OnInit {
     });
     this.chatInputText = '';
 
-    // Auto bot response
-    setTimeout(() => {
-      this.chatMessages.push({
-        sender: 'agent',
-        text: `Cảm ơn anh/chị. Em (${this.f['name'].value}) đã nhận được câu hỏi "${userText}". Em có thể hỗ trợ thông tin chi tiết gì cho anh/chị ạ?`,
-        time: 'Vừa xong'
-      });
-    }, 600);
+    try {
+      await this.applicationRealtimeService.sendMessage(userText);
+    } catch {
+      this.realtimeError = 'Không thể gửi tin nhắn đến Agent Service.';
+    }
+  }
+
+  private formatTime(date: Date): string {
+    return `${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
   }
 
   onCancel(): void {

@@ -2,6 +2,8 @@ export const environment = {
   production: true,
   defaultauth: 'fackbackend',
   apiBaseUrl: '',
+  agentApiBaseUrl: '',
+  agentRealtimeHubPath: '/hubs/application',
   exchangeApiBaseUrl: '',
   marketBoardPollingIntervalMs: 2000,
   demoBrokers: [

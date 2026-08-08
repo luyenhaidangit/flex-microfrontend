@@ -6,6 +6,8 @@ export const environment = {
   production: false,
   defaultauth: 'database',
   apiBaseUrl: 'https://api.flex.internal',
+  agentApiBaseUrl: 'http://localhost:7001',
+  agentRealtimeHubPath: '/hubs/application',
   exchangeApiBaseUrl: 'http://localhost:5266',
   marketBoardPollingIntervalMs: 2000,
   demoBrokers: [

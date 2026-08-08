@@ -232,6 +232,19 @@
               </button>
             </div>
 
+            <div class="d-flex align-items-center mb-2 small" [ngClass]="{
+              'text-success': connectionState === 'connected',
+              'text-warning': connectionState === 'connecting' || connectionState === 'reconnecting',
+              'text-danger': connectionState === 'disconnected'
+            }">
+              <i class="bx bx-radio-circle-marked me-1"></i>
+              <span *ngIf="connectionState === 'connecting'">Đang kết nối Agent Service...</span>
+              <span *ngIf="connectionState === 'connected'">Đã kết nối Agent Service</span>
+              <span *ngIf="connectionState === 'reconnecting'">Đang kết nối lại Agent Service...</span>
+              <span *ngIf="connectionState === 'disconnected'">Chưa kết nối Agent Service</span>
+            </div>
+            <div *ngIf="realtimeError" class="text-danger small mb-2">{{ realtimeError }}</div>
+
             <!-- Chat Conversation Area -->
             <div class="preview-chat-body flex-grow-1 overflow-auto d-flex flex-column align-items-center justify-content-center text-center p-3">
               <div *ngIf="!chatMessages.length" class="empty-chat-welcome">
@@ -295,7 +308,7 @@
                     <button type="button" class="btn btn-sm btn-light rounded-circle p-1.5 text-secondary d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Nhập bằng giọng nói">
                       <i class="bx bx-microphone fs-5"></i>
                     </button>
-                    <button type="button" class="btn btn-sm btn-primary rounded-circle p-1.5 text-white d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;" (click)="onSendMessage()" title="Gửi tin nhắn">
+                  <button type="button" class="btn btn-sm btn-primary rounded-circle p-1.5 text-white d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;" (click)="onSendMessage()" [disabled]="connectionState !== 'connected'" title="Gửi tin nhắn">
                       <i class="bx bx-send fs-5"></i>
                     </button>
                   </div>
