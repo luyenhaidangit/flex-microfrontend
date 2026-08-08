@@ -2,8 +2,8 @@
 
 /* Compact Single-Row Toolbar Styles */
 .category-chip {
-  background-color: #f3f3f9;
-  color: #495057;
+  background-color: #f8f9fa;
+  color: #74788d;
   border-radius: 50rem;
   padding: 0.35rem 0.85rem;
   font-size: 0.82rem;
@@ -21,16 +21,17 @@
   }
 
   &:hover {
-    background-color: #e2e5ec;
-    color: #212529;
+    background-color: #eef2ff;
+    color: #556ee6;
   }
 
   &.active {
-    background-color: #212529;
+    background-color: #556ee6;
     color: #ffffff;
+    border-color: #556ee6;
 
     .chip-dot {
-      background-color: #34c38f;
+      background-color: #ffffff;
     }
   }
 }

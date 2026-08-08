@@ -11,10 +11,10 @@
     .page-link {
       display: block;
       padding: 6px 10px;
-      color: #007bff;
+      color: #74788d;
       text-decoration: none;
-      background-color: #fff;
-      border: 1px solid #dee2e6;
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
       border-radius: 4px;
       transition: all 0.15s ease-in-out;
       cursor: pointer;
@@ -22,34 +22,34 @@
       font-size: 12px;
 
       &:hover {
-        color: #0056b3;
-        background-color: #e9ecef;
-        border-color: #adb5bd;
+        color: #556ee6;
+        background-color: #eef2ff;
+        border-color: #c8d0ff;
       }
 
       &:focus {
         outline: none;
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        box-shadow: 0 0 0 0.2rem rgba(85, 110, 230, 0.2);
       }
     }
 
     &.active .page-link {
       color: #fff;
-      background-color: #007bff;
-      border-color: #007bff;
+      background-color: #556ee6;
+      border-color: #556ee6;
     }
 
     &.disabled .page-link {
-      color: #6c757d;
-      background-color: #fff;
-      border-color: #dee2e6;
+      color: #adb5bd;
+      background-color: #f8f9fa;
+      border-color: #e9ecef;
       cursor: not-allowed;
-      opacity: 0.65;
+      opacity: 1;
 
       &:hover {
-        color: #6c757d;
-        background-color: #fff;
-        border-color: #dee2e6;
+        color: #adb5bd;
+        background-color: #f8f9fa;
+        border-color: #e9ecef;
       }
     }
   }
