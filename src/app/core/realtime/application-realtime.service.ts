@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AuthenticationService } from '../services/auth.service';
+import { AuthenticationService } from '../auth/auth.service';
 import { RealtimeConnection } from './realtime-connection';
 import {
   ApplicationRealtimeEvents,

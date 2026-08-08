@@ -5,7 +5,12 @@ import { BehaviorSubject, Observable, Subject, firstValueFrom } from 'rxjs';
 import { LocalStorage } from '../enums/local-storage.enum';
 import { Header } from '../enums/http.enum';
 
-export type AuthenticationLifecycleEvent = 'authenticated' | 'loggedOut';
+export const AuthenticationLifecycleEvents = {
+  Authenticated: 'authenticated',
+  LoggedOut: 'loggedOut',
+} as const;
+
+export type AuthenticationLifecycleEvent = typeof AuthenticationLifecycleEvents[keyof typeof AuthenticationLifecycleEvents];
 
 export interface MeProfile {
   sub?: string;
@@ -28,33 +33,25 @@ export interface LoginResponse {
 export class AuthenticationService {
   private static readonly TOKEN_KEY = LocalStorage.AuthToken;
   private static readonly LOGOUT_LEEWAY_MS = 30_000;
-
   private meSubject = new BehaviorSubject<MeProfile | null>(null);
   public readonly me$ = this.meSubject.asObservable();
   private readonly authenticationLifecycleSubject = new Subject<AuthenticationLifecycleEvent>();
   public readonly authenticationLifecycle$ = this.authenticationLifecycleSubject.asObservable();
-
   private accessToken: string | null = null;
   private logoutTimer: any;
-  private isLoggingOut: boolean = false;
+  private isLoggingOut = false;
 
   constructor(private http: HttpClient, private router: Router) {
     this.bootstrapFromStorage();
-
-    // Sync multi-tab
     if (typeof window !== 'undefined') {
       window.addEventListener('storage', (e: StorageEvent) => {
         if (e.key !== AuthenticationService.TOKEN_KEY) return;
-        if (e.newValue === null) {
-          this.forceLogout(false);
-        } else {
-          this.bootstrapFromStorage(true);
-        }
+        if (e.newValue === null) this.forceLogout(false);
+        else this.bootstrapFromStorage(true);
       });
     }
   }
 
-  // ===== Public API =====
   login(userName: string, password: string, rememberMe: boolean): Observable<LoginResponse> {
     return this.http.post<LoginResponse>('/api/auth/login', { userName, password, rememberMe });
   }
@@ -62,45 +59,31 @@ export class AuthenticationService {
   logout(): void {
     if (this.isLoggingOut) return;
     this.isLoggingOut = true;
-    this.authenticationLifecycleSubject.next('loggedOut');
-    
-    // Call logout API first
+    this.authenticationLifecycleSubject.next(AuthenticationLifecycleEvents.LoggedOut);
     this.callLogoutApi().finally(() => {
-      // Always clear local state regardless of API call result
-      // Ensure all UI overlays are closed (modals/backdrops)
       this.clearTokenFromStorage();
       this.clearTimersAndState();
-      this.isLoggingOut = false; // Reset flag
+      this.isLoggingOut = false;
       this.router.navigate(['/account/login']);
     });
   }
 
-  /** Lấy token (cho Interceptor/Guard) */
   getToken(): string | null {
-    if (this.accessToken) return this.accessToken;
-    return this.readRawToken();
+    return this.accessToken ?? this.readRawToken();
   }
 
-  /** Observable profile */
-  getProfile$(): Observable<MeProfile | null> {
-    return this.me$;
-  }
+  getProfile$(): Observable<MeProfile | null> { return this.me$; }
 
-  /** Snapshot profile */
-  getCurrentUser(): MeProfile | null {
-    return this.meSubject.value;
-  }
+  getCurrentUser(): MeProfile | null { return this.meSubject.value; }
 
-  // Verify token and load profile
   async initOnStartup(): Promise<void> {
     const token = this.getToken();
     if (!token) { this.meSubject.next(null); return; }
     this.scheduleAutoLogoutFromToken(token);
-    this.authenticationLifecycleSubject.next('authenticated');
+    this.authenticationLifecycleSubject.next(AuthenticationLifecycleEvents.Authenticated);
     await this.refreshProfile();
   }
 
-  // Save token after login
   setAuthToken(accessToken: string, rememberMe: boolean): void {
     if (rememberMe) {
       localStorage.setItem(AuthenticationService.TOKEN_KEY, accessToken);
@@ -110,22 +93,17 @@ export class AuthenticationService {
       localStorage.removeItem(AuthenticationService.TOKEN_KEY);
     }
     this.bootstrapFromStorage();
-    this.authenticationLifecycleSubject.next('authenticated');
+    this.authenticationLifecycleSubject.next(AuthenticationLifecycleEvents.Authenticated);
     this.refreshProfile();
   }
 
-  // ===== Internal =====
   private async callLogoutApi(): Promise<void> {
     const token = this.getToken();
-    if (!token) return; // No token to logout
-    
+    if (!token) return;
     try {
       const headers = new HttpHeaders().set(Header.SkipAuth, 'true');
-      await firstValueFrom(
-        this.http.post('/api/auth/logout', {}, { headers })
-      );
+      await firstValueFrom(this.http.post('/api/auth/logout', {}, { headers }));
     } catch (error) {
-      // Log error but don't prevent logout
       console.warn('Logout API call failed:', error);
     }
   }
@@ -133,26 +111,17 @@ export class AuthenticationService {
   private bootstrapFromStorage(loadProfile = false): void {
     const token = this.readRawToken();
     if (!token) { this.forceLogout(false); return; }
-
     const payload = this.safeDecodeJwt(token);
     const expMs = (payload?.exp ?? 0) * 1000;
-    const now = Date.now();
-    if (!payload?.exp || now >= expMs) { this.forceLogout(true); return; }
-
+    if (!payload?.exp || Date.now() >= expMs) { this.forceLogout(true); return; }
     this.accessToken = token;
-    this.schedule(expMs - now);
-
-    if (loadProfile) {
-      void this.refreshProfile();
-    }
+    this.schedule(expMs - Date.now());
+    if (loadProfile) void this.refreshProfile();
   }
 
   private scheduleAutoLogoutFromToken(token: string): void {
     const exp = this.safeDecodeJwt(token)?.exp;
-    if (!exp) return;
-    const expMs = exp * 1000;
-    const now = Date.now();
-    this.schedule(expMs - now);
+    if (exp) this.schedule(exp * 1000 - Date.now());
   }
 
   private schedule(msUntilExp: number): void {
@@ -164,14 +133,11 @@ export class AuthenticationService {
   private forceLogout(navigate = true): void {
     if (this.isLoggingOut) return;
     this.isLoggingOut = true;
-    this.authenticationLifecycleSubject.next('loggedOut');
-    
-    // Call logout API first
+    this.authenticationLifecycleSubject.next(AuthenticationLifecycleEvents.LoggedOut);
     this.callLogoutApi().finally(() => {
-      // Always clear local state regardless of API call result
       this.clearTimersAndState();
       this.clearTokenFromStorage();
-      this.isLoggingOut = false; // Reset flag
+      this.isLoggingOut = false;
       if (navigate) this.router.navigate(['/account/login']);
     });
   }
@@ -187,14 +153,12 @@ export class AuthenticationService {
     sessionStorage.removeItem(AuthenticationService.TOKEN_KEY);
   }
 
-  // Load profile from /api/auth/me
   private async refreshProfile(): Promise<void> {
     const token = this.getToken();
     if (!token) { this.meSubject.next(null); return; }
     try {
       const res: any = await firstValueFrom(this.http.get('/api/auth/me'));
-      const profile: MeProfile | null = res?.data ?? res ?? null;
-      this.meSubject.next(profile);
+      this.meSubject.next(res?.data ?? res ?? null);
     } catch {
       this.logout();
     }
@@ -202,14 +166,13 @@ export class AuthenticationService {
 
   private readRawToken(): string | null {
     return localStorage.getItem(AuthenticationService.TOKEN_KEY)
-        ?? sessionStorage.getItem(AuthenticationService.TOKEN_KEY);
+      ?? sessionStorage.getItem(AuthenticationService.TOKEN_KEY);
   }
 
   private safeDecodeJwt(token: string): any | null {
     try {
       const base64 = token.split('.')[1];
-      if (!base64) return null;
-      return JSON.parse(atob(base64));
+      return base64 ? JSON.parse(atob(base64)) : null;
     } catch {
       return null;
     }

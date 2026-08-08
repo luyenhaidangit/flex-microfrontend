@@ -3,7 +3,7 @@ import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/ro
 
 import { Observable, of } from 'rxjs';
 
-import { AuthenticationService } from '../services/auth.service';
+import { AuthenticationService } from '../auth/auth.service';
 import { ModalService } from '../services/modal.service';
 import { ConfigService } from '../services/config.service';
 

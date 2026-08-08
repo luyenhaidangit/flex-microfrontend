@@ -4,7 +4,7 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
 
 import { ToastService } from 'angular-toastify';
 
-import { AuthenticationService } from '../../../core/services/auth.service';
+import { AuthenticationService } from '../../../core/auth/auth.service';
 import { ModalService } from 'src/app/core/services/modal.service';
 import { ConfigService } from 'src/app/core/services/config.service';
 import { AUTH_MODE } from 'src/app/core/constants/config-values.constant';

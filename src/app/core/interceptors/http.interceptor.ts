@@ -9,7 +9,7 @@ import { environment } from '../../../environments/environment';
 import { ToastService } from 'angular-toastify';
 import { Header, HttpError } from '../enums/http.enum';
 import { LoaderService } from '../services/loader.service';
-import { AuthenticationService } from '../services/auth.service';
+import { AuthenticationService } from '../auth/auth.service';
 import { ErrorMessageService } from '../services/error-message.service';
 
 @Injectable()
