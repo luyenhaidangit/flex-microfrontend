@@ -5,7 +5,11 @@ import {
   HubConnectionState,
 } from '@microsoft/signalr';
 import { BehaviorSubject } from 'rxjs';
-import { RealtimeConnectionState } from './realtime-event.model';
+import {
+  RealtimeConnectionState,
+  RealtimeServerEventName,
+  RealtimeServerEvents,
+} from './realtime-event.model';
 
 type RealtimeEventHandler = (...args: any[]) => void;
 
@@ -22,9 +26,12 @@ export class RealtimeConnection implements OnDestroy {
     return this.connection?.state ?? HubConnectionState.Disconnected;
   }
 
-  on<T>(eventName: string, handler: (payload: T) => void): void {
+  on<K extends RealtimeServerEventName>(
+    eventName: K,
+    handler: (payload: RealtimeServerEvents[K]) => void,
+  ): void {
     const wrappedHandler: RealtimeEventHandler = (...args) =>
-      this.zone.run(() => handler(args[0] as T));
+      this.zone.run(() => handler(args[0] as RealtimeServerEvents[K]));
 
     const handlers = this.eventHandlers.get(eventName) ?? new Set<RealtimeEventHandler>();
     handlers.add(wrappedHandler);

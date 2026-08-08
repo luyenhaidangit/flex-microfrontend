@@ -4,6 +4,8 @@ import { environment } from '../../../environments/environment';
 import { AuthenticationService } from '../services/auth.service';
 import { RealtimeConnection } from './realtime-connection';
 import {
+  ApplicationRealtimeEvents,
+  ApplicationRealtimeMethods,
   DemoChatMessage,
   DemoNotification,
 } from './realtime-event.model';
@@ -21,10 +23,10 @@ export class ApplicationRealtimeService implements OnDestroy {
     private readonly realtimeConnection: RealtimeConnection,
     private readonly authenticationService: AuthenticationService,
   ) {
-    this.realtimeConnection.on<DemoChatMessage>('messageReceived', message => {
+    this.realtimeConnection.on(ApplicationRealtimeEvents.MessageReceived, (message: DemoChatMessage) => {
       this.messageSubject.next(message);
     });
-    this.realtimeConnection.on<DemoNotification>('demoNotification', notification => {
+    this.realtimeConnection.on(ApplicationRealtimeEvents.DemoNotification, (notification: DemoNotification) => {
       this.notificationSubject.next(notification);
     });
   }
@@ -53,7 +55,7 @@ export class ApplicationRealtimeService implements OnDestroy {
     const normalizedMessage = message.trim();
     if (!normalizedMessage) return;
 
-    await this.realtimeConnection.invoke('SendMessage', normalizedMessage);
+    await this.realtimeConnection.invoke(ApplicationRealtimeMethods.SendMessage, normalizedMessage);
   }
 
   ngOnDestroy(): void {
