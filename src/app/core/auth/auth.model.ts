@@ -8,8 +8,7 @@ export type AuthenticationLifecycleEvent = typeof AuthenticationLifecycleEvents[
 
 // Model
 export interface MeProfile {
-  sub?: string;
-  username?: string;
+  userName?: string;
   roles?: string[];
   permissions?: string[];
   id?: number | string;

@@ -4,8 +4,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastService } from 'angular-toastify';
 import { AgentService } from '../../services/agent.service';
+import { AuthenticationService } from '../../../../core/auth/auth.service';
 import { ApplicationRealtimeService } from '../../../../core/realtime/application-realtime.service';
-import { RealtimeConnectionState } from '../../../../core/realtime/realtime-event.model';
+import { DirectChatMessage, RealtimeConnectionState } from '../../../../core/realtime/realtime-event.model';
 
 export interface WizardStepItem {
   id: number;
@@ -57,6 +58,9 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
   // Test Chat Messages
   chatMessages: ChatMessage[] = [];
   chatInputText: string = '';
+  readonly chatUsers = ['admin', 'admin2'];
+  currentUserId = '';
+  recipientUserId = 'admin2';
   connectionState: RealtimeConnectionState = 'disconnected';
   realtimeError = '';
   private readonly realtimeSubscriptions = new Subscription();
@@ -74,6 +78,7 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
     private router: Router,
     private agentService: AgentService,
     private toastService: ToastService,
+    private readonly authenticationService: AuthenticationService,
     private readonly applicationRealtimeService: ApplicationRealtimeService,
   ) {}
 
@@ -86,15 +91,14 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
       this.connectionState = state;
       if (state === 'connected') this.realtimeError = '';
     }));
-    this.realtimeSubscriptions.add(this.applicationRealtimeService.messages$.subscribe(message => {
-      this.chatMessages.push({
-        sender: 'agent',
-        text: `Agent Service đã nhận: ${message.message}`,
-        time: this.formatTime(new Date(message.occurredAt))
-      });
+    this.realtimeSubscriptions.add(this.authenticationService.getProfile$().subscribe(profile => {
+      this.currentUserId = profile?.userName ?? '';
+      if (this.currentUserId && this.recipientUserId === this.currentUserId) {
+        this.recipientUserId = this.chatUsers.find(user => user !== this.currentUserId) ?? '';
+      }
     }));
-    this.realtimeSubscriptions.add(this.applicationRealtimeService.notifications$.subscribe(notification => {
-      if (notification.message) window.alert(notification.message);
+    this.realtimeSubscriptions.add(this.applicationRealtimeService.directMessages$.subscribe(message => {
+      this.addDirectMessage(message);
     }));
   }
 
@@ -135,19 +139,26 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
       this.realtimeError = 'Chưa kết nối Agent Service, vui lòng thử lại.';
       return;
     }
+    if (!this.recipientUserId || this.recipientUserId === this.currentUserId) {
+      this.realtimeError = 'Vui lòng chọn người nhận hợp lệ.';
+      return;
+    }
 
-    this.chatMessages.push({
-      sender: 'user',
-      text: userText,
-      time: 'Vừa xong'
-    });
     this.chatInputText = '';
 
     try {
-      await this.applicationRealtimeService.sendMessage(userText);
+      await this.applicationRealtimeService.sendDirectMessage(this.recipientUserId, userText);
     } catch {
       this.realtimeError = 'Không thể gửi tin nhắn đến Agent Service.';
     }
+  }
+
+  private addDirectMessage(message: DirectChatMessage): void {
+    this.chatMessages.push({
+      sender: message.senderUserId === this.currentUserId ? 'user' : 'agent',
+      text: message.message,
+      time: this.formatTime(new Date(message.occurredAt))
+    });
   }
 
   private formatTime(date: Date): string {

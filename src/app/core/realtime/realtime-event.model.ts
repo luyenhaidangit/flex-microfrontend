@@ -1,29 +1,23 @@
 export type RealtimeConnectionState = 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
 
-export interface DemoChatMessage {
+export interface DirectChatMessage {
   type: string;
-  message: string;
-  occurredAt: string;
-}
-
-export interface DemoNotification {
-  type: string;
+  senderUserId: string;
+  recipientUserId: string;
   message: string;
   occurredAt: string;
 }
 
 export interface RealtimeServerEvents {
-  messageReceived: DemoChatMessage;
-  demoNotification: DemoNotification;
+  directMessage: DirectChatMessage;
 }
 
 export type RealtimeServerEventName = keyof RealtimeServerEvents;
 
 export const ApplicationRealtimeEvents = {
-  MessageReceived: 'messageReceived',
-  DemoNotification: 'demoNotification',
+  DirectMessage: 'directMessage',
 } as const;
 
 export const ApplicationRealtimeMethods = {
-  SendMessage: 'SendMessage',
+  SendDirectMessage: 'SendDirectMessage',
 } as const;

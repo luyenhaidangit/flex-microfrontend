@@ -7,16 +7,13 @@ import { RealtimeConnection } from './realtime-connection';
 import {
   ApplicationRealtimeEvents,
   ApplicationRealtimeMethods,
-  DemoChatMessage,
-  DemoNotification,
+  DirectChatMessage,
 } from './realtime-event.model';
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationRealtimeService implements OnDestroy {
-  private readonly messageSubject = new Subject<DemoChatMessage>();
-  readonly messages$ = this.messageSubject.asObservable();
-  private readonly notificationSubject = new Subject<DemoNotification>();
-  readonly notifications$ = this.notificationSubject.asObservable();
+  private readonly directMessageSubject = new Subject<DirectChatMessage>();
+  readonly directMessages$ = this.directMessageSubject.asObservable();
   readonly connectionState$ = this.realtimeConnection.connectionState$;
   private authenticationSubscription?: Subscription;
 
@@ -24,11 +21,8 @@ export class ApplicationRealtimeService implements OnDestroy {
     private readonly realtimeConnection: RealtimeConnection,
     private readonly authenticationService: AuthenticationService,
   ) {
-    this.realtimeConnection.on(ApplicationRealtimeEvents.MessageReceived, (message: DemoChatMessage) => {
-      this.messageSubject.next(message);
-    });
-    this.realtimeConnection.on(ApplicationRealtimeEvents.DemoNotification, (notification: DemoNotification) => {
-      this.notificationSubject.next(notification);
+    this.realtimeConnection.on(ApplicationRealtimeEvents.DirectMessage, (message: DirectChatMessage) => {
+      this.directMessageSubject.next(message);
     });
   }
 
@@ -52,11 +46,15 @@ export class ApplicationRealtimeService implements OnDestroy {
     this.realtimeConnection.disconnect();
   }
 
-  async sendMessage(message: string): Promise<void> {
+  async sendDirectMessage(recipientUserId: string, message: string): Promise<void> {
+    const normalizedRecipientUserId = recipientUserId.trim();
     const normalizedMessage = message.trim();
-    if (!normalizedMessage) return;
+    if (!normalizedRecipientUserId || !normalizedMessage) return;
 
-    await this.realtimeConnection.invoke(ApplicationRealtimeMethods.SendMessage, normalizedMessage);
+    await this.realtimeConnection.invoke(
+      ApplicationRealtimeMethods.SendDirectMessage,
+      normalizedRecipientUserId,
+      normalizedMessage);
   }
 
   ngOnDestroy(): void {
