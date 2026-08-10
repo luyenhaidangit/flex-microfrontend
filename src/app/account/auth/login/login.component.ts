@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
@@ -94,6 +95,15 @@ export class LoginComponent implements OnInit {
             this.authenticationService.setAuthToken(accessToken,isRemember);
             this.toastService.success('Đăng nhập thành công!');
             this.router.navigate(['/dashboard']);
+          }
+        },
+        (error: HttpErrorResponse) => {
+          if (error.status === 0) {
+            this.toastService.error('Không thể kết nối đến máy chủ. Vui lòng thử lại!');
+          } else if (error.status === 400 || error.status === 401 || error?.error?.errorCode === 'INVALID_CREDENTIALS') {
+            this.toastService.error('Tên đăng nhập hoặc mật khẩu không đúng.');
+          } else {
+            this.toastService.error('Đăng nhập không thành công. Vui lòng thử lại!');
           }
         }
       );

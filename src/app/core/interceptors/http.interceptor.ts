@@ -55,15 +55,15 @@ export class AppHttpInterceptor implements HttpSystemInterceptor {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         // Error handling
-        if (error.status === 0) {
-          // Network/CORS error
-          this.toastService.error('Không thể kết nối đến máy chủ (mạng/CORS)!');
-        } else if (error.status === HttpError.ConnectionRefused) {
-          this.toastService.error('Không thể kết nối đến máy chủ!');
-        } else {
-          // Skip toast for requests with SkipToastError header
-          const skipToast = request.headers.has(Header.SkipToastError);
-          if (!skipToast) {
+        // Skip toast for requests with SkipToastError header
+        const skipToast = request.headers.has(Header.SkipToastError);
+        if (!skipToast) {
+          if (error.status === 0) {
+            // Network/CORS error
+            this.toastService.error('Không thể kết nối đến máy chủ (mạng/CORS)!');
+          } else if (error.status === HttpError.ConnectionRefused) {
+            this.toastService.error('Không thể kết nối đến máy chủ!');
+          } else {
             // Nếu có errorCode, sử dụng translation, nếu không thì dùng message như cũ
             if (error?.error?.errorCode) {
               const errorMessage = this.injector.get(ErrorMessageService).getErrorMessage(error);

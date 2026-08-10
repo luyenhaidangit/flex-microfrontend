@@ -33,7 +33,8 @@ export class AuthenticationService {
   }
 
   login(userName: string, password: string, rememberMe: boolean): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>('/api/auth/login', { userName, password, rememberMe });
+    const headers = new HttpHeaders().set(Header.SkipToastError, 'true');
+    return this.http.post<LoginResponse>('/api/auth/login', { userName, password, rememberMe }, { headers });
   }
 
   logout(): void {
