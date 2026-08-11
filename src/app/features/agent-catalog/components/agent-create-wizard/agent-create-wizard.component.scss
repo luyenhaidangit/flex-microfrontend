@@ -224,6 +224,14 @@
   .preview-chat-body {
     flex-grow: 1;
     overflow-y: auto !important;
+    align-items: stretch;
+    justify-content: flex-start;
+    background-color: #ffffff;
+
+    &.is-empty {
+      align-items: center;
+      justify-content: center;
+    }
 
     h6 {
       font-size: 14px !important;
@@ -244,6 +252,59 @@
       background: #ced4da;
       border-radius: 4px;
     }
+  }
+
+  .chat-message-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .chat-message-row {
+    width: 100%;
+
+    &.is-user {
+      justify-content: flex-end;
+    }
+
+    &.is-agent {
+      justify-content: flex-start;
+    }
+  }
+
+  .chat-message-content {
+    max-width: 84%;
+  }
+
+  .chat-message-bubble {
+    padding: 9px 12px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  .chat-bubble-user {
+    color: #ffffff;
+    background-color: #556ee6;
+    border-radius: 14px 14px 4px 14px;
+    box-shadow: 0 2px 5px rgba(85, 110, 230, 0.18);
+  }
+
+  .chat-bubble-agent {
+    color: #495057;
+    background-color: #f1f3f7;
+    border: 1px solid #e6e8ec;
+    border-radius: 14px 14px 14px 4px;
+  }
+
+  .chat-message-meta {
+    margin-top: 4px;
+    color: #98a1b2;
+    font-size: 10px;
+    line-height: 1.2;
+  }
+
+  .is-user .chat-message-meta {
+    text-align: right;
   }
 
   /* Modern AI Input Box Container */

@@ -255,8 +255,11 @@
             </div>
 
             <!-- Chat Conversation Area -->
-            <div class="preview-chat-body flex-grow-1 overflow-auto d-flex flex-column align-items-center justify-content-center text-center p-3">
-              <div *ngIf="!chatMessages.length" class="empty-chat-welcome">
+            <div
+              class="preview-chat-body flex-grow-1 overflow-auto d-flex flex-column p-3"
+              [class.is-empty]="!chatMessages.length"
+            >
+              <div *ngIf="!chatMessages.length" class="empty-chat-welcome text-center">
                 <img
                   [src]="f['avatarUrl'].value || 'assets/images/users/avatar-1.jpg'"
                   alt="Agent Preview"
@@ -268,20 +271,25 @@
               </div>
 
               <!-- Message History -->
-              <div *ngIf="chatMessages.length" class="w-100 text-start">
+              <div *ngIf="chatMessages.length" class="chat-message-list w-100">
                 <div
                   *ngFor="let msg of chatMessages"
-                  class="mb-3 d-flex flex-column"
-                  [class.align-items-end]="msg.sender === 'user'"
-                  [class.align-items-start]="msg.sender === 'agent'"
+                  class="chat-message-row d-flex"
+                  [class.is-user]="msg.sender === 'user'"
+                  [class.is-agent]="msg.sender === 'agent'"
                 >
-                  <div
-                    class="p-2.5 px-3 rounded-3 max-w-85 small"
-                    [ngClass]="msg.sender === 'user' ? 'bg-primary text-white' : 'bg-light text-dark border'"
-                  >
-                    {{ msg.text }}
+                  <div class="chat-message-content">
+                    <div
+                      class="chat-message-bubble small"
+                      [class.chat-bubble-user]="msg.sender === 'user'"
+                      [class.chat-bubble-agent]="msg.sender === 'agent'"
+                    >
+                      {{ msg.text }}
+                    </div>
+                    <div class="chat-message-meta">
+                      {{ msg.sender === 'user' ? 'Bạn' : 'Agent' }} · {{ msg.time }}
+                    </div>
                   </div>
-                  <span class="text-muted extra-small mt-1">{{ msg.time }}</span>
                 </div>
               </div>
             </div>
@@ -317,7 +325,7 @@
                     <button type="button" class="btn btn-sm btn-light rounded-circle p-1.5 text-secondary d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Nhập bằng giọng nói">
                       <i class="bx bx-microphone fs-5"></i>
                     </button>
-                  <button type="button" class="btn btn-sm btn-primary rounded-circle p-1.5 text-white d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;" (click)="onSendMessage()" [disabled]="connectionState !== 'connected'" title="Gửi tin nhắn">
+                  <button type="button" class="btn btn-sm btn-primary rounded-circle p-1.5 text-white d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;" (click)="onSendMessage()" [disabled]="connectionState !== 'connected' || !chatInputText.trim()" title="Gửi tin nhắn">
                       <i class="bx bx-send fs-5"></i>
                     </button>
                   </div>
