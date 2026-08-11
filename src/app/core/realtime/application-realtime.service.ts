@@ -21,7 +21,7 @@ export class ApplicationRealtimeService implements OnDestroy {
     private readonly realtimeConnection: RealtimeConnection,
     private readonly authenticationService: AuthenticationService,
   ) {
-    this.realtimeConnection.on(ApplicationRealtimeEvents.DirectMessage, (message: DirectChatMessage) => {
+    this.realtimeConnection.on(ApplicationRealtimeEvents.MessageCreated, (message: DirectChatMessage) => {
       this.directMessageSubject.next(message);
     });
   }

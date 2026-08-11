@@ -9,13 +9,13 @@ export interface DirectChatMessage {
 }
 
 export interface RealtimeServerEvents {
-  directMessage: DirectChatMessage;
+  'message.created': DirectChatMessage;
 }
 
 export type RealtimeServerEventName = keyof RealtimeServerEvents;
 
 export const ApplicationRealtimeEvents = {
-  DirectMessage: 'directMessage',
+  MessageCreated: 'message.created',
 } as const;
 
 export const ApplicationRealtimeMethods = {
