@@ -52,7 +52,7 @@ export class ApplicationRealtimeService implements OnDestroy {
     if (!normalizedRecipientUserId || !normalizedMessage) return;
 
     await this.realtimeConnection.invoke(
-      ApplicationRealtimeMethods.SendDirectMessage,
+      ApplicationRealtimeMethods.SendMessage,
       normalizedRecipientUserId,
       normalizedMessage);
   }

@@ -19,5 +19,5 @@ export const ApplicationRealtimeEvents = {
 } as const;
 
 export const ApplicationRealtimeMethods = {
-  SendDirectMessage: 'SendDirectMessage',
+  SendMessage: 'SendMessage',
 } as const;
