@@ -232,26 +232,15 @@
               </button>
             </div>
 
-            <div class="d-flex align-items-center mb-2 small" [ngClass]="{
-              'text-success': connectionState === 'connected',
-              'text-warning': connectionState === 'connecting' || connectionState === 'reconnecting',
-              'text-danger': connectionState === 'disconnected'
-            }">
+            <div class="d-flex align-items-center mb-2 small text-success">
               <i class="bx bx-radio-circle-marked me-1"></i>
-              <span *ngIf="connectionState === 'connecting'">Đang kết nối Agent Service...</span>
-              <span *ngIf="connectionState === 'connected'">Đã kết nối Agent Service</span>
-              <span *ngIf="connectionState === 'reconnecting'">Đang kết nối lại Agent Service...</span>
-              <span *ngIf="connectionState === 'disconnected'">Chưa kết nối Agent Service</span>
+              <span>Sẵn sàng kiểm tra Agent</span>
             </div>
-            <div *ngIf="realtimeError" class="text-danger small mb-2">{{ realtimeError }}</div>
+            <div *ngIf="previewError" class="text-danger small mb-2">{{ previewError }}</div>
 
             <div class="mb-2">
-              <label class="form-label small fw-medium text-secondary mb-1">Người nhận</label>
-              <select class="form-select form-select-sm" [(ngModel)]="recipientUserId">
-                <option *ngFor="let user of chatUsers" [value]="user" [disabled]="user === currentUserId">
-                  {{ user }}{{ user === currentUserId ? ' (bạn)' : '' }}
-                </option>
-              </select>
+              <label class="form-label small fw-medium text-secondary mb-1">Người kiểm tra</label>
+              <div class="form-control form-control-sm bg-light">{{ currentUserId || 'Bạn' }}</div>
             </div>
 
             <!-- Chat Conversation Area -->
@@ -267,7 +256,7 @@
                   style="width: 72px; height: 72px; object-fit: cover;"
                 />
                 <h6 class="fw-bold text-dark mb-2">Chào anh/chị. Em có thể giúp gì cho anh/chị?</h6>
-                <p class="text-muted small">Nhắn tin realtime với {{ recipientUserId || 'người dùng khác' }}.</p>
+                <p class="text-muted small">Gửi câu hỏi đầu tiên để kiểm tra cách Agent phản hồi.</p>
               </div>
 
               <!-- Message History -->
@@ -304,7 +293,7 @@
                   #chatTextarea
                   class="form-control border-0 bg-transparent shadow-none text-dark small"
                   rows="2"
-                  [placeholder]="'Nhắn tin cho ' + (recipientUserId || 'người dùng khác') + '...'"
+                  placeholder="Nhập câu hỏi cho Agent..."
                   [(ngModel)]="chatInputText"
                   (keydown.enter)="$event.preventDefault(); onSendMessage()"
                 ></textarea>
@@ -325,7 +314,7 @@
                     <button type="button" class="btn btn-sm btn-light rounded-circle p-1.5 text-secondary d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Nhập bằng giọng nói">
                       <i class="bx bx-microphone fs-5"></i>
                     </button>
-                  <button type="button" class="btn btn-sm btn-primary rounded-circle p-1.5 text-white d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;" (click)="onSendMessage()" [disabled]="connectionState !== 'connected' || !chatInputText.trim()" title="Gửi tin nhắn">
+                  <button type="button" class="btn btn-sm btn-primary rounded-circle p-1.5 text-white d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;" (click)="onSendMessage()" [disabled]="isPreviewPending || !chatInputText.trim()" title="Gửi tin nhắn">
                       <i class="bx bx-send fs-5"></i>
                     </button>
                   </div>

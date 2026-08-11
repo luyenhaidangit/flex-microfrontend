@@ -5,8 +5,8 @@ import { Router } from '@angular/router';
 import { ToastService } from 'angular-toastify';
 import { AgentService } from '../../services/agent.service';
 import { AuthenticationService } from '../../../../core/auth/auth.service';
-import { ApplicationRealtimeService } from '../../../../core/realtime/application-realtime.service';
-import { DirectChatMessage, RealtimeConnectionState } from '../../../../core/realtime/realtime-event.model';
+import { AgentPreviewService } from '../../services/agent-preview.service';
+import { AgentPreviewMessage } from '../../models/agent-preview.model';
 
 export interface WizardStepItem {
   id: number;
@@ -58,12 +58,9 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
   // Test Chat Messages
   chatMessages: ChatMessage[] = [];
   chatInputText: string = '';
-  readonly chatUsers = ['admin', 'admin2'];
   currentUserId = '';
-  recipientUserId = 'admin2';
-  connectionState: RealtimeConnectionState = 'disconnected';
-  realtimeError = '';
-  private readonly realtimeSubscriptions = new Subscription();
+  isPreviewPending = false;
+  previewError = '';
 
   defaultInstructions = `I. Vai trò
 - Là Nhân viên AI Chăm sóc Khách hàng sau bán của doanh nghiệp.
@@ -79,7 +76,7 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
     private agentService: AgentService,
     private toastService: ToastService,
     private readonly authenticationService: AuthenticationService,
-    private readonly applicationRealtimeService: ApplicationRealtimeService,
+    private readonly previewService: AgentPreviewService,
   ) {}
 
   ngOnInit(): void {
@@ -87,23 +84,13 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
     this.currentTimeFormatted = `${now.toLocaleDateString('vi-VN')} ${now.getHours()}:${now.getMinutes() < 10 ? '0' : ''}${now.getMinutes()}`;
 
     this.initForm();
-    this.realtimeSubscriptions.add(this.applicationRealtimeService.connectionState$.subscribe(state => {
-      this.connectionState = state;
-      if (state === 'connected') this.realtimeError = '';
-    }));
-    this.realtimeSubscriptions.add(this.authenticationService.getProfile$().subscribe(profile => {
+    this.authenticationService.getProfile$().subscribe(profile => {
       this.currentUserId = profile?.userName ?? '';
-      if (this.currentUserId && this.recipientUserId === this.currentUserId) {
-        this.recipientUserId = this.chatUsers.find(user => user !== this.currentUserId) ?? '';
-      }
-    }));
-    this.realtimeSubscriptions.add(this.applicationRealtimeService.directMessages$.subscribe(message => {
-      this.addDirectMessage(message);
-    }));
+    });
   }
 
   ngOnDestroy(): void {
-    this.realtimeSubscriptions.unsubscribe();
+    // Preview state is local to the wizard and has no realtime subscription.
   }
 
   initForm(): void {
@@ -132,32 +119,21 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
     this.steps.forEach((s) => (s.isActive = s.id === stepId));
   }
 
-  async onSendMessage(): Promise<void> {
+  onSendMessage(): void {
     const userText = this.chatInputText.trim();
-    if (!userText) return;
-    if (this.connectionState !== 'connected') {
-      this.realtimeError = 'Chưa kết nối Agent Service, vui lòng thử lại.';
-      return;
-    }
-    if (!this.recipientUserId || this.recipientUserId === this.currentUserId) {
-      this.realtimeError = 'Vui lòng chọn người nhận hợp lệ.';
-      return;
-    }
+    if (!userText || this.isPreviewPending || this.wizardForm.invalid) return;
 
     this.chatInputText = '';
-
-    try {
-      await this.applicationRealtimeService.sendDirectMessage(this.recipientUserId, userText);
-    } catch {
-      this.realtimeError = 'Không thể gửi tin nhắn đến Agent Service.';
-    }
-  }
-
-  private addDirectMessage(message: DirectChatMessage): void {
     this.chatMessages.push({
-      sender: message.senderUserId === this.currentUserId ? 'user' : 'agent',
-      text: message.message,
-      time: this.formatTime(new Date(message.occurredAt))
+      sender: 'user', text: userText, time: this.formatTime(new Date())
+    });
+    this.isPreviewPending = true;
+    this.previewError = '';
+    const formValue = this.wizardForm.value;
+    const messages: AgentPreviewMessage[] = this.chatMessages.map(message => ({ role: message.sender, content: message.text }));
+    this.previewService.preview({ agent: { name: formValue.name, role: formValue.role, instructions: formValue.instructions }, messages }).subscribe({
+      next: response => { this.chatMessages.push({ sender: 'agent', text: response.reply, time: this.formatTime(new Date()) }); this.isPreviewPending = false; },
+      error: () => { this.previewError = 'Không thể nhận phản hồi từ Agent. Vui lòng thử lại.'; this.isPreviewPending = false; }
     });
   }
 
