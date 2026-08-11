@@ -31,15 +31,15 @@ export class ApplicationRealtimeService implements OnDestroy {
 
     this.authenticationSubscription = this.authenticationService.authenticationLifecycle$.subscribe(event => {
       if (event === AuthenticationLifecycleEvents.Authenticated) {
-        this.refreshAuthentication();
+        this.reconnect();
       } else {
         this.disconnect();
       }
     });
   }
 
-  refreshAuthentication(): void {
-    this.realtimeConnection.refresh(this.getHubUrl(), () => this.authenticationService.getToken() ?? '');
+  reconnect(): void {
+    this.realtimeConnection.reconnect(this.getHubUrl(), () => this.authenticationService.getToken() ?? '');
   }
 
   disconnect(): void {

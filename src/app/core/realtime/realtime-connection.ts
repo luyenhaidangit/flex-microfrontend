@@ -63,7 +63,7 @@ export class RealtimeConnection implements OnDestroy {
       .catch(() => this.updateState('disconnected', connection));
   }
 
-  refresh(url: string, accessTokenFactory: () => string): void {
+  reconnect(url: string, accessTokenFactory: () => string): void {
     if (!this.connection) {
       this.connect(url, accessTokenFactory);
       return;
