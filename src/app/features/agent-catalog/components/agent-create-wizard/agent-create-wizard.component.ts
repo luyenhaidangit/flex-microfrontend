@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastService } from 'angular-toastify';
 import { AgentService } from '../../services/agent.service';
-import { AuthenticationService } from '../../../../core/auth/auth.service';
 import { AgentChatService } from '../../services/agent-chat.service';
 
 export interface WizardStepItem {
@@ -57,7 +56,6 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
   // Test Chat Messages
   chatMessages: ChatMessage[] = [];
   chatInputText: string = '';
-  currentUserId = '';
   isChatPending = false;
   chatError = '';
   conversationId = `agent-wizard-${Date.now()}`;
@@ -75,7 +73,6 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
     private router: Router,
     private agentService: AgentService,
     private toastService: ToastService,
-    private readonly authenticationService: AuthenticationService,
     private readonly chatService: AgentChatService,
   ) {}
 
@@ -84,9 +81,6 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
     this.currentTimeFormatted = `${now.toLocaleDateString('vi-VN')} ${now.getHours()}:${now.getMinutes() < 10 ? '0' : ''}${now.getMinutes()}`;
 
     this.initForm();
-    this.authenticationService.getProfile$().subscribe(profile => {
-      this.currentUserId = profile?.userName ?? '';
-    });
   }
 
   ngOnDestroy(): void {
