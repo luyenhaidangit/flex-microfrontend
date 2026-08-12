@@ -5,8 +5,7 @@ import { Router } from '@angular/router';
 import { ToastService } from 'angular-toastify';
 import { AgentService } from '../../services/agent.service';
 import { AuthenticationService } from '../../../../core/auth/auth.service';
-import { AgentPreviewService } from '../../services/agent-preview.service';
-import { AgentPreviewMessage } from '../../models/agent-preview.model';
+import { AgentChatService } from '../../services/agent-chat.service';
 
 export interface WizardStepItem {
   id: number;
@@ -59,8 +58,9 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
   chatMessages: ChatMessage[] = [];
   chatInputText: string = '';
   currentUserId = '';
-  isPreviewPending = false;
-  previewError = '';
+  isChatPending = false;
+  chatError = '';
+  conversationId = `agent-wizard-${Date.now()}`;
 
   defaultInstructions = `I. Vai trò
 - Là Nhân viên AI Chăm sóc Khách hàng sau bán của doanh nghiệp.
@@ -76,7 +76,7 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
     private agentService: AgentService,
     private toastService: ToastService,
     private readonly authenticationService: AuthenticationService,
-    private readonly previewService: AgentPreviewService,
+    private readonly chatService: AgentChatService,
   ) {}
 
   ngOnInit(): void {
@@ -121,19 +121,17 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
 
   onSendMessage(): void {
     const userText = this.chatInputText.trim();
-    if (!userText || this.isPreviewPending || this.wizardForm.invalid) return;
+    if (!userText || this.isChatPending || this.wizardForm.invalid) return;
 
     this.chatInputText = '';
     this.chatMessages.push({
       sender: 'user', text: userText, time: this.formatTime(new Date())
     });
-    this.isPreviewPending = true;
-    this.previewError = '';
-    const formValue = this.wizardForm.value;
-    const messages: AgentPreviewMessage[] = this.chatMessages.map(message => ({ role: message.sender, content: message.text }));
-    this.previewService.preview({ agent: { name: formValue.name, role: formValue.role, instructions: formValue.instructions }, messages }).subscribe({
-      next: response => { this.chatMessages.push({ sender: 'agent', text: response.reply, time: this.formatTime(new Date()) }); this.isPreviewPending = false; },
-      error: () => { this.previewError = 'Không thể nhận phản hồi từ Agent. Vui lòng thử lại.'; this.isPreviewPending = false; }
+    this.isChatPending = true;
+    this.chatError = '';
+    this.chatService.chat({ conversationId: this.conversationId, message: userText }).subscribe({
+      next: response => { this.chatMessages.push({ sender: 'agent', text: response.reply, time: this.formatTime(new Date()) }); this.isChatPending = false; },
+      error: () => { this.chatError = 'Không thể nhận phản hồi từ Agent. Vui lòng thử lại.'; this.isChatPending = false; }
     });
   }
 

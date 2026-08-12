@@ -226,7 +226,7 @@
           <div class="misa-preview-card bg-white rounded-3 border p-3 shadow-sm h-100 d-flex flex-column justify-content-between">
             <!-- Preview Header -->
             <div class="preview-header border-bottom pb-2 mb-3 d-flex align-items-center justify-content-between">
-              <span class="fw-bold text-dark fs-6">Xem trước và kiểm tra</span>
+              <span class="fw-bold text-dark fs-6">Chat với Agent</span>
               <button type="button" class="btn btn-link text-secondary p-0 fs-5" (click)="chatMessages = []" title="Tải lại đoạn chat">
                 <i class="bx bx-refresh"></i>
               </button>
@@ -234,9 +234,9 @@
 
             <div class="d-flex align-items-center mb-2 small text-success">
               <i class="bx bx-radio-circle-marked me-1"></i>
-              <span>Sẵn sàng kiểm tra Agent</span>
+              <span>Sẵn sàng chat với Agent</span>
             </div>
-            <div *ngIf="previewError" class="text-danger small mb-2">{{ previewError }}</div>
+            <div *ngIf="chatError" class="text-danger small mb-2">{{ chatError }}</div>
 
             <div class="mb-2">
               <label class="form-label small fw-medium text-secondary mb-1">Người kiểm tra</label>
@@ -251,7 +251,7 @@
               <div *ngIf="!chatMessages.length" class="empty-chat-welcome text-center">
                 <img
                   [src]="f['avatarUrl'].value || 'assets/images/users/avatar-1.jpg'"
-                  alt="Agent Preview"
+                  alt="Agent"
                   class="preview-agent-avatar rounded-circle border shadow-sm mb-3"
                   style="width: 72px; height: 72px; object-fit: cover;"
                 />
@@ -314,7 +314,7 @@
                     <button type="button" class="btn btn-sm btn-light rounded-circle p-1.5 text-secondary d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Nhập bằng giọng nói">
                       <i class="bx bx-microphone fs-5"></i>
                     </button>
-                  <button type="button" class="btn btn-sm btn-primary rounded-circle p-1.5 text-white d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;" (click)="onSendMessage()" [disabled]="isPreviewPending || !chatInputText.trim()" title="Gửi tin nhắn">
+                  <button type="button" class="btn btn-sm btn-primary rounded-circle p-1.5 text-white d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;" (click)="onSendMessage()" [disabled]="isChatPending || !chatInputText.trim()" title="Gửi tin nhắn">
                       <i class="bx bx-send fs-5"></i>
                     </button>
                   </div>
