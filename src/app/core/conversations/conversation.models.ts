@@ -1,4 +1,10 @@
 export type ConversationStatus = 'active' | 'suspended' | 'inactive';
+export enum ConversationSource {
+  Production = 1,
+  Preview = 2,
+  Playground = 3,
+  Api = 4,
+}
 export type MessageRole = 'system' | 'user' | 'assistant' | 'tool';
 export type MessageActorType = 'end_user' | 'ai_agent' | 'human_agent' | 'system' | 'tool' | 'automation';
 export type MessageStatus = 'pending' | 'completed' | 'failed' | 'cancelled';
@@ -14,6 +20,7 @@ export interface Conversation {
   lastMessageAt?: string;
   createdAt: string;
   updatedAt: string;
+  conversationSource: ConversationSource | null;
 }
 
 export interface ConversationMessage {
