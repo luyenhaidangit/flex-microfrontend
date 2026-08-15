@@ -11,4 +11,5 @@ export interface ChatMessage {
     name?: string;
     message: string;
     time: string;
+    messageId?: string;
 }

@@ -1,9 +1,14 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, Validators, UntypedFormGroup } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
 
 import { ChatUser, ChatMessage } from './chat.model';
 
 import { chatData, chatMessagesData } from './data';
+import { ConversationApiService } from '../../core/conversations/conversation-api.service';
+import { Conversation } from '../../core/conversations/conversation.models';
+import { ApplicationRealtimeService } from '../../core/realtime/application-realtime.service';
 
 @Component({
   selector: 'app-chat',
@@ -26,8 +31,17 @@ export class ChatComponent implements OnInit, AfterViewInit {
   chatSubmit: boolean;
   usermessage: string;
   emoji:any = '';
+  conversationId?: string;
+  chatError = '';
+  isLoading = false;
+  isSending = false;
+  private realtimeSubscription?: Subscription;
 
-  constructor(public formBuilder: UntypedFormBuilder) {
+  constructor(
+    public formBuilder: UntypedFormBuilder,
+    private readonly conversationApi: ConversationApiService,
+    private readonly realtimeService: ApplicationRealtimeService,
+  ) {
   }
 
   ngOnInit() {
@@ -40,6 +54,17 @@ export class ChatComponent implements OnInit, AfterViewInit {
     this.onListScroll();
 
     this._fetchData();
+    this.realtimeSubscription = this.realtimeService.conversationMessages$.subscribe(message => {
+      if (message.conversationId !== this.conversationId || this.chatMessagesData.some(item => item.messageId === message.messageId)) return;
+      this.chatMessagesData.push({
+        align: message.role === 'user' ? 'right' : 'left',
+        name: message.actorType === 'ai_agent' ? 'AI Agent' : message.actorType,
+        message: message.content ?? '',
+        time: new Date(message.occurredAt).toLocaleTimeString(),
+        messageId: message.messageId,
+      });
+      this.onListScroll();
+    });
   }
 
   ngAfterViewInit() {
@@ -57,6 +82,34 @@ export class ChatComponent implements OnInit, AfterViewInit {
   private _fetchData() {
     this.chatData = chatData;
     this.chatMessagesData = chatMessagesData;
+    this.isLoading = true;
+    this.conversationApi.list().subscribe({
+      next: conversations => {
+        this.isLoading = false;
+        if (conversations.length > 0) this.loadConversation(conversations[0]);
+      },
+      error: () => {
+        this.isLoading = false;
+        this.chatError = 'Không thể tải lịch sử hội thoại. Vui lòng thử lại.';
+      },
+    });
+  }
+
+  private loadConversation(conversation: Conversation): void {
+    this.conversationId = conversation.id;
+    this.username = conversation.title || 'Conversation';
+    this.conversationApi.getMessages(conversation.id).subscribe({
+      next: messages => {
+        this.chatMessagesData = messages.map(message => ({
+          align: message.role === 'user' ? 'right' : 'left',
+          name: message.actorType === 'ai_agent' ? 'AI Agent' : message.actorType,
+          message: message.content ?? '',
+          time: new Date(message.createdAt).toLocaleTimeString(),
+          messageId: message.id,
+        }));
+      },
+      error: () => this.chatError = 'Không thể tải message của conversation.',
+    });
   }
 
   onListScroll() {
@@ -86,25 +139,56 @@ export class ChatComponent implements OnInit, AfterViewInit {
    * Save the message in chat
    */
   messageSave() {
-    const message = this.formData.get('message').value;
-    const currentDate = new Date();
-    if (this.formData.valid && message) {
-      // Message Push in Chat
-      this.chatMessagesData.push({
-        align: 'right',
-        name: 'Henry Wells',
-        message,
-        time: currentDate.getHours() + ':' + currentDate.getMinutes()
-      });
-      this.onListScroll();
+    const message = (this.formData.get('message').value || '').trim();
+    if (this.formData.valid && message && !this.isSending) {
+      this.chatError = '';
+      this.isSending = true;
+      const request = {
+        clientMessageId: this.createClientMessageId(),
+        contentType: 'text',
+        content: message,
+        metadata: {},
+      };
+      const appendMessage = (conversationId: string) => this.conversationApi.append(conversationId, request);
 
-      // Set Form Data Reset
-      this.formData = this.formBuilder.group({
-        message: null
+      const append = this.conversationId
+        ? appendMessage(this.conversationId)
+        : this.conversationApi.create({ title: this.username }).pipe(
+            tap(conversation => this.conversationId = conversation.id),
+            switchMap(conversation => appendMessage(conversation.id)),
+          );
+
+      append.subscribe({
+        next: savedMessage => {
+          this.chatMessagesData.push({
+            align: savedMessage.role === 'user' ? 'right' : 'left',
+            name: savedMessage.actorType === 'ai_agent' ? 'AI Agent' : savedMessage.actorType,
+            message: savedMessage.content || message,
+            time: new Date(savedMessage.createdAt).toLocaleTimeString(),
+            messageId: savedMessage.id,
+          });
+          this.onListScroll();
+          this.formData.reset();
+          this.isSending = false;
+        },
+        error: () => {
+          this.chatError = 'Không thể lưu message. Vui lòng thử lại.';
+          this.isSending = false;
+        },
       });
     }
 
     this.chatSubmit = true;
+  }
+
+  ngOnDestroy(): void {
+    this.realtimeSubscription?.unsubscribe();
+  }
+
+  private createClientMessageId(): string {
+    return typeof crypto !== 'undefined' && 'randomUUID' in crypto
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
   }
 
   // Delete Message

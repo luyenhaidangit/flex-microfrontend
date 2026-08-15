@@ -7,6 +7,7 @@ import { RealtimeConnection } from './realtime-connection';
 import {
   ApplicationRealtimeEvents,
   ApplicationRealtimeMethods,
+  ConversationRealtimeMessage,
   DirectChatMessage,
 } from './realtime-event.model';
 
@@ -24,7 +25,13 @@ export class ApplicationRealtimeService implements OnDestroy {
     this.realtimeConnection.on(ApplicationRealtimeEvents.MessageCreated, (message: DirectChatMessage) => {
       this.directMessageSubject.next(message);
     });
+    this.realtimeConnection.on(ApplicationRealtimeEvents.ConversationMessageCreated, (message: ConversationRealtimeMessage) => {
+      this.conversationMessageSubject.next(message);
+    });
   }
+
+  private readonly conversationMessageSubject = new Subject<ConversationRealtimeMessage>();
+  readonly conversationMessages$ = this.conversationMessageSubject.asObservable();
 
   initialize(): void {
     if (this.authenticationSubscription) return;

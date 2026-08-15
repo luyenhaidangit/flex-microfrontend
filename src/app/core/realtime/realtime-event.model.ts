@@ -8,14 +8,30 @@ export interface DirectChatMessage {
   occurredAt: string;
 }
 
+export interface ConversationRealtimeMessage {
+  messageId: string;
+  conversationId: string;
+  tenantId: string;
+  sequenceNo: number;
+  role: string;
+  actorType: string;
+  actorId?: string;
+  status: string;
+  contentType: string;
+  content?: string;
+  occurredAt: string;
+}
+
 export interface RealtimeServerEvents {
   'message.created': DirectChatMessage;
+  'conversation.message.created': ConversationRealtimeMessage;
 }
 
 export type RealtimeServerEventName = keyof RealtimeServerEvents;
 
 export const ApplicationRealtimeEvents = {
   MessageCreated: 'message.created',
+  ConversationMessageCreated: 'conversation.message.created',
 } as const;
 
 export const ApplicationRealtimeMethods = {

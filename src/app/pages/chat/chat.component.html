@@ -314,6 +314,8 @@
         </div>
 
         <div>
+          <div *ngIf="isLoading" class="px-3 pt-3 text-muted small">Đang tải lịch sử hội thoại...</div>
+          <div *ngIf="chatError" class="mx-3 mt-3 mb-0 alert alert-danger py-2">{{ chatError }}</div>
           <div class="chat-conversation p-3">
             <ngx-simplebar style="height: 470px;" #scrollRef>
               <ul class="list-unstyled">
@@ -381,7 +383,7 @@
                 </div>
               </div>
               <div class="col-auto">
-                <button type="submit" class="btn btn-primary btn-rounded chat-send w-md"><span
+                <button type="submit" class="btn btn-primary btn-rounded chat-send w-md" [disabled]="isSending || isLoading"><span
                     class="d-none d-sm-inline-block me-2">Send</span> <i class="mdi mdi-send"></i></button>
               </div>
             </form>
