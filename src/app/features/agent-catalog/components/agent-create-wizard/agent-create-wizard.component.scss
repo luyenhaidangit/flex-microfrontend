@@ -164,13 +164,18 @@
     }
   }
 
-  /* Textarea Chỉ dẫn cho Agent đồng bộ 100% font với Skote theme */
-  .instructions-textarea {
-    font-family: inherit !important;
-    font-size: 13px !important;
-    line-height: 1.6 !important;
-    color: #495057 !important;
-    background-color: #ffffff !important;
+  .instructions-editor {
+    display: block;
+    font-size: 13px;
+
+    .ck-editor__editable {
+      min-height: 190px;
+      max-height: 320px;
+      overflow-y: auto;
+      font-family: inherit;
+      font-size: 13px;
+      line-height: 1.6;
+    }
   }
 }
 

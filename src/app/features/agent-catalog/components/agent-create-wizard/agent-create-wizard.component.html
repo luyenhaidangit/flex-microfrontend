@@ -178,34 +178,12 @@
                     </label>
                   </div>
 
-                  <!-- Rich Text Fake Toolbar -->
-                  <div class="rich-toolbar border rounded-top bg-light p-2 d-flex align-items-center justify-content-between flex-wrap gap-2 small border-bottom-0">
-                    <div class="d-flex align-items-center gap-2">
-                      <select class="form-select form-select-sm border-0 bg-transparent fw-medium py-0" style="width: auto;">
-                        <option>Đoạn văn</option>
-                      </select>
-                      <div class="vr"></div>
-                      <button type="button" class="btn btn-sm btn-link text-secondary p-0 fw-bold">B</button>
-                      <button type="button" class="btn btn-sm btn-link text-secondary p-0 fst-italic">I</button>
-                      <button type="button" class="btn btn-sm btn-link text-secondary p-0 text-decoration-underline">U</button>
-                      <div class="vr"></div>
-                      <button type="button" class="btn btn-sm btn-link text-secondary p-0"><i class="bx bx-list-ul"></i></button>
-                      <button type="button" class="btn btn-sm btn-link text-secondary p-0"><i class="bx bx-list-ol"></i></button>
-                    </div>
-                    <div class="d-flex align-items-center gap-2">
-                      <span class="text-muted small">Dạng hiển thị:</span>
-                      <select class="form-select form-select-sm border-0 bg-transparent fw-medium py-0" style="width: auto;">
-                        <option>Văn bản</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <textarea
-                    class="form-control rounded-bottom rounded-top-0 instructions-textarea"
-                    rows="7"
-                    placeholder="Nhập nội dung chỉ dẫn cho Agent..."
+                  <ckeditor
+                    [editor]="Editor"
+                    [config]="editorConfig"
                     formControlName="instructions"
-                  ></textarea>
+                    class="instructions-editor"
+                  ></ckeditor>
                 </div>
               </div>
 

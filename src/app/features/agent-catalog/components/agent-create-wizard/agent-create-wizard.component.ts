@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastService } from 'angular-toastify';
+import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { AgentService } from '../../services/agent.service';
 import { AgentChatService } from '../../services/agent-chat.service';
 
@@ -26,6 +27,10 @@ export interface ChatMessage {
   styleUrls: ['./agent-create-wizard.component.scss']
 })
 export class AgentCreateWizardComponent implements OnInit, OnDestroy {
+  public Editor = ClassicEditor;
+  public editorConfig = {
+    toolbar: ['heading', '|', 'bold', 'italic', 'link', '|', 'bulletedList', 'numberedList', '|', 'undo', 'redo']
+  };
   activeTab: 'info' | 'chat' | 'report' = 'info';
   currentStep = 1;
   isSidebarCollapsed = false;
