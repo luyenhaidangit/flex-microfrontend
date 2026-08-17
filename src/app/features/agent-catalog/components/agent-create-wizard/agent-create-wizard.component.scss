@@ -209,6 +209,30 @@
   }
 }
 
+.avatar-upload-item {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  background-color: #f8f9fa;
+  transition: all 0.15s ease-in-out;
+
+  &:hover {
+    background-color: #eff2f7;
+    border-color: #556ee6 !important;
+  }
+
+  &.selected {
+    border-color: #34c38f !important;
+    border-width: 2px !important;
+  }
+
+  .uploaded-avatar-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
 /* RIGHT CHAT PREVIEW CARD */
 .misa-preview-card {
   height: 100% !important;

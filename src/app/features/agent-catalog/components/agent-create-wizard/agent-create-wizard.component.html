@@ -5,7 +5,7 @@
     <!-- Left: Agent Identity Summary -->
     <div class="d-flex align-items-center gap-3">
       <img
-        [src]="f['avatarUrl'].value || 'assets/images/users/avatar-1.jpg'"
+        [src]="f['avatarUrl'].value || 'assets/images/default-agent-avatar.png'"
         alt="Agent Avatar"
         class="header-agent-avatar rounded-circle border shadow-sm"
       />
@@ -121,6 +121,24 @@
                   <div class="mb-3">
                     <label class="form-label small fw-medium text-secondary mb-2">Hình đại diện <span class="text-danger">*</span></label>
                     <div class="d-flex align-items-center gap-2 flex-wrap">
+                      <input
+                        #avatarInput
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp"
+                        class="d-none"
+                        (change)="onAvatarSelected($event)"
+                      />
+                      <button
+                        type="button"
+                        class="avatar-upload-item rounded-circle border d-flex align-items-center justify-content-center position-relative"
+                        [class.selected]="avatarFile"
+                        (click)="avatarInput.click()"
+                        title="Tải ảnh đại diện"
+                      >
+                        <img *ngIf="avatarFile" [src]="f['avatarUrl'].value" alt="Ảnh đại diện đã tải lên" class="uploaded-avatar-preview rounded-circle" />
+                        <i *ngIf="!avatarFile" class="bx bx-upload fs-5 text-secondary"></i>
+                        <i *ngIf="avatarFile" class="bx bxs-check-circle text-success select-check-icon"></i>
+                      </button>
                       <div
                         *ngFor="let preset of avatarPresets"
                         class="avatar-select-item rounded-circle position-relative cursor-pointer border p-0.5"
@@ -131,6 +149,8 @@
                         <i *ngIf="f['avatarUrl'].value === preset.url" class="bx bxs-check-circle text-success select-check-icon"></i>
                       </div>
                     </div>
+                    <div class="form-text">PNG, JPG hoặc WebP, tối đa 2 MB.</div>
+                    <div *ngIf="avatarError" class="text-danger small mt-1">{{ avatarError }}</div>
                   </div>
 
                   <!-- Form Fields: Tên & Vai trò -->
@@ -223,7 +243,7 @@
             >
               <div *ngIf="!chatMessages.length" class="empty-chat-welcome text-center">
                 <img
-                  [src]="f['avatarUrl'].value || 'assets/images/users/avatar-1.jpg'"
+                  [src]="f['avatarUrl'].value || 'assets/images/default-agent-avatar.png'"
                   alt="Agent"
                   class="preview-agent-avatar rounded-circle border shadow-sm mb-3"
                   style="width: 72px; height: 72px; object-fit: cover;"

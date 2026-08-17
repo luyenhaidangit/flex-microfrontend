@@ -37,6 +37,8 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
 
   isSubmitting = false;
   showConfirmCancelModal = false;
+  avatarError = '';
+  avatarFile: File | null = null;
 
   wizardForm!: FormGroup;
 
@@ -48,14 +50,9 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
     { id: 5, title: 'Phát hành', icon: 'bx-send', isCompleted: false, isActive: false }
   ];
 
-  // Danh sách Avatar Presets - Đặt default-agent-avatar.png lên đầu tiên chuẩn màn list
+  // Avatar mẫu duy nhất của Agent
   avatarPresets = [
-    { id: 'default', url: 'assets/images/default-agent-avatar.png' },
-    { id: '1', url: 'assets/images/users/avatar-1.jpg' },
-    { id: '2', url: 'assets/images/users/avatar-2.jpg' },
-    { id: '3', url: 'assets/images/users/avatar-3.jpg' },
-    { id: '4', url: 'assets/images/users/avatar-4.jpg' },
-    { id: '5', url: 'assets/images/users/avatar-5.jpg' }
+    { id: 'default', url: 'assets/images/default-agent-avatar.png' }
   ];
 
   // Test Chat Messages
@@ -100,7 +97,36 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
   }
 
   onSelectAvatar(url: string): void {
+    this.avatarFile = null;
+    this.avatarError = '';
     this.wizardForm.patchValue({ avatarUrl: url });
+  }
+
+  onAvatarSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      this.avatarError = 'Vui lòng chọn ảnh PNG, JPG hoặc WebP.';
+      input.value = '';
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      this.avatarError = 'Ảnh không được vượt quá 2 MB.';
+      input.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.avatarFile = file;
+      this.avatarError = '';
+      this.wizardForm.patchValue({ avatarUrl: reader.result as string });
+    };
+    reader.readAsDataURL(file);
   }
 
   toggleSidebar(): void {
