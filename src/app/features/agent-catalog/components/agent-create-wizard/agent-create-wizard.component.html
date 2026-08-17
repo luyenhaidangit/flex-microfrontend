@@ -120,7 +120,7 @@
                   <!-- Avatar Picker -->
                   <div class="mb-3">
                     <label class="form-label small fw-medium text-secondary mb-2">Hình đại diện <span class="text-danger">*</span></label>
-                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <div class="d-flex align-items-center">
                       <input
                         #avatarInput
                         type="file"
@@ -133,21 +133,18 @@
                         class="avatar-upload-item rounded-circle border d-flex align-items-center justify-content-center position-relative"
                         [class.selected]="avatarFile"
                         (click)="avatarInput.click()"
-                        title="Tải ảnh đại diện"
+                        title="Thay đổi ảnh đại diện"
+                        aria-label="Thay đổi ảnh đại diện"
                       >
-                        <img *ngIf="avatarFile" [src]="f['avatarUrl'].value" alt="Ảnh đại diện đã tải lên" class="uploaded-avatar-preview rounded-circle" />
-                        <i *ngIf="!avatarFile" class="bx bx-upload fs-5 text-secondary"></i>
-                        <i *ngIf="avatarFile" class="bx bxs-check-circle text-success select-check-icon"></i>
+                        <img
+                          [src]="f['avatarUrl'].value || 'assets/images/default-agent-avatar.png'"
+                          alt="Ảnh đại diện Agent"
+                          class="uploaded-avatar-preview rounded-circle"
+                        />
+                        <span class="avatar-upload-icon position-absolute d-flex align-items-center justify-content-center rounded-circle border bg-white text-primary shadow-sm small">
+                          <i class="bx bx-upload"></i>
+                        </span>
                       </button>
-                      <div
-                        *ngFor="let preset of avatarPresets"
-                        class="avatar-select-item rounded-circle position-relative cursor-pointer border p-0.5"
-                        [class.selected]="f['avatarUrl'].value === preset.url"
-                        (click)="onSelectAvatar(preset.url)"
-                      >
-                        <img [src]="preset.url" alt="Avatar option" class="rounded-circle avatar-md" />
-                        <i *ngIf="f['avatarUrl'].value === preset.url" class="bx bxs-check-circle text-success select-check-icon"></i>
-                      </div>
                     </div>
                     <div class="form-text">PNG, JPG hoặc WebP, tối đa 2 MB.</div>
                     <div *ngIf="avatarError" class="text-danger small mt-1">{{ avatarError }}</div>

@@ -50,11 +50,6 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
     { id: 5, title: 'Phát hành', icon: 'bx-send', isCompleted: false, isActive: false }
   ];
 
-  // Avatar mẫu duy nhất của Agent
-  avatarPresets = [
-    { id: 'default', url: 'assets/images/default-agent-avatar.png' }
-  ];
-
   // Test Chat Messages
   chatMessages: ChatMessage[] = [];
   chatInputText: string = '';
@@ -94,12 +89,6 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
 
   get f() {
     return this.wizardForm.controls;
-  }
-
-  onSelectAvatar(url: string): void {
-    this.avatarFile = null;
-    this.avatarError = '';
-    this.wizardForm.patchValue({ avatarUrl: url });
   }
 
   onAvatarSelected(event: Event): void {
