@@ -65,12 +65,6 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
   chatError = '';
   conversationId = `agent-wizard-${Date.now()}`;
 
-  defaultInstructions = `I. Vai trò
-- Là Nhân viên AI Chăm sóc Khách hàng sau bán của doanh nghiệp.
-- Hỗ trợ khách hàng trong quá trình sử dụng sản phẩm hoặc dịch vụ.
-- Giải đáp thắc mắc, hướng dẫn thao tác, tiếp nhận và xử lý vấn đề phát sinh.
-- Cung cấp thông tin liên quan đến: Chính sách bảo hành, Hướng dẫn thanh toán...`;
-
   currentTimeFormatted: string = '';
 
   constructor(
@@ -95,9 +89,9 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
   initForm(): void {
     this.wizardForm = this.fb.group({
       avatarUrl: ['assets/images/default-agent-avatar.png'], // Mặc định là avatar như ở màn list
-      name: ['Thảo CSKH', [Validators.required]],
-      role: ['Nhân viên AI chăm sóc khách hàng', [Validators.required]],
-      instructions: [this.defaultInstructions, [Validators.required]]
+      name: ['', [Validators.required]],
+      role: ['', [Validators.required]],
+      instructions: ['', [Validators.required]]
     });
   }
 
