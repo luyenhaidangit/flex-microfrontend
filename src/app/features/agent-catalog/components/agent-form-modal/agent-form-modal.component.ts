@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { HttpErrorResponse } from '@angular/common/http';
 import { ToastService } from 'angular-toastify';
 import { finalize } from 'rxjs/operators';
 import { Agent, PublishLocation } from '../../models/agent.model';
@@ -124,8 +123,7 @@ export class AgentFormModalComponent implements OnChanges {
         this.toastService.success(this.isEditMode ? 'Cập nhật Agent thành công.' : 'Tạo Agent thành công.');
         this.saved.emit();
       },
-      error: (err: HttpErrorResponse) => {
-        this.toastService.error(err.error?.message || 'Có lỗi xảy ra, vui lòng thử lại.');
+      error: () => {
       }
     });
   }

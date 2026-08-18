@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastService } from 'angular-toastify';
@@ -183,15 +184,12 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
       status: 'active'
     };
 
-    this.agentService.createAgent(payload).subscribe({
+    this.agentService.createAgent(payload).pipe(finalize(() => (this.isSubmitting = false))).subscribe({
       next: () => {
-        this.isSubmitting = false;
         this.toastService.success('Khởi tạo và phát hành Agent thành công!');
         this.router.navigate(['/agents']);
       },
       error: () => {
-        this.isSubmitting = false;
-        this.toastService.error('Có lỗi xảy ra. Vui lòng thử lại.');
       }
     });
   }

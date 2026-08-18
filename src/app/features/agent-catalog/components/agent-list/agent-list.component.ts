@@ -1,6 +1,5 @@
 import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
-import { ToastService } from 'angular-toastify';
 import { finalize } from 'rxjs/operators';
 import { BadgeTypeConfig } from 'src/app/shared/ui/badge/badge.component';
 import { PaginationState } from 'src/app/core/components/pagination/pagination/pagination.component';
@@ -22,6 +21,7 @@ export class AgentListComponent implements OnInit {
   agents: Agent[] = [];
   filteredAgents: Agent[] = [];
   isLoading = false;
+  hasLoadError = false;
 
   searchInputValue: string = '';
   searchKeyword: string = '';
@@ -43,7 +43,6 @@ export class AgentListComponent implements OnInit {
 
   constructor(
     private agentService: AgentService,
-    private toastService: ToastService,
     private router: Router
   ) {}
 
@@ -53,6 +52,7 @@ export class AgentListComponent implements OnInit {
 
   loadAgents(): void {
     this.isLoading = true;
+    this.hasLoadError = false;
     this.agentService
       .getAgents()
       .pipe(finalize(() => (this.isLoading = false)))
@@ -61,7 +61,9 @@ export class AgentListComponent implements OnInit {
           this.agents = agents || [];
           this.applyFilter();
         },
-        error: () => this.toastService.error('Không thể tải danh mục Agent.')
+        error: () => {
+          this.hasLoadError = true;
+        }
       });
   }
 

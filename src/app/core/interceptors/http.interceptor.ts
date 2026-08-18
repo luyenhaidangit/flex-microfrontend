@@ -64,14 +64,8 @@ export class AppHttpInterceptor implements HttpSystemInterceptor {
           } else if (error.status === HttpError.ConnectionRefused) {
             this.toastService.error('Không thể kết nối đến máy chủ!');
           } else {
-            // Nếu có errorCode, sử dụng translation, nếu không thì dùng message như cũ
-            if (error?.error?.errorCode) {
-              const errorMessage = this.injector.get(ErrorMessageService).getErrorMessage(error);
-              this.toastService.error(errorMessage);
-            } else {
-              const msg = error?.error?.message || error?.message || 'Đã xảy ra lỗi!';
-              this.toastService.error(msg);
-            }
+            const errorMessage = this.injector.get(ErrorMessageService).getErrorMessage(error);
+            this.toastService.error(errorMessage);
           }
         }
 

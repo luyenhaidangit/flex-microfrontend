@@ -88,7 +88,7 @@
     "BRANCH_NOT_FOUND": "Không tìm thấy chi nhánh",
     "ROLE_NOT_FOUND": "Không tìm thấy vai trò",
     "INTERNAL_SERVER_ERROR": "Lỗi máy chủ nội bộ",
-    "SERVICE_UNAVAILABLE": "Dịch vụ không khả dụng",
+    "SERVICE_UNAVAILABLE": "Dịch vụ tạm thời không khả dụng. Vui lòng thử lại sau.",
     "DATABASE_ERROR": "Lỗi cơ sở dữ liệu",
     "EXTERNAL_SERVICE_ERROR": "Lỗi dịch vụ bên ngoài",
     "PROCESSING_ERROR": "Lỗi xử lý",

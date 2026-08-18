@@ -40,6 +40,15 @@
       </div>
     </div>
 
+    <div *ngIf="!isLoading && hasLoadError" class="alert alert-danger d-flex align-items-center justify-content-between gap-3 mb-0" role="alert">
+      <div><i class="fas fa-exclamation-circle me-2"></i>Không thể tải danh mục Agent.</div>
+      <button type="button" class="btn btn-outline-danger btn-sm flex-shrink-0" (click)="loadAgents()">
+        <i class="fas fa-redo me-1"></i>Thử lại
+      </button>
+    </div>
+
+    <ng-container *ngIf="!hasLoadError || isLoading">
+
     <!-- ================= CARD VIEW ================= -->
     <div *ngIf="viewMode === 'card'">
       <!-- Loading Skeleton for Cards -->
@@ -157,11 +166,13 @@
 
     <!-- Pagination Component -->
     <app-pagination
+      *ngIf="!hasLoadError"
       [paginationState]="getPaginationState()"
       [pageSizeOptions]="CONFIG.pagination.pageSizeOptions"
       (pageChanged)="onPageChange($event)"
       (pageSizeChanged)="onPageSizeChange($event)">
     </app-pagination>
+    </ng-container>
   </div>
 </div>
 

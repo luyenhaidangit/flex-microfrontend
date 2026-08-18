@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { HttpErrorResponse } from '@angular/common/http';
 import { ToastService } from 'angular-toastify';
 import { finalize } from 'rxjs/operators';
 import { BadgeTypeConfig } from 'src/app/shared/ui/badge/badge.component';
@@ -47,8 +46,7 @@ export class AgentDeleteConfirmModalComponent {
           this.toastService.success('Xóa Agent thành công.');
           this.deleted.emit();
         },
-        error: (err: HttpErrorResponse) => {
-          this.toastService.error(err.error?.message || 'Không thể xóa Agent, vui lòng thử lại.');
+        error: () => {
         }
       });
   }

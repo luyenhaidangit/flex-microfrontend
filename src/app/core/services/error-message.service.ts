@@ -15,6 +15,10 @@ export class ErrorMessageService {
    * @returns Observable<string> - Thông báo lỗi đã được dịch
    */
   getErrorMessage(error: HttpErrorResponse | any): string {
+    if ([502, 503, 504].includes(error?.status)) {
+      return this.translate.instant('ERRORS.SERVICE_UNAVAILABLE');
+    }
+
     // Nếu có errorCode, ưu tiên sử dụng translation
     if (error?.error?.errorCode) {
       const errorKey = `ERRORS.${error.error.errorCode}`;
@@ -74,6 +78,10 @@ export class ErrorMessageService {
    * @returns Observable<string> - Thông báo lỗi đã được dịch
    */
   getErrorMessageAsync(error: HttpErrorResponse | any) {
+    if ([502, 503, 504].includes(error?.status)) {
+      return this.translate.get('ERRORS.SERVICE_UNAVAILABLE');
+    }
+
     // Nếu có errorCode, ưu tiên sử dụng translation
     if (error?.error?.errorCode) {
       const errorKey = `ERRORS.${error.error.errorCode}`;
