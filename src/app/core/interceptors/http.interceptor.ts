@@ -30,6 +30,12 @@ export class AppHttpInterceptor implements HttpSystemInterceptor {
       request = request.clone({ url: this.joinUrl(environment.apiBaseUrl, request.url) });
     }
 
+    // UI-only flag: consume it before sending the request to the API.
+    const skipToast = request.headers.has(Header.SkipToastError);
+    if (skipToast) {
+      request = request.clone({ headers: request.headers.delete(Header.SkipToastError) });
+    }
+
     // Loading indicator
     const skipLoading = request.headers.has(Header.SkipLoading);
     if (!skipLoading) {
@@ -55,8 +61,7 @@ export class AppHttpInterceptor implements HttpSystemInterceptor {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         // Error handling
-        // Skip toast for requests with SkipToastError header
-        const skipToast = request.headers.has(Header.SkipToastError);
+        // Skip toast for requests that opt out of global error notifications.
         if (!skipToast) {
           if (error.status === 0) {
             // Network/CORS error
