@@ -57,44 +57,12 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
 
   publishChannels = [
     {
-      code: 'facebook_fanpage',
-      name: 'Fanpage Facebook',
-      description: 'Kết nối Agent với fanpage facebook của bạn.',
-      iconType: 'facebook',
-      enabled: false
-    },
-    {
       code: 'instagram',
       name: 'Instagram Business',
       description: 'Kết nối nhân viên AI với tài khoản Instagram của bạn.',
-      iconType: 'instagram',
       enabled: false
-    },
-    {
-      code: 'zalo_oa',
-      name: 'Zalo OA (Doanh nghiệp)',
-      description: 'Kết nối nhân viên AI với trang Zalo doanh nghiệp của bạn.',
-      iconType: 'zalo',
-      enabled: false
-    },
-    {
-      code: 'website',
-      name: 'Tạo trang web',
-      description: 'Tạo một trang web riêng cho Agent hoạt động.',
-      iconType: 'website',
-      enabled: true,
-      statusBadge: 'Đã phát hành'
     }
   ];
-
-  websiteUrl = 'http://localhost:4200/agents/chat/demo-agent-01';
-
-  copyWebsiteUrl(): void {
-    if (navigator?.clipboard?.writeText) {
-      navigator.clipboard.writeText(this.websiteUrl);
-    }
-    this.toastService.success('Đã sao chép đường dẫn trang web!');
-  }
 
   constructor(
     private fb: FormBuilder,
