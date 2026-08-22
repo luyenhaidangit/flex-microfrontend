@@ -13,9 +13,20 @@ import { AgentListComponent } from './components/agent-list/agent-list.component
 import { AgentFormModalComponent } from './components/agent-form-modal/agent-form-modal.component';
 import { AgentDeleteConfirmModalComponent } from './components/agent-delete-confirm-modal/agent-delete-confirm-modal.component';
 import { AgentCreateWizardComponent } from './components/agent-create-wizard/agent-create-wizard.component';
+import { AgentStepGeneralComponent } from './components/agent-create-wizard/steps/agent-step-general/agent-step-general.component';
+import { AgentStepPublishComponent } from './components/agent-create-wizard/steps/agent-step-publish/agent-step-publish.component';
+import { AgentStepPlaceholderComponent } from './components/agent-create-wizard/steps/agent-step-placeholder/agent-step-placeholder.component';
 
 @NgModule({
-  declarations: [AgentListComponent, AgentFormModalComponent, AgentDeleteConfirmModalComponent, AgentCreateWizardComponent],
+  declarations: [
+    AgentListComponent,
+    AgentFormModalComponent,
+    AgentDeleteConfirmModalComponent,
+    AgentCreateWizardComponent,
+    AgentStepGeneralComponent,
+    AgentStepPublishComponent,
+    AgentStepPlaceholderComponent
+  ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule, CKEditorModule, UIModule, SharedModule, PaginationModule, CollapseModule.forRoot(), AgentCatalogRoutingModule],
   exports: [AgentCreateWizardComponent, AgentListComponent]
 })

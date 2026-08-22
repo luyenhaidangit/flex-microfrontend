@@ -325,3 +325,34 @@
 .cursor-pointer {
   cursor: pointer;
 }
+
+/* PUBLISH CHANNEL CARD STYLING */
+.publish-channel-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 16px !important;
+  transition: all 0.2s ease-in-out;
+  padding: 16px 20px !important;
+
+  &.active {
+    border-color: #556ee6 !important;
+    box-shadow: 0 0 0 1px #556ee6 !important;
+  }
+
+  .instagram-icon-badge {
+    width: 46px;
+    height: 46px;
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    border-radius: 14px !important;
+  }
+
+  .channel-title {
+    font-size: 15px;
+    color: #1e293b;
+  }
+
+  .channel-desc {
+    font-size: 13px;
+    color: #64748b;
+  }
+}

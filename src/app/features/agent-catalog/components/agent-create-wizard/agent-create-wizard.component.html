@@ -89,122 +89,26 @@
           <div class="misa-form-card bg-white rounded-3 border p-4 shadow-sm h-100 overflow-auto" [formGroup]="wizardForm">
 
             <!-- STEP 1 CONTENT -->
-            <div *ngIf="currentStep === 1" class="form-pane">
-              <!-- Title & Header -->
-              <div class="pane-title-area mb-4">
-                <h4 class="fw-bold text-dark mb-1 fs-5">Thông tin chung</h4>
-                <p class="text-muted small mb-0">
-                  Thiết lập thông tin cơ bản và chỉ dẫn để định danh và định hình cách tương tác cho Nhân viên AI
-                </p>
-              </div>
+            <app-agent-step-general
+              *ngIf="currentStep === 1"
+              [formGroup]="wizardForm"
+              [avatarFile]="avatarFile"
+              [avatarError]="avatarError"
+              (avatarSelected)="onAvatarSelected($event)"
+            ></app-agent-step-general>
 
-              <!-- Accordion Card 1: Thông tin cơ bản -->
-              <div class="card border rounded-3 mb-4 shadow-none">
-                <div
-                  class="card-header bg-transparent py-2 px-3 fw-semibold border-bottom-0 d-flex align-items-center gap-2 cursor-pointer"
-                  (click)="toggleSection('basicInfo')"
-                >
-                  <i class="bx text-secondary" [class.bx-chevron-down]="!isSectionCollapsed('basicInfo')" [class.bx-chevron-right]="isSectionCollapsed('basicInfo')"></i> Thông tin cơ bản
-                </div>
-                <div class="card-body pt-1 px-3 pb-3" [collapse]="isSectionCollapsed('basicInfo')">
-                  <!-- Avatar Picker -->
-                  <div class="mb-3">
-                    <label class="form-label small fw-medium text-secondary mb-2">Hình đại diện <span class="text-danger">*</span></label>
-                    <div class="d-flex align-items-center">
-                      <input
-                        #avatarInput
-                        type="file"
-                        accept="image/png,image/jpeg,image/webp"
-                        class="d-none"
-                        (change)="onAvatarSelected($event)"
-                      />
-                      <button
-                        type="button"
-                        class="avatar-upload-item rounded-circle border d-flex align-items-center justify-content-center position-relative"
-                        [class.selected]="avatarFile"
-                        (click)="avatarInput.click()"
-                        title="Thay đổi ảnh đại diện"
-                        aria-label="Thay đổi ảnh đại diện"
-                      >
-                        <img
-                          [src]="f['avatarUrl'].value || 'assets/images/default-agent-avatar.png'"
-                          alt="Ảnh đại diện Agent"
-                          class="uploaded-avatar-preview rounded-circle"
-                        />
-                        <span class="avatar-upload-icon position-absolute d-flex align-items-center justify-content-center rounded-circle border bg-white text-primary shadow-sm small">
-                          <i class="bx bx-upload"></i>
-                        </span>
-                      </button>
-                    </div>
-                    <div class="form-text">PNG, JPG hoặc WebP, tối đa 2 MB.</div>
-                    <div *ngIf="avatarError" class="text-danger small mt-1">{{ avatarError }}</div>
-                  </div>
+            <!-- STEPS 2 - 4 PLACEHOLDERS -->
+            <app-agent-step-placeholder
+              *ngIf="currentStep > 1 && currentStep < 5"
+              [title]="steps[currentStep - 1].title"
+            ></app-agent-step-placeholder>
 
-                  <!-- Form Fields: Tên & Vai trò -->
-                  <div class="row g-3">
-                    <div class="col-md-6">
-                      <label class="form-label small fw-medium text-dark mb-1">Tên <span class="text-danger">*</span></label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        placeholder="VD: Trợ lý tư vấn bán hàng"
-                        formControlName="name"
-                        [class.is-invalid]="f['name'].touched && f['name'].invalid"
-                      />
-                      <div *ngIf="f['name'].touched && f['name'].invalid" class="invalid-feedback small">
-                        Tên Agent là bắt buộc.
-                      </div>
-                    </div>
-
-                    <div class="col-md-6">
-                      <label class="form-label small fw-medium text-dark mb-1">Vai trò</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        placeholder="VD: Tư vấn sản phẩm và hỗ trợ khách hàng (không bắt buộc)"
-                        formControlName="role"
-                        [class.is-invalid]="f['role'].touched && f['role'].invalid"
-                      />
-                      <div *ngIf="f['role'].touched && f['role'].invalid" class="invalid-feedback small">
-                        Vai trò không vượt quá 500 ký tự.
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Accordion Card 2: Chỉ dẫn cho Agent -->
-              <div class="card border rounded-3 mb-4 shadow-none">
-                <div
-                  class="card-header bg-transparent py-2 px-3 fw-semibold border-bottom-0 d-flex align-items-center gap-2 cursor-pointer"
-                  (click)="toggleSection('instructions')"
-                >
-                  <i class="bx text-secondary" [class.bx-chevron-down]="!isSectionCollapsed('instructions')" [class.bx-chevron-right]="isSectionCollapsed('instructions')"></i> Chỉ dẫn cho Agent
-                </div>
-                <div class="card-body pt-1 px-3 pb-3" [collapse]="isSectionCollapsed('instructions')">
-                  <div class="mb-2 d-flex align-items-center justify-content-between">
-                    <label class="form-label small fw-medium text-dark mb-0">
-                      Chỉ dẫn cho Agent <span class="text-danger">*</span>
-                    </label>
-                  </div>
-
-                  <ckeditor
-                    [editor]="Editor"
-                    [config]="editorConfig"
-                    formControlName="instructions"
-                    class="instructions-editor"
-                  ></ckeditor>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- STEPS 2 - 5 PLACEHOLDERS -->
-            <div *ngIf="currentStep > 1" class="form-pane py-5 text-center">
-              <i class="bx bx-layer fs-1 text-primary mb-2"></i>
-              <h5 class="fw-bold text-dark">{{ steps[currentStep - 1].title }}</h5>
-              <p class="text-muted small">Cấu hình tính năng {{ steps[currentStep - 1].title }} đang sẵn sàng.</p>
-            </div>
+            <!-- STEP 5 CONTENT: PHÁT HÀNH -->
+            <app-agent-step-publish
+              *ngIf="currentStep === 5"
+              [publishChannels]="publishChannels"
+              (toggleChannel)="onToggleChannel($event)"
+            ></app-agent-step-publish>
 
           </div>
         </div>

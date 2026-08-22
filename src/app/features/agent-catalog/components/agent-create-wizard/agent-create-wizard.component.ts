@@ -29,16 +29,8 @@ export interface ChatMessage {
   styleUrls: ['./agent-create-wizard.component.scss']
 })
 export class AgentCreateWizardComponent implements OnInit, OnDestroy {
-  public Editor = ClassicEditor;
-  public editorConfig = {
-    toolbar: ['heading', '|', 'bold', 'italic', 'link', '|', 'bulletedList', 'numberedList', '|', 'undo', 'redo']
-  };
   activeTab: 'info' | 'chat' | 'report' = 'info';
   currentStep = 1;
-  collapsedSections: { [key: string]: boolean } = {
-    basicInfo: false,
-    instructions: false
-  };
 
   isSubmitting = false;
   showConfirmCancelModal = false;
@@ -61,8 +53,17 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
   isChatPending = false;
   chatError = '';
   conversationId = `agent-wizard-${Date.now()}`;
-
   currentTimeFormatted: string = '';
+
+  publishChannels = [
+    {
+      code: 'instagram',
+      name: 'Instagram Business',
+      description: 'Kết nối nhân viên AI với tài khoản Instagram của bạn.',
+      iconClass: 'bx bxl-instagram',
+      enabled: false
+    }
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -124,12 +125,13 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
   }
 
 
-  toggleSection(key: string): void {
-    this.collapsedSections[key] = !this.collapsedSections[key];
-  }
-
-  isSectionCollapsed(key: string): boolean {
-    return !!this.collapsedSections[key];
+  onToggleChannel(channel: any): void {
+    channel.enabled = !channel.enabled;
+    if (channel.enabled) {
+      this.toastService.success(`Đã kích hoạt kênh phát hành ${channel.name}`);
+    } else {
+      this.toastService.info(`Đã tắt kênh phát hành ${channel.name}`);
+    }
   }
 
   onStepClick(stepId: number): void {

@@ -1,0 +1,38 @@
+<div class="form-pane">
+  <div class="pane-title-area mb-4">
+    <h4 class="fw-bold text-dark mb-1 fs-5">Phát hành</h4>
+    <p class="text-muted small mb-0">
+      Chọn kênh tư vấn mà bạn muốn nhân viên AI sử dụng để trò chuyện với khách hàng
+    </p>
+  </div>
+
+  <div class="publish-channels-list">
+    <div
+      *ngFor="let channel of publishChannels"
+      class="publish-channel-card mb-3"
+      [class.active]="channel.enabled"
+    >
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-3">
+          <div class="instagram-icon-badge d-flex align-items-center justify-content-center flex-shrink-0">
+            <i class="bx bxl-instagram text-white fs-2"></i>
+          </div>
+          <div>
+            <h6 class="channel-title fw-semibold mb-0">{{ channel.name }}</h6>
+            <p class="channel-desc mb-0 mt-0.5">{{ channel.description }}</p>
+          </div>
+        </div>
+
+        <div class="form-check form-switch form-switch-md mb-0 ms-3">
+          <input
+            type="checkbox"
+            class="form-check-input cursor-pointer"
+            [id]="'switch-' + channel.code"
+            [checked]="channel.enabled"
+            (change)="onToggle(channel)"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
