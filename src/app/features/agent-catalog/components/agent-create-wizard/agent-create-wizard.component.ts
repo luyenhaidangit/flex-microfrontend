@@ -35,7 +35,6 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
   };
   activeTab: 'info' | 'chat' | 'report' = 'info';
   currentStep = 1;
-  isSidebarCollapsed = false;
 
   isSubmitting = false;
   showConfirmCancelModal = false;
@@ -120,9 +119,6 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
     reader.readAsDataURL(file);
   }
 
-  toggleSidebar(): void {
-    this.isSidebarCollapsed = !this.isSidebarCollapsed;
-  }
 
   onStepClick(stepId: number): void {
     this.currentStep = stepId;
