@@ -157,7 +157,7 @@
                       <input
                         type="text"
                         class="form-control"
-                        placeholder="Nhập tên Agent"
+                        placeholder="VD: Trợ lý tư vấn bán hàng"
                         formControlName="name"
                         [class.is-invalid]="f['name'].touched && f['name'].invalid"
                       />
@@ -171,7 +171,7 @@
                       <input
                         type="text"
                         class="form-control"
-                        placeholder="Nhập vai trò"
+                        placeholder="VD: Tư vấn sản phẩm và hỗ trợ khách hàng"
                         formControlName="role"
                         [class.is-invalid]="f['role'].touched && f['role'].invalid"
                       />
@@ -225,11 +225,6 @@
               <button type="button" class="btn btn-link text-secondary p-0 fs-5" (click)="chatMessages = []" title="Tải lại đoạn chat">
                 <i class="bx bx-refresh"></i>
               </button>
-            </div>
-
-            <div class="d-flex align-items-center mb-2 small text-success">
-              <i class="bx bx-radio-circle-marked me-1"></i>
-              <span>Sẵn sàng chat với Agent</span>
             </div>
             <div *ngIf="chatError" class="text-danger small mb-2">{{ chatError }}</div>
 

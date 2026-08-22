@@ -7,6 +7,7 @@ import { ToastService } from 'angular-toastify';
 import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { AgentService } from '../../services/agent.service';
 import { AgentChatService } from '../../services/agent-chat.service';
+import { DEFAULT_AGENT_INSTRUCTIONS_TEMPLATE } from './agent-create-wizard.config';
 
 export interface WizardStepItem {
   id: number;
@@ -84,7 +85,7 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
       avatarUrl: ['assets/images/default-agent-avatar.png'], // Mặc định là avatar như ở màn list
       name: ['', [Validators.required]],
       role: ['', [Validators.required]],
-      instructions: ['', [Validators.required]]
+      instructions: [DEFAULT_AGENT_INSTRUCTIONS_TEMPLATE, [Validators.required]]
     });
   }
 
