@@ -424,11 +424,10 @@
     height: 36px;
     margin-top: 14px;
 
-    &:hover,
-    &:focus {
-      background-color: #4353ff;
+    &:hover {
+      background-color: #bfd2ff;
       border-color: #4353ff;
-      color: #ffffff;
+      color: #4353ff;
     }
   }
 }
