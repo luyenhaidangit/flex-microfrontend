@@ -157,16 +157,16 @@
                     </div>
 
                     <div class="col-md-6">
-                      <label class="form-label small fw-medium text-dark mb-1">Vai trò <span class="text-danger">*</span></label>
+                      <label class="form-label small fw-medium text-dark mb-1">Vai trò</label>
                       <input
                         type="text"
                         class="form-control"
-                        placeholder="VD: Tư vấn sản phẩm và hỗ trợ khách hàng"
+                        placeholder="VD: Tư vấn sản phẩm và hỗ trợ khách hàng (không bắt buộc)"
                         formControlName="role"
                         [class.is-invalid]="f['role'].touched && f['role'].invalid"
                       />
                       <div *ngIf="f['role'].touched && f['role'].invalid" class="invalid-feedback small">
-                        Vai trò là bắt buộc.
+                        Vai trò không vượt quá 500 ký tự.
                       </div>
                     </div>
                   </div>

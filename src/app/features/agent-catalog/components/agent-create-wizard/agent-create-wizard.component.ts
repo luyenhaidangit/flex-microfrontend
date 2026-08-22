@@ -87,7 +87,7 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
     this.wizardForm = this.fb.group({
       avatarUrl: ['assets/images/default-agent-avatar.png'], // Mặc định là avatar như ở màn list
       name: ['', [Validators.required]],
-      role: ['', [Validators.required]],
+      role: ['', [Validators.maxLength(500)]],
       instructions: [DEFAULT_AGENT_INSTRUCTIONS_TEMPLATE, [Validators.required]]
     });
   }
