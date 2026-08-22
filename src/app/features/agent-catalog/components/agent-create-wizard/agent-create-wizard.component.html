@@ -107,9 +107,7 @@
             <app-agent-step-publish
               *ngIf="currentStep === 5"
               [publishChannels]="publishChannels"
-              [websiteUrl]="websiteUrl"
               (toggleChannel)="onToggleChannel($event)"
-              (copyWebsiteUrl)="copyWebsiteUrl()"
             ></app-agent-step-publish>
 
           </div>

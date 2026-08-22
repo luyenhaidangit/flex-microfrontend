@@ -1,50 +1,24 @@
 <div class="form-pane">
   <div class="pane-title-area mb-4">
-    <div class="d-flex align-items-center justify-content-between">
-      <div>
-        <h4 class="fw-bold text-dark mb-1 fs-5">Phát hành</h4>
-        <p class="text-muted small mb-0">
-          Chọn kênh tư vấn mà bạn muốn nhân viên AI sử dụng để trò chuyện với khách hàng
-        </p>
-      </div>
-      <button type="button" class="btn btn-link text-secondary p-0 fs-5" title="Tùy chọn">
-        <i class="bx bx-sidebar"></i>
-      </button>
-    </div>
+    <h4 class="fw-bold text-dark mb-1 fs-5">Phát hành</h4>
+    <p class="text-muted small mb-0">
+      Chọn kênh tư vấn mà bạn muốn nhân viên AI sử dụng để trò chuyện với khách hàng
+    </p>
   </div>
 
-  <div class="publish-channels-list d-flex flex-column gap-3">
+  <div class="publish-channels-list">
     <div
       *ngFor="let channel of publishChannels"
-      class="publish-channel-card p-3 rounded-4 border transition-all"
+      class="publish-channel-card p-3 rounded-4 border transition-all mb-3"
       [class.active]="channel.enabled"
     >
       <div class="d-flex align-items-center justify-content-between">
         <div class="d-flex align-items-center gap-3">
-          <!-- Channel Icons -->
-          <div *ngIf="channel.iconType === 'facebook'" class="channel-icon-avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px; background-color: #1877f2 !important;">
-            <i class="bx bxl-facebook fs-3"></i>
-          </div>
-
-          <div *ngIf="channel.iconType === 'instagram'" class="channel-icon-avatar flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+          <div class="channel-icon-avatar flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
             <img src="assets/images/icon-instagram.svg" alt="Instagram Business" style="width: 40px; height: 40px;" />
           </div>
-
-          <div *ngIf="channel.iconType === 'zalo'" class="channel-icon-avatar text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 fw-bold" style="width: 44px; height: 44px; background-color: #0068ff !important; font-size: 11px;">
-            Zalo
-          </div>
-
-          <div *ngIf="channel.iconType === 'website'" class="channel-icon-avatar text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px; background-color: #0d9488 !important;">
-            <i class="bx bx-globe fs-3"></i>
-          </div>
-
           <div>
-            <div class="d-flex align-items-center gap-2">
-              <h6 class="channel-title fw-bold text-dark mb-0 fs-6">{{ channel.name }}</h6>
-              <span *ngIf="channel.statusBadge" class="badge bg-success-subtle text-success border border-success-subtle rounded-pill font-size-11 px-2 py-0.5">
-                {{ channel.statusBadge }}
-              </span>
-            </div>
+            <h6 class="channel-title fw-bold text-dark mb-0 fs-6">{{ channel.name }}</h6>
             <p class="channel-desc text-muted small mb-0 mt-0.5">{{ channel.description }}</p>
           </div>
         </div>
@@ -57,18 +31,6 @@
             [checked]="channel.enabled"
             (change)="onToggle(channel)"
           />
-        </div>
-      </div>
-
-      <!-- Sub-section for Website URL link when enabled -->
-      <div *ngIf="channel.code === 'website' && channel.enabled" class="border-top pt-3 mt-3">
-        <h6 class="fw-bold text-dark mb-1 small">Đường dẫn</h6>
-        <p class="text-muted small mb-2">Sử dụng đường dẫn này để thực hiện truy cập trang web hỏi đáp với nhân viên AI</p>
-        <div class="input-group input-group-sm">
-          <input type="text" class="form-control bg-light" [value]="websiteUrl" readonly />
-          <button class="btn btn-outline-secondary" type="button" (click)="onCopyLink()">
-            <i class="bx bx-copy me-1"></i> Sao chép
-          </button>
         </div>
       </div>
     </div>
