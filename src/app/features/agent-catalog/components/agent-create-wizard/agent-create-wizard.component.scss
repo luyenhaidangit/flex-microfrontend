@@ -346,6 +346,10 @@
     border-radius: 14px !important;
   }
 
+  .instagram-gradient {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%) !important;
+  }
+
   .channel-title {
     font-size: 15px;
     color: #1e293b;
@@ -354,5 +358,21 @@
   .channel-desc {
     font-size: 13px;
     color: #64748b;
+  }
+}
+
+/* SMARTPHONE MOCKUP STYLING FOR STEP 5 PREVIEW */
+.phone-mockup-wrapper {
+  .phone-device {
+    width: 290px;
+    max-width: 100%;
+    border-radius: 38px !important;
+    background-color: #1e293b;
+    border: 5px solid #0f172a !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18) !important;
+  }
+
+  .phone-screen {
+    border-radius: 32px !important;
   }
 }
