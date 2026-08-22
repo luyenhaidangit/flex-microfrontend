@@ -184,16 +184,13 @@
   height: 48px;
   padding: 0;
   background-color: #f8f9fa;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 0 0 1px #ced4da, 0 2px 5px rgba(0, 0, 0, 0.1) !important;
   transition: all 0.15s ease-in-out;
 
   &:hover {
     background-color: #eff2f7;
-    border-color: #556ee6 !important;
-  }
-
-  &.selected {
-    border-color: #34c38f !important;
-    border-width: 2px !important;
+    box-shadow: 0 0 0 1px #556ee6, 0 2px 5px rgba(85, 110, 230, 0.2) !important;
   }
 
   .uploaded-avatar-preview {
