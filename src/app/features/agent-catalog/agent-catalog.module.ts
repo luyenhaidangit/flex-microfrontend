@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { CollapseModule } from 'ngx-bootstrap/collapse';
 
 import { UIModule } from 'src/app/shared/ui/ui.module';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -15,7 +16,7 @@ import { AgentCreateWizardComponent } from './components/agent-create-wizard/age
 
 @NgModule({
   declarations: [AgentListComponent, AgentFormModalComponent, AgentDeleteConfirmModalComponent, AgentCreateWizardComponent],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, CKEditorModule, UIModule, SharedModule, PaginationModule, AgentCatalogRoutingModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, CKEditorModule, UIModule, SharedModule, PaginationModule, CollapseModule.forRoot(), AgentCatalogRoutingModule],
   exports: [AgentCreateWizardComponent, AgentListComponent]
 })
 export class AgentCatalogModule {}

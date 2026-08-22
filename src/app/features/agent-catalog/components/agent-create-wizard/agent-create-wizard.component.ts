@@ -35,6 +35,10 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
   };
   activeTab: 'info' | 'chat' | 'report' = 'info';
   currentStep = 1;
+  collapsedSections: { [key: string]: boolean } = {
+    basicInfo: false,
+    instructions: false
+  };
 
   isSubmitting = false;
   showConfirmCancelModal = false;
@@ -119,6 +123,14 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
     reader.readAsDataURL(file);
   }
 
+
+  toggleSection(key: string): void {
+    this.collapsedSections[key] = !this.collapsedSections[key];
+  }
+
+  isSectionCollapsed(key: string): boolean {
+    return !!this.collapsedSections[key];
+  }
 
   onStepClick(stepId: number): void {
     this.currentStep = stepId;
