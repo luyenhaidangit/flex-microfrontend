@@ -57,10 +57,35 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
 
   publishChannels = [
     {
+      code: 'facebook_fanpage',
+      name: 'Fanpage Facebook',
+      description: 'Kết nối Agent với fanpage facebook của bạn.',
+      iconClass: 'bx bxl-facebook-circle',
+      iconColor: 'facebook',
+      enabled: false,
+      isAvailable: false
+    },
+    {
       code: 'instagram',
       name: 'Instagram Business',
       description: 'Kết nối nhân viên AI với tài khoản Instagram của bạn.',
-      enabled: false
+      icon: 'assets/images/icon-instagram.svg',
+      enabled: false,
+      isAvailable: true,
+      steps: [
+        'Chọn "Kết nối ngay" và chọn cách thức kết nối tới tài khoản Instagram Business.',
+        'Cấp các quyền truy cập được yêu cầu từ hệ thống để nhân viên AI có thể hoạt động.',
+        'Sau khi kết nối thành công, nhấn "Phát hành" để nhân viên AI thực hiện tư vấn ngay.'
+      ]
+    },
+    {
+      code: 'zalo_oa',
+      name: 'Zalo OA (Doanh nghiệp)',
+      description: 'Kết nối nhân viên AI với trang Zalo doanh nghiệp của bạn.',
+      iconText: 'Zalo',
+      iconColor: 'zalo',
+      enabled: false,
+      isAvailable: false
     }
   ];
 
@@ -125,6 +150,8 @@ export class AgentCreateWizardComponent implements OnInit, OnDestroy {
 
 
   onToggleChannel(channel: any): void {
+    if (channel.isAvailable === false) return;
+
     channel.enabled = !channel.enabled;
     if (channel.enabled) {
       this.toastService.success(`Đã kích hoạt kênh phát hành ${channel.name}`);

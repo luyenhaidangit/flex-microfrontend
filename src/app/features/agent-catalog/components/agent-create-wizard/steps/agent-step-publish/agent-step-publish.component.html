@@ -11,27 +11,50 @@
       *ngFor="let channel of publishChannels"
       class="publish-channel-card p-3 rounded-4 border transition-all mb-3"
       [class.active]="channel.enabled"
+      [class.unavailable]="channel.isAvailable === false"
     >
       <div class="d-flex align-items-center justify-content-between">
         <div class="d-flex align-items-center gap-3">
-          <div class="channel-icon-avatar flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
-            <img src="assets/images/icon-instagram.svg" alt="Instagram Business" style="width: 40px; height: 40px;" />
+          <div class="channel-icon-avatar flex-shrink-0 d-flex align-items-center justify-content-center" [ngClass]="channel.iconColor || ''">
+            <img
+              *ngIf="channel.icon"
+              [src]="channel.icon"
+              [alt]="channel.name"
+              class="channel-icon-image"
+            />
+            <i *ngIf="channel.iconClass" [class]="channel.iconClass" aria-hidden="true"></i>
+            <span *ngIf="channel.iconText" class="channel-icon-text">{{ channel.iconText }}</span>
           </div>
           <div>
-            <h6 class="channel-title fw-bold text-dark mb-0 fs-6">{{ channel.name }}</h6>
-            <p class="channel-desc text-muted small mb-0 mt-0.5">{{ channel.description }}</p>
+            <h6 class="channel-title fw-bold text-dark mb-0 fs-8">{{ channel.name }}</h6>
+            <p class="channel-desc text-muted small mb-0 mt-1">{{ channel.description }}</p>
           </div>
         </div>
 
-        <div class="form-check form-switch form-switch-md mb-0 ms-3">
+        <div class="form-check form-switch form-switch-sm mb-0 ms-3">
           <input
             type="checkbox"
             class="form-check-input cursor-pointer"
             [id]="'switch-' + channel.code"
             [checked]="channel.enabled"
+            [disabled]="channel.isAvailable === false"
             (change)="onToggle(channel)"
           />
         </div>
+      </div>
+
+      <div *ngIf="channel.enabled && channel.steps?.length" class="publish-channel-details">
+        <h6 class="publish-channel-steps-title">Phát hành với chỉ 3 bước</h6>
+        <ol class="publish-channel-steps list-unstyled mb-0">
+          <li *ngFor="let step of channel.steps; let stepIndex = index" class="publish-channel-step">
+            <span class="publish-channel-step-number">{{ stepIndex + 1 }}</span>
+            <span>{{ step }}</span>
+          </li>
+        </ol>
+        <button type="button" class="btn btn-outline-primary publish-channel-connect w-100">
+          <i class="bx bx-link-alt me-2" aria-hidden="true"></i>
+          Kết nối ngay
+        </button>
       </div>
     </div>
   </div>

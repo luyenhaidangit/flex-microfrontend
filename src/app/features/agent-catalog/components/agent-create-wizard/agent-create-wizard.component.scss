@@ -335,7 +335,41 @@
   padding: 16px 20px !important;
 
   &.active {
-    border-color: #bfdbfe !important;
+    border-color: #6c7cf8 !important;
+  }
+
+  &.unavailable {
+    .form-check-input {
+      cursor: not-allowed;
+    }
+  }
+
+  .channel-icon-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    font-size: 40px;
+    line-height: 1;
+
+    &.facebook {
+      color: #1877f2;
+    }
+
+    &.zalo {
+      background: #087cff;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .channel-icon-image {
+      width: 40px;
+      height: 40px;
+    }
+
+    .channel-icon-text {
+      letter-spacing: -0.5px;
+    }
   }
 
   .channel-title {
@@ -346,6 +380,56 @@
   .channel-desc {
     font-size: 13px;
     color: #64748b;
+  }
+
+  .publish-channel-details {
+    margin-top: 16px;
+  }
+
+  .publish-channel-steps-title {
+    color: #1e293b;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .publish-channel-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #475569;
+    font-size: 13px;
+    line-height: 1.35;
+    margin-bottom: 8px;
+  }
+
+  .publish-channel-step-number {
+    align-items: center;
+    border: 1px solid #4353ff;
+    border-radius: 50%;
+    color: #4353ff;
+    display: inline-flex;
+    flex: 0 0 28px;
+    font-size: 12px;
+    height: 28px;
+    justify-content: center;
+    line-height: 1;
+    width: 28px;
+  }
+
+  .publish-channel-connect {
+    border-color: #4353ff;
+    color: #4353ff;
+    font-size: 13px;
+    height: 36px;
+    margin-top: 14px;
+
+    &:hover,
+    &:focus {
+      background-color: #4353ff;
+      border-color: #4353ff;
+      color: #ffffff;
+    }
   }
 }
 
